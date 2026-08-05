@@ -148,7 +148,7 @@ abstention.
 ### Tests for User Story 3
 
 - [X] T059 [P] [US3] Add failing graph-path tests for insufficient evidence, invented evidence IDs, claim without evidence, contradiction, partial support, and controlled provider refusal in `apps/backend/tests/unit/agent/test_abstention_paths.py`
-- [ ] T060 [P] [US3] Add failing malicious-source and unauthorized-instruction fixtures plus integration tests in `apps/backend/tests/fixtures/security/` and `apps/backend/tests/integration/security/test_prompt_injection.py`
+- [X] T060 [P] [US3] Add failing malicious-source and unauthorized-instruction fixtures plus integration tests in `apps/backend/tests/fixtures/security/` and `apps/backend/tests/integration/security/test_prompt_injection.py`
 - [ ] T061 [P] [US3] Write failing abstention, disagreement, partial-answer, and out-of-scope UI tests in `apps/web/src/features/cited-answer/__tests__/abstention.test.tsx`
 
 ### Implementation for User Story 3
