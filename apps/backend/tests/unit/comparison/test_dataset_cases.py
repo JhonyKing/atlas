@@ -9,6 +9,8 @@ def test_comparison_dataset_has_deterministic_two_and_three_technology_cases() -
     ]
     matrix_cases = {case["id"]: case for case in cases if "expected_cells" in case}
 
+    assert len(cases) >= 20
+    assert len(matrix_cases) >= 16
     assert len(matrix_cases["two-tech-capability"]["technologies"]) == 2
     assert len(matrix_cases["three-tech-price-gap"]["technologies"]) == 3
     for case in matrix_cases.values():
