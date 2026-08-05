@@ -4,6 +4,8 @@ from functools import partial
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from openai import AsyncOpenAI
 
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
@@ -13,11 +15,14 @@ from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
+from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.config import get_settings
+from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
 from atlas.observability.context import RequestContextMiddleware
 from atlas.persistence.corpus_status import CorpusStatusProvider
+from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 
 
 def create_app(
@@ -39,6 +44,14 @@ def create_app(
         title="ATLAS AI API",
         description="Evidence-first technical research with verifiable cited answers.",
         version="0.1.0",
+    )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(settings.web_origin).rstrip("/")],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Accept", "Authorization", "Content-Type", "Idempotency-Key"],
+        expose_headers=["X-Atlas-Run-ID", "X-Request-ID"],
     )
     application.add_middleware(RequestContextMiddleware)
     resolved_visitor_secret = visitor_hmac_secret or (
@@ -68,7 +81,41 @@ def create_app(
     return application
 
 
-app = create_app()
+def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
+    """Build the process-level app, including safe deterministic development services.
+
+    Tests use ``create_app`` with explicit dependencies. The local process uses a deterministic
+    corpus/answer graph when running in development so a missing provider key cannot turn the
+    portfolio demo into a broken browser experience. Production deliberately receives no such
+    fallback and must wire a real provider service.
+    """
+
+    settings = get_settings()
+    if settings.atlas_env == "development":
+        real_provider = use_real_provider if use_real_provider is not None else bool(
+            settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
+        )
+        answer_graph = DemoAnswerGraph()
+        if real_provider and settings.openai_api_key is not None:
+            client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
+            safety_secret = (
+                settings.atlas_visitor_hmac_secret.get_secret_value()
+                if settings.atlas_visitor_hmac_secret is not None
+                else "atlas-development-only-visitor-secret"
+            )
+            generator = OpenAIResponsesAdapter(
+                client=client,
+                safety_identifier=derive_safety_identifier(safety_secret, "development-anonymous-visitor"),
+            )
+            answer_graph = OpenAIConnectedDemoGraph(generator)
+        return create_app(
+            answer_service=InMemoryAnswerRunService(answer_graph),
+            corpus_service=DemoCorpusStatusProvider(),
+        )
+    return create_app()
+
+
+app = create_runtime_app()
 
 
 def run() -> None:

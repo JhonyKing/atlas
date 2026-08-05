@@ -2,6 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { EvidencePanel } from "../EvidencePanel";
+import { LocaleProvider } from "@/i18n";
+
+function renderPanel() {
+  return render(<LocaleProvider><EvidencePanel claims={[claim]} citations={[citation]} onFeedback={vi.fn()} /></LocaleProvider>);
+}
 
 const citation = {
   id: "citation-1",
@@ -28,18 +33,18 @@ const claim = {
 
 describe("EvidencePanel", () => {
   it("exposes source metadata and a textual inference label", () => {
-    render(<EvidencePanel claims={[claim]} citations={[citation]} onFeedback={vi.fn()} />);
+    renderPanel();
 
     expect(screen.getByText("Official LangGraph docs")).toBeVisible();
     expect(screen.getByText("LangChain")).toBeVisible();
-    expect(screen.getByText(/captured/i)).toHaveTextContent(/2026/);
-    expect(screen.getByText(/published/i)).toHaveTextContent(/2026/);
+    expect(screen.getByText(/captured/i).parentElement).toHaveTextContent(/2026/);
+    expect(screen.getByText(/published/i).parentElement).toHaveTextContent(/2026/);
     expect(screen.getByText("v1.0")).toBeVisible();
     expect(screen.getByText(/inference/i)).toBeVisible();
   });
 
   it("opens canonical and revision links in a new browser context", () => {
-    render(<EvidencePanel claims={[claim]} citations={[citation]} onFeedback={vi.fn()} />);
+    renderPanel();
 
     const canonical = screen.getByRole("link", { name: /open official langgraph docs/i });
     const revision = screen.getByRole("link", { name: /open source revision/i });
@@ -52,7 +57,7 @@ describe("EvidencePanel", () => {
 
   it("keeps citation navigation and feedback controls keyboard reachable", () => {
     const onFeedback = vi.fn();
-    render(<EvidencePanel claims={[claim]} citations={[citation]} onFeedback={onFeedback} />);
+    render(<LocaleProvider><EvidencePanel claims={[claim]} citations={[citation]} onFeedback={onFeedback} /></LocaleProvider>);
 
     const canonical = screen.getByRole("link", { name: /open official langgraph docs/i });
     canonical.focus();
@@ -66,7 +71,7 @@ describe("EvidencePanel", () => {
   });
 
   it("does not communicate inference or source identity by color alone", () => {
-    render(<EvidencePanel claims={[claim]} citations={[citation]} onFeedback={vi.fn()} />);
+    renderPanel();
 
     const inference = screen.getByText(/inference/i);
     expect(inference).toHaveTextContent(/inference/i);

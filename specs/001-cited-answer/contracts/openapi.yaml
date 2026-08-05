@@ -405,6 +405,10 @@ components:
         date_to:
           type: [string, "null"]
           format: date
+        language:
+          type: [string, "null"]
+          enum: [en-US, es-MX, null]
+          description: Presentation locale. If omitted, the API resolves Accept-Language.
 
     RunStatus:
       type: object

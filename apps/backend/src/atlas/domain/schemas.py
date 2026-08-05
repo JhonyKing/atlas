@@ -33,7 +33,7 @@ class Question(DomainModel):
     ] | None = None
     date_from: date | None = None
     date_to: date | None = None
-    language: Annotated[str, StringConstraints(pattern=r"^[a-z]{2}(?:-[A-Z]{2})?$")] = "en"
+    language: Annotated[str, StringConstraints(pattern=r"^(?:en-US|es-MX)$")] = "en-US"
 
     @field_validator("text")
     @classmethod

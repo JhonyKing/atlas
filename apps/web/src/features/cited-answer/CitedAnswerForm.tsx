@@ -2,10 +2,12 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-import { cancelAnswer, streamCitedAnswer } from "./api";
+import { useLocale, type Locale } from "@/i18n";
+
 import { EvidencePanel } from "../evidence/EvidencePanel";
 import { putAnswerFeedback } from "../evidence/api";
 import type { FeedbackInput } from "../evidence/types";
+import { AtlasApiError, cancelAnswer, streamCitedAnswer } from "./api";
 import type {
   AnswerEvent,
   AskQuestionInput,
@@ -28,14 +30,17 @@ type AbstentionNotice = {
 };
 
 export function CitedAnswerForm() {
+  const { locale, setLocale, messages } = useLocale();
   const [question, setQuestion] = useState("");
   const [product, setProduct] = useState<CollectionSlug | "">("");
-  const [status, setStatus] = useState("Ready to verify an answer.");
+  const [status, setStatus] = useState(messages.ready);
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CompletedAnswer | null>(null);
   const [abstention, setAbstention] = useState<AbstentionNotice | null>(null);
   const [active, setActive] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
+  const runIdRef = useRef<string | null>(null);
+  const cancelRequestedRef = useRef(false);
   const controller = useRef<AbortController | null>(null);
   const shellRef = useRef<HTMLElement | null>(null);
 
@@ -45,10 +50,10 @@ export function CitedAnswerForm() {
 
   function validate(): string | null {
     if (question.trim().length < 3 || !/[\p{L}\p{N}]/u.test(question)) {
-      return "Enter a technical question with at least one word or number.";
+      return messages.invalidQuestion;
     }
     if ((question.match(/\?/g) ?? []).length > 1) {
-      return "Ask one related question at a time so every claim can be verified.";
+      return messages.invalidMultiple;
     }
     return null;
   }
@@ -64,23 +69,36 @@ export function CitedAnswerForm() {
     setAnswer(null);
     setAbstention(null);
     setActive(true);
-    setStatus("Accepted. Preparing retrieval…");
+    setStatus(messages.accepted);
+    cancelRequestedRef.current = false;
     const nextController = new AbortController();
     controller.current = nextController;
-    const input: AskQuestionInput = { question };
+    const input: AskQuestionInput = { question, language: locale };
     if (product) input.product = product;
     try {
       const nextRunId = await streamCitedAnswer(
         input,
         handleEvent,
         nextController.signal,
-        setRunId,
+        (nextRunId) => {
+          runIdRef.current = nextRunId;
+          setRunId(nextRunId);
+          if (cancelRequestedRef.current) void cancelAnswer(nextRunId);
+        },
       );
+      runIdRef.current = nextRunId;
       setRunId(nextRunId);
     } catch (caught) {
       if (!nextController.signal.aborted) {
-        setError(caught instanceof Error ? caught.message : "ATLAS could not complete the request.");
-        setStatus("Request ended without a verified answer.");
+        const message = caught instanceof AtlasApiError
+          ? messages.genericRequestError
+          : caught instanceof TypeError
+            ? messages.networkError
+            : caught instanceof Error
+              ? caught.message
+              : messages.genericRequestError;
+        setError(message);
+        setStatus(messages.requestEnded);
       }
     } finally {
       if (!nextController.signal.aborted) setActive(false);
@@ -93,19 +111,15 @@ export function CitedAnswerForm() {
     const answerStatus = event.data.answer_status === "partial" ? "partial" : "complete";
     setStatus(
       stage === "completed"
-        ? answerStatus === "partial"
-          ? "Partial answer ready."
-          : "Verified answer ready."
-        : `${stage}…`,
+        ? answerStatus === "partial" ? messages.partialReady : messages.verifiedReady
+        : `${messages.stage[stage] ?? stage}...`,
     );
     if (event.event === "answer.completed") {
       setAbstention(null);
       setAnswer({
         answerStatus,
         claims: Array.isArray(event.data.claims) ? (event.data.claims as CitedClaim[]) : [],
-        citations: Array.isArray(event.data.citations)
-          ? (event.data.citations as CitedEvidence[])
-          : [],
+        citations: Array.isArray(event.data.citations) ? (event.data.citations as CitedEvidence[]) : [],
         limitations: Array.isArray(event.data.limitations) ? (event.data.limitations as string[]) : [],
       });
       setActive(false);
@@ -115,16 +129,10 @@ export function CitedAnswerForm() {
         ? event.data.limitations.filter((value): value is string => typeof value === "string")
         : [];
       const notice: AbstentionNotice = {
-        limitations: limitations.length
-          ? limitations
-          : ["ATLAS could not verify an answer from the available evidence."],
+        limitations: limitations.length ? limitations : [messages.defaultAbstention],
       };
-      if (typeof event.data.scope_suggestion === "string") {
-        notice.scopeSuggestion = event.data.scope_suggestion;
-      }
-      if (typeof event.data.scope_explanation === "string") {
-        notice.scopeExplanation = event.data.scope_explanation;
-      }
+      if (typeof event.data.scope_suggestion === "string") notice.scopeSuggestion = event.data.scope_suggestion;
+      if (typeof event.data.scope_explanation === "string") notice.scopeExplanation = event.data.scope_explanation;
       setAbstention(notice);
       setError(notice.limitations.join(" "));
       setActive(false);
@@ -132,41 +140,41 @@ export function CitedAnswerForm() {
   }
 
   async function cancel() {
+    cancelRequestedRef.current = true;
     controller.current?.abort();
-    if (runId) await cancelAnswer(runId).catch(() => undefined);
+    if (runIdRef.current) await cancelAnswer(runIdRef.current).catch(() => undefined);
     setActive(false);
-    setStatus("Cancellation requested.");
+    setStatus(messages.stage.cancelled ?? messages.cancel);
   }
 
   async function handleFeedback(feedback: FeedbackInput) {
     if (!runId) {
-      setError("ATLAS could not associate feedback with this answer.");
+      setError(messages.feedbackAssociationError);
       return;
     }
     try {
       await putAnswerFeedback(runId, feedback);
       setError(null);
-      setStatus("Feedback saved.");
+      setStatus(messages.feedbackSaved);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "ATLAS could not save this feedback.");
+      setError(caught instanceof Error ? caught.message : messages.feedbackSaveError);
     }
   }
 
   return (
-    <section
-      ref={shellRef}
-      className="answer-shell"
-      aria-labelledby="page-title"
-      data-hydrated="false"
-    >
-      <p className="eyebrow">ATLAS AI · evidence-first research</p>
-      <h1 id="page-title">Answers you can verify.</h1>
-      <p className="lede">
-        Ask one technical question about the curated LangGraph, LangChain, or OpenAI corpus.
-        Claims appear only after their evidence is checked.
-      </p>
+    <section ref={shellRef} className="answer-shell" aria-labelledby="page-title" data-hydrated="false">
+      <div className="locale-control">
+        <label htmlFor="locale">{messages.switchLabel}</label>
+        <select id="locale" value={locale} onChange={(event) => setLocale(event.target.value as Locale)} aria-label={messages.switchTo}>
+          <option value="en-US">English</option>
+          <option value="es-MX">Español</option>
+        </select>
+      </div>
+      <p className="eyebrow">{messages.eyebrow}</p>
+      <h1 id="page-title">{messages.title}</h1>
+      <p className="lede">{messages.lede}</p>
       <form onSubmit={submit} noValidate>
-        <label htmlFor="question">Technical question</label>
+        <label htmlFor="question">{messages.technicalQuestion}</label>
         <textarea
           id="question"
           value={question}
@@ -174,43 +182,34 @@ export function CitedAnswerForm() {
           aria-invalid={Boolean(error)}
           aria-describedby={error ? "question-error" : undefined}
           rows={5}
-          placeholder="How does LangGraph persist state across a workflow?"
+          placeholder={messages.questionPlaceholder}
         />
-        <label htmlFor="product">Corpus (optional)</label>
+        <label htmlFor="product">{messages.corpus}</label>
         <select id="product" value={product} onChange={(event) => setProduct(event.target.value as CollectionSlug | "")}>
-          <option value="">All supported collections</option>
+          <option value="">{messages.allCollections}</option>
           <option value="langgraph">LangGraph</option>
           <option value="langchain">LangChain</option>
           <option value="openai">OpenAI API</option>
         </select>
         {error ? <p id="question-error" className="error" role="alert">{error}</p> : null}
         <div className="actions">
-          <button type="submit" disabled={active}>Ask ATLAS</button>
-          {active ? <button type="button" className="secondary" onClick={cancel}>Cancel request</button> : null}
+          <button type="submit" disabled={active}>{messages.ask}</button>
+          {active ? <button type="button" className="secondary" onClick={cancel}>{messages.cancel}</button> : null}
         </div>
       </form>
       <p className="progress" role="status" aria-live="polite">{status}</p>
-      {answer ? (
-        <EvidencePanel
-          answerStatus={answer.answerStatus}
-          claims={answer.claims}
-          citations={answer.citations}
-          limitations={answer.limitations}
-          onFeedback={handleFeedback}
-        />
-      ) : null}
+      {answer ? <EvidencePanel answerStatus={answer.answerStatus} claims={answer.claims} citations={answer.citations} limitations={answer.limitations} onFeedback={handleFeedback} /> : null}
       {abstention ? <AbstentionResult notice={abstention} /> : null}
     </section>
   );
 }
 
 function AbstentionResult({ notice }: { notice: AbstentionNotice }) {
+  const { messages } = useLocale();
   return (
     <article className="abstention-result" aria-labelledby="abstention-title">
-      <h2 id="abstention-title">ATLAS could not verify this answer</h2>
-      <ul>
-        {notice.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}
-      </ul>
+      <h2 id="abstention-title">{messages.abstentionTitle}</h2>
+      <ul>{notice.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul>
       {notice.scopeExplanation ? <p>{notice.scopeExplanation}</p> : null}
       {notice.scopeSuggestion ? <p>{notice.scopeSuggestion}</p> : null}
     </article>

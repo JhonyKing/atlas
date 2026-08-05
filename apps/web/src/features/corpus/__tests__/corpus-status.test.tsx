@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CorpusStatus } from "../CorpusStatus";
+import { LocaleProvider } from "@/i18n";
 
 const payload = {
   snapshot_id: "00000000-0000-0000-0000-000000000701",
@@ -44,7 +45,7 @@ describe("CorpusStatus", () => {
   it("shows freshness and availability for every supported collection", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(payload), { status: 200 })));
 
-    render(<CorpusStatus />);
+    render(<LocaleProvider><CorpusStatus /></LocaleProvider>);
 
     await waitFor(() => expect(screen.getByText("LangGraph")).toBeVisible());
     expect(screen.getByText("Ready")).toBeVisible();
@@ -57,7 +58,7 @@ describe("CorpusStatus", () => {
   it("fails closed without exposing transport details", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("database password")));
 
-    render(<CorpusStatus />);
+    render(<LocaleProvider><CorpusStatus /></LocaleProvider>);
 
     await waitFor(() => expect(screen.getByText("Corpus status unavailable.")).toBeVisible());
     expect(screen.queryByText(/database password/i)).not.toBeInTheDocument();

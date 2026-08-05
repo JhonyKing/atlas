@@ -45,7 +45,7 @@ A logical documentation page, changelog, or release that can have multiple captu
 | `source_type` | enum | `documentation`, `changelog`, `release_note` |
 | `title` | text | Required |
 | `product_area` | text | Optional controlled tag |
-| `language` | text | ISO tag; `en` for launch corpus |
+| `language` | text | Presentation locale; `en-US` or `es-MX`; source excerpts retain their original language |
 | `trust_tier` | enum | `official_docs`, `official_repository` |
 | `current_version_id` | UUID | Nullable FK set only by atomic promotion |
 | `created_at` | timestamptz | Required |

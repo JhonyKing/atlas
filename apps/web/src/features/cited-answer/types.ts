@@ -2,6 +2,7 @@ export type CollectionSlug = "langgraph" | "langchain" | "openai";
 
 export type AskQuestionInput = {
   question: string;
+  language?: "en-US" | "es-MX";
   product?: CollectionSlug;
   version?: string;
   date_from?: string;

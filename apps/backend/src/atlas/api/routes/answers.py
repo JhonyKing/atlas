@@ -26,6 +26,7 @@ class AskQuestionRequest(BaseModel):
     version: Annotated[str, Field(max_length=64)] | None = None
     date_from: date | None = None
     date_to: date | None = None
+    language: Literal["en-US", "es-MX"] | None = None
 
 
 AnswerStatusValue = Literal[
@@ -148,12 +149,14 @@ async def create_answer(
         body = AskQuestionRequest.model_validate(raw_body)
         if body.question.count("?") > 1:
             raise ValueError("submit one related question at a time")
+        language = body.language or _language_from_request(request)
         question = Question(
             text=body.question,
             product=body.product,
             version=body.version,
             date_from=body.date_from,
             date_to=body.date_to,
+            language=language,
         )
     except (ValidationError, ValueError) as exc:
         detail = str(exc) if isinstance(exc, ValueError) else "Question is not valid"
@@ -212,6 +215,13 @@ async def create_answer(
             "Cache-Control": "no-cache",
         },
     )
+
+
+def _language_from_request(request: Request) -> Literal["en-US", "es-MX"]:
+    """Resolve explicit locale first, then the browser's Accept-Language header."""
+
+    header = request.headers.get("accept-language", "").lower()
+    return "es-MX" if header.startswith("es") else "en-US"
 
 
 @router.get("/{run_id}")

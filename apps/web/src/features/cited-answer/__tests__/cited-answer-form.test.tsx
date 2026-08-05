@@ -2,6 +2,11 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CitedAnswerForm } from "../CitedAnswerForm";
+import { LocaleProvider } from "@/i18n";
+
+function renderForm() {
+  return render(<LocaleProvider><CitedAnswerForm /></LocaleProvider>);
+}
 
 function sseResponse(frames: string[]): Response {
   const encoder = new TextEncoder();
@@ -19,7 +24,7 @@ function sseResponse(frames: string[]): Response {
 
 describe("CitedAnswerForm", () => {
   it("preserves invalid entered text and explains the correction", () => {
-    render(<CitedAnswerForm />);
+    renderForm();
     const input = screen.getByLabelText("Technical question");
     fireEvent.change(input, { target: { value: "???" } });
     fireEvent.click(screen.getByRole("button", { name: "Ask ATLAS" }));
@@ -37,7 +42,7 @@ describe("CitedAnswerForm", () => {
       ]),
     );
     vi.stubGlobal("fetch", fetchMock);
-    render(<CitedAnswerForm />);
+    renderForm();
     fireEvent.change(screen.getByLabelText("Technical question"), {
       target: { value: "How does LangGraph work?" },
     });
@@ -50,7 +55,7 @@ describe("CitedAnswerForm", () => {
     await waitFor(() => expect(screen.getByText("Verified claim")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: "Open Official docs" })).toHaveAttribute(
       "href",
-      "https://docs.example.test/",
+      "https://docs.example.test",
     );
     expect(screen.queryByRole("button", { name: "Cancel request" })).not.toBeInTheDocument();
   });
@@ -60,7 +65,7 @@ describe("CitedAnswerForm", () => {
       sseResponse(['id: 1\nevent: run.accepted\ndata: {"stage":"accepted"}\n\n']),
     );
     vi.stubGlobal("fetch", fetchMock);
-    render(<CitedAnswerForm />);
+    renderForm();
     fireEvent.change(screen.getByLabelText("Technical question"), {
       target: { value: "Can I cancel this?" },
     });

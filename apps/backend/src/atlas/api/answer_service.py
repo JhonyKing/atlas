@@ -6,13 +6,17 @@ import asyncio
 from collections.abc import AsyncIterator, Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
+from typing import Protocol
 from uuid import UUID, uuid4
 
-from atlas.agent.cited_answer_graph import CitedAnswerGraph
 from atlas.api.answer_events import SSEEventWriter
 from atlas.api.routes.answers import AnswerRunConflict, AnswerRunStatus
 from atlas.domain import AnswerStatus, CollectionSlug, Question, assemble_citations
 from atlas.persistence.quota import QuotaService
+
+
+class AnswerGraph(Protocol):
+    async def ainvoke(self, state: Mapping[str, object]) -> Mapping[str, object]: ...
 
 
 @dataclass(slots=True)
@@ -31,7 +35,7 @@ class InMemoryAnswerRunService:
 
     def __init__(
         self,
-        graph: CitedAnswerGraph,
+        graph: AnswerGraph,
         *,
         quota: QuotaService | None = None,
         clock: Callable[[], datetime] | None = None,

@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CitedAnswerForm } from "../CitedAnswerForm";
+import { LocaleProvider } from "@/i18n";
 
 function sseResponse(body: string): Response {
   const encoder = new TextEncoder();
@@ -33,7 +34,7 @@ describe("abstention and disagreement states", () => {
         ),
       ),
     );
-    render(<CitedAnswerForm />);
+    render(<LocaleProvider><CitedAnswerForm /></LocaleProvider>);
     ask("What is the weather on Mars?");
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/No launch-corpus source/i));
@@ -51,7 +52,7 @@ describe("abstention and disagreement states", () => {
         ),
       ),
     );
-    render(<CitedAnswerForm />);
+    render(<LocaleProvider><CitedAnswerForm /></LocaleProvider>);
     ask("Compare the two persistence models.");
 
     await waitFor(() => expect(screen.getByText("Supported part")).toBeVisible());
@@ -69,7 +70,7 @@ describe("abstention and disagreement states", () => {
         ),
       ),
     );
-    render(<CitedAnswerForm />);
+    render(<LocaleProvider><CitedAnswerForm /></LocaleProvider>);
     ask("Explain a private undocumented system.");
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/outside the published ATLAS corpus/i));
