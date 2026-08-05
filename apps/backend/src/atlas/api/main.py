@@ -1,5 +1,6 @@
 """ATLAS FastAPI application factory and local entry point."""
 
+from datetime import timedelta
 from functools import partial
 
 import psycopg
@@ -9,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
 from atlas.api.answer_service import InMemoryAnswerRunService
+from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
@@ -28,6 +30,11 @@ from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink
+from atlas.persistence.comparison_quota import (
+    ComparisonQuotaService,
+    InMemoryComparisonQuotaRepository,
+)
+from atlas.persistence.comparison_repository import InMemoryComparisonRepository
 from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
@@ -154,9 +161,31 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 },
             ),
             corpus_service=corpus_service,
+            comparison_service=_comparison_service(settings, corpus_service),
             review_case_service=InMemoryReviewCaseService(),
         )
-    return create_app(corpus_service=_verified_corpus_or_demo(settings))
+    corpus_service = _verified_corpus_or_demo(settings)
+    return create_app(
+        corpus_service=corpus_service,
+        comparison_service=_comparison_service(settings, corpus_service),
+    )
+
+
+def _comparison_service(
+    settings: Settings, corpus_service: CorpusStatusProvider
+) -> InMemoryComparisonRunService:
+    """Wire a fail-closed comparison coordinator into every runtime environment."""
+
+    return InMemoryComparisonRunService(
+        quota=ComparisonQuotaService(
+            InMemoryComparisonQuotaRepository(
+                limit=settings.atlas_anonymous_comparison_limit,
+                window=timedelta(hours=settings.atlas_anonymous_window_hours),
+            )
+        ),
+        repository=InMemoryComparisonRepository(),
+        snapshot_provider=lambda: corpus_service.get_status().snapshot_id,
+    )
 
 
 def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:

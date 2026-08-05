@@ -23,3 +23,5 @@ Mode: local deterministic/fixture validation
   through the bundled runtime; lint, typecheck and Playwright remain green.
 - Four-technology comparison cases remain open until a fourth corpus collection is approved and
   ingested. The current verified corpus contains LangGraph, LangChain and OpenAI.
+- The runtime comparison endpoint is now wired with quota, snapshot selection, persistence and a
+  fail-closed executor; real retrieval/workflow execution remains a convergence task.
