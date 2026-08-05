@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from uuid import UUID
 
-from atlas.api.routes.feedback import FeedbackExpired, FeedbackNotFound
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
+from atlas.api.routes.feedback import FeedbackExpired, FeedbackNotFound
 
 RUN_ID = UUID("00000000-0000-0000-0000-000000000456")
 MISSING_RUN_ID = UUID("00000000-0000-0000-0000-000000000457")
@@ -85,17 +85,22 @@ def test_expired_answer_feedback_returns_retention_expired() -> None:
 
 def test_feedback_put_replaces_the_current_visitor_value_idempotently() -> None:
     client, service = app_and_service()
+    visitor_cookie = {"atlas_visitor": "v" * 32}
 
-    first = client.put(f"/v1/answers/{RUN_ID}/feedback", json={"label": "useful"})
+    first = client.put(
+        f"/v1/answers/{RUN_ID}/feedback",
+        cookies=visitor_cookie,
+        json={"label": "useful"},
+    )
     replacement = client.put(
         f"/v1/answers/{RUN_ID}/feedback",
+        cookies=visitor_cookie,
         json={"label": "not_useful", "category": "incorrect_citation"},
     )
 
     assert first.status_code == 204
     assert replacement.status_code == 204
     assert len(service.saved) == 1
-    assert next(iter(service.saved.values())) == {
-        "label": "not_useful",
-        "category": "incorrect_citation",
-    }
+    saved = next(iter(service.saved.values()))
+    assert saved["label"] == "not_useful"
+    assert saved["category"] == "incorrect_citation"

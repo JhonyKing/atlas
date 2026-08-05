@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
+from atlas.api.routes.feedback import FeedbackControl
+from atlas.api.routes.feedback import router as feedback_router
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
@@ -22,6 +24,7 @@ def create_app(
     operator_service: OperatorIngestionService | None = None,
     operator_token: str | None = None,
     answer_service: AnswerRunControl | None = None,
+    feedback_service: FeedbackControl | None = None,
     visitor_hmac_secret: str | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
@@ -47,6 +50,7 @@ def create_app(
     application.state.database_probe = resolved_database_probe
     application.state.operator_service = operator_service
     application.state.answer_service = answer_service
+    application.state.feedback_service = feedback_service
     application.state.operator_token = operator_token or (
         settings.atlas_operator_token.get_secret_value()
         if settings.atlas_operator_token is not None
@@ -54,6 +58,7 @@ def create_app(
     )
     application.include_router(health_router)
     application.include_router(answers_router)
+    application.include_router(feedback_router)
     application.include_router(operator_ingestion_router)
     return application
 
