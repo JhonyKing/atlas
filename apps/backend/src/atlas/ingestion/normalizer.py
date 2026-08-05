@@ -18,6 +18,10 @@ class NormalizedDocument:
     markdown: str
     content_sha256: str
     byte_size: int
+    language: str = "unknown"
+    page_count: int = 1
+    ocr_used: bool = False
+    ocr_confidence: float | None = None
     is_untrusted: bool = True
 
 
@@ -85,8 +89,30 @@ def normalize_document(content: bytes, *, content_type: str) -> NormalizedDocume
         markdown=text,
         content_sha256=sha256_hex(encoded),
         byte_size=len(encoded),
+        language=detect_language(text),
+        page_count=max(1, text.count("\f") + 1),
     )
 
 
 def sha256_hex(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
+
+
+def detect_language(text: str) -> str:
+    """Return a bounded presentation language label for provenance metadata."""
+
+    lowered = text.casefold()
+    spanish_markers = sum(
+        lowered.count(marker)
+        for marker in ("¿", "¡", " qué ", " para ", " los ", " las ", " una ", " de ")
+    )
+    spanish_accents = sum(lowered.count(marker) for marker in "áéíóúñ")
+    english_markers = sum(
+        lowered.count(marker)
+        for marker in (" the ", " and ", " with ", " from ", " this ", " for ")
+    )
+    if spanish_accents >= 2 or (spanish_markers >= 2 and spanish_markers > english_markers):
+        return "es-MX"
+    if english_markers >= 2 and english_markers >= spanish_markers:
+        return "en-US"
+    return "unknown"

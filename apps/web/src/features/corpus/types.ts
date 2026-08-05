@@ -11,6 +11,10 @@ export type CorpusCollectionStatus = {
   last_success_at?: string | null;
   last_attempt_at?: string | null;
   canonical_root: string;
+  source_count?: number;
+  page_count?: number;
+  chunk_count?: number;
+  byte_count?: number;
 };
 
 export type CorpusStatusPayload = {

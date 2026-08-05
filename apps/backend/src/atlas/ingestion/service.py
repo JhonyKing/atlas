@@ -228,8 +228,8 @@ class PostgresIngestionRepository:
         source_row = self._connection.execute(
             """
             INSERT INTO atlas.sources(
-              collection_id, canonical_url, source_type, title, publisher, trust_tier
-            ) VALUES (%s, %s, %s, %s, %s, %s)
+              collection_id, canonical_url, source_type, title, publisher, language, trust_tier
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (collection_id, canonical_url) DO UPDATE SET
               title = EXCLUDED.title, publisher = EXCLUDED.publisher, updated_at = now()
             RETURNING id
@@ -240,6 +240,7 @@ class PostgresIngestionRepository:
                 candidate.source_type.value,
                 candidate.title,
                 "LangChain" if candidate.collection is not CollectionSlug.OPENAI else "OpenAI",
+                document.language,
                 "official_repository" if candidate.source_revision_url else "official_docs",
             ),
         ).fetchone()
@@ -250,8 +251,9 @@ class PostgresIngestionRepository:
             """
             INSERT INTO atlas.source_versions(
               source_id, ingestion_run_id, content_sha256, source_revision_url,
-              version_label, published_at, fetched_at, normalized_markdown, byte_size, status
-            ) VALUES (%s, %s, %s, %s, %s, %s, now(), %s, %s, 'staged')
+              version_label, published_at, fetched_at, normalized_markdown, byte_size,
+              page_count, language, ocr_used, ocr_confidence, status
+            ) VALUES (%s, %s, %s, %s, %s, %s, now(), %s, %s, %s, %s, %s, %s, 'staged')
             ON CONFLICT (source_id, content_sha256) DO NOTHING
             RETURNING id
             """,
@@ -264,6 +266,10 @@ class PostgresIngestionRepository:
                 candidate.published_at,
                 document.markdown,
                 document.byte_size,
+                document.page_count,
+                document.language,
+                document.ocr_used,
+                document.ocr_confidence,
             ),
         ).fetchone()
         if version_row is None:
@@ -305,8 +311,9 @@ class PostgresIngestionRepository:
                 """
                 INSERT INTO atlas.chunks(
                   source_version_id, ordinal, heading_path, anchor, text, text_sha256,
-                  token_count, start_offset, end_offset
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                  token_count, start_offset, end_offset, page_start, page_end, language,
+                  ocr_used, ocr_confidence
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
                 """,
                 (
@@ -319,6 +326,11 @@ class PostgresIngestionRepository:
                     chunk.token_count,
                     chunk.start_offset,
                     chunk.end_offset,
+                    chunk.page_start,
+                    chunk.page_end,
+                    chunk.language,
+                    chunk.ocr_used,
+                    chunk.ocr_confidence,
                 ),
             ).fetchone()
             if chunk_row is None:

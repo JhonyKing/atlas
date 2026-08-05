@@ -17,12 +17,24 @@ class MarkdownChunk:
     start_offset: int
     end_offset: int
     anchor: str | None = None
+    page_start: int = 1
+    page_end: int = 1
+    language: str = "unknown"
+    ocr_used: bool = False
+    ocr_confidence: float | None = None
 
 
 _HEADING = re.compile(r"^(#{1,6})[ \t]+(.+?)\s*$")
 
 
-def chunk_markdown(markdown: str, *, max_chars: int = 1200) -> list[MarkdownChunk]:
+def chunk_markdown(
+    markdown: str,
+    *,
+    max_chars: int = 1200,
+    source_language: str = "unknown",
+    ocr_used: bool = False,
+    ocr_confidence: float | None = None,
+) -> list[MarkdownChunk]:
     if max_chars <= 0:
         raise ValueError("max_chars must be positive")
     sections = _sections(markdown)
@@ -40,9 +52,18 @@ def chunk_markdown(markdown: str, *, max_chars: int = 1200) -> list[MarkdownChun
                     token_count=len(re.findall(r"\S+", text)),
                     start_offset=start,
                     end_offset=max(end, start + len(text)),
+                    page_start=_page_for_offset(markdown, start),
+                    page_end=_page_for_offset(markdown, max(end, start + len(text))),
+                    language=source_language,
+                    ocr_used=ocr_used,
+                    ocr_confidence=ocr_confidence,
                 )
             )
     return chunks
+
+
+def _page_for_offset(markdown: str, offset: int) -> int:
+    return markdown[:offset].count("\f") + 1
 
 
 def _sections(markdown: str) -> list[tuple[tuple[str, ...], int, int, str]]:

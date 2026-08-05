@@ -68,7 +68,35 @@ class PostgresCorpusStatusRepository:
               coalesce(
                 bool_or(r.status IN ('queued', 'running')),
                 false
-              ) AS refresh_active
+              ) AS refresh_active,
+              (
+                SELECT count(*) FROM atlas.sources AS count_sources
+                WHERE count_sources.collection_id = c.id
+                  AND count_sources.current_version_id IS NOT NULL
+              ) AS source_count,
+              (
+                SELECT coalesce(sum(count_versions.page_count), 0)
+                FROM atlas.sources AS count_sources
+                JOIN atlas.source_versions AS count_versions
+                  ON count_versions.id = count_sources.current_version_id
+                WHERE count_sources.collection_id = c.id
+              ) AS page_count,
+              (
+                SELECT count(count_chunks.id)
+                FROM atlas.sources AS count_sources
+                JOIN atlas.source_versions AS count_versions
+                  ON count_versions.id = count_sources.current_version_id
+                LEFT JOIN atlas.chunks AS count_chunks
+                  ON count_chunks.source_version_id = count_versions.id
+                WHERE count_sources.collection_id = c.id
+              ) AS chunk_count,
+              (
+                SELECT coalesce(sum(count_versions.byte_size), 0)
+                FROM atlas.sources AS count_sources
+                JOIN atlas.source_versions AS count_versions
+                  ON count_versions.id = count_sources.current_version_id
+                WHERE count_sources.collection_id = c.id
+              ) AS byte_count
             FROM atlas.collections AS c
             LEFT JOIN atlas.ingestion_runs AS r ON r.collection_id = c.id
             LEFT JOIN atlas.sources AS s ON s.collection_id = c.id
@@ -105,6 +133,10 @@ class PostgresCorpusStatusRepository:
                     last_success_at=last_success,
                     last_attempt_at=last_attempt,
                     canonical_root=row[3],
+                    source_count=int(row[9]),
+                    page_count=int(row[10]),
+                    chunk_count=int(row[11]),
+                    byte_count=int(row[12]),
                 )
             )
 

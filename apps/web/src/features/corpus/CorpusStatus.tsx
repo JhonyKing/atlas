@@ -41,6 +41,9 @@ function CollectionCard({ collection }: { collection: CorpusCollectionStatus }) 
     <li className="corpus-card">
       <div className="corpus-card-title"><h3>{collection.name}</h3><span className={`corpus-badge corpus-${collection.status}`}>{stateLabel}</span></div>
       <p>{collection.publisher} · {sourceTypes}</p>
+      <p className="corpus-counts">
+        {messages.sourceCount}: {collection.source_count ?? 0} · {messages.pageCount}: {collection.page_count ?? 0} · {messages.chunkCount}: {collection.chunk_count ?? 0}
+      </p>
       <p className="corpus-date">{messages.lastVerified}: {collection.last_success_at ? formatDate(collection.last_success_at, locale, "medium") : messages.notVerified}</p>
       <a href={collection.canonical_root} target="_blank" rel="noreferrer noopener">{messages.openCanonical}</a>
     </li>

@@ -42,7 +42,12 @@ class IngestionWorker:
                     fetched.content,
                     content_type=fetched.content_type,
                 )
-                chunks = chunk_markdown(document.markdown)
+                chunks = chunk_markdown(
+                    document.markdown,
+                    source_language=document.language,
+                    ocr_used=document.ocr_used,
+                    ocr_confidence=document.ocr_confidence,
+                )
                 vectors = await self._embedder.embed([chunk.text for chunk in chunks])
                 if len(vectors) != len(chunks):
                     raise RuntimeError("embedding count does not match chunk count")

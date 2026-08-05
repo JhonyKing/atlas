@@ -40,6 +40,7 @@ atlas-api = "atlas.api.main:run"
 atlas-worker = "atlas.ingestion.worker:run"
 atlas-eval = "atlas.evaluation.cli:main"
 atlas-corpus-bootstrap = "atlas.ingestion.bootstrap:main"
+atlas-corpus-verify = "atlas.ingestion.verify:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/atlas"]

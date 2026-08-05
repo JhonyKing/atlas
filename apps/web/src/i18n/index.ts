@@ -60,6 +60,9 @@ type MessageCatalog = {
   unavailableCorpus: string;
   lastVerified: string;
   notVerified: string;
+  sourceCount: string;
+  pageCount: string;
+  chunkCount: string;
   openCanonical: string;
   sourceTypes: Record<string, string>;
   states: Record<string, string>;
@@ -145,6 +148,9 @@ const catalogs: Record<Locale, MessageCatalog> = {
     unavailableCorpus: "Corpus status unavailable.",
     lastVerified: "Last verified",
     notVerified: "Not yet verified",
+    sourceCount: "Sources",
+    pageCount: "Pages",
+    chunkCount: "Chunks",
     openCanonical: "Open canonical root",
     sourceTypes: { documentation: "documentation", changelog: "changelog", release_note: "release note" },
     states: { ready: "Ready", stale: "Stale", refreshing: "Refreshing", unavailable: "Unavailable" },
@@ -228,6 +234,9 @@ const catalogs: Record<Locale, MessageCatalog> = {
     unavailableCorpus: "El estado del corpus no está disponible.",
     lastVerified: "Última verificación",
     notVerified: "Aún no verificada",
+    sourceCount: "Fuentes",
+    pageCount: "Páginas",
+    chunkCount: "Fragmentos",
     openCanonical: "Abrir raíz canónica",
     sourceTypes: { documentation: "documentación", changelog: "registro de cambios", release_note: "nota de versión" },
     states: { ready: "Lista", stale: "Desactualizada", refreshing: "Actualizando", unavailable: "No disponible" },

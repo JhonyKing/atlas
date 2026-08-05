@@ -152,6 +152,10 @@ class CollectionStatus(DomainModel):
     last_success_at: datetime | None = None
     last_attempt_at: datetime | None = None
     canonical_root: HttpUrl
+    source_count: Annotated[int, Field(ge=0)] = 0
+    page_count: Annotated[int, Field(ge=0)] = 0
+    chunk_count: Annotated[int, Field(ge=0)] = 0
+    byte_count: Annotated[int, Field(ge=0)] = 0
 
     @field_validator("source_types")
     @classmethod

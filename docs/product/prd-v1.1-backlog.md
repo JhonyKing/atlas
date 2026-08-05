@@ -222,7 +222,7 @@ implementadas.
 - [ ] COR-006 Añadir validación de tipo, tamaño, redirecciones, SSRF, robots/licencia y dominio permitido antes de persistir una fuente.
 - [ ] COR-007 Incorporar OCR spa+eng para PDFs autorizados y guardar idioma, confianza y página de origen de cada chunk.
 - [ ] COR-008 Verificar que el runtime cambia de demo a snapshot real sólo cuando el snapshot está completo y activo.
-- [ ] COR-009 Exponer en el panel el conteo de fuentes, páginas, chunks, última captura, versión y estado de cada colección.
+- [X] COR-009 Exponer en el panel el conteo de fuentes, páginas, chunks, última captura, versión y estado de cada colección.
 - [X] COR-010 Construir un dataset de aproximadamente 60 preguntas: factual, multi-hop, OCR, bilingüe y no-answer, con ground truth de chunk IDs.
 - [X] COR-011 Separar el entorno `evals/` del entorno de producción y ejecutar las evaluaciones contra HTTP de forma reproducible.
 - [X] COR-012 Implementar faithfulness, context precision/recall, Hit@k, MRR, citation precision y freshness con resultados versionados.

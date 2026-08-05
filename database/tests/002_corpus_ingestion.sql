@@ -1,4 +1,4 @@
--- T027: corpus and ingestion migration contract tests.
+-- T006/T027: corpus and ingestion migration contract tests.
 \set ON_ERROR_STOP on
 
 DO $$
