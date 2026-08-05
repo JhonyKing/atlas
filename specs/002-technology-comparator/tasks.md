@@ -8,8 +8,8 @@ implement the smallest change that makes it pass.
 ## Phase 1: Setup
 
 - [X] T001 [P] Add comparison package entry points and typed configuration defaults in `apps/backend/src/atlas/comparison/__init__.py` and `apps/backend/src/atlas/config.py` for the five-comparison rolling window and supported criterion IDs. (Evidence: comparison exports and `atlas_anonymous_comparison_limit=5`; config/schema tests pass.)
-- [ ] T002 [P] Add the comparison OpenAPI and SSE contracts to the generated contract registry in `apps/backend/src/atlas/api/contracts.py` and verify links from `specs/002-technology-comparator/contracts/`.
-- [ ] T003 [P] Add the comparison feature route and page placeholders to `apps/web/src/app/[locale]/compare/page.tsx` and `apps/web/src/features/comparison/` without exposing an unverified result.
+- [X] T002 [P] Add the comparison OpenAPI and SSE contracts to the generated contract registry in `apps/backend/src/atlas/api/contracts.py` and verify links from `specs/002-technology-comparator/contracts/`. (Evidence: registry test confirms both Spec Kit contract files, three routes and seven event names.)
+- [X] T003 [P] Add the comparison feature route and page placeholders to `apps/web/src/app/[locale]/compare/page.tsx` and `apps/web/src/features/comparison/` without exposing an unverified result. (Evidence: bilingual `/en/compare` and `/es/compare` placeholder; frontend lint and typecheck pass.)
 
 ## Phase 2: Foundational
 
