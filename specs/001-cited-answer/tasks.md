@@ -91,7 +91,7 @@ evidence and no draft claim is streamed early.
 - [X] T038 [P] [US1] Write failing retrieval-service tests for query constraints, top-k bounds, corpus snapshot selection, and deterministic ordering in `apps/backend/tests/unit/retrieval/test_service.py`
 - [X] T039 [P] [US1] Write failing supported-path LangGraph tests for node order, state isolation, structured generation, evidence-ID validation, verified finalization, provider timeout, and cancellation in `apps/backend/tests/unit/agent/test_cited_answer_graph.py`
 - [X] T040 [P] [US1] Write failing API/SSE contract tests for `POST /v1/answers`, `GET /v1/answers/{run_id}`, and the repeat-safe cancellation request `DELETE /v1/answers/{run_id}`, including empty, punctuation-only, over-limit, unrelated-multi-question, repeated-cancel, and entered-text-preservation cases, in `apps/backend/tests/contract/api/test_answers.py`
-- [ ] T041 [P] [US1] Write failing accessible question-form, invalid-input text preservation, progress live-region, explicit cancel, and completed-answer component tests in `apps/web/src/features/cited-answer/__tests__/`
+- [X] T041 [P] [US1] Write failing accessible question-form, invalid-input text preservation, progress live-region, explicit cancel, and completed-answer component tests in `apps/web/src/features/cited-answer/__tests__/`
 
 ### Implementation for User Story 1
 
@@ -101,8 +101,8 @@ evidence and no draft claim is streamed early.
 - [X] T045 [US1] Implement answer-run persistence, run evidence, claims, claim-evidence integrity, usage events, and terminal-state transitions in `database/migrations/` and `apps/backend/src/atlas/persistence/answer_repository.py`
 - [X] T046 [US1] Implement verified event-stream serialization and disconnect cancellation in `apps/backend/src/atlas/api/answer_events.py` according to `contracts/answer-events.md`
 - [X] T047 [US1] Implement `POST /v1/answers`, `GET /v1/answers/{run_id}`, and repeat-safe cancellation through `DELETE /v1/answers/{run_id}` in `apps/backend/src/atlas/api/routes/answers.py` with invalid-input handling, request deduplication, quota, controlled errors, cancellation, and no provisional claim text
-- [ ] T048 [US1] Implement typed API/SSE client and explicit cancellation handling in `apps/web/src/lib/atlas-api/` from `contracts/openapi.yaml`
-- [ ] T049 [US1] Implement the English question page, constraint controls, invalid-input text preservation, progress, explicit cancellation, completed claims, and quota/error states in `apps/web/src/app/page.tsx` and `apps/web/src/features/cited-answer/` to satisfy T041
+- [X] T048 [US1] Implement typed API/SSE client and explicit cancellation handling in `apps/web/src/lib/atlas-api/` from `contracts/openapi.yaml`
+- [X] T049 [US1] Implement the English question page, constraint controls, invalid-input text preservation, progress, explicit cancellation, completed claims, and quota/error states in `apps/web/src/app/page.tsx` and `apps/web/src/features/cited-answer/` to satisfy T041
 - [ ] T050 [US1] Add the supported-question, invalid-question, and explicit-cancellation Playwright journeys in `apps/web/tests/e2e/cited-answer-supported.spec.ts` and verify the independent-test checkpoint
 
 **Checkpoint**: User Story 1 is deployable and demonstrable using the fake provider and seeded corpus.

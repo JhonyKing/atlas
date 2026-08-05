@@ -13,14 +13,21 @@ body {
   margin: 0;
 }
 
-main {
-  width: min(48rem, calc(100% - 2rem));
-  margin: 0 auto;
-  padding: 8rem 0;
-}
-
-h1 {
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  line-height: 0.95;
-  max-width: 10ch;
-}
+main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
+.answer-shell { max-width: 48rem; margin: 0 auto; }
+.eyebrow { color: #5865d8; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+h1 { font-size: clamp(2.5rem, 8vw, 5rem); line-height: .95; max-width: 10ch; margin: 1rem 0; }
+.lede { font-size: 1.1rem; line-height: 1.6; color: #4b5568; }
+form { display: grid; gap: .65rem; margin-top: 2rem; }
+label { font-weight: 700; }
+textarea, select { border: 1px solid #b9c1d0; border-radius: .65rem; padding: .8rem; font: inherit; background: white; }
+textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #f2b84b; outline-offset: 2px; }
+.actions { display: flex; gap: .75rem; margin-top: .5rem; }
+button { border: 0; border-radius: 999px; padding: .75rem 1.2rem; font: inherit; font-weight: 700; color: white; background: #172033; cursor: pointer; }
+button:disabled { opacity: .55; cursor: wait; }
+button.secondary { color: #172033; background: #e4e8ef; }
+.error { color: #a52525; font-weight: 700; }
+.progress { min-height: 1.5rem; margin: 1.5rem 0; color: #5865d8; font-weight: 700; }
+.answer-result { border-top: 1px solid #d6dce7; padding-top: 1.5rem; line-height: 1.6; }
+.answer-result a { color: #3542b5; font-weight: 700; }
+.answer-result p { color: #4b5568; }
