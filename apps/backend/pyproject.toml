@@ -50,6 +50,7 @@ testpaths = ["tests"]
 markers = [
   "contract: API or provider contract tests",
   "database: PostgreSQL integration tests",
+  "integration: opt-in external service integration tests",
   "offline_eval: deterministic offline evaluation tests",
 ]
 

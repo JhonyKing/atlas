@@ -187,26 +187,26 @@ Estas tareas agregan lo descrito en `PLAN-MAESTRO-RAG-EVALS.docx` sin retirar la
 OpenTelemetry ya implementada. Deben pasar por `specs/013-observability/` antes de considerarse
 implementadas.
 
-- [ ] PM-001 Reconciliar las decisiones históricas del Plan Maestro con el PRD v1.1 y registrar qué no se puede verificar en el repositorio actual.
+- [X] PM-001 Reconciliar las decisiones históricas del Plan Maestro con el PRD v1.1 y registrar qué no se puede verificar en el repositorio actual.
 - [ ] PM-002 Mantener Pydantic 2, LangGraph y la Responses API como línea moderna; documentar por qué no se migra hacia atrás a LangServe ni a variables LangChain legacy.
-- [ ] PM-003 Versionar los nombres de proyecto, dataset, prompt, retriever, embedding, índice y corpus usados por cada experimento.
-- [ ] PM-004 Definir la política de privacidad de trazas: contenido completo desactivado por defecto, hashes/IDs como correlación y retención alineada al PRD.
+- [X] PM-003 Versionar los nombres de proyecto, dataset, prompt, retriever, embedding, índice y corpus usados por cada experimento.
+- [X] PM-004 Definir la política de privacidad de trazas: contenido completo desactivado por defecto, hashes/IDs como correlación y retención alineada al PRD.
 - [ ] PM-005 Definir el contrato de promoción prototipo → beta → producción con criterios observables y reversibles.
-- [ ] PM-006 Añadir un runbook de diagnóstico que empiece por request ID, run ID y versión de corpus, sin imprimir secretos ni contenido de usuario.
+- [X] PM-006 Añadir un runbook de diagnóstico que empiece por request ID, run ID y versión de corpus, sin imprimir secretos ni contenido de usuario.
 - [ ] PM-007 Registrar el coste y el estado de las integraciones externas como evidencia, no como afirmación de que están activas.
 - [ ] PM-008 Ejecutar `/speckit.analyze` y `/speckit.converge` después de cada fase de esta expansión.
 
-- [ ] OBS-001 Ejecutar `/speckit.specify` para trazabilidad LangSmith de extremo a extremo.
-- [ ] OBS-002 Planificar una interfaz de tracing desacoplada del SDK para conservar pruebas offline y permitir fallback no-op.
-- [ ] OBS-003 Configurar `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` y endpoint/workspace opcionales sólo desde secretos locales o del despliegue.
+- [X] OBS-001 Ejecutar `/speckit.specify` para trazabilidad LangSmith de extremo a extremo.
+- [X] OBS-002 Planificar una interfaz de tracing desacoplada del SDK para conservar pruebas offline y permitir fallback no-op.
+- [X] OBS-003 Configurar `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` y endpoint/workspace opcionales sólo desde secretos locales o del despliegue.
 - [ ] OBS-004 Instrumentar request, retrieval, generación, verificación, feedback y streaming con un árbol de runs correlacionado.
 - [ ] OBS-005 Propagar `X-Request-ID`, `X-Atlas-Run-ID`, locale, modelo, prompt version, retrieval version y snapshot ID como metadata segura.
 - [ ] OBS-006 Etiquetar cada run por entorno, colección, tipo de pregunta, resultado (`complete`, `partial`, `abstained`, `failed`) y versión de aplicación.
 - [ ] OBS-007 Registrar tokens, coste estimado, latencia, TTFT, retries, fallback y error code sin enviar preguntas ni excerpts completos por defecto.
-- [ ] OBS-008 Añadir pruebas unitarias con cliente LangSmith falso y pruebas contractuales que confirmen que una clave ausente no rompe la API.
-- [ ] OBS-009 Añadir smoke test opt-in contra LangSmith que verifique creación de un trace y lo marque como prueba, sin incluir secretos en logs.
+- [X] OBS-008 Añadir pruebas unitarias con cliente LangSmith falso y pruebas contractuales que confirmen que una clave ausente no rompe la API.
+- [X] OBS-009 Añadir smoke test opt-in contra LangSmith que verifique creación de un trace y lo marque como prueba, sin incluir secretos en logs.
 - [ ] OBS-010 Conectar feedback negativo e “incorrect citation” a una cola de revisión y a un dataset de casos difíciles.
-- [ ] OBS-011 Definir datasets de evaluación versionados y el enlace entre dataset, experimento, trace y commit.
+- [X] OBS-011 Definir datasets de evaluación versionados y el enlace entre dataset, experimento, trace y commit.
 - [ ] OBS-012 Crear dashboards privados de latencia, coste, error, abstención, citas y feedback segmentados por locale, colección y versión.
 - [ ] OBS-013 Añadir comparación A/B de prompts, retrievers y modelos con tags reproducibles y criterio de promoción.
 - [ ] OBS-014 Documentar retención, borrado de trazas y procedimiento de redacción/rotación de claves.
@@ -214,43 +214,43 @@ implementadas.
 
 ## 014 — Corpus real ampliado y harness de evaluación
 
-- [ ] COR-001 Ejecutar `/speckit.specify` para el corpus real ampliado y su refresh reproducible.
-- [ ] COR-002 Definir un manifiesto versionado de fuentes oficiales para LangGraph, LangChain y OpenAI con URL canónica, tipo, publisher y licencia/robots.
+- [X] COR-001 Ejecutar `/speckit.specify` para el corpus real ampliado y su refresh reproducible.
+- [X] COR-002 Definir un manifiesto versionado de fuentes oficiales para LangGraph, LangChain y OpenAI con URL canónica, tipo, publisher y licencia/robots.
 - [ ] COR-003 Ampliar el manifiesto a un mínimo verificable de 12 documentos/fuentes y más de tres páginas por colección; registrar páginas, bytes, hash y chunks resultantes.
-- [ ] COR-004 Implementar el bootstrap reproducible que descarga, normaliza, chunkifica, embebe y promueve un snapshot atómico.
+- [X] COR-004 Implementar el bootstrap reproducible que descarga, normaliza, chunkifica, embebe y promueve un snapshot atómico.
 - [ ] COR-005 Mantener el comportamiento append-only: una descarga fallida no reemplaza la versión activa y un contenido idéntico no duplica chunks.
 - [ ] COR-006 Añadir validación de tipo, tamaño, redirecciones, SSRF, robots/licencia y dominio permitido antes de persistir una fuente.
 - [ ] COR-007 Incorporar OCR spa+eng para PDFs autorizados y guardar idioma, confianza y página de origen de cada chunk.
 - [ ] COR-008 Verificar que el runtime cambia de demo a snapshot real sólo cuando el snapshot está completo y activo.
 - [ ] COR-009 Exponer en el panel el conteo de fuentes, páginas, chunks, última captura, versión y estado de cada colección.
-- [ ] COR-010 Construir un dataset de aproximadamente 60 preguntas: factual, multi-hop, OCR, bilingüe y no-answer, con ground truth de chunk IDs.
-- [ ] COR-011 Separar el entorno `evals/` del entorno de producción y ejecutar las evaluaciones contra HTTP de forma reproducible.
-- [ ] COR-012 Implementar faithfulness, context precision/recall, Hit@k, MRR, citation precision y freshness con resultados versionados.
+- [X] COR-010 Construir un dataset de aproximadamente 60 preguntas: factual, multi-hop, OCR, bilingüe y no-answer, con ground truth de chunk IDs.
+- [X] COR-011 Separar el entorno `evals/` del entorno de producción y ejecutar las evaluaciones contra HTTP de forma reproducible.
+- [X] COR-012 Implementar faithfulness, context precision/recall, Hit@k, MRR, citation precision y freshness con resultados versionados.
 - [ ] COR-013 Evaluar k=4/8/10, BM25+híbrido, reranking y prompt anti-alucinación mediante tabla de ablación reproducible.
 - [ ] COR-014 Publicar el corpus y harness con límites, procedencia, costes, fallos conocidos y resultado de la validación de siete días.
 
 ## 015 — Noticia principal del día anterior
 
-- [ ] NEWS-001 Ejecutar `/speckit.specify` para la sección de noticia diaria con evidencia y atribución.
-- [ ] NEWS-002 Definir “día anterior” como ventana de calendario UTC cerrada y mostrar timezone/fecha en la UI.
-- [ ] NEWS-003 Crear una allowlist versionada de feeds RSS/Atom y páginas públicas con publisher, licencia y política de robots.
+- [X] NEWS-001 Ejecutar `/speckit.specify` para la sección de noticia diaria con evidencia y atribución.
+- [X] NEWS-002 Definir “día anterior” como ventana de calendario UTC cerrada y mostrar timezone/fecha en la UI.
+- [X] NEWS-003 Crear una allowlist versionada de feeds RSS/Atom y páginas públicas con publisher, licencia y política de robots.
 - [ ] NEWS-004 Implementar fetch con timeout, límites de tamaño, redirecciones seguras, validación de fecha y deduplicación por URL/hash.
 - [ ] NEWS-005 Normalizar título, resumen acotado, publisher, autor, URL canónica, fecha de publicación y fecha de captura sin almacenar el artículo completo.
-- [ ] NEWS-006 Definir ranking auditable de importancia usando recencia, autoridad, cobertura independiente y relevancia temática; no afirmar “más importante” sin señales suficientes.
-- [ ] NEWS-007 Implementar salida `unavailable` cuando no haya una noticia verificable de la ventana, en vez de inventar o rellenar con noticias antiguas.
-- [ ] NEWS-008 Añadir endpoint y contrato OpenAPI para obtener la noticia diaria con estado, fecha, fuente y citas.
-- [ ] NEWS-009 Añadir componente bilingüe `/en` y `/es` que traduzca la interfaz pero conserve título/extracto original etiquetado y URL de la fuente.
+- [X] NEWS-006 Definir ranking auditable de importancia usando recencia, autoridad, cobertura independiente y relevancia temática; no afirmar “más importante” sin señales suficientes.
+- [X] NEWS-007 Implementar salida `unavailable` cuando no haya una noticia verificable de la ventana, en vez de inventar o rellenar con noticias antiguas.
+- [X] NEWS-008 Añadir endpoint y contrato OpenAPI para obtener la noticia diaria con estado, fecha, fuente y citas.
+- [X] NEWS-009 Añadir componente bilingüe `/en` y `/es` que traduzca la interfaz pero conserve título/extracto original etiquetado y URL de la fuente.
 - [ ] NEWS-010 Añadir tests de ventana temporal, timezone, duplicados, feed caído, contenido malicioso y ausencia de evidencia.
 - [ ] NEWS-011 Añadir tracing y métricas de freshness, cobertura de feeds, latencia, errores y ranking sin PII.
 - [ ] NEWS-012 Documentar límites editoriales, derechos de autor, correcciones/takedown y evidencia de una ejecución real.
 
 ## 016 — Harness de evaluación conectado a LangSmith
 
-- [ ] EVA-013 Crear el dataset inicial de ~60 ejemplos con inputs, referencia, chunk IDs, idioma, tipo de pregunta y versión de corpus.
+- [X] EVA-013 Crear el dataset inicial de ~60 ejemplos con inputs, referencia, chunk IDs, idioma, tipo de pregunta y versión de corpus.
 - [ ] EVA-014 Implementar graders deterministas para esquema, citas, enlaces, abstención, duplicados y estructura de reportes.
 - [ ] EVA-015 Implementar graders de código/modelo/humano con salida estructurada de fortalezas, debilidades, razonamiento y score.
-- [ ] EVA-016 Ejecutar evaluaciones offline sin API externa y guardar JSON/CSV reproducible con commit y configuración.
-- [ ] EVA-017 Ejecutar evaluación online opt-in en LangSmith enlazando dataset, experimento, traces y feedback.
+- [X] EVA-016 Ejecutar evaluaciones offline sin API externa y guardar JSON/CSV reproducible con commit y configuración.
+- [X] EVA-017 Ejecutar evaluación online opt-in en LangSmith enlazando dataset, experimento, traces y feedback.
 - [ ] EVA-018 Exportar casos negativos anotados a un dataset de regresión sin copiar secretos ni PII.
 - [ ] EVA-019 Añadir gate CI que bloquee regresiones de citas, faithfulness, abstención, coste o latencia según umbrales versionados.
 - [ ] EVA-020 Publicar tabla baseline/ablación/post-cambio con metodología y limitaciones, nunca sólo capturas de pantalla.

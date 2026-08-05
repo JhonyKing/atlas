@@ -8,7 +8,15 @@ from pathlib import Path
 from typing import Any
 
 
-_CATEGORIES = {"in_scope", "temporal", "abstention", "contradiction", "injection"}
+_CATEGORIES = {
+    "in_scope",
+    "temporal",
+    "multi_hop",
+    "ocr",
+    "abstention",
+    "contradiction",
+    "injection",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,11 +24,14 @@ class EvaluationCase:
     id: str
     category: str
     question: str
+    collection: str
+    locale: str
     expected_answer_status: str
     required_terms: tuple[str, ...]
     min_citations: int
     required_date: str | None = None
     required_version: str | None = None
+    ground_truth_chunk_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,11 +82,18 @@ def load_dataset(path: str | Path) -> list[EvaluationCase]:
                 id=case_id,
                 category=category,
                 question=_required_text(raw, "question", line_number),
+                collection=_optional_text(raw.get("collection")) or "all",
+                locale=_optional_text(raw.get("locale")) or "en-US",
                 expected_answer_status=_required_text(raw, "expected_answer_status", line_number),
                 required_terms=tuple(term.casefold() for term in terms),
                 min_citations=int(raw.get("min_citations", 0)),
                 required_date=_optional_text(raw.get("required_date")),
                 required_version=_optional_text(raw.get("required_version")),
+                ground_truth_chunk_ids=tuple(
+                    str(chunk_id)
+                    for chunk_id in raw.get("ground_truth_chunk_ids", [])
+                    if isinstance(chunk_id, (str, int))
+                ),
             )
         )
     if not cases:
@@ -157,11 +175,19 @@ def summarize(cases: list[EvaluationCase], results: list[CaseEvaluation]) -> Eva
     if len(cases) != len(results):
         raise ValueError("cases and results must have equal length")
     total = len(cases)
-    in_scope = [result for case, result in zip(cases, results, strict=True) if case.category == "in_scope"]
+    in_scope = [
+        result
+        for case, result in zip(cases, results, strict=True)
+        if case.category in {"in_scope", "multi_hop", "ocr"}
+    ]
     temporal = [result for case, result in zip(cases, results, strict=True) if case.category == "temporal"]
     negative = [result for case, result in zip(cases, results, strict=True) if case.category in {"abstention", "contradiction"}]
     injection = [result for case, result in zip(cases, results, strict=True) if case.category == "injection"]
-    citation_cases = [result for case, result in zip(cases, results, strict=True) if case.category in {"in_scope", "temporal"}]
+    citation_cases = [
+        result
+        for case, result in zip(cases, results, strict=True)
+        if case.category in {"in_scope", "temporal", "multi_hop", "ocr"}
+    ]
     return EvaluationSummary(
         total_cases=total,
         passed_cases=sum(result.passed for result in results),

@@ -22,3 +22,20 @@
 - [ ] T010 Add API/UI tests for locale parity, attribution, dates, links and unavailable state.
 - [ ] T011 Add retention, correction/takedown and copyright documentation.
 - [ ] T012 Run analyze/converge and capture evidence of one real execution.
+
+## Requirement coverage
+
+| Requirement | Tasks |
+|---|---|
+| FR-NEWS-001 | T005, T008, T009, T010 |
+| FR-NEWS-002 | T001, T002, T003, T004, T011 |
+| FR-NEWS-003 | T005, T006, T010 |
+| FR-NEWS-004 | T003, T004, T010 |
+| FR-NEWS-005 | T006, T008, T010 |
+| FR-NEWS-006 | T008, T009, T010 |
+| FR-NEWS-007 | T004, T010 |
+| FR-NEWS-008 | T007, T012 |
+| SC-NEWS-001 | T003, T008, T010 |
+| SC-NEWS-002 | T005, T010 |
+| SC-NEWS-003 | T006, T008, T009, T010 |
+| SC-NEWS-004 | T005, T010, T012 |

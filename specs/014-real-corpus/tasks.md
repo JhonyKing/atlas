@@ -19,8 +19,25 @@
 
 ## Phase 3: Evaluation harness (P2)
 
-- [ ] T010 Create the versioned ~60-case dataset in `evals/datasets/rag-v1.jsonl` with ground-truth chunk IDs.
-- [ ] T011 Add separate eval environment instructions and HTTP runner in `evals/run_offline.py`.
-- [ ] T012 Implement Hit@k, MRR, context precision/recall, citation precision and freshness evaluators.
+- [X] T010 Create the versioned ~60-case dataset in `evals/datasets/rag-v1.jsonl` with ground-truth chunk IDs.
+- [X] T011 Add separate eval environment instructions and HTTP runner in `evals/run_offline.py`.
+- [X] T012 Implement Hit@k, MRR, context precision/recall, citation precision and freshness evaluators.
 - [ ] T013 Add retrieval ablations for k=4/8/10, hybrid retrieval, reranking and anti-hallucination prompting.
 - [ ] T014 Run seven-day refresh validation, publish results and run analyze/converge.
+
+## Requirement coverage
+
+| Requirement | Tasks |
+|---|---|
+| FR-COR-001 | T001, T002, T003 |
+| FR-COR-002 | T005, T007 |
+| FR-COR-003 | T001, T007, T014 |
+| FR-COR-004 | T006, T008 |
+| FR-COR-005 | T008, T009 |
+| FR-COR-006 | T010, T011, T012 |
+| FR-COR-007 | T012, T013 |
+| FR-COR-008 | T002, T004, T005 |
+| SC-COR-001 | T007, T014 |
+| SC-COR-002 | T005, T007 |
+| SC-COR-003 | T006, T008, T014 |
+| SC-COR-004 | T010, T011, T012 |
