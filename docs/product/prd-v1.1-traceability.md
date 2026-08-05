@@ -28,7 +28,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
 | PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
-| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe y evaluador implementados; runtime, cuarta colección y baseline de 20 casos pendientes | T001–T041; specs/002-technology-comparator/ |
+| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe, ejecutores y baseline offline de 20 solicitudes implementados; falta cuarta colección y verificación live contra snapshot poblado | T001–T041; specs/002-technology-comparator/ |
 | PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
 | PRD-007 | Architecture brief, ADR, release intelligence, research report | 7.3; tabla de plantillas | 003 | No iniciado | RPT-003–RPT-008 |
 | PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
@@ -93,8 +93,8 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
   requiere verificar una ejecución real contra un snapshot poblado (el ejecutor de embeddings,
   retrieval y extracción estructurada ya está cableado, junto con el coordinador fail-closed y la
   traza LangSmith);
-  `T040` debe ampliar el baseline a 20
-  solicitudes y medir latencia/calidad; `T041` depende de resolver el runner Vitest de Windows.
+  `T040` ya tiene 20 solicitudes y 16 matrices offline, pero aún debe medir latencia/calidad en
+  una ejecución live; `T041` está cerrado con 8 archivos y 20 pruebas Vitest.
 
 ## Regla de entrega
 
