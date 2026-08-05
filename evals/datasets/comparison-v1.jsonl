@@ -1,0 +1,4 @@
+{"id":"missing-price","technology":"openai","criterion":"price","state":"unsupported","version":"latest","captured_at":"2026-08-05","evidence_ids":[],"explanation":"No comparable price evidence."}
+{"id":"conflicting-latency-units","technology":"langgraph","criterion":"latency","state":"contradictory","version":"1.0","captured_at":"2026-08-05","units":["ms","seconds"],"evidence_ids":["e1","e2"]}
+{"id":"stale-context","technology":"langchain","criterion":"context","state":"unsupported","version":"0.3","captured_at":"2024-01-01","date_from":"2026-01-01","evidence_ids":[],"explanation":"Evidence is outside the requested date window."}
+{"id":"version-mismatch","technology":"openai","criterion":"tool_calling","state":"unsupported","version":"gpt-4","observed_version":"gpt-3.5","evidence_ids":[],"explanation":"Evidence does not match the requested version."}

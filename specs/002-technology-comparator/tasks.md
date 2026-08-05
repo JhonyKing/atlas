@@ -49,12 +49,12 @@ evidence IDs for every populated cell.
 **Independent Test**: Prepared missing and contradiction cases render the correct cell state without
 invented values or unauthorized actions.
 
-- [ ] T024 [P] [US2] Write failing cell-state and contradiction tests in `apps/backend/tests/unit/comparison/test_cell_verification.py`.
-- [ ] T025 [US2] Implement supported, unsupported, partial and contradictory cell verification in `apps/backend/src/atlas/comparison/verification.py` to satisfy T024.
-- [ ] T026 [P] [US2] Add malicious-source and unauthorized-instruction fixtures for comparison evidence in `apps/backend/tests/fixtures/security/comparison_malicious_source.md` and `apps/backend/tests/integration/security/test_comparison_prompt_injection.py`.
-- [ ] T027 [US2] Enforce the evidence-only prompt boundary and no-action-tools policy in `apps/backend/src/atlas/providers/prompts/comparison.py` to satisfy T026.
-- [ ] T028 [P] [US2] Add temporal, version and stale-source regression cases to `evals/datasets/comparison-v1.jsonl` and `apps/backend/tests/unit/comparison/test_constraints.py`.
-- [ ] T029 [US2] Add unsupported, partial, contradiction and constraint explanations to `apps/web/src/features/comparison/ComparisonMatrix.tsx` and add the Playwright journey in `apps/web/tests/e2e/comparison-evidence-states.spec.ts`.
+- [X] T024 [P] [US2] Write failing cell-state and contradiction tests in `apps/backend/tests/unit/comparison/test_cell_verification.py`. (Evidence: tests cover all four states and reject populated cells without evidence or explanations.)
+- [X] T025 [US2] Implement supported, unsupported, partial and contradictory cell verification in `apps/backend/src/atlas/comparison/verification.py` to satisfy T024. (Evidence: final matrix evidence gate enforces explicit state rules; tests pass.)
+- [X] T026 [P] [US2] Add malicious-source and unauthorized-instruction fixtures for comparison evidence in `apps/backend/tests/fixtures/security/comparison_malicious_source.md` and `apps/backend/tests/integration/security/test_comparison_prompt_injection.py`. (Evidence: malicious instruction fixture is treated as data and parsed without execution.)
+- [X] T027 [US2] Enforce the evidence-only prompt boundary and no-action-tools policy in `apps/backend/src/atlas/providers/prompts/comparison.py` to satisfy T026. (Evidence: prompt explicitly marks source as untrusted, exposes no tools, and security test passes.)
+- [X] T028 [P] [US2] Add temporal, version and stale-source regression cases to `evals/datasets/comparison-v1.jsonl` and `apps/backend/tests/unit/comparison/test_constraints.py`. (Evidence: four deterministic cases cover missing price, incompatible units, stale dates and version mismatch; constraint tests pass.)
+- [X] T029 [US2] Add unsupported, partial, contradiction and constraint explanations to `apps/web/src/features/comparison/ComparisonMatrix.tsx` and add the Playwright journey in `apps/web/tests/e2e/comparison-evidence-states.spec.ts`. (Evidence: UI renders explicit states/explanations; Chromium journey passes.)
 
 ## Phase 5: User Story 3 - Bilingual and Four-Technology Comparison (Priority: P2)
 
