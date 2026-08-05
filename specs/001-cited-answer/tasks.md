@@ -167,8 +167,8 @@ abstention.
 
 **Purpose**: Retention, public corpus status, evaluation evidence, operations, and portfolio handoff.
 
-- [ ] T067 [P] Write failing 30-day purge, aggregate-preservation, batching, idempotency, and no-user-dimension tests in `database/tests/005_retention.sql` and `apps/backend/tests/integration/retention/test_purge.py`
-- [ ] T068 Implement aggregate rollup, cascading interaction-content deletion, expired-result tombstones, and daily retention scheduling in `database/functions/purge_expired_interactions.sql`, `database/migrations/`, and `apps/backend/src/atlas/persistence/retention.py` to satisfy T067
+- [X] T067 [P] Write failing 30-day purge, aggregate-preservation, batching, idempotency, and no-user-dimension tests in `database/tests/005_retention.sql` and `apps/backend/tests/integration/retention/test_purge.py`
+- [X] T068 Implement aggregate rollup, cascading interaction-content deletion, expired-result tombstones, and daily retention scheduling in `database/functions/purge_expired_interactions.sql`, `database/migrations/`, and `apps/backend/src/atlas/persistence/retention.py` to satisfy T067
 - [ ] T069 [P] Add corpus-status endpoint and UI tests in `apps/backend/tests/contract/api/test_corpus.py` and `apps/web/src/features/corpus/__tests__/corpus-status.test.tsx`, then implement `apps/backend/src/atlas/api/routes/corpus.py` and `apps/web/src/features/corpus/`
 - [ ] T070 [P] Create the versioned evaluation dataset and deterministic evaluators in `evals/datasets/cited-answer-v1.jsonl`, `evals/evaluators/`, and `apps/backend/src/atlas/evaluation/` covering 30 in-scope, 10 temporal, abstention, contradiction, and injection cases
 - [ ] T071 Create the evaluation CLI and CI regression gate in `apps/backend/src/atlas/evaluation/cli.py` and `.github/workflows/evals.yml`, recording model, prompt, retrieval, embedding, corpus snapshot, latency, tokens, cost, and required thresholds
