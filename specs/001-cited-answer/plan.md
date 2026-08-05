@@ -39,8 +39,9 @@ seconds for at least 95% of normal questions and complete within 15 seconds; 95%
 
 **Constraints**: Three allowlisted official collections; daily refresh plus manual operator trigger;
 10 cited-answer questions per anonymous visitor per rolling 24 hours; 30-day content retention;
-English-only first slice; no report generation, uploads, accounts, saved conversations, or live-web
-research; model text is never shown before citation validation
+English-canonical content with `en-US`/`es-MX` public parity for this slice; no report generation,
+uploads, accounts, saved conversations, or live-web research in this feature; model text is never
+shown before citation validation
 
 **Scale/Scope**: Portfolio launch, initially up to 1,000 monthly active visitors and three curated
 collections; exact vector retrieval remains the recall ground truth and scale infrastructure is
@@ -60,7 +61,7 @@ added only after measured need
 | Security and Privacy | Allowlisted fetches, untrusted evidence boundary, pseudonymous visitor HMAC, 30-day purge, private admin/worker | PASS |
 | Observable and Cost-Aware | Request IDs, token/cost fields, content-free spans, quota enforcement, global budget circuit breaker | PASS |
 | Small Vertical Slices | One cited-answer journey; no microservices, persistent graph memory, general tool loop, reports, or auth | PASS |
-| English-Canonical Engineering | All artifacts, contracts, identifiers, tests, and UI copy for this slice are English | PASS |
+| English-Canonical Engineering | Engineering identifiers and source contracts are English; public cited-answer UX has `en-US` and `es-MX` parity | PASS |
 
 Post-design re-check: the Supabase queue is justified because daily ingestion is durable work that
 must survive API restarts and preserve the previous corpus on failure. It reuses PostgreSQL rather

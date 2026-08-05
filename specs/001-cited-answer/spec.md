@@ -157,6 +157,12 @@ confirm that ATLAS does not fabricate a definitive answer or citation.
   and cost measurements.
 - **FR-022**: The system MUST distinguish current documentation from historical changelog and
   release-note evidence and MUST preserve the date and version context of temporal claims.
+- **FR-023**: The public question experience MUST be available in both `en-US` and `es-MX`, with
+  an explicit locale switch, locale-specific URL, and persisted visitor preference.
+- **FR-024**: The answer status, validation, abstention, limitation, quota, cancellation, evidence,
+  and feedback copy MUST be translated in both locales without changing the claims, evidence IDs,
+  citation targets, dates, or numeric values. Source excerpts MAY remain in their original language
+  and MUST be labelled as original source text when they are not translated.
 
 ### Key Entities
 
@@ -179,8 +185,10 @@ confirm that ATLAS does not fabricate a definitive answer or citation.
   LangChain, and the OpenAI API.
 - The feature answers questions from the indexed launch corpus; unrestricted live-web research is
   outside this feature.
-- Uploads, private sources, user accounts, saved conversation history, generated reports, broad
-  technology comparison matrices, and Spanish localization are outside this feature.
+- Uploads, private sources, user accounts, saved conversation history, generated reports, and broad
+  technology comparison matrices are outside this *cited-answer feature slice* and are tracked as
+  separate Spec Kit features in the product backlog. Spanish localization is NOT outside the
+  product: this slice includes the bilingual public question journey through FR-023 and FR-024.
 - Generated reports and documents will have a separate usage quota in their future feature; they do
   not count toward the 10-question anonymous cited-answer limit.
 - The feature provides technical research support, not legal, medical, financial, or personalized
@@ -215,13 +223,20 @@ confirm that ATLAS does not fabricate a definitive answer or citation.
 - **SC-012**: In every limit-boundary test, the first 10 valid questions are accepted, the next
   question within the same rolling period is rejected before processing, and the visitor sees the
   earliest retry time.
+- **SC-013**: All public strings in the cited-answer journey have `en-US` and `es-MX` catalog keys,
+  the locale switch changes the visible copy without a page reload, and automated parity checks
+  report 100% key coverage.
+- **SC-014**: A supported question submitted in either locale produces the same terminal claims,
+  evidence IDs, citation targets, and verification status; only presentation language may differ.
 
 ## Assumptions
 
 - The LangGraph, LangChain, and OpenAI documentation, changelog, and release-note collections have
   terms that permit the required retrieval and linking behavior; this assumption MUST be verified
   during planning before ingestion work begins.
-- English is the only public interface language for this first vertical slice.
+- English (`en-US`) is the canonical source and default locale; Spanish (`es-MX`) has functional
+  parity for the cited-answer journey. The corpus remains primarily English, so original source
+  excerpts are preserved and clearly identified when shown in either locale.
 - Visitors have a modern browser and stable internet access.
 - Source ingestion occurs before a visitor asks a question; continuous live-web research is a later
   feature.

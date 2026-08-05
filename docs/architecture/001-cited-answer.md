@@ -7,9 +7,10 @@ Last reviewed: 2026-08-04
 ## Purpose and boundaries
 
 ATLAS answers one technical question at a time from a versioned, allowlisted corpus. It emits
-progress first and claims/citations only in a terminal verified event. The feature deliberately
-does not include live web search, user accounts, generated reports, durable conversation memory,
-Spanish localization, or high-stakes advice.
+progress first and claims/citations only in a terminal verified event. This feature deliberately
+does not include live web search, user accounts, generated reports, or durable conversation memory;
+the public cited-answer journey is available in en-US and es-MX, while source excerpts preserve
+their original language. High-stakes advice is out of scope.
 
 ## Runtime topology
 

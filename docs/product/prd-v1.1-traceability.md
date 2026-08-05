@@ -1,0 +1,61 @@
+# ATLAS AI PRD v1.1 — matriz de trazabilidad Spec Kit
+
+**Fuente:** `C:\Users\Usuario\Downloads\Proyecto_ATLAS_AI_PRD_Arquitectura_v1.1.docx`  
+**Versión de la fuente:** 1.1 · 30 de julio de 2026  
+**Regla:** ningún requisito del PRD se considera entregado sólo porque exista código parecido. Debe
+tener una especificación, un plan, tareas, pruebas y evidencia de aceptación.
+
+## Hallazgo de la auditoría
+
+La especificación inicial de `001-cited-answer` fue demasiado estrecha y contradijo la fuente:
+
+- El PRD define el producto como **English-first y bilingüe**, con `en-US` y `es-MX` con paridad
+  funcional (tabla “Control del documento”, sección 21 y ADR-007).
+- El PRD incluye en el MVP público comparador, reportes DOCX/PDF, perfiles/sesiones, feedback,
+  panel de estado, evaluación y experiencia bilingüe (tabla “Incluido”, sección 5.1).
+- El PRD exige rutas localizadas `/en` y `/es`, catálogos versionados, `Accept-Language`,
+  evidencia original más traducción opcional, renderers EN/ES, 100% de cobertura y paridad de
+  citas (tablas de las secciones 8.1 y 21).
+- El repositorio decía lo contrario: `T049` hablaba de una página sólo en inglés, el `spec.md`
+  declaraba español fuera de alcance y `tasks.md` ordenaba no añadir localización. Eso fue una
+  desviación de la fuente y queda corregido por `FR-023`, `FR-024`, `SC-013` y `SC-014`.
+
+## Mapa requisito → artefacto → estado
+
+| ID PRD | Requisito verificable | Sección/fuente | Feature Spec Kit | Estado actual | Evidencia/tarea |
+|---|---|---|---|---|---|
+| PRD-001 | Producto público de investigación técnica con evidencia | 1–3 | 001 | Parcial | T037–T050; falta completar runtime real |
+| PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Corregido en spec; implementación pendiente | T078–T081 |
+| PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
+| PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
+| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | No iniciado | Backlog CMP-001–CMP-009 |
+| PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
+| PRD-007 | Architecture brief, ADR, release intelligence, research report | 7.3; tabla de plantillas | 003 | No iniciado | RPT-003–RPT-008 |
+| PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
+| PRD-009 | Feedback positivo/negativo y cita incorrecta | 5.1; 14 | 001 | Implementado con fakes | T051–T058 |
+| PRD-010 | Panel de fuentes, última actualización y cobertura | 5.1 | 001 / 005 | Parcial | T069; ING-009 |
+| PRD-011 | Corpus curado de docs, releases, papers, pricing y uploads autorizados | 6 | 005 | Parcial | T024–T030 sólo cubren 3 colecciones; ING-001–ING-015 |
+| PRD-012 | Gobernanza: licencia, robots, hash, takedown, obsolescencia, desactivación | 6.3; 12.3 | 005 | Parcial | T022–T026; ING-012–ING-015 |
+| PRD-013 | Router, planner, retrieval, verifier, síntesis, reporte y human review | 7; 9.2 | 006 | Parcial | T039/T044/T062–T065; AGT-001–AGT-010 |
+| PRD-014 | Checkpoints persistentes y reanudación para trabajos largos | 9.3 | 006 | No iniciado | AGT-007–AGT-009 |
+| PRD-015 | RAG: rewriting, filtros, híbrido, diversidad, reranking y budget | 10.1–10.4 | 007 | Parcial | T037/T042; RET-001–RET-009 |
+| PRD-016 | Router de modelos, fallback, costos y GPT-5.6 Luna prioritario | 11; decisión posterior del usuario | 008 | Adapter Luna existe; router no | T019; MOD-001–MOD-010 |
+| PRD-017 | Embeddings multilingües y filtros de idioma | tabla 21.2; 10 | 007 / 008 | No iniciado | RET-006; MOD-006 |
+| PRD-018 | Secretos, RLS, SSRF, sandbox, uploads, injection, rate limits, auditoría, privacidad | 12.2 | 009 | Parcial | T022/T035/T064; SEC-001–SEC-012 |
+| PRD-019 | Escala MVP→beta→100k, colas, cache, HNSW, circuit breakers | 13 | 010 | Parcial | T072; SCL-001–SCL-012 |
+| PRD-020 | SLOs: disponibilidad, TTFT, p95, reportes, errores, citas, costo | 13.3 | 010 | Parcial | T072; SCL-004–SCL-008 |
+| PRD-021 | Golden dataset: factual, temporal, comparación, abstención, injection, reportes, bilingüe | 14.2 | 011 | Parcial | T070/T071; EVA-001–EVA-006 |
+| PRD-022 | Evals offline/online, gates de regresión, trazas y dashboard | 14.1–14.4 | 011 | Parcial | T070–T073; EVA-007–EVA-012 |
+| PRD-023 | Roadmap verificable de 12 semanas | 15 | 000 | Documentado | RDM-001–RDM-012 |
+| PRD-024 | Repo modular: web, API, worker, agent, retrieval, ingestion, models, reports, evaluation | 17 | 000 | Adaptado a monorepo actual | RDM-013 |
+| PRD-025 | ADRs, README, demo, video, post técnico y narrativa de entrevista | 18–20; ADR-001–ADR-009 | 012 | Parcial | T073/T077; PRT-001–PRT-009 |
+| PRD-026 | KPIs de adopción, valor, calidad, rendimiento, economía, conocimiento y operación | apéndice KPI | 012 | No iniciado | PRT-006–PRT-008 |
+| PRD-027 | SDD con Spec Kit: specify → clarify → plan → tasks → analyze → tests → implement → converge | 22; tabla de gates | Todas | En uso | Esta matriz y los feature folders |
+
+## Regla de entrega
+
+`001-cited-answer` es el primer vertical slice, no el PRD completo. No se puede cerrar el producto
+como “listo” hasta que los features 002–012 tengan sus propios `spec.md`, `plan.md`, `tasks.md`,
+pruebas y resultados. El backlog siguiente es la lista maestra que evita que las expansiones del
+PRD desaparezcan detrás de la palabra “futuro”.
+

@@ -2,7 +2,8 @@ openapi: 3.1.0
 info:
   title: ATLAS AI Cited Answer API
   version: 0.1.0
-  description: Contract for feature 001-cited-answer. All public content is English.
+  description: Contract for feature 001-cited-answer. Public presentation supports en-US and es-MX;
+    evidence excerpts preserve their original source language.
 servers:
   - url: /api
 tags:

@@ -102,7 +102,7 @@ evidence and no draft claim is streamed early.
 - [X] T046 [US1] Implement verified event-stream serialization and disconnect cancellation in `apps/backend/src/atlas/api/answer_events.py` according to `contracts/answer-events.md`
 - [X] T047 [US1] Implement `POST /v1/answers`, `GET /v1/answers/{run_id}`, and repeat-safe cancellation through `DELETE /v1/answers/{run_id}` in `apps/backend/src/atlas/api/routes/answers.py` with invalid-input handling, request deduplication, quota, controlled errors, cancellation, and no provisional claim text
 - [X] T048 [US1] Implement typed API/SSE client and explicit cancellation handling in `apps/web/src/lib/atlas-api/` from `contracts/openapi.yaml`
-- [X] T049 [US1] Implement the English question page, constraint controls, invalid-input text preservation, progress, explicit cancellation, completed claims, and quota/error states in `apps/web/src/app/page.tsx` and `apps/web/src/features/cited-answer/` to satisfy T041
+- [X] T049 [US1] Implement the bilingual question page, locale controls, constraint controls, invalid-input text preservation, progress, explicit cancellation, completed claims, and quota/error states in `apps/web/src/app/page.tsx` and `apps/web/src/features/cited-answer/` to satisfy T041
 - [X] T050 [US1] Add the supported-question, invalid-question, and explicit-cancellation Playwright journeys in `apps/web/tests/e2e/cited-answer-supported.spec.ts` and verify the independent-test checkpoint
 
 **Checkpoint**: User Story 1 is deployable and demonstrable using the fake provider and seeded corpus.
@@ -174,6 +174,13 @@ abstention.
 - [X] T071 Create the evaluation CLI and CI regression gate in `apps/backend/src/atlas/evaluation/cli.py` and `.github/workflows/evals.yml`, recording model, prompt, retrieval, embedding, corpus snapshot, latency, tokens, cost, and required thresholds
 - [X] T072 [P] Add load/limit/cancellation checks for portfolio launch SLOs in `apps/backend/tests/load/` without asserting 10k/100k-user capacity
 - [X] T073 [P] Document architecture, graph, data flow, privacy/threat model, and measured trade-offs in `docs/architecture/001-cited-answer.md`, `docs/adr/`, and `docs/runbooks/`
+- [ ] T078 [P] [US1] Write failing locale-parity, locale-switch, persisted-preference, and language-independent-claim tests in `apps/web/src/i18n/`, `apps/web/src/features/cited-answer/__tests__/`, and `apps/web/tests/e2e/`
+- [ ] T079 [US1] Implement versioned `en-US` and `es-MX` message catalogs, `/en` and `/es` locale routing, persisted preference, accessible switch labels, and locale-aware date/number formatting in `apps/web/src/i18n/` and `apps/web/src/app/`
+- [ ] T080 [US1] Implement locale propagation through the answer request and Spanish controlled-error/status copy in `apps/web/src/features/cited-answer/api.ts`, `apps/backend/src/atlas/api/`, and `specs/001-cited-answer/contracts/openapi.yaml`
+- [ ] T081 [US1] Replace hardcoded public English strings in `apps/web/src/features/cited-answer/`, `apps/web/src/features/evidence/`, and `apps/web/src/features/corpus/` with catalog keys and label original-language evidence excerpts
+- [ ] T082 [P] Add CORS preflight and local-runtime smoke tests for browser `OPTIONS /v1/answers`, deterministic no-key development answers, and corpus status in `apps/backend/tests/contract/api/` and `apps/backend/tests/integration/`
+- [ ] T083 Implement development-only deterministic answer/corpus services and explicit CORS policy without weakening production provider requirements in `apps/backend/src/atlas/demo/` and `apps/backend/src/atlas/api/main.py`
+- [ ] T084 Re-run the Spec Kit analyze/converge checks after the bilingual and local-runtime changes, recording any remaining spec/plan/task/code gaps in `docs/product/prd-v1.1-traceability.md`
 - [ ] T074 Execute a moderated five-person external usability study for SC-007 using `docs/research/001-cited-answer-usability-protocol.md`, record only consented non-identifying observations and the four-of-five result in `evals/results/001-cited-answer-usability.md`, and create follow-up defects for any failed critical flow
 - [ ] T075 Run the seven-day scheduled-refresh validation for SC-009, calculate per-collection and aggregate success rates from ingestion records, verify failed-run preservation, and record timestamps, failures, and the 95% result in `evals/results/001-cited-answer-refresh-7d.md`
 - [ ] T076 Execute every scenario in `specs/001-cited-answer/quickstart.md`, record the consolidated results in `evals/results/001-cited-answer-baseline.md`, and fix any divergence before completion
@@ -257,6 +264,8 @@ T059, T060, and T061 can be authored in parallel. T062-T065 follow; T066 is the 
 
 - Execute one task or one tightly coupled test/implementation pair at a time.
 - Confirm the listed test fails for the expected reason before its implementation task.
-- Do not add authentication, Spanish localization, report generation, live-web search, reranking,
-  HNSW, multiple answer models, or durable LangGraph memory to this feature.
+- Do not add authentication, report generation, live-web search, reranking, HNSW, multiple answer
+  models, or durable LangGraph memory to this feature. Those are separate product features and
+  MUST remain represented in `docs/product/prd-v1.1-backlog.md`; Spanish localization is part of
+  this feature and MUST be implemented before its completion gate.
 - Update spec/plan/contracts before accepting behavior that differs from these artifacts.

@@ -6,7 +6,8 @@ guidance.
 
 ## Ethics and scope
 
-- Recruit five adults who did not build ATLAS and can read the English interface.
+- Recruit five adults who did not build ATLAS. Record the locale used by each participant (`en-US`
+  or `es-MX`) and include both locales when feasible.
 - Explain that this is a product usability test, not a test of the participant's intelligence.
 - Obtain consent before recording notes. Do not collect names, email addresses, account details,
   questions about private systems, or any identifying demographic information.
@@ -19,7 +20,8 @@ guidance.
 ## Moderation script
 
 1. “You are trying ATLAS for the first time. Please think aloud, but I will not guide you.”
-2. “Ask one supported technical question about LangGraph, LangChain, or the OpenAI API.”
+2. “Choose English or Spanish, then ask one supported technical question about LangGraph,
+   LangChain, or the OpenAI API.”
 3. “Inspect the evidence for the answer and tell me whether ATLAS verified it.”
 4. “Now ask a question outside the published corpus or with insufficient evidence. Tell me whether
    ATLAS answered or abstained, and why.”
