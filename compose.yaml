@@ -1,0 +1,24 @@
+name: atlas-ai
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17-bookworm
+    environment:
+      POSTGRES_DB: atlas
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: atlas-local-only
+    ports:
+      - "5432:5432"
+    volumes:
+      - atlas-postgres-data:/var/lib/postgresql/data
+      - ./infra/containers/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas -d atlas"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  atlas-postgres-data:

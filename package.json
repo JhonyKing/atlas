@@ -1,0 +1,19 @@
+{
+  "name": "atlas-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Evidence-first technical research with verifiable cited answers.",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @atlas/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @atlas/web test:e2e"
+  }
+}

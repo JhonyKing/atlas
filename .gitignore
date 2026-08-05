@@ -1,0 +1,45 @@
+# Local secrets (keep the documented template)
+.env*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+htmlcov/
+
+# Node.js / Next.js
+node_modules/
+.pnpm-store/
+.next/
+out/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local tooling and generated review material
+.review_atlas/
+tmp/
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local model/evaluation artifacts
+.models/
+models/
+evals/results/local/
+
+# Source PRD is retained outside version control
+/Proyecto_ATLAS_AI_PRD_Arquitectura_v1.1.pdf

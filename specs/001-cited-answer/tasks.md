@@ -22,13 +22,13 @@ work establish the smallest shared platform needed by all three stories.
 
 **Purpose**: Reproducible monorepo, local infrastructure, and quality commands.
 
-- [ ] T001 Create repository hygiene files `.gitignore`, `.gitattributes`, and `.editorconfig`, excluding `.env*`, `.review_atlas/`, `tmp/`, build output, coverage, and local model artifacts
-- [ ] T002 [P] Create root Node workspace files `package.json`, `pnpm-workspace.yaml`, and `pnpm-lock.yaml` with pinned package-manager metadata and shared lint/typecheck/test scripts
-- [ ] T003 [P] Create Python project and lock files `apps/backend/pyproject.toml`, `apps/backend/uv.lock`, and `apps/backend/src/atlas/__init__.py` for Python 3.13 and the dependency lines approved in `plan.md`
-- [ ] T004 [P] Scaffold the strict TypeScript Next.js application in `apps/web/` with App Router, package metadata, linting, type checking, Vitest, and Playwright configuration
-- [ ] T005 [P] Create local PostgreSQL/pgvector infrastructure in `compose.yaml` and `infra/containers/postgres/` with a deterministic health check and persistent development volume
-- [ ] T006 [P] Create typed configuration examples and secret policy in `.env.example`, `apps/backend/src/atlas/config.py`, and `apps/web/src/lib/env.ts` without real credentials
-- [ ] T007 Create initial CI quality workflow in `.github/workflows/ci.yml` that installs frozen locks and exposes separate Python, web, database, and offline-eval jobs
+- [X] T001 Create repository hygiene files `.gitignore`, `.gitattributes`, and `.editorconfig`, excluding `.env*`, `.review_atlas/`, `tmp/`, build output, coverage, and local model artifacts
+- [X] T002 [P] Create root Node workspace files `package.json`, `pnpm-workspace.yaml`, and `pnpm-lock.yaml` with pinned package-manager metadata and shared lint/typecheck/test scripts
+- [X] T003 [P] Create Python project and lock files `apps/backend/pyproject.toml`, `apps/backend/uv.lock`, and `apps/backend/src/atlas/__init__.py` for Python 3.13 and the dependency lines approved in `plan.md`
+- [X] T004 [P] Scaffold the strict TypeScript Next.js application in `apps/web/` with App Router, package metadata, linting, type checking, Vitest, and Playwright configuration
+- [X] T005 [P] Create local PostgreSQL/pgvector infrastructure in `compose.yaml` and `infra/containers/postgres/` with a deterministic health check and persistent development volume
+- [X] T006 [P] Create typed configuration examples and secret policy in `.env.example`, `apps/backend/src/atlas/config.py`, and `apps/web/src/lib/env.ts` without real credentials
+- [X] T007 Create initial CI quality workflow in `.github/workflows/ci.yml` that installs frozen locks and exposes separate Python, web, database, and offline-eval jobs
 
 **Checkpoint**: A clean clone can install locked dependencies and start the local database without
 application source beyond scaffolding.
