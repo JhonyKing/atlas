@@ -1,0 +1,237 @@
+"""In-process answer-run coordinator used by local development and offline evaluation."""
+
+from __future__ import annotations
+
+import asyncio
+from collections.abc import AsyncIterator, Callable, Mapping
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime, timedelta
+from uuid import UUID, uuid4
+
+from atlas.agent.cited_answer_graph import CitedAnswerGraph
+from atlas.api.answer_events import SSEEventWriter
+from atlas.api.routes.answers import AnswerRunConflict, AnswerRunStatus
+from atlas.domain import AnswerStatus, CollectionSlug, Question
+from atlas.persistence.quota import QuotaService
+
+
+@dataclass(slots=True)
+class _Run:
+    run_id: UUID
+    visitor_key_hash: str
+    idempotency_key: str
+    question: Question
+    status: AnswerRunStatus
+    queue: asyncio.Queue[str | None] = field(default_factory=asyncio.Queue)
+    task: asyncio.Task[None] | None = None
+
+
+class InMemoryAnswerRunService:
+    """Coordinate one-shot graph execution with repeat-safe idempotency and cancellation."""
+
+    def __init__(
+        self,
+        graph: CitedAnswerGraph,
+        *,
+        quota: QuotaService | None = None,
+        clock: Callable[[], datetime] | None = None,
+    ) -> None:
+        self._graph = graph
+        self._quota = quota
+        self._clock = clock or (lambda: datetime.now(UTC))
+        self._runs: dict[UUID, _Run] = {}
+        self._idempotency: dict[tuple[str, str], UUID] = {}
+        self._lock = asyncio.Lock()
+
+    async def start(
+        self,
+        *,
+        question: Mapping[str, object],
+        visitor_key_hash: str,
+        idempotency_key: str,
+        request_id: UUID,
+    ) -> UUID:
+        del request_id
+        question_data = dict(question)
+        product = question_data.get("product")
+        if isinstance(product, str):
+            question_data["product"] = CollectionSlug(product)
+        for date_key in ("date_from", "date_to"):
+            date_value = question_data.get(date_key)
+            if isinstance(date_value, str):
+                question_data[date_key] = date.fromisoformat(date_value)
+        parsed_question = Question.model_validate(question_data)
+        key = (visitor_key_hash, idempotency_key)
+        async with self._lock:
+            existing_id = self._idempotency.get(key)
+            if existing_id is not None:
+                existing = self._runs[existing_id]
+                if existing.question != parsed_question:
+                    raise KeyError(idempotency_key)
+                return existing_id
+
+            run_id = uuid4()
+            now = self._clock()
+            remaining = None
+            if self._quota is not None:
+                reservation = self._quota.reserve(
+                    visitor_key_hash,
+                    idempotency_key,
+                    run_id,
+                    now=now,
+                )
+                remaining = reservation.remaining
+                run_id = reservation.run_id
+            status = AnswerRunStatus(run_id=run_id, status="accepted", created_at=now)
+            entry = _Run(
+                run_id=run_id,
+                visitor_key_hash=visitor_key_hash,
+                idempotency_key=idempotency_key,
+                question=parsed_question,
+                status=status,
+            )
+            self._runs[run_id] = entry
+            self._idempotency[key] = run_id
+            writer = SSEEventWriter()
+            entry.queue.put_nowait(
+                writer.emit(
+                    "run.accepted",
+                    {
+                        "run_id": str(run_id),
+                        "stage": "accepted",
+                        "quota": {
+                            "limit": 10,
+                            "remaining": remaining,
+                            "window_hours": 24,
+                        },
+                    },
+                )
+            )
+            entry.task = asyncio.create_task(self._execute(entry, writer))
+            return run_id
+
+    async def get_status(
+        self,
+        run_id: UUID,
+        *,
+        visitor_key_hash: str,
+    ) -> AnswerRunStatus | None:
+        entry = self._runs.get(run_id)
+        if entry is None or entry.visitor_key_hash != visitor_key_hash:
+            return None
+        return entry.status
+
+    async def cancel(self, run_id: UUID, *, visitor_key_hash: str) -> AnswerRunStatus:
+        entry = self._runs.get(run_id)
+        if entry is None or entry.visitor_key_hash != visitor_key_hash:
+            raise KeyError(run_id)
+        if entry.status.status in {"completed", "abstained", "failed"}:
+            raise AnswerRunConflict("answer run is already terminal")
+        if entry.status.status == "cancelled":
+            return entry.status
+        entry.status = entry.status.model_copy(update={"status": "cancelling"})
+        if entry.task is not None:
+            entry.task.cancel()
+        entry.status = entry.status.model_copy(
+            update={"status": "cancelled", "completed_at": self._clock()}
+        )
+        entry.queue.put_nowait(
+            SSEEventWriter(sequence=1).emit(
+                "answer.cancelled",
+                {"run_id": str(run_id), "stage": "cancelled"},
+            )
+        )
+        entry.queue.put_nowait(None)
+        return entry.status
+
+    async def stream(self, run_id: UUID, *, visitor_key_hash: str) -> AsyncIterator[str]:
+        entry = self._runs.get(run_id)
+        if entry is None or entry.visitor_key_hash != visitor_key_hash:
+            raise KeyError(run_id)
+        while True:
+            frame = await entry.queue.get()
+            if frame is None:
+                return
+            yield frame
+
+    async def _execute(self, entry: _Run, writer: SSEEventWriter) -> None:
+        entry.status = entry.status.model_copy(update={"status": "retrieving"})
+        entry.queue.put_nowait(
+            writer.emit(
+                "retrieval.started",
+                {"run_id": str(entry.run_id), "stage": "retrieving"},
+            )
+        )
+        try:
+            result = await self._graph.ainvoke(
+                {"question": entry.question, "request_id": entry.run_id}
+            )
+        except asyncio.CancelledError:
+            if entry.status.status != "cancelled":
+                entry.status = entry.status.model_copy(
+                    update={"status": "cancelled", "completed_at": self._clock()}
+                )
+                entry.queue.put_nowait(None)
+            return
+
+        answer = result.get("answer")
+        if answer is None or answer.answer_status is AnswerStatus.ABSTAINED:
+            limitations = answer.limitations if answer is not None else []
+            completed_at = self._clock()
+            entry.status = entry.status.model_copy(
+                update={
+                    "status": "abstained",
+                    "completed_at": completed_at,
+                    "answer_status": "abstained",
+                    "limitations": limitations,
+                    "retained_until": completed_at + timedelta(days=30),
+                }
+            )
+            entry.queue.put_nowait(
+                writer.emit(
+                    "answer.abstained",
+                    {
+                        "run_id": str(entry.run_id),
+                        "stage": "abstained",
+                        "limitations": limitations,
+                    },
+                )
+            )
+        else:
+            evidence_by_id = {item.id: item for item in result.get("evidence", [])}
+            citations = [
+                {
+                    "id": str(evidence_id),
+                    "evidence_id": str(evidence_id),
+                    **evidence_by_id[evidence_id].model_dump(mode="json", exclude={"id"}),
+                }
+                for evidence_id in answer.evidence_ids
+                if evidence_id in evidence_by_id
+            ]
+            claims = [claim.model_dump(mode="json") for claim in answer.claims]
+            completed_at = self._clock()
+            entry.status = entry.status.model_copy(
+                update={
+                    "status": "completed",
+                    "completed_at": completed_at,
+                    "answer_status": answer.answer_status.value,
+                    "claims": claims,
+                    "citations": citations,
+                    "limitations": answer.limitations,
+                    "retained_until": completed_at + timedelta(days=30),
+                }
+            )
+            entry.queue.put_nowait(
+                writer.emit(
+                    "answer.completed",
+                    {
+                        "run_id": str(entry.run_id),
+                        "stage": "completed",
+                        "answer_status": answer.answer_status.value,
+                        "claims": [claim.model_dump(mode="json") for claim in answer.claims],
+                        "citations": citations,
+                        "limitations": answer.limitations,
+                    },
+                )
+            )
+        entry.queue.put_nowait(None)
