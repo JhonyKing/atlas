@@ -234,13 +234,13 @@ implementadas.
 - [X] NEWS-001 Ejecutar `/speckit.specify` para la sección de noticia diaria con evidencia y atribución.
 - [X] NEWS-002 Definir “día anterior” como ventana de calendario UTC cerrada y mostrar timezone/fecha en la UI.
 - [X] NEWS-003 Crear una allowlist versionada de feeds RSS/Atom y páginas públicas con publisher, licencia y política de robots.
-- [ ] NEWS-004 Implementar fetch con timeout, límites de tamaño, redirecciones seguras, validación de fecha y deduplicación por URL/hash.
-- [ ] NEWS-005 Normalizar título, resumen acotado, publisher, autor, URL canónica, fecha de publicación y fecha de captura sin almacenar el artículo completo.
+- [X] NEWS-004 Implementar fetch con timeout, límites de tamaño, redirecciones seguras, validación de fecha y deduplicación por URL/hash.
+- [X] NEWS-005 Normalizar título, resumen acotado, publisher, autor, URL canónica, fecha de publicación y fecha de captura sin almacenar el artículo completo.
 - [X] NEWS-006 Definir ranking auditable de importancia usando recencia, autoridad, cobertura independiente y relevancia temática; no afirmar “más importante” sin señales suficientes.
 - [X] NEWS-007 Implementar salida `unavailable` cuando no haya una noticia verificable de la ventana, en vez de inventar o rellenar con noticias antiguas.
 - [X] NEWS-008 Añadir endpoint y contrato OpenAPI para obtener la noticia diaria con estado, fecha, fuente y citas.
 - [X] NEWS-009 Añadir componente bilingüe `/en` y `/es` que traduzca la interfaz pero conserve título/extracto original etiquetado y URL de la fuente.
-- [ ] NEWS-010 Añadir tests de ventana temporal, timezone, duplicados, feed caído, contenido malicioso y ausencia de evidencia.
+- [X] NEWS-010 Añadir tests de ventana temporal, timezone, duplicados, feed caído, contenido malicioso y ausencia de evidencia.
 - [ ] NEWS-011 Añadir tracing y métricas de freshness, cobertura de feeds, latencia, errores y ranking sin PII.
 - [ ] NEWS-012 Documentar límites editoriales, derechos de autor, correcciones/takedown y evidencia de una ejecución real.
 
