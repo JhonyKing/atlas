@@ -185,6 +185,8 @@ def _comparison_service(
         ),
         repository=InMemoryComparisonRepository(),
         snapshot_provider=lambda: corpus_service.get_status().snapshot_id,
+        trace_sink=LangSmithTraceSink.from_settings(settings),
+        model=settings.atlas_answer_model,
     )
 
 

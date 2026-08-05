@@ -10,12 +10,14 @@ from uuid import UUID, uuid4
 
 from atlas.api.routes.comparisons import ComparisonRunResponse
 from atlas.comparison.events import ComparisonEventWriter
+from atlas.comparison.observability import ComparisonTraceTree
 from atlas.comparison.schemas import (
     ComparisonMatrix,
     ComparisonRequest,
     ComparisonRun,
     ComparisonRunStatus,
 )
+from atlas.observability.langsmith import NullTraceSink, TraceSink
 from atlas.persistence.comparison_quota import ComparisonQuotaService
 from atlas.persistence.comparison_repository import InMemoryComparisonRepository
 
@@ -51,12 +53,16 @@ class InMemoryComparisonRunService:
         snapshot_provider: Callable[[], UUID],
         executor: ComparisonExecutor | None = None,
         clock: Callable[[], datetime] | None = None,
+        trace_sink: TraceSink | None = None,
+        model: str = "gpt-5.6-luna",
     ) -> None:
         self._quota = quota
         self._repository = repository
         self._snapshot_provider = snapshot_provider
         self._executor = executor
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._trace_sink = trace_sink or NullTraceSink()
+        self._model = model
         self._entries: dict[UUID, _Entry] = {}
         self._idempotency: dict[tuple[str, str], UUID] = {}
         self._lock = asyncio.Lock()
@@ -140,6 +146,17 @@ class InMemoryComparisonRunService:
             yield frame
 
     async def _execute(self, entry: _Entry, writer: ComparisonEventWriter) -> None:
+        trace_tree = ComparisonTraceTree.start(
+            self._trace_sink,
+            request_id=entry.run.request_id,
+            run_id=entry.run.run_id,
+            locale=entry.comparison.language,
+            technology_count=len(entry.comparison.technologies),
+            criterion_count=len(entry.comparison.criteria),
+            snapshot_id=entry.run.snapshot_id,
+            model=self._model,
+            quota_limit=5,
+        )
         if self._executor is None:
             entry.run = entry.run.model_copy(
                 update={"status": ComparisonRunStatus.FAILED, "completed_at": self._clock()}
@@ -149,15 +166,20 @@ class InMemoryComparisonRunService:
                     "comparison.failed", {"status": "failed", "reason": "executor_unavailable"}
                 )
             )
+            trace_tree.end(status="failed")
             entry.queue.put_nowait(None)
             return
         try:
+            retrieval_trace = trace_tree.start_stage("retrieval")
             matrix = await self._executor.run(
                 entry.comparison,
                 snapshot_id=entry.run.snapshot_id,
                 is_cancelled=lambda: entry.cancelled,
             )
             self._repository.save_matrix(entry.run.run_id, matrix)
+            self._trace_sink.end(retrieval_trace, status="completed")
+            verification_trace = trace_tree.start_stage("verification")
+            self._trace_sink.end(verification_trace, status="completed")
             entry.matrix = matrix
             entry.run = entry.run.model_copy(
                 update={"status": ComparisonRunStatus.COMPLETED, "completed_at": self._clock()}
@@ -168,7 +190,9 @@ class InMemoryComparisonRunService:
                     {"status": "completed", "matrix": matrix.model_dump(mode="json")},
                 )
             )
+            trace_tree.end(status="completed", matrix_cell_count=len(matrix.cells))
         except asyncio.CancelledError:
+            trace_tree.end(status="cancelled")
             return
         except Exception:
             entry.run = entry.run.model_copy(
@@ -177,6 +201,7 @@ class InMemoryComparisonRunService:
             entry.queue.put_nowait(
                 writer.emit("comparison.failed", {"status": "failed", "reason": "workflow_failed"})
             )
+            trace_tree.end(status="failed")
         finally:
             entry.queue.put_nowait(None)
 
