@@ -1,5 +1,10 @@
 """Evidence-backed technology comparison contracts."""
 
+from .retrieval import (
+    ComparisonRetrievalBranch,
+    ComparisonRetrievalService,
+    CorpusComparisonBranchRetriever,
+)
 from .schemas import (
     ComparisonCell,
     ComparisonCellState,
@@ -16,6 +21,9 @@ __all__ = [
     "ComparisonCriterion",
     "ComparisonMatrix",
     "ComparisonRequest",
+    "ComparisonRetrievalBranch",
+    "ComparisonRetrievalService",
     "ComparisonRun",
     "ComparisonRunStatus",
+    "CorpusComparisonBranchRetriever",
 ]

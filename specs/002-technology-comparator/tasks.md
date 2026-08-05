@@ -19,8 +19,8 @@ implement the smallest change that makes it pass.
 - [X] T007 Implement versioned comparison tables, indexes, retention and evidence foreign keys in `database/migrations/versions/` to satisfy T006. (Evidence: migration `0012_comparisons`; Alembic upgrade and `psql -f database/tests/006_comparisons.sql` pass against local PostgreSQL.)
 - [X] T008 [P] Write failing comparison-quota tests for five accepted runs, rolling expiry, idempotency and visitor isolation in `apps/backend/tests/integration/security/test_comparison_quota.py`. (Evidence: three integration tests cover five-run limit, sixth-run denial, rolling expiry, repeat safety and visitor isolation.)
 - [X] T009 Implement the separate comparison quota reservation in `apps/backend/src/atlas/persistence/comparison_quota.py` and `database/functions/reserve_comparison_quota.sql` to satisfy T008. (Evidence: in-memory and PostgreSQL repositories plus migration `0013_comparison_quota`; local SQL smoke test accepted five and denied the sixth.)
-- [ ] T010 [P] Write failing retrieval fan-out tests for independent technology filters, selected snapshot and deterministic branch ordering in `apps/backend/tests/unit/comparison/test_retrieval.py`.
-- [ ] T011 Implement the comparison retrieval port and fan-out service in `apps/backend/src/atlas/comparison/retrieval.py` to satisfy T010 using the existing corpus repository.
+- [X] T010 [P] Write failing retrieval fan-out tests for independent technology filters, selected snapshot and deterministic branch ordering in `apps/backend/tests/unit/comparison/test_retrieval.py`. (Evidence: two async tests verify four ordered branches, shared immutable snapshot, independent filters and no cross-technology evidence.)
+- [X] T011 Implement the comparison retrieval port and fan-out service in `apps/backend/src/atlas/comparison/retrieval.py` to satisfy T010 using the existing corpus repository. (Evidence: deterministic `asyncio.gather` fan-out, per-branch constraints, stable de-duplication and corpus adapter; 11 targeted tests pass.)
 
 ## Phase 3: User Story 1 - Compare Selected Technologies (Priority: P1)
 
