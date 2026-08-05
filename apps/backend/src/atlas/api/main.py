@@ -105,6 +105,11 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
     settings = get_settings()
     if settings.atlas_env == "development":
         corpus_service = _verified_corpus_or_demo(settings)
+        corpus_snapshot = (
+            str(corpus_service.get_status().snapshot_id)
+            if isinstance(corpus_service, PostgresCorpusStatusRepository)
+            else "demo-unverified"
+        )
         real_provider = use_real_provider if use_real_provider is not None else bool(
             settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
         )
@@ -136,7 +141,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                         f"{settings.atlas_embedding_model}:{settings.atlas_embedding_dimensions}"
                     ),
                     "application_version": "0.1.0",
-                    "corpus_snapshot": "demo-unverified",
+                    "corpus_snapshot": corpus_snapshot,
                 },
             ),
             corpus_service=corpus_service,
