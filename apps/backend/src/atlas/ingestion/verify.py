@@ -19,7 +19,7 @@ _QUERY = """
     JOIN atlas.sources AS s ON s.collection_id = c.id
     JOIN atlas.source_versions AS sv ON sv.id = s.current_version_id
     LEFT JOIN atlas.chunks AS ch ON ch.source_version_id = sv.id
-    WHERE (%s IS NULL OR c.slug = %s)
+    WHERE (%s::text IS NULL OR c.slug = %s::text)
     GROUP BY c.slug, s.id, s.canonical_url, sv.id, sv.page_count, sv.byte_size,
              sv.content_sha256, sv.language, sv.ocr_used
     ORDER BY c.slug, s.canonical_url

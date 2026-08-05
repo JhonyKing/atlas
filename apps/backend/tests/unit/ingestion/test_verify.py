@@ -1,6 +1,13 @@
 from uuid import UUID
 
-from atlas.ingestion.verify import summarize_rows
+from atlas.ingestion.verify import _QUERY, summarize_rows
+
+
+def test_verification_query_types_optional_collection_filter() -> None:
+    """The unfiltered report must bind NULL parameters on PostgreSQL."""
+
+    assert "%s::text IS NULL" in _QUERY
+    assert "c.slug = %s::text" in _QUERY
 
 
 def test_verification_report_aggregates_pages_bytes_hashes_and_chunks() -> None:

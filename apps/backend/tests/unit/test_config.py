@@ -36,6 +36,13 @@ def test_safe_defaults_select_the_approved_portfolio_baseline() -> None:
     assert settings.atlas_content_retention_days == 30
 
 
+def test_blank_optional_langsmith_values_are_treated_as_unset() -> None:
+    settings = Settings(langsmith_endpoint="", langsmith_workspace_id="  ")
+
+    assert settings.langsmith_endpoint is None
+    assert settings.langsmith_workspace_id is None
+
+
 def test_production_rejects_missing_runtime_secrets() -> None:
     with pytest.raises(ValidationError, match="Production configuration requires"):
         Settings(atlas_env="production")

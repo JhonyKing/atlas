@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal, TypedDict
 
-from pydantic import AnyHttpUrl, Field, SecretStr, model_validator
+from pydantic import AnyHttpUrl, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -57,6 +57,15 @@ class Settings(BaseSettings):
     atlas_anonymous_answer_limit: int = Field(default=10, ge=1)
     atlas_anonymous_window_hours: int = Field(default=24, ge=1)
     atlas_content_retention_days: int = Field(default=30, ge=1)
+
+    @field_validator("langsmith_endpoint", "langsmith_workspace_id", mode="before")
+    @classmethod
+    def blank_optional_langsmith_values(cls, value: object) -> object:
+        """Treat empty values in local dotenv files as unset optional settings."""
+
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
 
     @model_validator(mode="after")
     def require_production_secrets(self) -> "Settings":
