@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
 from atlas.api.routes.feedback import FeedbackExpired, FeedbackNotFound
+from atlas.persistence.review_cases import InMemoryReviewCaseService
 
 RUN_ID = UUID("00000000-0000-0000-0000-000000000456")
 MISSING_RUN_ID = UUID("00000000-0000-0000-0000-000000000457")
@@ -31,8 +32,9 @@ class FakeFeedbackService:
         self.saved[(run_id, visitor_key_hash)] = dict(feedback)
 
 
-def app_and_service() -> tuple[TestClient, FakeFeedbackService]:
+def app_and_service() -> tuple[TestClient, FakeFeedbackService, InMemoryReviewCaseService]:
     service = FakeFeedbackService()
+    review_service = InMemoryReviewCaseService()
 
     async def database_probe() -> bool:
         return True
@@ -40,13 +42,14 @@ def app_and_service() -> tuple[TestClient, FakeFeedbackService]:
     application = create_app(
         database_probe=database_probe,
         feedback_service=service,
+        review_case_service=review_service,
         visitor_hmac_secret="test-visitor-secret",
     )
-    return TestClient(application), service
+    return TestClient(application), service, review_service
 
 
 def test_retained_answer_feedback_returns_no_content() -> None:
-    client, service = app_and_service()
+    client, service, _ = app_and_service()
 
     response = client.put(
         f"/v1/answers/{RUN_ID}/feedback",
@@ -59,7 +62,7 @@ def test_retained_answer_feedback_returns_no_content() -> None:
 
 
 def test_missing_answer_feedback_is_not_found() -> None:
-    client, _ = app_and_service()
+    client, _, _ = app_and_service()
 
     response = client.put(
         f"/v1/answers/{MISSING_RUN_ID}/feedback",
@@ -72,7 +75,7 @@ def test_missing_answer_feedback_is_not_found() -> None:
 
 
 def test_expired_answer_feedback_returns_retention_expired() -> None:
-    client, _ = app_and_service()
+    client, _, _ = app_and_service()
 
     response = client.put(
         f"/v1/answers/{EXPIRED_RUN_ID}/feedback",
@@ -84,7 +87,7 @@ def test_expired_answer_feedback_returns_retention_expired() -> None:
 
 
 def test_feedback_put_replaces_the_current_visitor_value_idempotently() -> None:
-    client, service = app_and_service()
+    client, service, review_service = app_and_service()
     visitor_cookie = {"atlas_visitor": "v" * 32}
 
     first = client.put(
@@ -104,3 +107,7 @@ def test_feedback_put_replaces_the_current_visitor_value_idempotently() -> None:
     saved = next(iter(service.saved.values()))
     assert saved["label"] == "not_useful"
     assert saved["category"] == "incorrect_citation"
+    cases = review_service.list_cases()
+    assert len(cases) == 1
+    assert cases[0].answer_run_id == RUN_ID
+    assert cases[0].category == "incorrect_citation"

@@ -33,3 +33,21 @@ IDs, versiones, tamaños, contadores, estados, latencias y clases de coste.
 - Rota las claves con caducidad y elimina las claves antiguas desde LangSmith.
 - Guarda en el repositorio sólo nombres de proyecto, versiones, resultados agregados y esta guía.
 
+## Retención, borrado y rotación
+
+Antes de borrar o retener datos, confirma el proyecto, el intervalo UTC y el
+motivo en el registro operativo. El procedimiento mínimo es:
+
+1. Exporta sólo agregados necesarios para el informe; no exportes inputs/outputs.
+2. Aplica la política de 30 días del PRD a contenido anónimo y conserva únicamente
+   identificadores/versiones necesarios para auditoría.
+3. Ejecuta la eliminación en el workspace correcto y verifica que el conteo
+   posterior coincide con el intervalo solicitado.
+4. Revoca la clave anterior, crea la nueva en el gestor de secretos, actualiza
+   el despliegue y ejecuta el smoke test opt-in.
+5. Confirma que el fallback no-op mantiene la API disponible si el proveedor
+   externo no responde.
+
+Lista de comprobación de redacción: `question`, `answer`, `prompt`, `evidence`,
+`excerpt`, `authorization`, `cookie`, API keys, tokens, emails y comentarios de
+usuario no deben aparecer en trazas externas por defecto.

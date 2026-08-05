@@ -63,7 +63,7 @@ deben quedar trazadas antes de declarar el producto listo:
 | Corpus real de múltiples documentos/páginas, OCR y harness separado | PRD-002, PRD-011, PRD-012, PRD-015, PRD-021 | 014 | COR-001–COR-014, EVA-013–EVA-016 |
 | Noticia verificable del día anterior | PRD-001, PRD-004, PRD-005, PRD-011, PRD-022 | 015 | NEWS-001–NEWS-012 |
 
-El conteo actualizado del backlog maestro es **192 tareas totales: 165 abiertas y 27 marcadas como
+El conteo actualizado del backlog maestro es **192 tareas totales: 163 abiertas y 29 marcadas como
 completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 9 abiertas y
 79 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
 Estas cifras no deben sumarse porque representan niveles distintos de planificación.

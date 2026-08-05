@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from contextlib import suppress
 from typing import Annotated, Literal, Protocol
 from uuid import UUID, uuid4
 
@@ -11,6 +12,7 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from atlas.observability.context import current_request_id
+from atlas.persistence.review_cases import ReviewCategory
 
 router = APIRouter(prefix="/v1/answers", tags=["Feedback"])
 
@@ -51,6 +53,16 @@ class FeedbackControl(Protocol):
     ) -> None: ...
 
 
+class ReviewCaseControl(Protocol):
+    async def enqueue(
+        self,
+        answer_run_id: UUID,
+        *,
+        category: ReviewCategory,
+        label: Literal["useful", "not_useful"],
+    ) -> object: ...
+
+
 def _service(request: Request) -> FeedbackControl:
     service = request.app.state.feedback_service
     if service is None:
@@ -89,6 +101,14 @@ async def put_feedback(request: Request, run_id: UUID, body: FeedbackRequest) ->
             visitor_key_hash=_visitor_hash(request),
             feedback=body.model_dump(mode="json"),
         )
+        review_service: ReviewCaseControl | None = request.app.state.review_case_service
+        if body.category == "incorrect_citation" and review_service is not None:
+            with suppress(Exception):
+                await review_service.enqueue(
+                    run_id,
+                    category=body.category,
+                    label=body.label,
+                )
     except FeedbackNotFound:
         return _problem(
             request,

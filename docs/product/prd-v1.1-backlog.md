@@ -207,9 +207,9 @@ implementadas.
 - [X] OBS-009 Añadir smoke test opt-in contra LangSmith que verifique creación de un trace y lo marque como prueba, sin incluir secretos en logs.
 - [ ] OBS-010 Conectar feedback negativo e “incorrect citation” a una cola de revisión y a un dataset de casos difíciles.
 - [X] OBS-011 Definir datasets de evaluación versionados y el enlace entre dataset, experimento, trace y commit.
-- [ ] OBS-012 Crear dashboards privados de latencia, coste, error, abstención, citas y feedback segmentados por locale, colección y versión.
+- [X] OBS-012 Crear dashboards privados de latencia, coste, error, abstención, citas y feedback segmentados por locale, colección y versión.
 - [ ] OBS-013 Añadir comparación A/B de prompts, retrievers y modelos con tags reproducibles y criterio de promoción.
-- [ ] OBS-014 Documentar retención, borrado de trazas y procedimiento de redacción/rotación de claves.
+- [X] OBS-014 Documentar retención, borrado de trazas y procedimiento de redacción/rotación de claves.
 - [ ] OBS-015 Publicar evidencia de observabilidad para el portafolio: diagrama, captura sin PII, métricas y limitaciones verificadas.
 
 ## 014 — Corpus real ampliado y harness de evaluación
