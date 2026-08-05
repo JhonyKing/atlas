@@ -147,6 +147,7 @@ async def test_contradictory_claim_abstains_with_disagreement_notice() -> None:
     assert answer_of(result).answer_status is AnswerStatus.ABSTAINED
     assert error_of(result).code is ErrorCode.CITATION_VERIFICATION_FAILED
     assert "contradict" in answer_of(result).limitations[0].lower()
+    assert "2026-08-04" in answer_of(result).limitations[0]
 
 
 @pytest.mark.asyncio

@@ -71,9 +71,22 @@ def verify_draft(
             )
         verification_status = getattr(claim, "verification_status", VerificationStatus.SUPPORTED)
         if verification_status is VerificationStatus.CONTRADICTED:
+            dates = sorted(
+                {
+                    (
+                        evidence_by_id[evidence_id].published_at
+                        or evidence_by_id[evidence_id].captured_at
+                    )
+                    .date()
+                    .isoformat()
+                    for evidence_id in claim.citation_ids
+                }
+            )
+            date_suffix = f" (source dates: {', '.join(dates)})" if dates else ""
             return _failure(
                 ErrorCode.CITATION_VERIFICATION_FAILED,
-                "Credible sources contradict this claim; ATLAS will not choose silently.",
+                "Credible sources contradict this claim"
+                f"{date_suffix}; ATLAS will not choose silently.",
                 request,
             )
         if verification_status is VerificationStatus.UNSUPPORTED:
