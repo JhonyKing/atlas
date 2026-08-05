@@ -1,0 +1,587 @@
+openapi: 3.1.0
+info:
+  title: ATLAS AI Cited Answer API
+  version: 0.1.0
+  description: Contract for feature 001-cited-answer. All public content is English.
+servers:
+  - url: /api
+tags:
+  - name: Health
+  - name: Corpus
+  - name: Answers
+  - name: Feedback
+  - name: Operator
+
+paths:
+  /healthz:
+    get:
+      tags: [Health]
+      operationId: getHealth
+      responses:
+        "200":
+          description: Process and required database dependency are ready to accept requests.
+          headers:
+            X-Request-ID:
+              $ref: "#/components/headers/RequestId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+        "503":
+          description: Process is alive but a required dependency is not ready.
+          headers:
+            X-Request-ID:
+              $ref: "#/components/headers/RequestId"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /v1/corpus:
+    get:
+      tags: [Corpus]
+      operationId: getCorpusStatus
+      summary: Publish the supported corpus and freshness status.
+      responses:
+        "200":
+          description: Current public corpus status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorpusStatus"
+
+  /v1/answers:
+    post:
+      tags: [Answers]
+      operationId: streamCitedAnswer
+      summary: Reserve quota and stream progress toward a verified answer or abstention.
+      description: |
+        The response is a server-sent event stream defined by answer-events.md. Claim text and
+        citations are emitted only in the terminal verified event. Disconnecting cancels active
+        processing. Only accepted requests consume the anonymous cited-answer quota.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskQuestionRequest"
+      responses:
+        "200":
+          description: SSE progress stream. `X-Atlas-Run-ID` identifies the reserved run.
+          headers:
+            X-Atlas-Run-ID:
+              required: true
+              schema:
+                type: string
+                format: uuid
+            X-Request-ID:
+              required: true
+              schema:
+                type: string
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: UTF-8 SSE frames defined in answer-events.md.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Idempotency key was reused with a different question.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "429":
+          description: Anonymous visitor has already consumed 10 accepted questions in 24 hours.
+          headers:
+            Retry-After:
+              required: true
+              schema:
+                type: integer
+                minimum: 1
+              description: Seconds until the oldest counted usage event exits the window.
+          content:
+            application/problem+json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Problem"
+                  - type: object
+                    required: [retry_at]
+                    properties:
+                      retry_at:
+                        type: string
+                        format: date-time
+        "503":
+          description: Corpus is unavailable or the global model budget circuit breaker is open.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /v1/answers/{run_id}:
+    parameters:
+      - $ref: "#/components/parameters/RunId"
+    get:
+      tags: [Answers]
+      operationId: getCitedAnswer
+      summary: Retrieve a retained terminal answer or abstention.
+      responses:
+        "200":
+          description: Terminal run with verified public content.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnswerResult"
+        "202":
+          description: Run is still active.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunStatus"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          description: Retained content has expired and was deleted.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+    delete:
+      tags: [Answers]
+      operationId: cancelCitedAnswer
+      summary: Request cancellation of an active run owned by the anonymous visitor cookie.
+      responses:
+        "202":
+          description: Cancellation accepted, or the run was already cancelling or cancelled; repeating this request creates no additional effect.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunStatus"
+        "409":
+          description: Run already completed, abstained, or failed before cancellation could take effect.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/answers/{run_id}/feedback:
+    parameters:
+      - $ref: "#/components/parameters/RunId"
+    put:
+      tags: [Feedback]
+      operationId: putAnswerFeedback
+      summary: Create or replace the current visitor's feedback for a retained answer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackRequest"
+      responses:
+        "204":
+          description: Feedback saved.
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          description: The answer content and feedback window have expired.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: Feedback category is missing or invalid for the selected label.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /v1/operator/ingestion-runs:
+    post:
+      tags: [Operator]
+      operationId: enqueueIngestionRun
+      summary: Enqueue an on-demand refresh using the same durable path as the daily schedule.
+      security:
+        - OperatorBearer: []
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [collection]
+              properties:
+                collection:
+                  $ref: "#/components/schemas/CollectionSlug"
+      responses:
+        "202":
+          description: Refresh was queued or the matching idempotent run already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestionRunStatus"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Idempotency key conflicts with another collection.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /v1/operator/ingestion-runs/{ingestion_run_id}:
+    get:
+      tags: [Operator]
+      operationId: getIngestionRun
+      security:
+        - OperatorBearer: []
+      parameters:
+        - name: ingestion_run_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Current ingestion status and bounded summary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IngestionRunStatus"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  headers:
+    RequestId:
+      description: Stable identifier for correlating this request without exposing visitor data.
+      required: true
+      schema:
+        type: string
+
+  securitySchemes:
+    OperatorBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque operator credential
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 128
+        pattern: "^[A-Za-z0-9._:-]+$"
+    RunId:
+      name: run_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Question is empty, too long, or otherwise invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: The resource does not exist or is not owned by the visitor.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Operator authentication is missing or invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+  schemas:
+    HealthStatus:
+      type: object
+      additionalProperties: false
+      required: [status, checks]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        checks:
+          type: object
+          additionalProperties: false
+          required: [database]
+          properties:
+            database:
+              type: string
+              enum: [ready, unavailable]
+
+    CollectionSlug:
+      type: string
+      enum: [langgraph, langchain, openai]
+
+    CorpusStatus:
+      type: object
+      additionalProperties: false
+      required: [snapshot_id, generated_at, collections]
+      properties:
+        snapshot_id:
+          type: string
+          format: uuid
+        generated_at:
+          type: string
+          format: date-time
+        collections:
+          type: array
+          minItems: 3
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/CollectionStatus"
+
+    CollectionStatus:
+      type: object
+      additionalProperties: false
+      required: [slug, name, publisher, source_types, status]
+      properties:
+        slug:
+          $ref: "#/components/schemas/CollectionSlug"
+        name:
+          type: string
+        publisher:
+          type: string
+        source_types:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            enum: [documentation, changelog, release_note]
+        status:
+          type: string
+          enum: [ready, stale, refreshing, unavailable]
+        last_success_at:
+          type: [string, "null"]
+          format: date-time
+        last_attempt_at:
+          type: [string, "null"]
+          format: date-time
+        canonical_root:
+          type: string
+          format: uri
+
+    AskQuestionRequest:
+      type: object
+      additionalProperties: false
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 3
+          maxLength: 2000
+        product:
+          oneOf:
+            - $ref: "#/components/schemas/CollectionSlug"
+            - type: "null"
+        version:
+          type: [string, "null"]
+          maxLength: 64
+        date_from:
+          type: [string, "null"]
+          format: date
+        date_to:
+          type: [string, "null"]
+          format: date
+
+    RunStatus:
+      type: object
+      additionalProperties: false
+      required: [run_id, status, created_at]
+      properties:
+        run_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [accepted, retrieving, composing, verifying, completed, abstained, cancelling, cancelled, failed]
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: [string, "null"]
+          format: date-time
+
+    AnswerResult:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/RunStatus"
+        - type: object
+          required: [answer_status, claims, citations, limitations, retained_until]
+          properties:
+            answer_status:
+              type: string
+              enum: [complete, partial, abstained]
+            claims:
+              type: array
+              items:
+                $ref: "#/components/schemas/Claim"
+            citations:
+              type: array
+              items:
+                $ref: "#/components/schemas/Citation"
+            limitations:
+              type: array
+              items:
+                type: string
+            retained_until:
+              type: string
+              format: date-time
+
+    Claim:
+      type: object
+      additionalProperties: false
+      required: [id, ordinal, text, type, citation_ids]
+      properties:
+        id:
+          type: string
+          format: uuid
+        ordinal:
+          type: integer
+          minimum: 0
+        text:
+          type: string
+        type:
+          type: string
+          enum: [factual, inference]
+        citation_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+
+    Citation:
+      type: object
+      additionalProperties: false
+      required: [id, evidence_id, source_title, publisher, canonical_url, excerpt, captured_at, source_type]
+      properties:
+        id:
+          type: string
+          format: uuid
+        evidence_id:
+          type: string
+          format: uuid
+        source_title:
+          type: string
+        publisher:
+          type: string
+        canonical_url:
+          type: string
+          format: uri
+        source_revision_url:
+          type: [string, "null"]
+          format: uri
+        anchor:
+          type: [string, "null"]
+        excerpt:
+          type: string
+        captured_at:
+          type: string
+          format: date-time
+        published_at:
+          type: [string, "null"]
+          format: date-time
+        version_label:
+          type: [string, "null"]
+        source_type:
+          type: string
+          enum: [documentation, changelog, release_note]
+
+    FeedbackRequest:
+      type: object
+      additionalProperties: false
+      required: [label]
+      properties:
+        label:
+          type: string
+          enum: [useful, not_useful]
+        category:
+          type: [string, "null"]
+          enum: [incorrect_citation, incorrect_answer, outdated, incomplete, other, null]
+        comment:
+          type: [string, "null"]
+          maxLength: 1000
+
+    IngestionRunStatus:
+      type: object
+      additionalProperties: false
+      required: [id, collection, trigger, status, requested_at, attempt_count]
+      properties:
+        id:
+          type: string
+          format: uuid
+        collection:
+          $ref: "#/components/schemas/CollectionSlug"
+        trigger:
+          type: string
+          enum: [scheduled, operator]
+        status:
+          type: string
+          enum: [queued, running, succeeded, partial, failed, dead_letter]
+        requested_at:
+          type: string
+          format: date-time
+        started_at:
+          type: [string, "null"]
+          format: date-time
+        completed_at:
+          type: [string, "null"]
+          format: date-time
+        attempt_count:
+          type: integer
+          minimum: 0
+        discovered_count:
+          type: integer
+          minimum: 0
+        promoted_count:
+          type: integer
+          minimum: 0
+        failed_count:
+          type: integer
+          minimum: 0
+        error_code:
+          type: [string, "null"]
+
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail, request_id]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        request_id:
+          type: string
+        error_code:
+          type: string
