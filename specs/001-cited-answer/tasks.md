@@ -174,7 +174,7 @@ abstention.
 - [X] T071 Create the evaluation CLI and CI regression gate in `apps/backend/src/atlas/evaluation/cli.py` and `.github/workflows/evals.yml`, recording model, prompt, retrieval, embedding, corpus snapshot, latency, tokens, cost, and required thresholds
 - [X] T072 [P] Add load/limit/cancellation checks for portfolio launch SLOs in `apps/backend/tests/load/` without asserting 10k/100k-user capacity
 - [X] T073 [P] Document architecture, graph, data flow, privacy/threat model, and measured trade-offs in `docs/architecture/001-cited-answer.md`, `docs/adr/`, and `docs/runbooks/`
-- [ ] T078 [P] [US1] Write failing locale-parity, locale-switch, persisted-preference, and language-independent-claim tests in `apps/web/src/i18n/`, `apps/web/src/features/cited-answer/__tests__/`, and `apps/web/tests/e2e/`
+- [X] T078 [P] [US1] Write failing locale-parity, locale-switch, persisted-preference, and language-independent-claim tests in `apps/web/src/i18n/`, `apps/web/src/features/cited-answer/__tests__/`, and `apps/web/tests/e2e/`
 - [X] T079 [US1] Implement versioned `en-US` and `es-MX` message catalogs, `/en` and `/es` locale routing, persisted preference, accessible switch labels, and locale-aware date/number formatting in `apps/web/src/i18n/` and `apps/web/src/app/`
 - [X] T080 [US1] Implement locale propagation through the answer request and Spanish controlled-error/status copy in `apps/web/src/features/cited-answer/api.ts`, `apps/backend/src/atlas/api/`, and `specs/001-cited-answer/contracts/openapi.yaml`
 - [X] T081 [US1] Replace hardcoded public English strings in `apps/web/src/features/cited-answer/`, `apps/web/src/features/evidence/`, and `apps/web/src/features/corpus/` with catalog keys and label original-language evidence excerpts
@@ -296,6 +296,6 @@ The post-implementation review found these remaining gaps. They are appended rat
 earlier tasks, following the Spec Kit convergence contract.
 
 - [ ] T085 Wire the development/runtime corpus provider to a verified PostgreSQL snapshot when one exists, keep demo evidence visibly non-ready, and add an integration test for the transition per FR-002, FR-018, and SC-009 (partial).
-- [ ] T086 Add Playwright locale-route and citation-parity coverage, including `/en`, `/es`, persisted preference, and original-language evidence labels per FR-023, FR-024, SC-013, and SC-014 (missing).
+- [X] T086 Add Playwright locale-route and citation-parity coverage, including `/en`, `/es`, persisted preference, and original-language evidence labels per FR-023, FR-024, SC-013, and SC-014.
 - [ ] T087 Execute and record the seven-day refresh, quickstart, and five-person usability evidence required by T074–T076 before calling the vertical slice complete per SC-007 and SC-009 (missing).
 - [ ] T088 Add a complete metadata-tag test for model, prompt, retrieval, embedding, application, locale, and corpus versions in the LangSmith sink per Principle VII and the Plan Maestro observability addendum (partial).

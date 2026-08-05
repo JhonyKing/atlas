@@ -65,5 +65,5 @@ test("explicit cancellation calls the repeat-safe DELETE endpoint", async ({ pag
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
   await page.getByRole("button", { name: "Cancel request" }).click();
 
-  await expect(page.getByRole("status")).toContainText("Cancellation requested");
+  await expect(page.getByRole("status")).toContainText("Cancelled");
 });

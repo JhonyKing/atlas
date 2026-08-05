@@ -25,7 +25,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | ID PRD | Requisito verificable | Sección/fuente | Feature Spec Kit | Estado actual | Evidencia/tarea |
 |---|---|---|---|---|---|
 | PRD-001 | Producto público de investigación técnica con evidencia | 1–3 | 001 | Parcial | T037–T050; falta completar runtime real |
-| PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Corregido en spec; implementación pendiente | T078–T081 |
+| PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
 | PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
 | PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | No iniciado | Backlog CMP-001–CMP-009 |
@@ -64,8 +64,8 @@ deben quedar trazadas antes de declarar el producto listo:
 | Noticia verificable del día anterior | PRD-001, PRD-004, PRD-005, PRD-011, PRD-022 | 015 | NEWS-001–NEWS-012 |
 
 El conteo actualizado del backlog maestro es **192 tareas totales: 159 abiertas y 33 marcadas como
-completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 9 abiertas y
-79 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
+completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 7 abiertas y
+81 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
 Estas cifras no deben sumarse porque representan niveles distintos de planificación.
 
 ## Regla de entrega
