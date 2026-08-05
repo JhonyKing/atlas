@@ -14,6 +14,21 @@ body {
 }
 
 main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
+.corpus-status { border: 1px solid #d6dce7; border-radius: .75rem; padding: 1rem; margin: 0 auto 3rem; background: white; }
+.corpus-status-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+.corpus-status h2 { margin: .25rem 0 0; }
+.corpus-snapshot, .corpus-date { color: #4b5568; font-size: .9rem; }
+.corpus-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; list-style: none; padding: 0; margin: 1rem 0 0; }
+.corpus-card { border: 1px solid #d6dce7; border-radius: .65rem; padding: .85rem; }
+.corpus-card h3 { margin: 0; }
+.corpus-card p { margin: .5rem 0; }
+.corpus-card-title { display: flex; justify-content: space-between; gap: .5rem; align-items: center; }
+.corpus-badge { border-radius: 999px; padding: .2rem .5rem; font-size: .8rem; font-weight: 700; }
+.corpus-ready { color: #155b36; background: #dff5e7; }
+.corpus-stale, .corpus-refreshing { color: #7a4b00; background: #fff0c7; }
+.corpus-unavailable { color: #8b2525; background: #fde4e4; }
+.corpus-card a { color: #3542b5; font-weight: 700; }
+.corpus-status-message { margin: 0 auto 2rem; color: #4b5568; font-weight: 700; }
 .answer-shell { max-width: 48rem; margin: 0 auto; }
 .eyebrow { color: #5865d8; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 h1 { font-size: clamp(2.5rem, 8vw, 5rem); line-height: .95; max-width: 10ch; margin: 1rem 0; }
