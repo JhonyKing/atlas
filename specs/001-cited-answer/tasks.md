@@ -45,8 +45,8 @@ application source beyond scaffolding.
 - [X] T009 Implement validated settings, safe defaults, and secret-redacted representations in `apps/backend/src/atlas/config.py` and `apps/web/src/lib/env.ts` to satisfy T008
 - [X] T010 [P] Write failing API health contract tests for `GET /healthz`, including database-ready and dependency-degraded responses, in `apps/backend/tests/contract/api/test_health.py`
 - [X] T011 Implement the FastAPI application factory and `GET /healthz` route in `apps/backend/src/atlas/api/main.py` and `apps/backend/src/atlas/api/routes/health.py` to satisfy T010 without leaking credentials or internal exception details
-- [ ] T012 [P] Write failing database extension, role, RLS/grant, and schema contract tests in `database/tests/001_foundation.sql`
-- [ ] T013 Implement versioned Alembic/PostgreSQL migrations for schemas, least-privilege roles, `vector`, `pgmq`, `pg_cron`, and common timestamp/UUID helpers in `database/migrations/` to satisfy T012
+- [X] T012 [P] Write failing database extension, role, RLS/grant, and schema contract tests in `database/tests/001_foundation.sql`
+- [X] T013 Implement versioned Alembic/PostgreSQL migrations for schemas, least-privilege roles, `vector`, `pgmq`, `pg_cron`, and common timestamp/UUID helpers in `database/migrations/` to satisfy T012
 - [ ] T014 [P] Write failing domain-schema tests for Question, AnswerDraft, Claim, Evidence, Citation, CorpusStatus, and controlled errors in `apps/backend/tests/unit/domain/test_schemas.py`
 - [ ] T015 Implement strict Pydantic domain contracts and enums in `apps/backend/src/atlas/domain/` to satisfy T014 without importing provider SDK types
 - [ ] T016 [P] Write failing provider-port and deterministic-fake tests in `apps/backend/tests/unit/providers/test_ports.py`
