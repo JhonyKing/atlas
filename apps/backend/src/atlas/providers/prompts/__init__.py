@@ -1,0 +1,1 @@
+"""Provider prompt contracts."""

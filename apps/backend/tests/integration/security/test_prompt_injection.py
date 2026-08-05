@@ -4,14 +4,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID
 
+from pydantic import HttpUrl
+
+from atlas.domain import Evidence, Question, SourceType
 from atlas.providers.prompts.cited_answer import (
     CITED_ANSWER_INSTRUCTIONS,
     CITED_ANSWER_TOOLS,
     build_cited_answer_input,
 )
-from pydantic import HttpUrl
-
-from atlas.domain import Evidence, Question, SourceType
 
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "security"
 EVIDENCE_ID = UUID("00000000-0000-0000-0000-000000000801")
