@@ -52,19 +52,36 @@ uv run --project apps/backend alembic upgrade head
 Expected result: PostgreSQL is healthy; required extensions, tables, functions, roles, and indexes
 exist; migrations are at the repository head.
 
-## 4. Seed the three allowlisted collections
+## 4. Bootstrap the three allowlisted collections
 
 Before enabling a collection, confirm that its review in `docs/governance/source-reviews/` records
 the exact terms, robots policy, licensing basis, allowed fetch paths, required attribution, reviewer,
 review date, and re-review trigger. A missing, failed, or expired review keeps that collection
 disabled.
 
+The implemented bootstrap command seeds the collection rows, fetches the manifest, embeds the
+documents, promotes immutable versions, and creates a snapshot only when all manifest sources are
+active. A dry run is safe and performs no network or database writes:
+
 ```powershell
-uv run --project apps/backend atlas-ingest seed-collections
-uv run --project apps/backend atlas-ingest enqueue --collection langgraph
-uv run --project apps/backend atlas-ingest enqueue --collection langchain
-uv run --project apps/backend atlas-ingest enqueue --collection openai
-uv run --project apps/backend atlas-worker --until-empty
+apps\backend\.venv\Scripts\python.exe -m atlas.ingestion.bootstrap `
+  --manifest corpus\manifests\launch-v1.yaml
+```
+
+After reviewing the dry-run output and confirming `OPENAI_API_KEY` is present in the local secret
+file, execute the real bootstrap:
+
+```powershell
+$env:ATLAS_DATABASE_URL="postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
+apps\backend\.venv\Scripts\python.exe -m atlas.ingestion.bootstrap `
+  --manifest corpus\manifests\launch-v1.yaml --execute --max-runs 3
+```
+
+To inspect the promoted corpus without changing it:
+
+```powershell
+$env:ATLAS_DATABASE_URL="postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
+apps\backend\.venv\Scripts\python.exe -m atlas.ingestion.verify
 ```
 
 Expected result:
