@@ -15,9 +15,16 @@ import type {
 } from "./types";
 
 type CompletedAnswer = {
+  answerStatus: "complete" | "partial";
   claims: CitedClaim[];
   citations: CitedEvidence[];
   limitations: string[];
+};
+
+type AbstentionNotice = {
+  limitations: string[];
+  scopeSuggestion?: string;
+  scopeExplanation?: string;
 };
 
 export function CitedAnswerForm() {
@@ -26,6 +33,7 @@ export function CitedAnswerForm() {
   const [status, setStatus] = useState("Ready to verify an answer.");
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CompletedAnswer | null>(null);
+  const [abstention, setAbstention] = useState<AbstentionNotice | null>(null);
   const [active, setActive] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
@@ -54,6 +62,7 @@ export function CitedAnswerForm() {
     }
     setError(null);
     setAnswer(null);
+    setAbstention(null);
     setActive(true);
     setStatus("Accepted. Preparing retrieval…");
     const nextController = new AbortController();
@@ -81,9 +90,18 @@ export function CitedAnswerForm() {
 
   function handleEvent(event: AnswerEvent) {
     const stage = typeof event.data.stage === "string" ? event.data.stage : event.event;
-    setStatus(stage === "completed" ? "Verified answer ready." : `${stage}…`);
+    const answerStatus = event.data.answer_status === "partial" ? "partial" : "complete";
+    setStatus(
+      stage === "completed"
+        ? answerStatus === "partial"
+          ? "Partial answer ready."
+          : "Verified answer ready."
+        : `${stage}…`,
+    );
     if (event.event === "answer.completed") {
+      setAbstention(null);
       setAnswer({
+        answerStatus,
         claims: Array.isArray(event.data.claims) ? (event.data.claims as CitedClaim[]) : [],
         citations: Array.isArray(event.data.citations)
           ? (event.data.citations as CitedEvidence[])
@@ -93,7 +111,22 @@ export function CitedAnswerForm() {
       setActive(false);
     }
     if (event.event === "answer.abstained") {
-      setError("ATLAS could not verify an answer from the available evidence.");
+      const limitations = Array.isArray(event.data.limitations)
+        ? event.data.limitations.filter((value): value is string => typeof value === "string")
+        : [];
+      const notice: AbstentionNotice = {
+        limitations: limitations.length
+          ? limitations
+          : ["ATLAS could not verify an answer from the available evidence."],
+      };
+      if (typeof event.data.scope_suggestion === "string") {
+        notice.scopeSuggestion = event.data.scope_suggestion;
+      }
+      if (typeof event.data.scope_explanation === "string") {
+        notice.scopeExplanation = event.data.scope_explanation;
+      }
+      setAbstention(notice);
+      setError(notice.limitations.join(" "));
       setActive(false);
     }
   }
@@ -159,12 +192,27 @@ export function CitedAnswerForm() {
       <p className="progress" role="status" aria-live="polite">{status}</p>
       {answer ? (
         <EvidencePanel
+          answerStatus={answer.answerStatus}
           claims={answer.claims}
           citations={answer.citations}
           limitations={answer.limitations}
           onFeedback={handleFeedback}
         />
       ) : null}
+      {abstention ? <AbstentionResult notice={abstention} /> : null}
     </section>
+  );
+}
+
+function AbstentionResult({ notice }: { notice: AbstentionNotice }) {
+  return (
+    <article className="abstention-result" aria-labelledby="abstention-title">
+      <h2 id="abstention-title">ATLAS could not verify this answer</h2>
+      <ul>
+        {notice.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}
+      </ul>
+      {notice.scopeExplanation ? <p>{notice.scopeExplanation}</p> : null}
+      {notice.scopeSuggestion ? <p>{notice.scopeSuggestion}</p> : null}
+    </article>
   );
 }

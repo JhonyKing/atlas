@@ -40,6 +40,8 @@ button.secondary { color: #172033; background: #e4e8ef; }
 .citation-links { display: flex; flex-wrap: wrap; gap: 1rem; }
 .evidence-panel a { color: #3542b5; font-weight: 700; }
 .limitations { color: #4b5568; }
+.answer-state { color: #3542b5; font-weight: 700; }
+.abstention-result { border-top: 1px solid #d6dce7; margin-top: 1.5rem; padding-top: 1.5rem; line-height: 1.6; }
 .feedback { border-top: 1px solid #d6dce7; margin-top: 1.5rem; padding-top: 1rem; }
 .feedback-actions, .feedback-details { display: grid; gap: .65rem; margin-top: .75rem; }
 .feedback-details { max-width: 30rem; }

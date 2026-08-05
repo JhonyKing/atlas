@@ -18,5 +18,6 @@ export type EvidencePanelProps = {
   claims: CitedClaim[];
   citations: CitedEvidence[];
   limitations?: string[];
+  answerStatus?: "complete" | "partial";
   onFeedback: (feedback: FeedbackInput) => void | Promise<void>;
 };

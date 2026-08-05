@@ -156,7 +156,7 @@ abstention.
 - [X] T062 [US3] Implement deterministic evidence sufficiency, evidence-ID, citation coverage, temporal metadata, and terminal verification gates in `apps/backend/src/atlas/agent/verification.py` to satisfy T059
 - [X] T063 [US3] Implement supported-only partial answers, dated disagreement presentation, refusal handling, and structured abstention nodes in `apps/backend/src/atlas/agent/cited_answer_graph.py`
 - [X] T064 [US3] Harden evidence prompt boundaries and ensure the model has no source-selection or action tools in `apps/backend/src/atlas/providers/prompts/cited_answer.py` to satisfy T060
-- [ ] T065 [US3] Implement accessible abstention, limitation, disagreement, and out-of-scope states in `apps/web/src/features/cited-answer/` to satisfy T061
+- [X] T065 [US3] Implement accessible abstention, limitation, disagreement, and out-of-scope states in `apps/web/src/features/cited-answer/` to satisfy T061
 - [ ] T066 [US3] Add Playwright journeys for abstention and prompt-injection resistance in `apps/web/tests/e2e/cited-answer-abstention.spec.ts`
 
 **Checkpoint**: All three user stories are independently testable and safe-failure behavior is public.

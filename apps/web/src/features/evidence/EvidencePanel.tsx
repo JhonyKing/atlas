@@ -31,7 +31,13 @@ function sourceTypeLabel(value: CitedEvidence["source_type"]): string {
   return value.replaceAll("_", " ");
 }
 
-export function EvidencePanel({ claims, citations, limitations = [], onFeedback }: EvidencePanelProps) {
+export function EvidencePanel({
+  claims,
+  citations,
+  limitations = [],
+  answerStatus = "complete",
+  onFeedback,
+}: EvidencePanelProps) {
   const [selectedLabel, setSelectedLabel] = useState<FeedbackLabel | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
   const [comment, setComment] = useState("");
@@ -54,6 +60,9 @@ export function EvidencePanel({ claims, citations, limitations = [], onFeedback 
   return (
     <section className="evidence-panel" aria-labelledby="evidence-title">
       <h2 id="evidence-title">Evidence and feedback</h2>
+      <p className="answer-state">
+        {answerStatus === "partial" ? "Partial answer" : "Complete answer"}
+      </p>
       <div className="claim-list">
         {claims.map((claim) => (
           <ClaimWithEvidence key={claim.id} claim={claim} citations={citations} />
