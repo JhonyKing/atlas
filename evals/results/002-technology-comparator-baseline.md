@@ -38,3 +38,6 @@ Mode: local deterministic/fixture validation
 - Offline comparator dataset: **20 requests / 16 matrix cases**, all deterministic cases passing
   with matrix structure, state accuracy and evidence-ID parity at **1.0**. Live citation precision
   and latency measurements remain opt-in until a populated verified corpus is available.
+- Vitest locale/component suite: **8 files, 20 tests passed** with the bundled Node 24 runtime.
+  The regular sandboxed Node 20 launcher is blocked by Windows path permissions before test
+  collection; this does not reproduce when the approved bundled runtime is used.
