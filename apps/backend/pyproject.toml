@@ -36,6 +36,7 @@ dev = [
 [project.scripts]
 atlas-api = "atlas.api.main:run"
 atlas-worker = "atlas.ingestion.worker:run"
+atlas-eval = "atlas.evaluation.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/atlas"]

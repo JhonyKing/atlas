@@ -10,6 +10,7 @@ permissions:
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
+  PYTHONPATH: .
 
 jobs:
   backend:
@@ -69,5 +70,10 @@ jobs:
         with:
           python-version: "3.13"
       - run: uv sync --project apps/backend --frozen
-      - name: Verify the versioned evaluation contract is present
-        run: uv run --project apps/backend python -c "from pathlib import Path; assert Path('specs/001-cited-answer/spec.md').is_file()"
+      - name: Run deterministic cited-answer evaluation gate
+        run: uv run --project apps/backend atlas-eval run --dataset evals/datasets/cited-answer-v1.jsonl --output evals/results/cited-answer-v1-ci.json
+      - name: Upload evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cited-answer-v1-evaluation
+          path: evals/results/cited-answer-v1-ci.json
