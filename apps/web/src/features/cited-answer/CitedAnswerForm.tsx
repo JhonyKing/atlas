@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { cancelAnswer, streamCitedAnswer } from "./api";
 import type {
@@ -26,6 +26,11 @@ export function CitedAnswerForm() {
   const [active, setActive] = useState(false);
   const [runId, setRunId] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
+  const shellRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    shellRef.current?.setAttribute("data-hydrated", "true");
+  }, []);
 
   function validate(): string | null {
     if (question.trim().length < 3 || !/[\p{L}\p{N}]/u.test(question)) {
@@ -98,7 +103,12 @@ export function CitedAnswerForm() {
   }
 
   return (
-    <section className="answer-shell" aria-labelledby="page-title">
+    <section
+      ref={shellRef}
+      className="answer-shell"
+      aria-labelledby="page-title"
+      data-hydrated="false"
+    >
       <p className="eyebrow">ATLAS AI · evidence-first research</p>
       <h1 id="page-title">Answers you can verify.</h1>
       <p className="lede">

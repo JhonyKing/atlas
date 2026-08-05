@@ -103,7 +103,7 @@ evidence and no draft claim is streamed early.
 - [X] T047 [US1] Implement `POST /v1/answers`, `GET /v1/answers/{run_id}`, and repeat-safe cancellation through `DELETE /v1/answers/{run_id}` in `apps/backend/src/atlas/api/routes/answers.py` with invalid-input handling, request deduplication, quota, controlled errors, cancellation, and no provisional claim text
 - [X] T048 [US1] Implement typed API/SSE client and explicit cancellation handling in `apps/web/src/lib/atlas-api/` from `contracts/openapi.yaml`
 - [X] T049 [US1] Implement the English question page, constraint controls, invalid-input text preservation, progress, explicit cancellation, completed claims, and quota/error states in `apps/web/src/app/page.tsx` and `apps/web/src/features/cited-answer/` to satisfy T041
-- [ ] T050 [US1] Add the supported-question, invalid-question, and explicit-cancellation Playwright journeys in `apps/web/tests/e2e/cited-answer-supported.spec.ts` and verify the independent-test checkpoint
+- [X] T050 [US1] Add the supported-question, invalid-question, and explicit-cancellation Playwright journeys in `apps/web/tests/e2e/cited-answer-supported.spec.ts` and verify the independent-test checkpoint
 
 **Checkpoint**: User Story 1 is deployable and demonstrable using the fake provider and seeded corpus.
 
