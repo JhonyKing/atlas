@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     atlas_env: Literal["development", "test", "production"] = "development"
     atlas_log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     database_url: SecretStr = SecretStr(
-        "postgresql+psycopg://atlas:atlas-local-only@localhost:5432/atlas"
+        "postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
     )
     web_origin: AnyHttpUrl = AnyHttpUrl("http://localhost:3000")
     api_origin: AnyHttpUrl = AnyHttpUrl("http://localhost:8000")

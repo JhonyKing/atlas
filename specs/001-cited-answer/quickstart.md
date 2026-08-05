@@ -28,7 +28,7 @@ Set the documented local-only variables:
 OPENAI_API_KEY=<secret>
 ATLAS_VISITOR_HMAC_SECRET=<random local secret>
 ATLAS_OPERATOR_TOKEN=<random local secret>
-DATABASE_URL=postgresql+psycopg://atlas:atlas@localhost:5432/atlas
+DATABASE_URL=postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas
 WEB_ORIGIN=http://localhost:3000
 API_ORIGIN=http://localhost:8000
 ```
