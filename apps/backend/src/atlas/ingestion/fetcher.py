@@ -24,7 +24,7 @@ class FetcherError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class FetchPolicy:
     allowed_hosts: frozenset[str]
-    max_bytes: int = 2_000_000
+    max_bytes: int = 4_000_000
     max_redirects: int = 3
     timeout_seconds: float = 20.0
     allowed_content_types: frozenset[str] = field(

@@ -37,8 +37,19 @@ def test_safe_defaults_select_the_approved_portfolio_baseline() -> None:
 
 
 def test_blank_optional_langsmith_values_are_treated_as_unset() -> None:
-    settings = Settings(langsmith_endpoint="", langsmith_workspace_id="  ")
+    settings = Settings(
+        openai_api_key="",
+        atlas_visitor_hmac_secret=" ",
+        atlas_operator_token="",
+        langsmith_api_key="",
+        langsmith_endpoint="",
+        langsmith_workspace_id="  ",
+    )
 
+    assert settings.openai_api_key is None
+    assert settings.atlas_visitor_hmac_secret is None
+    assert settings.atlas_operator_token is None
+    assert settings.langsmith_api_key is None
     assert settings.langsmith_endpoint is None
     assert settings.langsmith_workspace_id is None
 

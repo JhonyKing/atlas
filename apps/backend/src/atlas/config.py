@@ -58,7 +58,15 @@ class Settings(BaseSettings):
     atlas_anonymous_window_hours: int = Field(default=24, ge=1)
     atlas_content_retention_days: int = Field(default=30, ge=1)
 
-    @field_validator("langsmith_endpoint", "langsmith_workspace_id", mode="before")
+    @field_validator(
+        "openai_api_key",
+        "atlas_visitor_hmac_secret",
+        "atlas_operator_token",
+        "langsmith_api_key",
+        "langsmith_endpoint",
+        "langsmith_workspace_id",
+        mode="before",
+    )
     @classmethod
     def blank_optional_langsmith_values(cls, value: object) -> object:
         """Treat empty values in local dotenv files as unset optional settings."""

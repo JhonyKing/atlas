@@ -2,6 +2,7 @@
 
 from functools import partial
 
+import psycopg
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,13 +20,13 @@ from atlas.api.routes.health import router as health_router
 from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.api.routes.review_cases import router as review_cases_router
-from atlas.config import get_settings
+from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink
-from atlas.persistence.corpus_status import CorpusStatusProvider
+from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 
@@ -103,6 +104,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
 
     settings = get_settings()
     if settings.atlas_env == "development":
+        corpus_service = _verified_corpus_or_demo(settings)
         real_provider = use_real_provider if use_real_provider is not None else bool(
             settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
         )
@@ -137,10 +139,28 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                     "corpus_snapshot": "demo-unverified",
                 },
             ),
-            corpus_service=DemoCorpusStatusProvider(),
+            corpus_service=corpus_service,
             review_case_service=InMemoryReviewCaseService(),
         )
     return create_app()
+
+
+def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:
+    """Use PostgreSQL status after snapshot promotion, otherwise keep the visible demo fallback."""
+
+    dsn = settings.database_url.get_secret_value().replace(
+        "postgresql+psycopg://", "postgresql://", 1
+    )
+    connection = None
+    try:
+        connection = psycopg.connect(dsn)
+        provider = PostgresCorpusStatusRepository(connection)
+        provider.get_status()
+        return provider
+    except Exception:
+        if connection is not None:
+            connection.close()
+        return DemoCorpusStatusProvider()
 
 
 app = create_runtime_app()

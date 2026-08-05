@@ -100,7 +100,7 @@ class PostgresCorpusStatusRepository:
             FROM atlas.collections AS c
             LEFT JOIN atlas.ingestion_runs AS r ON r.collection_id = c.id
             LEFT JOIN atlas.sources AS s ON s.collection_id = c.id
-            GROUP BY c.slug, c.display_name, c.publisher, c.base_url,
+            GROUP BY c.id, c.slug, c.display_name, c.publisher, c.base_url,
                      c.refresh_interval, c.last_success_at
             ORDER BY c.slug
             """

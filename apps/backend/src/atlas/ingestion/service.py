@@ -361,10 +361,19 @@ class PostgresIngestionRepository:
             """
             UPDATE atlas.ingestion_runs
             SET status = 'succeeded', discovered_count = %s, promoted_count = %s,
-                completed_at = now()
+                completed_at = now(), error_code = NULL, error_summary = NULL
             WHERE id = %s
             """,
             (discovered, promoted, run.id),
+        )
+        self._connection.execute(
+            """
+            UPDATE atlas.collections AS c
+            SET last_success_at = now()
+            FROM atlas.ingestion_runs AS r
+            WHERE r.id = %s AND c.id = r.collection_id
+            """,
+            (run.id,),
         )
         self._connection.commit()
         self._release_lease(run)

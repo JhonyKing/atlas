@@ -2,7 +2,8 @@
 # This file is a plan/input for ingestion, not proof that the snapshot is active.
 # A bootstrap run must record fetched_at, content_sha256, bytes, pages and chunks before promotion.
 version: launch-v1
-review_status: pending_operator_approval
+# Approved by the project owner after the dry-run review on 2026-08-05.
+review_status: approved
 collections:
   langgraph:
     publisher: LangChain
@@ -43,8 +44,8 @@ collections:
       - title: OpenAI API models
         url: https://developers.openai.com/api/docs/models
         type: documentation
-      - title: OpenAI Responses API reference
-        url: https://developers.openai.com/api/reference/responses
+      - title: OpenAI model and Responses guidance
+        url: https://developers.openai.com/api/docs/guides/latest-model
         type: documentation
       - title: OpenAI embeddings guide
         url: https://developers.openai.com/api/docs/guides/embeddings
@@ -52,4 +53,3 @@ collections:
       - title: OpenAI structured outputs guide
         url: https://developers.openai.com/api/docs/guides/structured-outputs
         type: documentation
-

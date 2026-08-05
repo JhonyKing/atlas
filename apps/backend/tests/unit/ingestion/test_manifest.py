@@ -11,7 +11,7 @@ def test_launch_manifest_is_multi_document_and_uses_official_hosts() -> None:
     manifest = load_manifest(MANIFEST)
 
     assert manifest.version == "launch-v1"
-    assert manifest.review_status == "pending_operator_approval"
+    assert manifest.review_status == "approved"
     assert manifest.source_count == 12
     assert {candidate.collection.value for candidate in manifest.candidates} == {
         "langgraph",
@@ -40,4 +40,3 @@ collections:
 
     with pytest.raises(ManifestError, match="duplicate"):
         load_manifest(path)
-
