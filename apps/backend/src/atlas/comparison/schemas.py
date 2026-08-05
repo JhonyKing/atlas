@@ -96,6 +96,8 @@ class ComparisonCell(DomainModel):
         | None
     ) = None
     explanation: ComparisonText | None = None
+    period: Annotated[str, StringConstraints(min_length=1, max_length=64)] | None = None
+    version: Annotated[str, StringConstraints(min_length=1, max_length=64)] | None = None
     evidence_ids: list[UUID] = Field(default_factory=list)
     observed_at: datetime | None = None
 

@@ -159,7 +159,8 @@ class PostgresComparisonRepository:
             return StoredComparison(run=run)
         cell_rows = self._connection.execute(
             """
-            SELECT id, technology_id, criterion_id, state, value, unit, explanation, observed_at
+            SELECT id, technology_id, criterion_id, state, value, unit, explanation,
+                   period, version, observed_at
             FROM atlas.comparison_cells
             WHERE comparison_matrix_id = %s
             ORDER BY id
@@ -185,8 +186,10 @@ class PostgresComparisonRepository:
                     value=cell_row[4],
                     unit=cell_row[5],
                     explanation=cell_row[6],
+                    period=cell_row[7],
+                    version=cell_row[8],
                     evidence_ids=[row[0] for row in evidence_rows],
-                    observed_at=cell_row[7],
+                    observed_at=cell_row[9],
                 )
             )
         matrix = ComparisonMatrix(
@@ -221,8 +224,8 @@ class PostgresComparisonRepository:
                 """
                 INSERT INTO atlas.comparison_cells(
                   comparison_matrix_id, technology_id, criterion_id, state,
-                  value, unit, explanation, observed_at
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                  value, unit, explanation, period, version, observed_at
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
                 """,
                 (
@@ -233,6 +236,8 @@ class PostgresComparisonRepository:
                     cell.value,
                     cell.unit,
                     cell.explanation,
+                    cell.period,
+                    cell.version,
                     cell.observed_at,
                 ),
             ).fetchone()
