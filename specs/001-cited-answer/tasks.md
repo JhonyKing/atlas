@@ -68,8 +68,8 @@ application source beyond scaffolding.
 - [X] T032 Implement authenticated operator ingestion endpoints in `apps/backend/src/atlas/api/routes/operator_ingestion.py` without exposing worker or database credentials
 - [X] T033 [P] Write failing request-ID, content-free telemetry, price-table, and sensitive-log redaction tests in `apps/backend/tests/unit/observability/`
 - [X] T034 Implement request context, structured logging, OpenTelemetry spans, effective-dated price lookup, and cost metrics in `apps/backend/src/atlas/observability/`
-- [ ] T035 [P] Write failing anonymous-cookie, HMAC identity, idempotency, concurrent rolling-window quota, retry-time, and global-budget tests in `apps/backend/tests/integration/security/test_anonymous_quota.py`
-- [ ] T036 Implement anonymous identity middleware and transactional quota reservation in `apps/backend/src/atlas/api/middleware/anonymous_identity.py`, `apps/backend/src/atlas/persistence/quota.py`, and `database/functions/reserve_answer_quota.sql` to satisfy T035
+- [X] T035 [P] Write failing anonymous-cookie, HMAC identity, idempotency, concurrent rolling-window quota, retry-time, and global-budget tests in `apps/backend/tests/integration/security/test_anonymous_quota.py`
+- [X] T036 Implement anonymous identity middleware and transactional quota reservation in `apps/backend/src/atlas/api/middleware/anonymous_identity.py`, `apps/backend/src/atlas/persistence/quota.py`, and `database/functions/reserve_answer_quota.sql` to satisfy T035
 
 **Checkpoint**: Three collections can be refreshed durably; provider adapters and domain contracts
 are testable; public questions can be identified and quota-reserved without fingerprinting.
