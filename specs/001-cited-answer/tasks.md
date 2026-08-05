@@ -60,8 +60,8 @@ application source beyond scaffolding.
 - [X] T024 [P] Add official-source connector fixtures and failing discovery/version tests in `apps/backend/tests/fixtures/sources/` and `apps/backend/tests/unit/ingestion/test_connectors.py`
 - [X] T025 Complete and record the terms, robots, licensing, allowed-path, attribution, review-date, and re-review-trigger decision for LangGraph, LangChain, and OpenAI in `docs/governance/source-reviews/`, leaving every source disabled unless its review explicitly passes
 - [X] T026 Implement the LangGraph, LangChain, and OpenAI documentation/changelog/release connectors in `apps/backend/src/atlas/ingestion/connectors/`, enabling only the collections approved by T025
-- [ ] T027 [P] Write failing corpus/ingestion migration tests covering immutable versions, atomic promotion, failed-refresh preservation, snapshots, queue idempotency, and dead-letter state in `database/tests/002_corpus_ingestion.sql`
-- [ ] T028 Implement corpus, embedding, snapshot, ingestion-run, PGMQ queue, and daily Cron migrations/functions in `database/migrations/` and `database/functions/` to satisfy T027
+- [X] T027 [P] Write failing corpus/ingestion migration tests covering immutable versions, atomic promotion, failed-refresh preservation, snapshots, queue idempotency, and dead-letter state in `database/tests/002_corpus_ingestion.sql`
+- [X] T028 Implement corpus, embedding, snapshot, ingestion-run, PGMQ queue, and daily Cron migrations/functions in `database/migrations/` and `database/functions/` to satisfy T027
 - [ ] T029 Write failing ingestion service and worker tests for scheduled/manual triggers, locks, retries, deduplication, embedding, and atomic promotion in `apps/backend/tests/integration/ingestion/test_worker.py`
 - [ ] T030 Implement durable enqueueing, ingestion orchestration, and the worker entry point in `apps/backend/src/atlas/ingestion/service.py` and `apps/backend/src/atlas/ingestion/worker.py` to satisfy T029
 - [ ] T031 [P] Write failing operator ingestion endpoint contract tests from `contracts/openapi.yaml` in `apps/backend/tests/contract/api/test_operator_ingestion.py`
