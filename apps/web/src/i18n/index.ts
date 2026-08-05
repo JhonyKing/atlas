@@ -260,16 +260,16 @@ type LocaleContextValue = {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en-US");
+function getInitialLocale(): Locale {
+  if (typeof window === "undefined") return "en-US";
+  const pathLocale = window.location.pathname.split("/")[1];
+  const stored = window.localStorage.getItem("atlas-locale");
+  const browserLocale = window.navigator.language.toLowerCase().startsWith("es") ? "es-MX" : "en-US";
+  return pathLocale === "es" || stored === "es-MX" || (!stored && browserLocale === "es-MX") ? "es-MX" : "en-US";
+}
 
-  useEffect(() => {
-    const pathLocale = window.location.pathname.split("/")[1];
-    const stored = window.localStorage.getItem("atlas-locale");
-    const browserLocale = window.navigator.language.toLowerCase().startsWith("es") ? "es-MX" : "en-US";
-    const next: Locale = pathLocale === "es" || stored === "es-MX" || (!stored && browserLocale === "es-MX") ? "es-MX" : "en-US";
-    setLocaleState(next);
-  }, []);
+export function LocaleProvider({ children }: { children: ReactNode }) {
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
   const setLocale = (next: Locale) => {
     setLocaleState(next);

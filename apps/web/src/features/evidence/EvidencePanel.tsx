@@ -10,7 +10,7 @@ import type { EvidencePanelProps, FeedbackCategory, FeedbackInput, FeedbackLabel
 const categoryValues: FeedbackCategory[] = ["incorrect_citation", "incorrect_answer", "outdated", "incomplete", "other"];
 
 export function EvidencePanel({ claims, citations, limitations = [], answerStatus = "complete", onFeedback }: EvidencePanelProps) {
-  const { locale, messages } = useLocale();
+  const { messages } = useLocale();
   const [selectedLabel, setSelectedLabel] = useState<FeedbackLabel | null>(null);
   const [category, setCategory] = useState<FeedbackCategory | null>(null);
   const [comment, setComment] = useState("");
