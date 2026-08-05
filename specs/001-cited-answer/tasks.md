@@ -49,8 +49,8 @@ application source beyond scaffolding.
 - [X] T013 Implement versioned Alembic/PostgreSQL migrations for schemas, least-privilege roles, `vector`, `pgmq`, `pg_cron`, and common timestamp/UUID helpers in `database/migrations/` to satisfy T012
 - [X] T014 [P] Write failing domain-schema tests for Question, AnswerDraft, Claim, Evidence, Citation, CorpusStatus, and controlled errors in `apps/backend/tests/unit/domain/test_schemas.py`
 - [X] T015 Implement strict Pydantic domain contracts and enums in `apps/backend/src/atlas/domain/` to satisfy T014 without importing provider SDK types
-- [ ] T016 [P] Write failing provider-port and deterministic-fake tests in `apps/backend/tests/unit/providers/test_ports.py`
-- [ ] T017 Implement `AnswerGenerator`, `EmbeddingProvider`, clock, pricing, and source-fetch ports plus deterministic fakes in `apps/backend/src/atlas/providers/ports.py` and `apps/backend/tests/fakes/`
+- [X] T016 [P] Write failing provider-port and deterministic-fake tests in `apps/backend/tests/unit/providers/test_ports.py`
+- [X] T017 Implement `AnswerGenerator`, `EmbeddingProvider`, clock, pricing, and source-fetch ports plus deterministic fakes in `apps/backend/src/atlas/providers/ports.py` and `apps/backend/tests/fakes/`
 - [ ] T018 [P] Write failing OpenAI adapter contract tests with injected HTTP/SSE fixtures in `apps/backend/tests/contract/providers/test_openai_responses.py`
 - [ ] T019 Implement the async Responses API adapter with exact `gpt-5.6-luna`, medium effort, `store=false`, current-turn reasoning, Pydantic parsing, HMAC `safety_identifier`, telemetry, and bounded retries in `apps/backend/src/atlas/providers/openai_responses.py`
 - [ ] T020 [P] Write failing embedding adapter and dimension-invariant tests in `apps/backend/tests/contract/providers/test_openai_embeddings.py`
