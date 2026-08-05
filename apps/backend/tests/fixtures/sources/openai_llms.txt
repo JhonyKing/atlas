@@ -1,0 +1,4 @@
+# OpenAI API documentation
+
+- [Responses](https://developers.openai.com/api/docs/guides/responses.md)
+- [Embeddings](https://developers.openai.com/api/docs/guides/embeddings.md)
