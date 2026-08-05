@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator, Mapping
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Literal, Protocol
 from uuid import UUID
 
@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from atlas.comparison.schemas import ComparisonCriterion, ComparisonMatrix, ComparisonRequest
 from atlas.domain import CollectionSlug, SourceType
 from atlas.observability.context import current_request_id
+from atlas.persistence.comparison_quota import ComparisonQuotaExceeded
 
 router = APIRouter(prefix="/v1/comparisons", tags=["Comparisons"])
 
@@ -127,12 +128,29 @@ async def create_comparison(
             detail="Comparison selection is not valid",
             error_code="invalid_comparison",
         )
-    run_id = await _service(request).start(
-        comparison=comparison.model_dump(mode="json"),
-        visitor_key_hash=_visitor_hash(request),
-        idempotency_key=idempotency_key,
-        request_id=_request_id(request),
-    )
+    try:
+        run_id = await _service(request).start(
+            comparison=comparison.model_dump(mode="json"),
+            visitor_key_hash=_visitor_hash(request),
+            idempotency_key=idempotency_key,
+            request_id=_request_id(request),
+        )
+    except KeyError:
+        return _problem(
+            request,
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Idempotency key conflicts with another comparison",
+            error_code="idempotency_conflict",
+        )
+    except ComparisonQuotaExceeded as exc:
+        retry_after = exc.retry_after_seconds(now=datetime.now(UTC))
+        return _problem(
+            request,
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Anonymous comparison quota exceeded",
+            error_code="quota_exceeded",
+            headers={"Retry-After": str(retry_after)},
+        )
 
     async def stream() -> AsyncIterator[str]:
         async for frame in _service(request).stream(
