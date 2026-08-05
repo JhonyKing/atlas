@@ -66,8 +66,8 @@ application source beyond scaffolding.
 - [X] T030 Implement durable enqueueing, ingestion orchestration, and the worker entry point in `apps/backend/src/atlas/ingestion/service.py` and `apps/backend/src/atlas/ingestion/worker.py` to satisfy T029
 - [X] T031 [P] Write failing operator ingestion endpoint contract tests from `contracts/openapi.yaml` in `apps/backend/tests/contract/api/test_operator_ingestion.py`
 - [X] T032 Implement authenticated operator ingestion endpoints in `apps/backend/src/atlas/api/routes/operator_ingestion.py` without exposing worker or database credentials
-- [ ] T033 [P] Write failing request-ID, content-free telemetry, price-table, and sensitive-log redaction tests in `apps/backend/tests/unit/observability/`
-- [ ] T034 Implement request context, structured logging, OpenTelemetry spans, effective-dated price lookup, and cost metrics in `apps/backend/src/atlas/observability/`
+- [X] T033 [P] Write failing request-ID, content-free telemetry, price-table, and sensitive-log redaction tests in `apps/backend/tests/unit/observability/`
+- [X] T034 Implement request context, structured logging, OpenTelemetry spans, effective-dated price lookup, and cost metrics in `apps/backend/src/atlas/observability/`
 - [ ] T035 [P] Write failing anonymous-cookie, HMAC identity, idempotency, concurrent rolling-window quota, retry-time, and global-budget tests in `apps/backend/tests/integration/security/test_anonymous_quota.py`
 - [ ] T036 Implement anonymous identity middleware and transactional quota reservation in `apps/backend/src/atlas/api/middleware/anonymous_identity.py`, `apps/backend/src/atlas/persistence/quota.py`, and `database/functions/reserve_answer_quota.sql` to satisfy T035
 

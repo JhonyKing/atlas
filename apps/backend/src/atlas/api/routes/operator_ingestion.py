@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from atlas.domain import CollectionSlug
 from atlas.ingestion.service import IdempotencyConflict, OperatorIngestionService
+from atlas.observability.context import current_request_id
 
 router = APIRouter(prefix="/v1/operator", tags=["Operator"])
 bearer = HTTPBearer(auto_error=False)
@@ -68,7 +69,7 @@ def _service(request: Request) -> OperatorIngestionService:
 
 def _response(payload: IngestionRunStatus, *, status_code: int) -> JSONResponse:
     response = JSONResponse(status_code=status_code, content=payload.model_dump(mode="json"))
-    response.headers["X-Request-ID"] = str(uuid4())
+    response.headers["X-Request-ID"] = str(current_request_id() or uuid4())
     return response
 
 

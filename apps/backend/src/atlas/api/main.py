@@ -10,6 +10,7 @@ from atlas.api.routes.health import router as health_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.config import get_settings
 from atlas.ingestion.service import OperatorIngestionService
+from atlas.observability.context import RequestContextMiddleware
 
 
 def create_app(
@@ -28,6 +29,7 @@ def create_app(
         description="Evidence-first technical research with verifiable cited answers.",
         version="0.1.0",
     )
+    application.add_middleware(RequestContextMiddleware)
     application.state.database_probe = resolved_database_probe
     application.state.operator_service = operator_service
     application.state.operator_token = operator_token or (

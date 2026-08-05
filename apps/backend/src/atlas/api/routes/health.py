@@ -10,6 +10,8 @@ from fastapi.responses import JSONResponse
 from psycopg import Connection
 from pydantic import BaseModel, ConfigDict, SecretStr
 
+from atlas.observability.context import current_request_id
+
 DatabaseProbe = Callable[[], Awaitable[bool]]
 
 
@@ -56,7 +58,7 @@ def _database_probe_from(request: Request) -> DatabaseProbe:
     },
 )
 async def get_health(request: Request) -> JSONResponse:
-    request_id = str(uuid4())
+    request_id = str(current_request_id() or uuid4())
 
     try:
         database_is_ready = await _database_probe_from(request)()
