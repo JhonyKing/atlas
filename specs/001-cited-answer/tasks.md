@@ -175,12 +175,12 @@ abstention.
 - [X] T072 [P] Add load/limit/cancellation checks for portfolio launch SLOs in `apps/backend/tests/load/` without asserting 10k/100k-user capacity
 - [X] T073 [P] Document architecture, graph, data flow, privacy/threat model, and measured trade-offs in `docs/architecture/001-cited-answer.md`, `docs/adr/`, and `docs/runbooks/`
 - [ ] T078 [P] [US1] Write failing locale-parity, locale-switch, persisted-preference, and language-independent-claim tests in `apps/web/src/i18n/`, `apps/web/src/features/cited-answer/__tests__/`, and `apps/web/tests/e2e/`
-- [ ] T079 [US1] Implement versioned `en-US` and `es-MX` message catalogs, `/en` and `/es` locale routing, persisted preference, accessible switch labels, and locale-aware date/number formatting in `apps/web/src/i18n/` and `apps/web/src/app/`
-- [ ] T080 [US1] Implement locale propagation through the answer request and Spanish controlled-error/status copy in `apps/web/src/features/cited-answer/api.ts`, `apps/backend/src/atlas/api/`, and `specs/001-cited-answer/contracts/openapi.yaml`
-- [ ] T081 [US1] Replace hardcoded public English strings in `apps/web/src/features/cited-answer/`, `apps/web/src/features/evidence/`, and `apps/web/src/features/corpus/` with catalog keys and label original-language evidence excerpts
-- [ ] T082 [P] Add CORS preflight and local-runtime smoke tests for browser `OPTIONS /v1/answers`, deterministic no-key development answers, and corpus status in `apps/backend/tests/contract/api/` and `apps/backend/tests/integration/`
-- [ ] T083 Implement development-only deterministic answer/corpus services and explicit CORS policy without weakening production provider requirements in `apps/backend/src/atlas/demo/` and `apps/backend/src/atlas/api/main.py`
-- [ ] T084 Re-run the Spec Kit analyze/converge checks after the bilingual and local-runtime changes, recording any remaining spec/plan/task/code gaps in `docs/product/prd-v1.1-traceability.md`
+- [X] T079 [US1] Implement versioned `en-US` and `es-MX` message catalogs, `/en` and `/es` locale routing, persisted preference, accessible switch labels, and locale-aware date/number formatting in `apps/web/src/i18n/` and `apps/web/src/app/`
+- [X] T080 [US1] Implement locale propagation through the answer request and Spanish controlled-error/status copy in `apps/web/src/features/cited-answer/api.ts`, `apps/backend/src/atlas/api/`, and `specs/001-cited-answer/contracts/openapi.yaml`
+- [X] T081 [US1] Replace hardcoded public English strings in `apps/web/src/features/cited-answer/`, `apps/web/src/features/evidence/`, and `apps/web/src/features/corpus/` with catalog keys and label original-language evidence excerpts
+- [X] T082 [P] Add CORS preflight and local-runtime smoke tests for browser `OPTIONS /v1/answers`, deterministic no-key development answers, and corpus status in `apps/backend/tests/contract/api/` and `apps/backend/tests/integration/`
+- [X] T083 Implement development-only deterministic answer/corpus services and explicit CORS policy without weakening production provider requirements in `apps/backend/src/atlas/demo/` and `apps/backend/src/atlas/api/main.py`
+- [X] T084 Re-run the Spec Kit analyze/converge checks after the bilingual and local-runtime changes, recording any remaining spec/plan/task/code gaps in `docs/product/prd-v1.1-traceability.md`
 - [ ] T074 Execute a moderated five-person external usability study for SC-007 using `docs/research/001-cited-answer-usability-protocol.md`, record only consented non-identifying observations and the four-of-five result in `evals/results/001-cited-answer-usability.md`, and create follow-up defects for any failed critical flow
 - [ ] T075 Run the seven-day scheduled-refresh validation for SC-009, calculate per-collection and aggregate success rates from ingestion records, verify failed-run preservation, and record timestamps, failures, and the 95% result in `evals/results/001-cited-answer-refresh-7d.md`
 - [ ] T076 Execute every scenario in `specs/001-cited-answer/quickstart.md`, record the consolidated results in `evals/results/001-cited-answer-baseline.md`, and fix any divergence before completion
@@ -269,3 +269,33 @@ T059, T060, and T061 can be authored in parallel. T062-T065 follow; T066 is the 
   MUST remain represented in `docs/product/prd-v1.1-backlog.md`; Spanish localization is part of
   this feature and MUST be implemented before its completion gate.
 - Update spec/plan/contracts before accepting behavior that differs from these artifacts.
+
+## Requirement and success-criteria coverage
+
+This map is intentionally explicit so `/speckit.analyze` can verify coverage instead of inferring it
+only from filenames. It maps the current vertical-slice scope; product features outside this slice
+remain in `docs/product/prd-v1.1-backlog.md`.
+
+| Requirement group | Covered by tasks |
+|---|---|
+| FR-001–FR-004 (question, corpus scope, claims and claim evidence) | T008–T021, T037–T050 |
+| FR-005–FR-008 (evidence metadata, links, constraints and inference labels) | T022–T030, T037–T058 |
+| FR-009–FR-013 (abstention, disagreement, status, validation and injection boundary) | T059–T066 |
+| FR-014–FR-017 (progress, cancellation, stable run, feedback and quota) | T040–T058 |
+| FR-018–FR-022 (refresh, preservation, retention, purge and temporal source context) | T024–T036, T067–T073 |
+| FR-023–FR-024 (en-US/es-MX routes, parity and original-language evidence) | T078–T083 |
+| SC-001–SC-005 (answer, citation, abstention and latency evaluation) | T037–T050, T070–T073 |
+| SC-006–SC-008 (accessibility, usability and injection safety) | T041, T063–T066, T074 |
+| SC-009–SC-010 (refresh validation and retention deletion) | T067–T075 |
+| SC-011–SC-012 (feedback and public methodology/evaluation evidence) | T051–T058, T070–T077 |
+| SC-013–SC-014 (locale coverage and citation parity) | T078–T084 |
+
+## Phase 7: Convergence (2026-08-05)
+
+The post-implementation review found these remaining gaps. They are appended rather than replacing
+earlier tasks, following the Spec Kit convergence contract.
+
+- [ ] T085 Wire the development/runtime corpus provider to a verified PostgreSQL snapshot when one exists, keep demo evidence visibly non-ready, and add an integration test for the transition per FR-002, FR-018, and SC-009 (partial).
+- [ ] T086 Add Playwright locale-route and citation-parity coverage, including `/en`, `/es`, persisted preference, and original-language evidence labels per FR-023, FR-024, SC-013, and SC-014 (missing).
+- [ ] T087 Execute and record the seven-day refresh, quickstart, and five-person usability evidence required by T074–T076 before calling the vertical slice complete per SC-007 and SC-009 (missing).
+- [ ] T088 Add a complete metadata-tag test for model, prompt, retrieval, embedding, application, locale, and corpus versions in the LangSmith sink per Principle VII and the Plan Maestro observability addendum (partial).
