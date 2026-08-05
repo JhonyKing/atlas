@@ -28,7 +28,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
 | PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
-| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | No iniciado | Backlog CMP-001–CMP-009 |
+| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Spec y plan listos; implementación no iniciada | CMP-001–CMP-003; specs/002-technology-comparator/ |
 | PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
 | PRD-007 | Architecture brief, ADR, release intelligence, research report | 7.3; tabla de plantillas | 003 | No iniciado | RPT-003–RPT-008 |
 | PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
@@ -63,7 +63,7 @@ deben quedar trazadas antes de declarar el producto listo:
 | Corpus real de múltiples documentos/páginas, OCR y harness separado | PRD-002, PRD-011, PRD-012, PRD-015, PRD-021 | 014 | COR-001–COR-014, EVA-013–EVA-016 |
 | Noticia verificable del día anterior | PRD-001, PRD-004, PRD-005, PRD-011, PRD-022 | 015 | NEWS-001–NEWS-012 |
 
-El conteo actualizado del backlog maestro es **192 tareas totales: 159 abiertas y 33 marcadas como
+El conteo actualizado del backlog maestro es **192 tareas totales: 156 abiertas y 36 marcadas como
 completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 5 abiertas y
 83 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
 Estas cifras no deben sumarse porque representan niveles distintos de planificación.

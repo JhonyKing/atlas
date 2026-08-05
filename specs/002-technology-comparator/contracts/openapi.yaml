@@ -1,0 +1,141 @@
+openapi: 3.1.0
+info:
+  title: ATLAS Technology Comparator API
+  version: 0.1.0
+paths:
+  /v1/comparisons:
+    post:
+      operationId: createComparison
+      summary: Start an evidence-backed technology comparison
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComparisonRequest'
+      responses:
+        '200':
+          description: Server-sent comparison progress and terminal events
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/Problem'
+        '429':
+          $ref: '#/components/responses/Problem'
+  /v1/comparisons/{run_id}:
+    get:
+      operationId: getComparison
+      summary: Read comparison status or completed matrix
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+      responses:
+        '200':
+          description: Comparison status or terminal matrix
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComparisonRun'
+        '404':
+          $ref: '#/components/responses/Problem'
+    delete:
+      operationId: cancelComparison
+      summary: Cancel a non-terminal comparison
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+      responses:
+        '202':
+          description: Cancellation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComparisonRun'
+        '409':
+          $ref: '#/components/responses/Problem'
+components:
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 128
+    RunId:
+      name: run_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    ComparisonRequest:
+      type: object
+      additionalProperties: false
+      required: [technologies, criteria]
+      properties:
+        technologies:
+          type: array
+          minItems: 2
+          maxItems: 4
+          uniqueItems: true
+          items: { type: string }
+        criteria:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+            enum: [capability, tool_calling, context, latency, price, license, freshness, operational_risk]
+        product: { type: string }
+        version: { type: string, maxLength: 64 }
+        date_from: { type: string, format: date }
+        date_to: { type: string, format: date }
+        source_type: { type: string }
+        language: { type: string, enum: [en-US, es-MX] }
+    ComparisonRun:
+      type: object
+      required: [run_id, status, created_at]
+      properties:
+        run_id: { type: string, format: uuid }
+        status:
+          type: string
+          enum: [accepted, retrieving, normalizing, verifying, completed, abstained, cancelled, failed]
+        created_at: { type: string, format: date-time }
+        completed_at: { type: string, format: date-time, nullable: true }
+        matrix:
+          $ref: '#/components/schemas/ComparisonMatrix'
+          nullable: true
+    ComparisonMatrix:
+      type: object
+      required: [technology_ids, criterion_ids, cells]
+      properties:
+        technology_ids: { type: array, items: { type: string } }
+        criterion_ids: { type: array, items: { type: string } }
+        cells: { type: array, items: { $ref: '#/components/schemas/ComparisonCell' } }
+        summary: { type: string, nullable: true }
+    ComparisonCell:
+      type: object
+      required: [technology_id, criterion_id, state, evidence_ids]
+      properties:
+        technology_id: { type: string }
+        criterion_id: { type: string }
+        state: { type: string, enum: [supported, unsupported, partial, contradictory] }
+        value: { type: string, nullable: true }
+        unit: { type: string, nullable: true }
+        explanation: { type: string, nullable: true }
+        evidence_ids: { type: array, items: { type: string, format: uuid } }
+    Problem:
+      type: object
+      required: [type, title, status, detail, request_id, error_code]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        request_id: { type: string, format: uuid }
+        error_code: { type: string }

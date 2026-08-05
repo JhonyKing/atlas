@@ -31,9 +31,9 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 002 — technology comparator
 
-- [ ] CMP-001 Run `/speckit.specify` for configurable 2–4 technology comparison with explicit criteria and evidence per cell.
-- [ ] CMP-002 Specify supported criteria: capability, tool calling, context, latency, price, license, freshness, and operational risk.
-- [ ] CMP-003 Plan comparison state, retrieval fan-out, normalization, missing-value semantics, and contradiction handling.
+- [X] CMP-001 Run `/speckit.specify` for configurable 2–4 technology comparison with explicit criteria and evidence per cell.
+- [X] CMP-002 Specify supported criteria: capability, tool calling, context, latency, price, license, freshness, and operational risk.
+- [X] CMP-003 Plan comparison state, retrieval fan-out, normalization, missing-value semantics, and contradiction handling.
 - [ ] CMP-004 Write contract, domain, retrieval, and accessible UI tests before implementation.
 - [ ] CMP-005 Implement comparison request and asynchronous progress flow.
 - [ ] CMP-006 Implement evidence-backed comparison matrix and claim-level citations for every populated cell.
