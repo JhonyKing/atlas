@@ -17,15 +17,28 @@ DO $$
 DECLARE visitor_hash text := repeat('d', 64);
 DECLARE now_at timestamptz := '2026-08-04 12:00:00+00';
 DECLARE run_id uuid;
+DECLARE first_run_id uuid;
 DECLARE accepted boolean;
 DECLARE remaining integer;
 DECLARE retry_at timestamptz;
 DECLARE index integer;
 BEGIN
   FOR index IN 0..9 LOOP
+    INSERT INTO atlas.answer_runs(
+      visitor_key_hash, idempotency_key, question, status, expires_at
+    ) VALUES (
+      visitor_hash,
+      'quota-answer-run-' || lpad(index::text, 3, '0'),
+      'How does the quota work?',
+      'accepted',
+      now_at + interval '30 days'
+    ) RETURNING id INTO run_id;
+    IF index = 0 THEN
+      first_run_id := run_id;
+    END IF;
     SELECT q.run_id, q.accepted, q.remaining INTO run_id, accepted, remaining
     FROM atlas.reserve_answer_quota(
-      visitor_hash, 'quota-test-key-' || lpad(index::text, 3, '0'), atlas.new_uuid(), now_at
+      visitor_hash, 'quota-test-key-' || lpad(index::text, 3, '0'), run_id, now_at
     ) AS q;
     IF NOT accepted OR remaining <> 9 - index THEN
       RAISE EXCEPTION 'reservation % did not consume one slot', index;
@@ -39,7 +52,7 @@ BEGIN
   END IF;
 
   SELECT q.run_id, q.remaining INTO run_id, remaining
-  FROM atlas.reserve_answer_quota(visitor_hash, 'quota-test-key-000', atlas.new_uuid(), now_at) AS q;
+  FROM atlas.reserve_answer_quota(visitor_hash, 'quota-test-key-000', first_run_id, now_at) AS q;
   IF remaining <> 9 THEN
     RAISE EXCEPTION 'idempotent retry consumed another quota unit';
   END IF;

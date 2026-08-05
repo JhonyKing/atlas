@@ -120,13 +120,13 @@ navigation.
 
 ### Tests for User Story 2
 
-- [ ] T051 [P] [US2] Write failing claim-evidence referential-integrity and immutable-metadata tests in `database/tests/004_claim_evidence.sql`
-- [ ] T052 [P] [US2] Write failing citation/feedback API contract tests for retained, missing, expired, and replaced-feedback cases in `apps/backend/tests/contract/api/test_citations_feedback.py`
-- [ ] T053 [P] [US2] Write failing keyboard, focus, source-metadata, external-link, inference-label, and no-color-only citation component tests in `apps/web/src/features/evidence/__tests__/`
+- [X] T051 [P] [US2] Write failing claim-evidence referential-integrity and immutable-metadata tests in `database/tests/004_claim_evidence.sql`
+- [X] T052 [P] [US2] Write failing citation/feedback API contract tests for retained, missing, expired, and replaced-feedback cases in `apps/backend/tests/contract/api/test_citations_feedback.py`
+- [X] T053 [P] [US2] Write failing keyboard, focus, source-metadata, external-link, inference-label, and no-color-only citation component tests in `apps/web/src/features/evidence/__tests__/`
 
 ### Implementation for User Story 2
 
-- [ ] T054 [US2] Add composite foreign keys and database views that materialize canonical citation metadata from immutable corpus rows in `database/migrations/` and `database/functions/get_answer_result.sql` to satisfy T051
+- [X] T054 [US2] Add composite foreign keys and database views that materialize canonical citation metadata from immutable corpus rows in `database/migrations/` and `database/functions/get_answer_result.sql` to satisfy T051
 - [ ] T055 [US2] Implement citation assembly and inference labeling in `apps/backend/src/atlas/domain/citations.py` and `apps/backend/src/atlas/persistence/answer_repository.py`
 - [ ] T056 [US2] Implement idempotent `PUT /v1/answers/{run_id}/feedback` and expired-content semantics in `apps/backend/src/atlas/api/routes/feedback.py` to satisfy T052
 - [ ] T057 [US2] Implement the accessible evidence panel, source metadata, canonical/revision links, and feedback controls in `apps/web/src/features/evidence/` to satisfy T053
