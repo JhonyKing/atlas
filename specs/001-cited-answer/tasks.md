@@ -55,8 +55,8 @@ application source beyond scaffolding.
 - [X] T019 Implement the async Responses API adapter with exact `gpt-5.6-luna`, medium effort, `store=false`, current-turn reasoning, Pydantic parsing, HMAC `safety_identifier`, telemetry, and bounded retries in `apps/backend/src/atlas/providers/openai_responses.py`
 - [X] T020 [P] Write failing embedding adapter and dimension-invariant tests in `apps/backend/tests/contract/providers/test_openai_embeddings.py`
 - [X] T021 Implement the `text-embedding-3-small` adapter and versioned embedding profile in `apps/backend/src/atlas/providers/openai_embeddings.py`
-- [ ] T022 [P] Write failing SSRF, redirect, content-size/type, prompt-injection-boundary, Markdown normalization, hashing, and structure-aware chunking tests in `apps/backend/tests/unit/ingestion/`
-- [ ] T023 Implement the allowlisted HTTP fetcher, normalizer, hasher, and heading-aware chunker in `apps/backend/src/atlas/ingestion/fetcher.py`, `normalizer.py`, and `chunker.py` to satisfy T022
+- [X] T022 [P] Write failing SSRF, redirect, content-size/type, prompt-injection-boundary, Markdown normalization, hashing, and structure-aware chunking tests in `apps/backend/tests/unit/ingestion/`
+- [X] T023 Implement the allowlisted HTTP fetcher, normalizer, hasher, and heading-aware chunker in `apps/backend/src/atlas/ingestion/fetcher.py`, `normalizer.py`, and `chunker.py` to satisfy T022
 - [ ] T024 [P] Add official-source connector fixtures and failing discovery/version tests in `apps/backend/tests/fixtures/sources/` and `apps/backend/tests/unit/ingestion/test_connectors.py`
 - [ ] T025 Complete and record the terms, robots, licensing, allowed-path, attribution, review-date, and re-review-trigger decision for LangGraph, LangChain, and OpenAI in `docs/governance/source-reviews/`, leaving every source disabled unless its review explicitly passes
 - [ ] T026 Implement the LangGraph, LangChain, and OpenAI documentation/changelog/release connectors in `apps/backend/src/atlas/ingestion/connectors/`, enabling only the collections approved by T025
