@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 TESTS_ROOT = Path(__file__).resolve().parent
-for import_root in (TESTS_ROOT.parent, TESTS_ROOT):
+WORKSPACE_ROOT = TESTS_ROOT.parents[2]
+for import_root in (WORKSPACE_ROOT, TESTS_ROOT.parent, TESTS_ROOT):
     if str(import_root) not in sys.path:
         sys.path.insert(0, str(import_root))

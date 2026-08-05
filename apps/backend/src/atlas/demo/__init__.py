@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import UTC, datetime
-from typing import Mapping
 from uuid import UUID
 
 from pydantic import HttpUrl
 
+from atlas.agent.verification import verify_draft
 from atlas.domain import (
     AnswerDraft,
     AnswerStatus,
@@ -21,7 +22,6 @@ from atlas.domain import (
     SourceType,
 )
 from atlas.providers.ports import AnswerGenerator
-from atlas.agent.verification import verify_draft
 
 _SNAPSHOT_ID = UUID("00000000-0000-0000-0000-000000000801")
 _EVIDENCE_IDS = {
@@ -32,7 +32,7 @@ _EVIDENCE_IDS = {
 
 
 class DemoCorpusStatusProvider:
-    """Return a clearly bounded local baseline rather than pretending the corpus is production data."""
+    """Return a bounded local baseline, not a production corpus."""
 
     def get_status(self) -> CorpusStatus:
         now = datetime.now(UTC)
@@ -93,7 +93,10 @@ class DemoAnswerGraph:
                 else "ATLAS could not verify this question with the local demo corpus."
             )
             return {
-                "answer": AnswerDraft(answer_status=AnswerStatus.ABSTAINED, limitations=[limitation]),
+                "answer": AnswerDraft(
+                    answer_status=AnswerStatus.ABSTAINED,
+                    limitations=[limitation],
+                ),
                 "evidence": [],
             }
 
@@ -117,7 +120,10 @@ class DemoAnswerGraph:
 
     @staticmethod
     def _collection_for(text: str) -> CollectionSlug | None:
-        if any(term in text for term in ("langgraph", "conditional edge", "conditional node", "state graph")):
+        if any(
+            term in text
+            for term in ("langgraph", "conditional edge", "conditional node", "state graph")
+        ):
             return CollectionSlug.LANGGRAPH
         if "langchain" in text:
             return CollectionSlug.LANGCHAIN
@@ -129,17 +135,20 @@ class DemoAnswerGraph:
     def _evidence(collection: CollectionSlug) -> Evidence:
         data = {
             CollectionSlug.LANGGRAPH: (
-                "LangGraph conditional edges route execution to the next node based on the current graph state.",
+                "LangGraph conditional edges route execution to the next node based on the "
+                "current graph state.",
                 "LangGraph conditional edges",
                 "https://langchain-ai.github.io/langgraph/concepts/low_level/",
             ),
             CollectionSlug.LANGCHAIN: (
-                "LangChain provides composable building blocks for applications powered by language models.",
+                "LangChain provides composable building blocks for applications powered by "
+                "language models.",
                 "LangChain overview",
                 "https://python.langchain.com/docs/introduction/",
             ),
             CollectionSlug.OPENAI: (
-                "The Responses API is an interface for building model responses with structured inputs and outputs.",
+                "The Responses API is an interface for building model responses with structured "
+                "inputs and outputs.",
                 "OpenAI Responses API",
                 "https://platform.openai.com/docs/api-reference/responses",
             ),
@@ -158,14 +167,32 @@ class DemoAnswerGraph:
     def _claim_text(collection: CollectionSlug, language: str) -> str:
         if language == "es-MX":
             return {
-                CollectionSlug.LANGGRAPH: "En LangGraph, las aristas condicionales dirigen la ejecución al siguiente nodo según el estado actual del grafo.",
-                CollectionSlug.LANGCHAIN: "LangChain ofrece bloques componibles para aplicaciones impulsadas por modelos de lenguaje.",
-                CollectionSlug.OPENAI: "La Responses API de OpenAI permite construir respuestas de modelos con entradas y salidas estructuradas.",
+                CollectionSlug.LANGGRAPH: (
+                    "En LangGraph, las aristas condicionales dirigen la ejecución al siguiente "
+                    "nodo según el estado actual del grafo."
+                ),
+                CollectionSlug.LANGCHAIN: (
+                    "LangChain ofrece bloques componibles para aplicaciones impulsadas por "
+                    "modelos de lenguaje."
+                ),
+                CollectionSlug.OPENAI: (
+                    "La Responses API de OpenAI permite construir respuestas de modelos con "
+                    "entradas y salidas estructuradas."
+                ),
             }[collection]
         return {
-            CollectionSlug.LANGGRAPH: "In LangGraph, conditional edges route execution to the next node based on the current graph state.",
-            CollectionSlug.LANGCHAIN: "LangChain provides composable building blocks for applications powered by language models.",
-            CollectionSlug.OPENAI: "The OpenAI Responses API supports model responses with structured inputs and outputs.",
+            CollectionSlug.LANGGRAPH: (
+                "In LangGraph, conditional edges route execution to the next node based on the "
+                "current graph state."
+            ),
+            CollectionSlug.LANGCHAIN: (
+                "LangChain provides composable building blocks for applications powered by "
+                "language models."
+            ),
+            CollectionSlug.OPENAI: (
+                "The OpenAI Responses API supports model responses with structured inputs and "
+                "outputs."
+            ),
         }[collection]
 
 
@@ -191,27 +218,58 @@ class OpenAIConnectedDemoGraph:
                 if language == "es-MX"
                 else "ATLAS could not verify this question with the local demo corpus."
             )
-            return {"answer": AnswerDraft(answer_status=AnswerStatus.ABSTAINED, limitations=[limitation]), "evidence": []}
+            return {
+                "answer": AnswerDraft(
+                    answer_status=AnswerStatus.ABSTAINED,
+                    limitations=[limitation],
+                ),
+                "evidence": [],
+            }
 
         evidence = DemoAnswerGraph._evidence(collection)
         try:
-            draft = await self._generator.generate(question, [evidence], request_id=state.get("request_id"))
+            draft = await self._generator.generate(
+                question,
+                [evidence],
+                request_id=state.get("request_id"),
+            )
         except Exception:
             limitation = (
-                "El proveedor de modelo no respondió; ATLAS no publicará una respuesta sin verificar."
+                "El proveedor de modelo no respondió; ATLAS no publicará una respuesta sin "
+                "verificar."
                 if language == "es-MX"
-                else "The model provider did not respond; ATLAS will not publish an unverified answer."
+                else (
+                    "The model provider did not respond; ATLAS will not publish an unverified "
+                    "answer."
+                )
             )
-            return {"answer": AnswerDraft(answer_status=AnswerStatus.ABSTAINED, limitations=[limitation]), "evidence": []}
+            return {
+                "answer": AnswerDraft(
+                    answer_status=AnswerStatus.ABSTAINED,
+                    limitations=[limitation],
+                ),
+                "evidence": [],
+            }
 
-        verification = verify_draft(draft, [evidence], question=question, request_id=state.get("request_id"))
+        verification = verify_draft(
+            draft,
+            [evidence],
+            question=question,
+            request_id=state.get("request_id"),
+        )
         if verification.error is not None or verification.draft is None:
             limitation = (
                 "La respuesta del modelo no superó la verificación de citas."
                 if language == "es-MX"
                 else "The model response did not pass citation verification."
             )
-            return {"answer": AnswerDraft(answer_status=AnswerStatus.ABSTAINED, limitations=[limitation]), "evidence": []}
+            return {
+                "answer": AnswerDraft(
+                    answer_status=AnswerStatus.ABSTAINED,
+                    limitations=[limitation],
+                ),
+                "evidence": [],
+            }
         return {"answer": verification.draft, "evidence": [evidence]}
 
 

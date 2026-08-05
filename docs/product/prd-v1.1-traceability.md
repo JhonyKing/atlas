@@ -52,10 +52,24 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-026 | KPIs de adopción, valor, calidad, rendimiento, economía, conocimiento y operación | apéndice KPI | 012 | No iniciado | PRT-006–PRT-008 |
 | PRD-027 | SDD con Spec Kit: specify → clarify → plan → tasks → analyze → tests → implement → converge | 22; tabla de gates | Todas | En uso | Esta matriz y los feature folders |
 
+## Addendum del Plan Maestro RAG/Evals
+
+La auditoría de `PLAN-MAESTRO-RAG-EVALS.docx` no reemplaza esta matriz. Añade tres superficies que
+deben quedar trazadas antes de declarar el producto listo:
+
+| Necesidad agregada | Requisito PRD relacionado | Feature Spec Kit | Tareas nuevas |
+|---|---|---|---|
+| Observabilidad LangSmith de trazas, feedback y evaluaciones | PRD-018, PRD-022, PRD-026 | 013 | PM-001–PM-008, OBS-001–OBS-015, EVA-017–EVA-020 |
+| Corpus real de múltiples documentos/páginas, OCR y harness separado | PRD-002, PRD-011, PRD-012, PRD-015, PRD-021 | 014 | COR-001–COR-014, EVA-013–EVA-016 |
+| Noticia verificable del día anterior | PRD-001, PRD-004, PRD-005, PRD-011, PRD-022 | 015 | NEWS-001–NEWS-012 |
+
+El conteo actualizado del backlog maestro es **192 tareas totales: 191 abiertas y 1 marcada como
+completada**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **84 tareas: 11 abiertas y
+73 completadas**; esas cifras no deben sumarse porque representan niveles distintos de planificación.
+
 ## Regla de entrega
 
 `001-cited-answer` es el primer vertical slice, no el PRD completo. No se puede cerrar el producto
 como “listo” hasta que los features 002–012 tengan sus propios `spec.md`, `plan.md`, `tasks.md`,
 pruebas y resultados. El backlog siguiente es la lista maestra que evita que las expansiones del
 PRD desaparezcan detrás de la palabra “futuro”.
-

@@ -1,6 +1,7 @@
 """Content-free request, trace, logging, and cost observability primitives."""
 
 from atlas.observability.context import RequestContextMiddleware, current_request_id
+from atlas.observability.langsmith import LangSmithTraceSink, NullTraceSink, TraceHandle, TraceSink
 from atlas.observability.pricing import (
     CostEstimate,
     CostMetrics,
@@ -15,8 +16,12 @@ __all__ = [
     "CostEstimate",
     "CostMetrics",
     "EffectivePriceTable",
+    "LangSmithTraceSink",
+    "NullTraceSink",
     "RequestContextMiddleware",
     "TokenUsage",
+    "TraceHandle",
+    "TraceSink",
     "current_request_id",
     "estimate_cost",
     "log_event",

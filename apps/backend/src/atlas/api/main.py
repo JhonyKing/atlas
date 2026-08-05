@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
+from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
@@ -15,12 +16,12 @@ from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
-from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.config import get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
 from atlas.observability.context import RequestContextMiddleware
+from atlas.observability.langsmith import LangSmithTraceSink
 from atlas.persistence.corpus_status import CorpusStatusProvider
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 
@@ -105,11 +106,17 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             )
             generator = OpenAIResponsesAdapter(
                 client=client,
-                safety_identifier=derive_safety_identifier(safety_secret, "development-anonymous-visitor"),
+                safety_identifier=derive_safety_identifier(
+                    safety_secret,
+                    "development-anonymous-visitor",
+                ),
             )
             answer_graph = OpenAIConnectedDemoGraph(generator)
         return create_app(
-            answer_service=InMemoryAnswerRunService(answer_graph),
+            answer_service=InMemoryAnswerRunService(
+                answer_graph,
+                trace_sink=LangSmithTraceSink.from_settings(settings),
+            ),
             corpus_service=DemoCorpusStatusProvider(),
         )
     return create_app()

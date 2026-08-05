@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     openai_api_key: SecretStr | None = None
     atlas_visitor_hmac_secret: SecretStr | None = None
     atlas_operator_token: SecretStr | None = None
+    langsmith_tracing: bool = False
+    langsmith_api_key: SecretStr | None = None
+    langsmith_project: str = "atlas-ai"
+    langsmith_endpoint: AnyHttpUrl | None = None
+    langsmith_workspace_id: str | None = None
 
     atlas_answer_model: str = "gpt-5.6-luna"
     atlas_reasoning_effort: Literal["low", "medium", "high"] = "medium"

@@ -12,6 +12,7 @@ from uuid import UUID, uuid4
 from atlas.api.answer_events import SSEEventWriter
 from atlas.api.routes.answers import AnswerRunConflict, AnswerRunStatus
 from atlas.domain import AnswerStatus, CollectionSlug, Question, assemble_citations
+from atlas.observability.langsmith import NullTraceSink, TraceSink
 from atlas.persistence.quota import QuotaService
 
 
@@ -25,6 +26,7 @@ class _Run:
     visitor_key_hash: str
     idempotency_key: str
     question: Question
+    request_id: UUID
     status: AnswerRunStatus
     queue: asyncio.Queue[str | None] = field(default_factory=asyncio.Queue)
     task: asyncio.Task[None] | None = None
@@ -39,10 +41,12 @@ class InMemoryAnswerRunService:
         *,
         quota: QuotaService | None = None,
         clock: Callable[[], datetime] | None = None,
+        trace_sink: TraceSink | None = None,
     ) -> None:
         self._graph = graph
         self._quota = quota
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._trace_sink = trace_sink or NullTraceSink()
         self._runs: dict[UUID, _Run] = {}
         self._idempotency: dict[tuple[str, str], UUID] = {}
         self._lock = asyncio.Lock()
@@ -55,7 +59,6 @@ class InMemoryAnswerRunService:
         idempotency_key: str,
         request_id: UUID,
     ) -> UUID:
-        del request_id
         question_data = dict(question)
         product = question_data.get("product")
         if isinstance(product, str):
@@ -92,6 +95,7 @@ class InMemoryAnswerRunService:
                 visitor_key_hash=visitor_key_hash,
                 idempotency_key=idempotency_key,
                 question=parsed_question,
+                request_id=request_id,
                 status=status,
             )
             self._runs[run_id] = entry
@@ -159,6 +163,36 @@ class InMemoryAnswerRunService:
             yield frame
 
     async def _execute(self, entry: _Run, writer: SSEEventWriter) -> None:
+        root_trace = self._trace_sink.start(
+            "atlas.answer",
+            request_id=entry.request_id,
+            run_id=entry.run_id,
+            fields={
+                "locale": entry.question.language,
+                "question_length": len(entry.question.text),
+            },
+            tags=("answer", entry.question.language),
+        )
+        retrieval_trace = self._trace_sink.start(
+            "atlas.retrieval",
+            request_id=entry.request_id,
+            run_id=entry.run_id,
+            run_type="retriever",
+            parent=root_trace,
+        )
+        generation_trace = self._trace_sink.start(
+            "atlas.generation",
+            request_id=entry.request_id,
+            run_id=entry.run_id,
+            run_type="llm",
+            parent=root_trace,
+        )
+        verification_trace = self._trace_sink.start(
+            "atlas.verification",
+            request_id=entry.request_id,
+            run_id=entry.run_id,
+            parent=root_trace,
+        )
         entry.status = entry.status.model_copy(update={"status": "retrieving"})
         entry.queue.put_nowait(
             writer.emit(
@@ -171,6 +205,10 @@ class InMemoryAnswerRunService:
                 {"question": entry.question, "request_id": entry.run_id}
             )
         except asyncio.CancelledError:
+            self._trace_sink.end(retrieval_trace, status="cancelled")
+            self._trace_sink.end(generation_trace, status="cancelled")
+            self._trace_sink.end(verification_trace, status="cancelled")
+            self._trace_sink.end(root_trace, status="cancelled")
             if entry.status.status != "cancelled":
                 entry.status = entry.status.model_copy(
                     update={"status": "cancelled", "completed_at": self._clock()}
@@ -178,8 +216,12 @@ class InMemoryAnswerRunService:
                 entry.queue.put_nowait(None)
             return
 
+        self._trace_sink.end(retrieval_trace, status="completed")
+        self._trace_sink.end(generation_trace, status="completed")
+
         answer = result.get("answer")
         if answer is None or answer.answer_status is AnswerStatus.ABSTAINED:
+            self._trace_sink.end(verification_trace, status="abstained")
             limitations = answer.limitations if answer is not None else []
             completed_at = self._clock()
             entry.status = entry.status.model_copy(
@@ -202,6 +244,7 @@ class InMemoryAnswerRunService:
                 )
             )
         else:
+            self._trace_sink.end(verification_trace, status="completed")
             citations = [
                 citation.model_dump(mode="json")
                 for citation in assemble_citations(
@@ -235,3 +278,8 @@ class InMemoryAnswerRunService:
                 )
             )
         entry.queue.put_nowait(None)
+        self._trace_sink.end(
+            root_trace,
+            status=entry.status.status,
+            fields={"citation_count": len(entry.status.citations)},
+        )
