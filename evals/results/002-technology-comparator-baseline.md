@@ -41,3 +41,6 @@ Mode: local deterministic/fixture validation
 - Vitest locale/component suite: **8 files, 20 tests passed** with the bundled Node 24 runtime.
   The regular sandboxed Node 20 launcher is blocked by Windows path permissions before test
   collection; this does not reproduce when the approved bundled runtime is used.
+- Live local API smoke after restarting the backend: `/healthz` returned **200** and a two-technology
+  `/v1/comparisons` request emitted accepted → retrieval → normalization → verification → completed
+  SSE events with a development-only matrix.
