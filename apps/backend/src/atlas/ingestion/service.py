@@ -20,6 +20,10 @@ from atlas.providers.openai_embeddings import DEFAULT_EMBEDDING_PROFILE
 RunStatus = Literal["queued", "running", "succeeded", "failed", "dead_letter"]
 
 
+class IdempotencyConflict(RuntimeError):
+    """An idempotency key was previously bound to a different collection."""
+
+
 @dataclass(frozen=True, slots=True)
 class IngestionRun:
     id: UUID
@@ -62,6 +66,18 @@ class SourceDiscoverer(Protocol):
     async def discover(self, collection: CollectionSlug) -> Sequence[SourceCandidate]: ...
 
 
+class OperatorIngestionService(Protocol):
+    def request_refresh(
+        self,
+        collection: CollectionSlug,
+        trigger: str,
+        idempotency_key: str,
+        requested_by: str | None = None,
+    ) -> UUID: ...
+
+    def get_status(self, run_id: UUID) -> dict[str, object] | None: ...
+
+
 class IngestionService:
     def __init__(self, repository: IngestionRepository) -> None:
         self._repository = repository
@@ -78,6 +94,12 @@ class IngestionService:
         if not idempotency_key.strip():
             raise ValueError("idempotency_key must not be blank")
         return self._repository.enqueue(collection, trigger, idempotency_key, requested_by)
+
+    def get_status(self, run_id: UUID) -> dict[str, object] | None:
+        getter = getattr(self._repository, "get_status", None)
+        if getter is None:
+            return None
+        return getter(run_id)
 
 
 class PostgresIngestionRepository:
@@ -96,6 +118,20 @@ class PostgresIngestionRepository:
         idempotency_key: str,
         requested_by: str | None = None,
     ) -> UUID:
+        existing = self._connection.execute(
+            """
+            SELECT r.id, c.slug
+            FROM atlas.ingestion_runs AS r
+            JOIN atlas.collections AS c ON c.id = r.collection_id
+            WHERE r.idempotency_key = %s
+            """,
+            (idempotency_key,),
+        ).fetchone()
+        if existing is not None:
+            if existing[1] != collection.value:
+                raise IdempotencyConflict("idempotency key belongs to another collection")
+            self._connection.commit()
+            return existing[0]
         row = self._connection.execute(
             "SELECT atlas.enqueue_ingestion(%s, %s, %s, %s)",
             (
@@ -109,6 +145,35 @@ class PostgresIngestionRepository:
         if row is None:
             raise RuntimeError("ingestion enqueue did not return a run id")
         return row[0]
+
+    def get_status(self, run_id: UUID) -> dict[str, object] | None:
+        row = self._connection.execute(
+            """
+            SELECT r.id, c.slug, r.trigger, r.status, r.requested_at, r.started_at,
+                   r.completed_at, r.attempt_count, r.discovered_count, r.promoted_count,
+                   r.failed_count, r.error_code
+            FROM atlas.ingestion_runs AS r
+            JOIN atlas.collections AS c ON c.id = r.collection_id
+            WHERE r.id = %s
+            """,
+            (run_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return {
+            "id": row[0],
+            "collection": row[1],
+            "trigger": row[2],
+            "status": row[3],
+            "requested_at": row[4],
+            "started_at": row[5],
+            "completed_at": row[6],
+            "attempt_count": row[7],
+            "discovered_count": row[8],
+            "promoted_count": row[9],
+            "failed_count": row[10],
+            "error_code": row[11],
+        }
 
     def claim_next(self) -> IngestionRun | None:
         row = self._connection.execute(

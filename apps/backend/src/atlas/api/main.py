@@ -7,10 +7,17 @@ from fastapi import FastAPI
 
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
+from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.config import get_settings
+from atlas.ingestion.service import OperatorIngestionService
 
 
-def create_app(*, database_probe: DatabaseProbe | None = None) -> FastAPI:
+def create_app(
+    *,
+    database_probe: DatabaseProbe | None = None,
+    operator_service: OperatorIngestionService | None = None,
+    operator_token: str | None = None,
+) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
     settings = get_settings()
@@ -22,7 +29,14 @@ def create_app(*, database_probe: DatabaseProbe | None = None) -> FastAPI:
         version="0.1.0",
     )
     application.state.database_probe = resolved_database_probe
+    application.state.operator_service = operator_service
+    application.state.operator_token = operator_token or (
+        settings.atlas_operator_token.get_secret_value()
+        if settings.atlas_operator_token is not None
+        else None
+    )
     application.include_router(health_router)
+    application.include_router(operator_ingestion_router)
     return application
 
 
