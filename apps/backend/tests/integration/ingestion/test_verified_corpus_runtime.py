@@ -6,6 +6,7 @@ import psycopg
 import pytest
 from pydantic import SecretStr
 
+from atlas.api import main as main_module
 from atlas.api.main import _verified_corpus_or_demo
 from atlas.config import Settings
 from atlas.persistence.corpus_status import PostgresCorpusStatusRepository
@@ -17,7 +18,12 @@ def test_runtime_uses_verified_postgres_snapshot_when_available() -> None:
     if not raw_dsn:
         pytest.skip("ATLAS_DATABASE_URL is required for the PostgreSQL integration test")
 
-    settings = Settings(database_url=SecretStr(raw_dsn))
+    settings = Settings(
+        atlas_env="production",
+        database_url=SecretStr(raw_dsn),
+        atlas_operator_token=SecretStr("integration-test-operator"),
+        atlas_visitor_hmac_secret=SecretStr("integration-test-visitor-secret"),
+    )
     provider = _verified_corpus_or_demo(settings)
 
     assert isinstance(provider, PostgresCorpusStatusRepository)
@@ -29,3 +35,25 @@ def test_runtime_uses_verified_postgres_snapshot_when_available() -> None:
     connection = provider._connection
     assert isinstance(connection, psycopg.Connection)
     connection.close()
+
+
+@pytest.mark.database
+def test_production_runtime_wires_the_verified_corpus_provider(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw_dsn = os.getenv("ATLAS_DATABASE_URL") or os.getenv("DATABASE_URL")
+    if not raw_dsn:
+        pytest.skip("ATLAS_DATABASE_URL is required for the PostgreSQL integration test")
+
+    settings = Settings(
+        atlas_env="production",
+        database_url=SecretStr(raw_dsn),
+        atlas_operator_token=SecretStr("integration-test-operator"),
+        atlas_visitor_hmac_secret=SecretStr("integration-test-visitor-secret"),
+    )
+    monkeypatch.setattr(main_module, "get_settings", lambda: settings)
+    application = main_module.create_runtime_app()
+    provider = application.state.corpus_service
+    assert isinstance(provider, PostgresCorpusStatusRepository)
+    assert provider.get_status().snapshot_id
+    provider._connection.close()

@@ -14,7 +14,7 @@
 - [X] T005 Add page/OCR/language provenance to normalized documents and chunks.
 - [X] T006 Add duplicate-content and atomic-promotion integration tests against PostgreSQL (`database/tests/002_corpus_ingestion.sql`).
 - [X] T007 Add verification command that reports documents, pages, bytes, hashes and chunks per collection.
-- [ ] T008 Switch production runtime corpus provider to verified snapshot and retain demo fallback only for development.
+- [X] T008 Switch production runtime corpus provider to verified snapshot and retain demo fallback only for development.
 - [X] T009 Add status UI for source/page/chunk counts and demo-versus-verified state.
 
 ## Phase 3: Evaluation harness (P2)

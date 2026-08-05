@@ -142,7 +142,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             corpus_service=corpus_service,
             review_case_service=InMemoryReviewCaseService(),
         )
-    return create_app()
+    return create_app(corpus_service=_verified_corpus_or_demo(settings))
 
 
 def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:
@@ -157,9 +157,13 @@ def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:
         provider = PostgresCorpusStatusRepository(connection)
         provider.get_status()
         return provider
-    except Exception:
+    except Exception as exc:
         if connection is not None:
             connection.close()
+        if settings.atlas_env != "development":
+            raise RuntimeError(
+                "a verified corpus snapshot is required outside development"
+            ) from exc
         return DemoCorpusStatusProvider()
 
 
