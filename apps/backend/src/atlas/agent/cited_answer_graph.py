@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 
 from langgraph.graph import END, START, StateGraph
 
+from atlas.agent.verification import verify_draft
 from atlas.domain import (
     AnswerDraft,
     AnswerStatus,
@@ -18,7 +19,7 @@ from atlas.domain import (
     Evidence,
     Question,
 )
-from atlas.providers.ports import AnswerGenerator, EmbeddingProvider
+from atlas.providers.ports import AnswerGenerator, EmbeddingProvider, ProviderRefusal
 from atlas.retrieval.service import RetrievalRow
 
 GraphStage = Literal[
@@ -204,6 +205,16 @@ class CitedAnswerGraph:
                     "The answer provider timed out before producing a verified draft.",
                 ),
             }
+        except ProviderRefusal:
+            return {
+                "visited": visited,
+                "stage": "abstained",
+                "error": _controlled_error(
+                    state,
+                    ErrorCode.UNSUPPORTED_QUESTION,
+                    "The provider declined because this question is outside the supported corpus.",
+                ),
+            }
         except Exception:
             return {
                 "visited": visited,
@@ -218,7 +229,6 @@ class CitedAnswerGraph:
     async def _verify(self, state: CitedAnswerState) -> dict[str, object]:
         visited = _visit(state, "verify")
         draft = state.get("draft")
-        evidence_ids = {evidence.id for evidence in state.get("evidence", [])}
         if draft is None:
             return {
                 "visited": visited,
@@ -229,21 +239,19 @@ class CitedAnswerGraph:
                     "The provider returned no structured draft.",
                 ),
             }
-        invalid_evidence = not set(draft.evidence_ids).issubset(evidence_ids)
-        invalid_citations = any(
-            not set(claim.citation_ids).issubset(evidence_ids) for claim in draft.claims
+        verification = verify_draft(
+            draft,
+            state.get("evidence", []),
+            question=state["question"],
+            request_id=state.get("request_id"),
         )
-        if invalid_evidence or invalid_citations:
+        if verification.error is not None:
             return {
                 "visited": visited,
                 "stage": "abstained",
-                "error": _controlled_error(
-                    state,
-                    ErrorCode.CITATION_VERIFICATION_FAILED,
-                    "The draft contained an invented evidence identifier.",
-                ),
+                "error": verification.error,
             }
-        return {"visited": visited, "stage": "verifying"}
+        return {"visited": visited, "stage": "verifying", "draft": verification.draft}
 
     async def _abstain(self, state: CitedAnswerState) -> dict[str, object]:
         visited = _visit(state, "abstain")

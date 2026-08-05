@@ -17,6 +17,7 @@ from .enums import (
     CollectionState,
     ErrorCode,
     SourceType,
+    VerificationStatus,
 )
 
 ShortText = Annotated[str, StringConstraints(strip_whitespace=False, min_length=1, max_length=500)]
@@ -98,6 +99,10 @@ class Claim(DomainModel):
     text: Annotated[str, StringConstraints(strip_whitespace=False, min_length=1, max_length=2000)]
     type: ClaimType
     citation_ids: Annotated[list[UUID], Field(min_length=1)]
+    verification_status: VerificationStatus = Field(
+        default=VerificationStatus.SUPPORTED,
+        exclude=True,
+    )
 
     @field_validator("text")
     @classmethod

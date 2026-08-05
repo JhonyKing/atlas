@@ -12,6 +12,10 @@ from uuid import UUID
 from atlas.domain import AnswerDraft, Evidence, Question
 
 
+class ProviderRefusal(RuntimeError):
+    """The provider declined a question because it is outside supported scope."""
+
+
 @dataclass(frozen=True, slots=True)
 class FetchedSource:
     requested_url: str

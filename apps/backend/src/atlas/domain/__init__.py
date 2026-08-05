@@ -8,6 +8,7 @@ from .enums import (
     CollectionState,
     ErrorCode,
     SourceType,
+    VerificationStatus,
 )
 from .schemas import (
     AnswerDraft,
@@ -36,6 +37,7 @@ __all__ = [
     "Evidence",
     "Question",
     "SourceType",
+    "VerificationStatus",
     "assemble_citations",
     "claim_type_label",
 ]

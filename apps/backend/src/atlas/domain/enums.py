@@ -32,6 +32,12 @@ class ClaimType(_StringEnum):
     INFERENCE = "inference"
 
 
+class VerificationStatus(_StringEnum):
+    SUPPORTED = "supported"
+    CONTRADICTED = "contradicted"
+    UNSUPPORTED = "unsupported"
+
+
 class AnswerStatus(_StringEnum):
     COMPLETE = "complete"
     PARTIAL = "partial"

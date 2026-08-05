@@ -7,7 +7,11 @@ from uuid import UUID, uuid4
 import pytest
 from pydantic import HttpUrl
 
-from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
+from atlas.agent.cited_answer_graph import (
+    CitedAnswerDependencies,
+    CitedAnswerGraph,
+    CitedAnswerState,
+)
 from atlas.domain import (
     AnswerDraft,
     AnswerStatus,
@@ -18,7 +22,9 @@ from atlas.domain import (
     Evidence,
     Question,
     SourceType,
+    VerificationStatus,
 )
+from atlas.providers.ports import ProviderRefusal
 from atlas.retrieval.service import RetrievalRow
 
 EVIDENCE_ID = UUID("00000000-0000-0000-0000-000000000701")
@@ -83,13 +89,13 @@ def graph_for(draft: AnswerDraft) -> CitedAnswerGraph:
     )
 
 
-def error_of(result: dict[str, object]) -> ControlledError:
+def error_of(result: CitedAnswerState) -> ControlledError:
     error = result.get("error")
     assert isinstance(error, ControlledError)
     return error
 
 
-def answer_of(result: dict[str, object]) -> AnswerDraft:
+def answer_of(result: CitedAnswerState) -> AnswerDraft:
     answer = result.get("answer")
     assert isinstance(answer, AnswerDraft)
     return answer
@@ -125,7 +131,7 @@ async def test_contradictory_claim_abstains_with_disagreement_notice() -> None:
         text="The sources disagree.",
         type=ClaimType.FACTUAL,
         citation_ids=[EVIDENCE_ID],
-        verification_status="contradicted",
+        verification_status=VerificationStatus.CONTRADICTED,
     )
     draft = AnswerDraft.model_construct(
         answer_status=AnswerStatus.COMPLETE,
@@ -151,7 +157,7 @@ async def test_partial_draft_excludes_unsupported_claims_and_explains_gap() -> N
         text="The supported part.",
         type=ClaimType.FACTUAL,
         citation_ids=[EVIDENCE_ID],
-        verification_status="supported",
+        verification_status=VerificationStatus.SUPPORTED,
     )
     unsupported = Claim.model_construct(
         id=uuid4(),
@@ -159,7 +165,7 @@ async def test_partial_draft_excludes_unsupported_claims_and_explains_gap() -> N
         text="The unsupported part.",
         type=ClaimType.FACTUAL,
         citation_ids=[EVIDENCE_ID],
-        verification_status="unsupported",
+        verification_status=VerificationStatus.UNSUPPORTED,
     )
     draft = AnswerDraft.model_construct(
         answer_status=AnswerStatus.PARTIAL,
@@ -176,10 +182,6 @@ async def test_partial_draft_excludes_unsupported_claims_and_explains_gap() -> N
     assert answer.answer_status is AnswerStatus.PARTIAL
     assert [claim.text for claim in answer.claims] == ["The supported part."]
     assert any("evidence" in limitation.lower() for limitation in answer.limitations)
-
-
-class ProviderRefusal(RuntimeError):
-    """Controlled provider refusal used by the abstention contract."""
 
 
 class RefusingGenerator(Generator):
