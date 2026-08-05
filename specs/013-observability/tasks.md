@@ -29,7 +29,9 @@
 - [X] T014 Add retention/deletion and key-rotation runbook with a trace redaction checklist.
 - [X] T015 Run analyze/converge, record evidence, and update the PRD traceability matrix. Local
   evidence: 7 observability tests passed, LangSmith dry-run completed without network calls, and
-  the 60-case offline harness passed. The real LangSmith network smoke remains operator-controlled.
+  the 60-case offline harness passed. The real smoke and one live answer were also verified in
+  project `atlas-ai`; recent successful runs included `atlas.answer`, `atlas.retrieval`,
+  `atlas.generation`, and `atlas.verification`.
 
 ## Requirement coverage
 
