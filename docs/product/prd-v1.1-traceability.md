@@ -45,7 +45,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-019 | Escala MVP→beta→100k, colas, cache, HNSW, circuit breakers | 13 | 010 | Parcial | T072; SCL-001–SCL-012 |
 | PRD-020 | SLOs: disponibilidad, TTFT, p95, reportes, errores, citas, costo | 13.3 | 010 | Parcial | T072; SCL-004–SCL-008 |
 | PRD-021 | Golden dataset: factual, temporal, comparación, abstención, injection, reportes, bilingüe | 14.2 | 011 | Parcial | T070/T071; EVA-001–EVA-006 |
-| PRD-022 | Evals offline/online, gates de regresión, trazas y dashboard | 14.1–14.4 | 011 | Parcial | T070–T073; EVA-007–EVA-012 |
+| PRD-022 | Evals offline/online, gates de regresión, trazas y dashboard | 14.1–14.4 | 011 / 013 / 016 | Parcial; offline y dry-run verificados, smoke real pendiente de credencial operativa | T070–T073; EVA-007–EVA-012; T015 |
 | PRD-023 | Roadmap verificable de 12 semanas | 15 | 000 | Documentado | RDM-001–RDM-012 |
 | PRD-024 | Repo modular: web, API, worker, agent, retrieval, ingestion, models, reports, evaluation | 17 | 000 | Adaptado a monorepo actual | RDM-013 |
 | PRD-025 | ADRs, README, demo, video, post técnico y narrativa de entrevista | 18–20; ADR-001–ADR-009 | 012 | Parcial | T073/T077; PRT-001–PRT-009 |
@@ -67,6 +67,14 @@ El conteo actualizado del backlog maestro es **192 tareas totales: 159 abiertas 
 completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 5 abiertas y
 83 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
 Estas cifras no deben sumarse porque representan niveles distintos de planificación.
+
+## Evidencia de cierre parcial de features 013–014
+
+- **013 Observabilidad:** siete pruebas de observabilidad pasaron; el dry-run de LangSmith no hizo
+  llamadas de red; el harness offline `rag-v1` pasó sus 60 casos. La prueba real contra LangSmith
+  queda opt-in y requiere una credencial configurada por el operador.
+- **014 Corpus real:** el runtime de producción exige un snapshot verificado y el fallback demo
+  queda limitado a desarrollo; la integración de producción pasó contra el snapshot local activo.
 
 ## Regla de entrega
 

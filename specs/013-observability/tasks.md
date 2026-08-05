@@ -27,7 +27,9 @@
 
 - [X] T013 Add dashboard query definitions for latency, TTFT, errors, cost, citation, abstention and feedback by locale/snapshot.
 - [X] T014 Add retention/deletion and key-rotation runbook with a trace redaction checklist.
-- [ ] T015 Run analyze/converge, record evidence, and update the PRD traceability matrix.
+- [X] T015 Run analyze/converge, record evidence, and update the PRD traceability matrix. Local
+  evidence: 7 observability tests passed, LangSmith dry-run completed without network calls, and
+  the 60-case offline harness passed. The real LangSmith network smoke remains operator-controlled.
 
 ## Requirement coverage
 
