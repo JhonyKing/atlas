@@ -87,16 +87,16 @@ evidence and no draft claim is streamed early.
 
 ### Tests for User Story 1
 
-- [ ] T037 [P] [US1] Write failing hybrid-retrieval SQL tests for full-text candidates, exact vector candidates, filters, reciprocal-rank fusion, deduplication, and stable evidence IDs in `database/tests/003_hybrid_retrieval.sql`
-- [ ] T038 [P] [US1] Write failing retrieval-service tests for query constraints, top-k bounds, corpus snapshot selection, and deterministic ordering in `apps/backend/tests/unit/retrieval/test_service.py`
+- [X] T037 [P] [US1] Write failing hybrid-retrieval SQL tests for full-text candidates, exact vector candidates, filters, reciprocal-rank fusion, deduplication, and stable evidence IDs in `database/tests/003_hybrid_retrieval.sql`
+- [X] T038 [P] [US1] Write failing retrieval-service tests for query constraints, top-k bounds, corpus snapshot selection, and deterministic ordering in `apps/backend/tests/unit/retrieval/test_service.py`
 - [ ] T039 [P] [US1] Write failing supported-path LangGraph tests for node order, state isolation, structured generation, evidence-ID validation, verified finalization, provider timeout, and cancellation in `apps/backend/tests/unit/agent/test_cited_answer_graph.py`
 - [ ] T040 [P] [US1] Write failing API/SSE contract tests for `POST /v1/answers`, `GET /v1/answers/{run_id}`, and the repeat-safe cancellation request `DELETE /v1/answers/{run_id}`, including empty, punctuation-only, over-limit, unrelated-multi-question, repeated-cancel, and entered-text-preservation cases, in `apps/backend/tests/contract/api/test_answers.py`
 - [ ] T041 [P] [US1] Write failing accessible question-form, invalid-input text preservation, progress live-region, explicit cancel, and completed-answer component tests in `apps/web/src/features/cited-answer/__tests__/`
 
 ### Implementation for User Story 1
 
-- [ ] T042 [US1] Implement versioned exact hybrid retrieval and RRF SQL in `database/functions/search_evidence.sql` with GIN/B-tree indexes in `database/migrations/` to satisfy T037
-- [ ] T043 [US1] Implement repository and retrieval services in `apps/backend/src/atlas/persistence/corpus_repository.py` and `apps/backend/src/atlas/retrieval/service.py` to satisfy T038
+- [X] T042 [US1] Implement versioned exact hybrid retrieval and RRF SQL in `database/functions/search_evidence.sql` with GIN/B-tree indexes in `database/migrations/` to satisfy T037
+- [X] T043 [US1] Implement repository and retrieval services in `apps/backend/src/atlas/persistence/corpus_repository.py` and `apps/backend/src/atlas/retrieval/service.py` to satisfy T038
 - [ ] T044 [US1] Implement the typed LangGraph state, nodes, conditional edges, dependency context, and graph factory in `apps/backend/src/atlas/agent/cited_answer_graph.py` to satisfy T039
 - [ ] T045 [US1] Implement answer-run persistence, run evidence, claims, claim-evidence integrity, usage events, and terminal-state transitions in `database/migrations/` and `apps/backend/src/atlas/persistence/answer_repository.py`
 - [ ] T046 [US1] Implement verified event-stream serialization and disconnect cancellation in `apps/backend/src/atlas/api/answer_events.py` according to `contracts/answer-events.md`
