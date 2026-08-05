@@ -20,6 +20,7 @@ _SENSITIVE_FIELD_PARTS = (
     "secret",
     "raw",
 )
+_SAFE_METADATA_FIELDS = frozenset({"prompt_version"})
 
 
 def span_attributes(
@@ -36,7 +37,9 @@ def span_attributes(
     }
     for key, value in (fields or {}).items():
         normalized = key.lower()
-        if any(part in normalized for part in _SENSITIVE_FIELD_PARTS):
+        if normalized not in _SAFE_METADATA_FIELDS and any(
+            part in normalized for part in _SENSITIVE_FIELD_PARTS
+        ):
             continue
         if isinstance(value, (str, int, float, bool)):
             attributes[f"atlas.{normalized}"] = value

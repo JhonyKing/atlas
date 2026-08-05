@@ -28,6 +28,11 @@ def test_langsmith_sink_sends_only_safe_metadata() -> None:
         fields={
             "locale": "es-MX",
             "model": "gpt-5.6-luna",
+            "prompt_version": "cited-answer-v1",
+            "retrieval_version": "hybrid-v1",
+            "embedding_profile": "text-embedding-3-small:1536",
+            "application_version": "0.1.0",
+            "corpus_snapshot": "demo-unverified",
             "question": "private question",
             "evidence_excerpt": "private excerpt",
         },
@@ -42,6 +47,15 @@ def test_langsmith_sink_sends_only_safe_metadata() -> None:
     assert "private excerpt" not in str(created)
     assert "es-MX" in str(created)
     assert "gpt-5.6-luna" in str(created)
+    metadata = created["extra"]["metadata"]
+    assert metadata["locale"] == "es-MX"
+    assert metadata["model"] == "gpt-5.6-luna"
+    assert metadata["prompt_version"] == "cited-answer-v1"
+    assert metadata["retrieval_version"] == "hybrid-v1"
+    assert metadata["embedding_profile"] == "text-embedding-3-small:1536"
+    assert metadata["application_version"] == "0.1.0"
+    assert metadata["corpus_snapshot"] == "demo-unverified"
+    assert created["tags"] == ["answer", "es-MX"]
     assert len(client.updated) == 1
     assert client.updated[0]["outputs"] == {"status": "completed", "citation_count": 2}
 

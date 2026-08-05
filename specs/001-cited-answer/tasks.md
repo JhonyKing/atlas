@@ -298,4 +298,4 @@ earlier tasks, following the Spec Kit convergence contract.
 - [ ] T085 Wire the development/runtime corpus provider to a verified PostgreSQL snapshot when one exists, keep demo evidence visibly non-ready, and add an integration test for the transition per FR-002, FR-018, and SC-009 (partial).
 - [X] T086 Add Playwright locale-route and citation-parity coverage, including `/en`, `/es`, persisted preference, and original-language evidence labels per FR-023, FR-024, SC-013, and SC-014.
 - [ ] T087 Execute and record the seven-day refresh, quickstart, and five-person usability evidence required by T074–T076 before calling the vertical slice complete per SC-007 and SC-009 (missing).
-- [ ] T088 Add a complete metadata-tag test for model, prompt, retrieval, embedding, application, locale, and corpus versions in the LangSmith sink per Principle VII and the Plan Maestro observability addendum (partial).
+- [X] T088 Add a complete metadata-tag test for model, prompt, retrieval, embedding, application, locale, and corpus versions in the LangSmith sink per Principle VII and the Plan Maestro observability addendum.

@@ -64,8 +64,8 @@ deben quedar trazadas antes de declarar el producto listo:
 | Noticia verificable del día anterior | PRD-001, PRD-004, PRD-005, PRD-011, PRD-022 | 015 | NEWS-001–NEWS-012 |
 
 El conteo actualizado del backlog maestro es **192 tareas totales: 159 abiertas y 33 marcadas como
-completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 7 abiertas y
-81 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
+completadas**. El vertical slice `specs/001-cited-answer/tasks.md` mantiene **88 tareas: 6 abiertas y
+82 completadas**; las cuatro nuevas tareas T085–T088 provienen de la convergencia del 2026-08-05.
 Estas cifras no deben sumarse porque representan niveles distintos de planificación.
 
 ## Regla de entrega
