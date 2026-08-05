@@ -171,6 +171,9 @@ class InMemoryComparisonRunService:
             return
         try:
             retrieval_trace = trace_tree.start_stage("retrieval")
+            entry.queue.put_nowait(
+                writer.emit("comparison.retrieval.started", {"status": "retrieving"})
+            )
             matrix = await self._executor.run(
                 entry.comparison,
                 snapshot_id=entry.run.snapshot_id,
@@ -178,11 +181,25 @@ class InMemoryComparisonRunService:
             )
             self._repository.save_matrix(entry.run.run_id, matrix)
             self._trace_sink.end(retrieval_trace, status="completed")
+            entry.queue.put_nowait(
+                writer.emit("comparison.retrieval.completed", {"status": "retrieving"})
+            )
+            entry.queue.put_nowait(
+                writer.emit("comparison.normalization.completed", {"status": "normalizing"})
+            )
             verification_trace = trace_tree.start_stage("verification")
             self._trace_sink.end(verification_trace, status="completed")
+            entry.queue.put_nowait(
+                writer.emit("comparison.verification.completed", {"status": "verifying"})
+            )
             entry.matrix = matrix
             entry.run = entry.run.model_copy(
                 update={"status": ComparisonRunStatus.COMPLETED, "completed_at": self._clock()}
+            )
+            self._repository.complete(
+                entry.run.run_id,
+                visitor_key_hash=entry.run.visitor_key_hash,
+                completed_at=entry.run.completed_at or self._clock(),
             )
             entry.queue.put_nowait(
                 writer.emit(

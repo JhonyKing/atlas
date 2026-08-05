@@ -90,8 +90,9 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
   y pruebas de metadata segura para LangSmith; `T035–T036` pasaron el evaluador determinista y
   las puertas locales (168 backend tests, 11 Playwright).
 - **Pendiente explícito:** `T032–T033` y `T039` requieren una cuarta colección aprobada; `T038`
-  debe conectar el ejecutor real de retrieval/workflow (el coordinador fail-closed y la traza
-  LangSmith ya están cableados);
+  requiere verificar una ejecución real contra un snapshot poblado (el ejecutor de embeddings,
+  retrieval y extracción estructurada ya está cableado, junto con el coordinador fail-closed y la
+  traza LangSmith);
   `T040` debe ampliar el baseline a 20
   solicitudes y medir latencia/calidad; `T041` depende de resolver el runner Vitest de Windows.
 

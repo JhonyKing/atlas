@@ -66,6 +66,10 @@ async def test_service_emits_terminal_matrix_only_after_executor_completes() -> 
     assert any("comparison.completed" in frame for frame in frames)
     assert "Fixture has no comparison evidence." in "".join(frames)
 
+    stored = service._repository.get(run_id, visitor_key_hash="a" * 64)
+    assert stored.run.status.value == "completed"
+    assert stored.matrix is not None
+
 
 @pytest.mark.asyncio
 async def test_service_without_executor_fails_closed_without_matrix() -> None:

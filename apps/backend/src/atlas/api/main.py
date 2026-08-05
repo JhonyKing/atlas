@@ -24,6 +24,12 @@ from atlas.api.routes.health import router as health_router
 from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.api.routes.review_cases import router as review_cases_router
+from atlas.comparison.demo_executor import DemoComparisonExecutor
+from atlas.comparison.executor import (
+    OpenAIComparisonObservationExtractor,
+    RetrievalComparisonExecutor,
+)
+from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusComparisonBranchRetriever
 from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
@@ -35,8 +41,10 @@ from atlas.persistence.comparison_quota import (
     InMemoryComparisonQuotaRepository,
 )
 from atlas.persistence.comparison_repository import InMemoryComparisonRepository
+from atlas.persistence.corpus_repository import PostgresCorpusRepository
 from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
+from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 
 
@@ -145,6 +153,12 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 ),
             )
             answer_graph = OpenAIConnectedDemoGraph(generator)
+        comparison_executor = _comparison_executor(
+            settings,
+            corpus_service,
+            client=client if real_provider and settings.openai_api_key is not None else None,
+            allow_real=real_provider,
+        )
         return create_app(
             answer_service=InMemoryAnswerRunService(
                 answer_graph,
@@ -161,18 +175,25 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 },
             ),
             corpus_service=corpus_service,
-            comparison_service=_comparison_service(settings, corpus_service),
+            comparison_service=_comparison_service(
+                settings, corpus_service, executor=comparison_executor
+            ),
             review_case_service=InMemoryReviewCaseService(),
         )
     corpus_service = _verified_corpus_or_demo(settings)
     return create_app(
         corpus_service=corpus_service,
-        comparison_service=_comparison_service(settings, corpus_service),
+        comparison_service=_comparison_service(
+            settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
+        ),
     )
 
 
 def _comparison_service(
-    settings: Settings, corpus_service: CorpusStatusProvider
+    settings: Settings,
+    corpus_service: CorpusStatusProvider,
+    *,
+    executor=None,
 ) -> InMemoryComparisonRunService:
     """Wire a fail-closed comparison coordinator into every runtime environment."""
 
@@ -185,9 +206,48 @@ def _comparison_service(
         ),
         repository=InMemoryComparisonRepository(),
         snapshot_provider=lambda: corpus_service.get_status().snapshot_id,
+        executor=executor,
         trace_sink=LangSmithTraceSink.from_settings(settings),
         model=settings.atlas_answer_model,
     )
+
+
+def _comparison_executor(
+    settings: Settings,
+    corpus_service: CorpusStatusProvider,
+    *,
+    client: AsyncOpenAI | None = None,
+    allow_real: bool = True,
+):
+    """Select a safe executor: local fixture in development, real graph only for verified data."""
+
+    if isinstance(corpus_service, DemoCorpusStatusProvider) or (
+        settings.atlas_env == "development" and not allow_real
+    ):
+        return DemoComparisonExecutor()
+    if client is None and settings.openai_api_key is not None:
+        client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
+    if client is None or not isinstance(corpus_service, PostgresCorpusStatusRepository):
+        return None
+    connection = None
+    try:
+        dsn = settings.database_url.get_secret_value().replace(
+            "postgresql+psycopg://", "postgresql://", 1
+        )
+        connection = psycopg.connect(dsn)
+        repository = PostgresCorpusRepository(connection)
+        extractor = OpenAIComparisonObservationExtractor(
+            client=client, model=settings.atlas_answer_model
+        )
+        return RetrievalComparisonExecutor(
+            embedding_provider=OpenAIEmbeddingsAdapter(client=client),
+            retrieval=ComparisonRetrievalService(CorpusComparisonBranchRetriever(repository)),
+            extractor=extractor,
+        )
+    except Exception:
+        if connection is not None:
+            connection.close()
+        return None
 
 
 def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:

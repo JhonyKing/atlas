@@ -24,4 +24,14 @@ Mode: local deterministic/fixture validation
 - Four-technology comparison cases remain open until a fourth corpus collection is approved and
   ingested. The current verified corpus contains LangGraph, LangChain and OpenAI.
 - The runtime comparison endpoint is now wired with quota, snapshot selection, persistence and a
-  fail-closed executor; real retrieval/workflow execution remains a convergence task.
+  fail-closed executor; the runtime now includes a development-only deterministic executor and a
+  verified-corpus OpenAI embedding/retrieval/structured-extraction executor. A live run against a
+  populated production snapshot remains a convergence check.
+
+## Latest convergence check (2026-08-05)
+
+- Backend suite: **174 passed, 4 skipped**.
+- Runtime smoke with `use_real_provider=False`: terminal `comparison.completed` SSE with a safe
+  development-only matrix; no unverified production claim is implied.
+- New unit coverage verifies extraction evidence allow-listing, executor wiring, and persisted
+  terminal matrix state.
