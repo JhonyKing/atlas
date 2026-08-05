@@ -16,10 +16,12 @@ from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
+from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.config import get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
+from atlas.news.ranking import DailyNewsProvider
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink
 from atlas.persistence.corpus_status import CorpusStatusProvider
@@ -34,6 +36,7 @@ def create_app(
     answer_service: AnswerRunControl | None = None,
     feedback_service: FeedbackControl | None = None,
     corpus_service: CorpusStatusProvider | None = None,
+    news_service: DailyNewsProvider | None = None,
     visitor_hmac_secret: str | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
@@ -69,6 +72,7 @@ def create_app(
     application.state.answer_service = answer_service
     application.state.feedback_service = feedback_service
     application.state.corpus_service = corpus_service
+    application.state.news_service = news_service
     application.state.operator_token = operator_token or (
         settings.atlas_operator_token.get_secret_value()
         if settings.atlas_operator_token is not None
@@ -79,6 +83,7 @@ def create_app(
     application.include_router(feedback_router)
     application.include_router(corpus_router)
     application.include_router(operator_ingestion_router)
+    application.include_router(news_router)
     return application
 
 

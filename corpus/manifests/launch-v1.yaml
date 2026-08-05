@@ -1,0 +1,55 @@
+# Curated official-source manifest for the first real ATLAS snapshot.
+# This file is a plan/input for ingestion, not proof that the snapshot is active.
+# A bootstrap run must record fetched_at, content_sha256, bytes, pages and chunks before promotion.
+version: launch-v1
+review_status: pending_operator_approval
+collections:
+  langgraph:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangGraph overview
+        url: https://docs.langchain.com/oss/python/langgraph/overview
+        type: documentation
+      - title: LangGraph graph API
+        url: https://docs.langchain.com/oss/python/langgraph/graph-api
+        type: documentation
+      - title: LangGraph persistence
+        url: https://docs.langchain.com/oss/python/langgraph/persistence
+        type: documentation
+      - title: LangGraph interrupts
+        url: https://docs.langchain.com/oss/python/langgraph/interrupts
+        type: documentation
+  langchain:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangChain overview
+        url: https://docs.langchain.com/oss/python/langchain/overview
+        type: documentation
+      - title: LangChain agents
+        url: https://docs.langchain.com/oss/python/langchain/agents
+        type: documentation
+      - title: LangChain retrieval
+        url: https://docs.langchain.com/oss/python/langchain/retrieval
+        type: documentation
+      - title: LangChain middleware
+        url: https://docs.langchain.com/oss/python/langchain/middleware/overview
+        type: documentation
+  openai:
+    publisher: OpenAI
+    allowed_host: developers.openai.com
+    sources:
+      - title: OpenAI API models
+        url: https://developers.openai.com/api/docs/models
+        type: documentation
+      - title: OpenAI Responses API reference
+        url: https://developers.openai.com/api/reference/responses
+        type: documentation
+      - title: OpenAI embeddings guide
+        url: https://developers.openai.com/api/docs/guides/embeddings
+        type: documentation
+      - title: OpenAI structured outputs guide
+        url: https://developers.openai.com/api/docs/guides/structured-outputs
+        type: documentation
+

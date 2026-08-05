@@ -63,6 +63,15 @@ type MessageCatalog = {
   openCanonical: string;
   sourceTypes: Record<string, string>;
   states: Record<string, string>;
+  newsEyebrow: string;
+  newsTitle: string;
+  newsLoading: string;
+  newsUnavailable: string;
+  newsNoEvidence: string;
+  newsOriginal: string;
+  newsPublisher: string;
+  newsPublished: string;
+  newsOpen: string;
 };
 
 const catalogs: Record<Locale, MessageCatalog> = {
@@ -139,6 +148,15 @@ const catalogs: Record<Locale, MessageCatalog> = {
     openCanonical: "Open canonical root",
     sourceTypes: { documentation: "documentation", changelog: "changelog", release_note: "release note" },
     states: { ready: "Ready", stale: "Stale", refreshing: "Refreshing", unavailable: "Unavailable" },
+    newsEyebrow: "Internet signal",
+    newsTitle: "Previous-day headline",
+    newsLoading: "Loading yesterday's verified news…",
+    newsUnavailable: "No verified headline is available for the previous day.",
+    newsNoEvidence: "The feed window did not contain enough attributable evidence.",
+    newsOriginal: "Original headline and summary",
+    newsPublisher: "Publisher",
+    newsPublished: "Published",
+    newsOpen: "Open source",
   },
   "es-MX": {
     localeName: "Español",
@@ -213,6 +231,15 @@ const catalogs: Record<Locale, MessageCatalog> = {
     openCanonical: "Abrir raíz canónica",
     sourceTypes: { documentation: "documentación", changelog: "registro de cambios", release_note: "nota de versión" },
     states: { ready: "Lista", stale: "Desactualizada", refreshing: "Actualizando", unavailable: "No disponible" },
+    newsEyebrow: "Señal de Internet",
+    newsTitle: "Titular del día anterior",
+    newsLoading: "Cargando la noticia verificada de ayer…",
+    newsUnavailable: "No hay un titular verificado disponible del día anterior.",
+    newsNoEvidence: "La ventana de fuentes no tuvo evidencia atribuible suficiente.",
+    newsOriginal: "Titular y resumen originales",
+    newsPublisher: "Publicador",
+    newsPublished: "Publicada",
+    newsOpen: "Abrir fuente",
   },
 };
 

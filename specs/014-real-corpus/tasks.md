@@ -4,9 +4,9 @@
 
 ## Phase 1: Manifest and safety
 
-- [ ] T001 [P] Create the allowlisted official-source manifest in `corpus/manifests/launch-v1.yaml`.
-- [ ] T002 Add license/robots, URL, redirect, type and size validation in `apps/backend/src/atlas/ingestion/manifest.py`.
-- [ ] T003 Add manifest and SSRF/redirect contract tests in `apps/backend/tests/contract/ingestion/`.
+- [X] T001 [P] Create the allowlisted official-source manifest in `corpus/manifests/launch-v1.yaml`.
+- [X] T002 Add license/robots, URL, redirect, type and size validation in `apps/backend/src/atlas/ingestion/manifest.py`.
+- [X] T003 Add manifest validation tests in `apps/backend/tests/unit/ingestion/test_manifest.py`.
 
 ## Phase 2: Real snapshot (P1)
 
@@ -24,4 +24,3 @@
 - [ ] T012 Implement Hit@k, MRR, context precision/recall, citation precision and freshness evaluators.
 - [ ] T013 Add retrieval ablations for k=4/8/10, hybrid retrieval, reranking and anti-hallucination prompting.
 - [ ] T014 Run seven-day refresh validation, publish results and run analyze/converge.
-

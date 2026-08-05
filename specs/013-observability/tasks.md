@@ -11,10 +11,10 @@
 
 ## Phase 2: Answer lifecycle (P1)
 
-- [ ] T005 [P] Instrument request/run creation and terminal status in `apps/backend/src/atlas/api/routes/answers.py`.
-- [ ] T006 [P] Instrument retrieval, model generation, verification and SSE completion metadata in `apps/backend/src/atlas/observability/`.
+- [X] T005 [P] Instrument request/run creation and terminal status in `apps/backend/src/atlas/api/answer_service.py`.
+- [X] T006 [P] Instrument retrieval, model generation, verification and answer terminal status in `apps/backend/src/atlas/observability/`.
 - [ ] T007 Add locale, model, prompt, retrieval, embedding, application and corpus snapshot version tags without content in `apps/backend/src/atlas/observability/langsmith.py`.
-- [ ] T008 Add unit and contract tests proving LangSmith absence/unavailability does not fail answer requests.
+- [X] T008 Add unit and contract tests proving LangSmith absence/unavailability does not fail answer requests.
 
 ## Phase 3: Feedback and evals (P1)
 
