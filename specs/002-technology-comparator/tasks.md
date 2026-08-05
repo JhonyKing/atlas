@@ -7,14 +7,14 @@ implement the smallest change that makes it pass.
 
 ## Phase 1: Setup
 
-- [ ] T001 [P] Add comparison package entry points and typed configuration defaults in `apps/backend/src/atlas/comparison/__init__.py` and `apps/backend/src/atlas/config.py` for the five-comparison rolling window and supported criterion IDs.
+- [X] T001 [P] Add comparison package entry points and typed configuration defaults in `apps/backend/src/atlas/comparison/__init__.py` and `apps/backend/src/atlas/config.py` for the five-comparison rolling window and supported criterion IDs. (Evidence: comparison exports and `atlas_anonymous_comparison_limit=5`; config/schema tests pass.)
 - [ ] T002 [P] Add the comparison OpenAPI and SSE contracts to the generated contract registry in `apps/backend/src/atlas/api/contracts.py` and verify links from `specs/002-technology-comparator/contracts/`.
 - [ ] T003 [P] Add the comparison feature route and page placeholders to `apps/web/src/app/[locale]/compare/page.tsx` and `apps/web/src/features/comparison/` without exposing an unverified result.
 
 ## Phase 2: Foundational
 
-- [ ] T004 [P] Write failing domain tests for `ComparisonRequest`, `ComparisonRun`, `ComparisonMatrix`, `ComparisonCell`, criterion IDs and cell-state rules in `apps/backend/tests/unit/comparison/test_schemas.py`.
-- [ ] T005 Implement typed comparison domain schemas and validation in `apps/backend/src/atlas/comparison/schemas.py` to satisfy T004.
+- [X] T004 [P] Write failing domain tests for `ComparisonRequest`, `ComparisonRun`, `ComparisonMatrix`, `ComparisonCell`, criterion IDs and cell-state rules in `apps/backend/tests/unit/comparison/test_schemas.py`. (Evidence: 14 domain/config tests cover selection, lifecycle, matrix coordinates, evidence requirements and criteria.)
+- [X] T005 Implement typed comparison domain schemas and validation in `apps/backend/src/atlas/comparison/schemas.py` to satisfy T004. (Evidence: strict Pydantic contracts for requests, runs, matrices and cells; targeted tests pass.)
 - [ ] T006 [P] Write failing PostgreSQL contract tests for comparison runs, cells, evidence links, snapshot IDs, retention and idempotency in `database/tests/006_comparisons.sql`.
 - [ ] T007 Implement versioned comparison tables, indexes, retention and evidence foreign keys in `database/migrations/versions/` to satisfy T006.
 - [ ] T008 [P] Write failing comparison-quota tests for five accepted runs, rolling expiry, idempotency and visitor isolation in `apps/backend/tests/integration/security/test_comparison_quota.py`.

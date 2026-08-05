@@ -32,6 +32,7 @@ def test_safe_defaults_select_the_approved_portfolio_baseline() -> None:
     assert settings.atlas_embedding_model == "text-embedding-3-small"
     assert settings.atlas_embedding_dimensions == 1536
     assert settings.atlas_anonymous_answer_limit == 10
+    assert settings.atlas_anonymous_comparison_limit == 5
     assert settings.atlas_anonymous_window_hours == 24
     assert settings.atlas_content_retention_days == 30
 

@@ -17,6 +17,7 @@ class SafeSettingsSummary(TypedDict):
     embedding_model: str
     embedding_dimensions: int
     anonymous_answer_limit: int
+    anonymous_comparison_limit: int
     anonymous_window_hours: int
     content_retention_days: int
     web_origin: str
@@ -55,6 +56,7 @@ class Settings(BaseSettings):
     atlas_embedding_model: str = "text-embedding-3-small"
     atlas_embedding_dimensions: int = Field(default=1536, ge=1)
     atlas_anonymous_answer_limit: int = Field(default=10, ge=1)
+    atlas_anonymous_comparison_limit: int = Field(default=5, ge=1)
     atlas_anonymous_window_hours: int = Field(default=24, ge=1)
     atlas_content_retention_days: int = Field(default=30, ge=1)
 
@@ -109,6 +111,7 @@ class Settings(BaseSettings):
             "embedding_model": self.atlas_embedding_model,
             "embedding_dimensions": self.atlas_embedding_dimensions,
             "anonymous_answer_limit": self.atlas_anonymous_answer_limit,
+            "anonymous_comparison_limit": self.atlas_anonymous_comparison_limit,
             "anonymous_window_hours": self.atlas_anonymous_window_hours,
             "content_retention_days": self.atlas_content_retention_days,
             "web_origin": str(self.web_origin),
