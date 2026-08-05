@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 from atlas.agent.cited_answer_graph import CitedAnswerGraph
 from atlas.api.answer_events import SSEEventWriter
 from atlas.api.routes.answers import AnswerRunConflict, AnswerRunStatus
-from atlas.domain import AnswerStatus, CollectionSlug, Question
+from atlas.domain import AnswerStatus, CollectionSlug, Question, assemble_citations
 from atlas.persistence.quota import QuotaService
 
 
@@ -198,15 +198,11 @@ class InMemoryAnswerRunService:
                 )
             )
         else:
-            evidence_by_id = {item.id: item for item in result.get("evidence", [])}
             citations = [
-                {
-                    "id": str(evidence_id),
-                    "evidence_id": str(evidence_id),
-                    **evidence_by_id[evidence_id].model_dump(mode="json", exclude={"id"}),
-                }
-                for evidence_id in answer.evidence_ids
-                if evidence_id in evidence_by_id
+                citation.model_dump(mode="json")
+                for citation in assemble_citations(
+                    result.get("evidence", []), evidence_ids=answer.evidence_ids
+                )
             ]
             claims = [claim.model_dump(mode="json") for claim in answer.claims]
             completed_at = self._clock()

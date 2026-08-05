@@ -171,3 +171,16 @@ class PostgresAnswerRepository:
             (draft.answer_status.value, draft.limitations, run_id),
         )
         self._connection.commit()
+
+    def get_answer_result(self, run_id: UUID) -> dict[str, object] | None:
+        """Read canonical claims/citations assembled by the database view and function."""
+
+        row = self._connection.execute(
+            "SELECT atlas.get_answer_result(%s)",
+            (run_id,),
+        ).fetchone()
+        if row is None or row[0] is None:
+            return None
+        if not isinstance(row[0], dict):
+            raise RuntimeError("answer result function returned an invalid payload")
+        return row[0]

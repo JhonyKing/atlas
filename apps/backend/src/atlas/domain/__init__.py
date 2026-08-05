@@ -1,5 +1,6 @@
 """Public provider-independent contracts for ATLAS."""
 
+from .citations import CitationRecord, assemble_citations, claim_type_label
 from .enums import (
     AnswerStatus,
     ClaimType,
@@ -23,6 +24,7 @@ __all__ = [
     "AnswerDraft",
     "AnswerStatus",
     "Citation",
+    "CitationRecord",
     "Claim",
     "ClaimType",
     "CollectionSlug",
@@ -34,4 +36,6 @@ __all__ = [
     "Evidence",
     "Question",
     "SourceType",
+    "assemble_citations",
+    "claim_type_label",
 ]
