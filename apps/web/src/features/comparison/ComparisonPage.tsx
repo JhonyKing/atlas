@@ -41,14 +41,14 @@ const labels: Record<ComparisonTechnology | ComparisonCriterion, { en: string; e
 };
 
 export function ComparisonPage() {
-  const { locale } = useLocale();
+  const { locale, messages } = useLocale();
   const spanish = locale === "es-MX";
   const [selectedTechnologies, setSelectedTechnologies] = useState<ComparisonTechnology[]>([
     "langgraph",
     "openai",
   ]);
   const [selectedCriteria, setSelectedCriteria] = useState<ComparisonCriterion[]>(["capability", "price"]);
-  const [status, setStatus] = useState(spanish ? "Listo para comparar." : "Ready to compare.");
+  const [status, setStatus] = useState(messages.comparison.ready);
   const [error, setError] = useState<string | null>(null);
   const [matrix, setMatrix] = useState<Matrix | null>(null);
   const [active, setActive] = useState(false);
@@ -82,7 +82,7 @@ export function ComparisonPage() {
     setError(null);
     setMatrix(null);
     setActive(true);
-    setStatus(spanish ? "Comparación aceptada…" : "Comparison accepted…");
+    setStatus(messages.comparison.accepted);
     const nextController = new AbortController();
     controller.current = nextController;
     const input: ComparisonRequest = {
@@ -105,7 +105,7 @@ export function ComparisonPage() {
   function handleEvent(event: ComparisonEvent) {
     if (event.event === "comparison.completed" && isMatrix(event.data.matrix)) {
       setMatrix(event.data.matrix);
-      setStatus(spanish ? "Comparación verificada." : "Comparison verified.");
+      setStatus(messages.comparison.verified);
     } else if (event.event.endsWith("failed")) {
       setStatus(spanish ? "La comparación falló." : "Comparison failed.");
     } else if (event.event.endsWith("cancelled")) {
@@ -122,11 +122,11 @@ export function ComparisonPage() {
   return (
     <main>
       <section aria-labelledby="comparison-title">
-        <p>{spanish ? "Comparador con evidencia" : "Evidence-backed comparator"}</p>
-        <h1 id="comparison-title">{spanish ? "Compara tecnologías sin inventar datos." : "Compare technologies without invented data."}</h1>
+        <p>{messages.comparison.eyebrow}</p>
+        <h1 id="comparison-title">{messages.comparison.title}</h1>
         <form onSubmit={submit}>
           <fieldset>
-            <legend>{spanish ? "Tecnologías (2 a 4)" : "Technologies (2 to 4)"}</legend>
+            <legend>{messages.comparison.technologies}</legend>
             {technologies.map((technology) => (
               <label key={technology}>
                 <input
@@ -139,7 +139,7 @@ export function ComparisonPage() {
             ))}
           </fieldset>
           <fieldset>
-            <legend>{spanish ? "Criterios" : "Criteria"}</legend>
+            <legend>{messages.comparison.criteria}</legend>
             {criteria.map((criterion) => (
               <label key={criterion}>
                 <input
@@ -152,9 +152,9 @@ export function ComparisonPage() {
             ))}
           </fieldset>
           <button type="submit" disabled={active}>
-            {spanish ? "Comparar" : "Compare"}
+            {messages.comparison.compare}
           </button>
-          {active ? <button type="button" onClick={cancel}>{spanish ? "Cancelar" : "Cancel"}</button> : null}
+          {active ? <button type="button" onClick={cancel}>{messages.comparison.cancel}</button> : null}
         </form>
         <p role="status">{status}</p>
         {error ? <p role="alert">{error}</p> : null}

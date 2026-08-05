@@ -1,4 +1,5 @@
 import type { ComparisonCell, ComparisonCriterion, ComparisonMatrix as Matrix } from "./types";
+import { useLocale } from "@/i18n";
 
 const criterionLabels: Record<ComparisonCriterion, { en: string; es: string }> = {
   capability: { en: "Capability", es: "Capacidad" },
@@ -12,6 +13,7 @@ const criterionLabels: Record<ComparisonCriterion, { en: string; es: string }> =
 };
 
 export function ComparisonMatrix({ matrix, spanish }: { matrix: Matrix; spanish: boolean }) {
+  const { messages } = useLocale();
   const cellByKey = new Map(matrix.cells.map((cell) => [`${cell.technology_id}:${cell.criterion_id}`, cell]));
   return (
     <div role="region" aria-label={spanish ? "Matriz de comparación" : "Comparison matrix"} tabIndex={0}>
@@ -22,7 +24,7 @@ export function ComparisonMatrix({ matrix, spanish }: { matrix: Matrix; spanish:
             <th scope="col">{spanish ? "Tecnología" : "Technology"}</th>
             {matrix.criterion_ids.map((criterion) => (
               <th scope="col" key={criterion}>
-                {criterionLabels[criterion][spanish ? "es" : "en"]}
+                {messages.comparison.criterionLabels[criterion] ?? criterionLabels[criterion][spanish ? "es" : "en"]}
               </th>
             ))}
           </tr>
@@ -44,9 +46,13 @@ export function ComparisonMatrix({ matrix, spanish }: { matrix: Matrix; spanish:
 }
 
 function CellView({ cell, spanish }: { cell: ComparisonCell; spanish: boolean }) {
-  const stateLabels = spanish
-    ? { supported: "Compatible", unsupported: "Sin evidencia", partial: "Parcial", contradictory: "Contradictoria" }
-    : { supported: "Supported", unsupported: "Unsupported", partial: "Partial", contradictory: "Contradictory" };
+  const { messages } = useLocale();
+  const stateLabels = {
+    supported: spanish ? "Compatible" : "Supported",
+    unsupported: messages.comparison.unsupported,
+    partial: messages.comparison.partial,
+    contradictory: messages.comparison.contradictory,
+  };
   return (
     <div data-cell-state={cell.state}>
       <strong>{stateLabels[cell.state]}</strong>

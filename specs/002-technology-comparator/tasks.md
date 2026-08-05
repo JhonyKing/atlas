@@ -64,8 +64,8 @@ four rows.
 **Independent Test**: The same request in `/en/compare` and `/es/compare` preserves all IDs, values,
 dates, versions and cell states.
 
-- [ ] T030 [P] [US3] Write failing locale catalog, route and semantic-parity tests in `apps/web/src/features/comparison/__tests__/comparison-locale.test.tsx` and `apps/web/tests/e2e/comparison-locale-parity.spec.ts`.
-- [ ] T031 [US3] Add comparison message catalogs, `/en/compare` and `/es/compare` route handling, original-language evidence labels and locale propagation in `apps/web/src/i18n/` and `apps/web/src/features/comparison/`.
+- [X] T030 [P] [US3] Write failing locale catalog, route and semantic-parity tests in `apps/web/src/features/comparison/__tests__/comparison-locale.test.tsx` and `apps/web/tests/e2e/comparison-locale-parity.spec.ts`. (Evidence: component parity test is present; Chromium parity test preserves technology IDs and values across `/en/compare` and `/es/compare`; Vitest execution remains blocked by the existing Windows resolver issue.)
+- [X] T031 [US3] Add comparison message catalogs, `/en/compare` and `/es/compare` route handling, original-language evidence labels and locale propagation in `apps/web/src/i18n/` and `apps/web/src/features/comparison/`. (Evidence: catalog entries exist in both locales; request language and labels follow locale; parity journey passes.)
 - [ ] T032 [P] [US3] Add deterministic two-, three- and four-technology comparison cases with expected cell states and evidence IDs in `evals/datasets/comparison-v1.jsonl`.
 - [ ] T033 [US3] Add four-technology validation, keyboard navigation and locale-parity Playwright coverage in `apps/web/tests/e2e/comparison-four-tech.spec.ts`.
 

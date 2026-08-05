@@ -75,6 +75,22 @@ type MessageCatalog = {
   newsPublisher: string;
   newsPublished: string;
   newsOpen: string;
+  comparison: {
+    eyebrow: string;
+    title: string;
+    technologies: string;
+    criteria: string;
+    compare: string;
+    cancel: string;
+    ready: string;
+    accepted: string;
+    verified: string;
+    unsupported: string;
+    partial: string;
+    contradictory: string;
+    noEvidence: string;
+    criterionLabels: Record<string, string>;
+  };
 };
 
 const catalogs: Record<Locale, MessageCatalog> = {
@@ -163,6 +179,31 @@ const catalogs: Record<Locale, MessageCatalog> = {
     newsPublisher: "Publisher",
     newsPublished: "Published",
     newsOpen: "Open source",
+    comparison: {
+      eyebrow: "Evidence-backed comparator",
+      title: "Compare technologies without invented data.",
+      technologies: "Technologies (2 to 4)",
+      criteria: "Criteria",
+      compare: "Compare",
+      cancel: "Cancel",
+      ready: "Ready to compare.",
+      accepted: "Comparison accepted…",
+      verified: "Comparison verified.",
+      unsupported: "Unsupported",
+      partial: "Partial",
+      contradictory: "Contradictory",
+      noEvidence: "No verified evidence is available for this cell.",
+      criterionLabels: {
+        capability: "Capability",
+        tool_calling: "Tool calling",
+        context: "Context",
+        latency: "Latency",
+        price: "Price",
+        license: "License",
+        freshness: "Freshness",
+        operational_risk: "Operational risk",
+      },
+    },
   },
   "es-MX": {
     localeName: "Español",
@@ -249,6 +290,31 @@ const catalogs: Record<Locale, MessageCatalog> = {
     newsPublisher: "Publicador",
     newsPublished: "Publicada",
     newsOpen: "Abrir fuente",
+    comparison: {
+      eyebrow: "Comparador con evidencia",
+      title: "Compara tecnologías sin inventar datos.",
+      technologies: "Tecnologías (2 a 4)",
+      criteria: "Criterios",
+      compare: "Comparar",
+      cancel: "Cancelar",
+      ready: "Listo para comparar.",
+      accepted: "Comparación aceptada…",
+      verified: "Comparación verificada.",
+      unsupported: "Sin evidencia",
+      partial: "Parcial",
+      contradictory: "Contradictoria",
+      noEvidence: "No hay evidencia verificada disponible para esta celda.",
+      criterionLabels: {
+        capability: "Capacidad",
+        tool_calling: "Llamada de herramientas",
+        context: "Contexto",
+        latency: "Latencia",
+        price: "Precio",
+        license: "Licencia",
+        freshness: "Actualización",
+        operational_risk: "Riesgo operativo",
+      },
+    },
   },
 };
 
