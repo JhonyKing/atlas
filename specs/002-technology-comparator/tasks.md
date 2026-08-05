@@ -66,15 +66,15 @@ dates, versions and cell states.
 
 - [X] T030 [P] [US3] Write failing locale catalog, route and semantic-parity tests in `apps/web/src/features/comparison/__tests__/comparison-locale.test.tsx` and `apps/web/tests/e2e/comparison-locale-parity.spec.ts`. (Evidence: component parity test is present; Chromium parity test preserves technology IDs and values across `/en/compare` and `/es/compare`; Vitest execution remains blocked by the existing Windows resolver issue.)
 - [X] T031 [US3] Add comparison message catalogs, `/en/compare` and `/es/compare` route handling, original-language evidence labels and locale propagation in `apps/web/src/i18n/` and `apps/web/src/features/comparison/`. (Evidence: catalog entries exist in both locales; request language and labels follow locale; parity journey passes.)
-- [ ] T032 [P] [US3] Add deterministic two-, three- and four-technology comparison cases with expected cell states and evidence IDs in `evals/datasets/comparison-v1.jsonl`.
+- [ ] T032 [P] [US3] Add deterministic two-, three- and four-technology comparison cases with expected cell states and evidence IDs in `evals/datasets/comparison-v1.jsonl`. (Progress: two- and three-technology cases are present and tested; four-technology case remains pending an approved fourth corpus collection.)
 - [ ] T033 [US3] Add four-technology validation, keyboard navigation and locale-parity Playwright coverage in `apps/web/tests/e2e/comparison-four-tech.spec.ts`.
 
 ## Phase 6: Polish and Cross-Cutting Quality Gates
 
-- [ ] T034 [P] Add comparison request, retrieval, normalization, verification, locale, model and snapshot metadata to the LangSmith trace tree in `apps/backend/src/atlas/comparison/observability.py` and cover it in `apps/backend/tests/unit/comparison/test_observability.py`.
-- [ ] T035 Add deterministic comparison evaluation and matrix/citation parity reporting in `apps/backend/src/atlas/evaluation/comparison_cli.py` and `evals/evaluators/comparison.py`.
-- [ ] T036 Run the feature quickstart and all backend/frontend quality gates, recording results in `evals/results/002-technology-comparator-baseline.md`.
-- [ ] T037 Run Spec Kit analyze/converge, resolve critical findings, update the PRD traceability matrix, and mark only evidenced tasks complete in `docs/product/prd-v1.1-traceability.md`.
+- [X] T034 [P] Add comparison request, retrieval, normalization, verification, locale, model and snapshot metadata to the LangSmith trace tree in `apps/backend/src/atlas/comparison/observability.py` and cover it in `apps/backend/tests/unit/comparison/test_observability.py`. (Evidence: root/stage trace tree carries safe counts, locale, model, snapshot, quota and branch labels without content; test passes.)
+- [X] T035 Add deterministic comparison evaluation and matrix/citation parity reporting in `apps/backend/src/atlas/evaluation/comparison_cli.py` and `evals/evaluators/comparison.py`. (Evidence: CLI reports structure accuracy, state accuracy and evidence-ID parity; deterministic fixture run passes 2 matrix cases.)
+- [X] T036 Run the feature quickstart and all backend/frontend quality gates, recording results in `evals/results/002-technology-comparator-baseline.md`. (Evidence: 168 backend tests passed, migrations upgraded, comparison evaluator 2/2, frontend lint/typecheck passed and 11 Playwright tests passed.)
+- [X] T037 Run Spec Kit analyze/converge, resolve critical findings, update the PRD traceability matrix, and mark only evidenced tasks complete in `docs/product/prd-v1.1-traceability.md`. (Evidence: prerequisite check passed; analysis found runtime wiring, fourth corpus, 20-case metrics and Vitest runner gaps; convergence tasks T038–T041 were appended and PRD/backlog traceability updated.)
 
 ## Dependencies and Execution Order
 
@@ -105,3 +105,10 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 | SC-CMP-005–SC-CMP-006 (locale and semantic parity) | T030–T033, T035 |
 | SC-CMP-007 (source-injection safety) | T026–T027, T035 |
 | SC-CMP-008 (external usability) | T033, T036 |
+
+## Phase 7: Convergence
+
+- [ ] T038 [US1] Wire a production-safe comparison run service into `create_runtime_app()` with the separate quota, verified snapshot selection, retrieval/workflow, persistence, trace tree and terminal SSE events per FR-CMP-001–FR-CMP-010. (missing; current routes are contract-tested with a fake service but runtime state leaves `comparison_service` unset.)
+- [ ] T039 [US3] Approve, ingest and verify a fourth supported technology collection, then add the four-technology dataset and Playwright journey for FR-CMP-001, FR-CMP-011 and SC-CMP-006. (missing; current verified corpus contains only three collections and no fourth source review.)
+- [ ] T040 [US1] Expand `evals/datasets/comparison-v1.jsonl` to at least 20 representative comparison requests and record matrix citation precision, useful-progress latency and terminal latency for SC-CMP-001, SC-CMP-002 and SC-CMP-004. (partial; current deterministic baseline covers two matrix cases and does not measure latency or 20-request quality.)
+- [ ] T041 [US3] Execute the locale component test with a working Vitest Windows resolver and record the result in `evals/results/002-technology-comparator-baseline.md`. (partial; test exists, but the bundled Vitest invocation fails before collection while Playwright/lint/typecheck pass.)

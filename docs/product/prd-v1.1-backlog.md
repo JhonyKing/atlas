@@ -34,12 +34,12 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [X] CMP-001 Run `/speckit.specify` for configurable 2–4 technology comparison with explicit criteria and evidence per cell.
 - [X] CMP-002 Specify supported criteria: capability, tool calling, context, latency, price, license, freshness, and operational risk.
 - [X] CMP-003 Plan comparison state, retrieval fan-out, normalization, missing-value semantics, and contradiction handling.
-- [ ] CMP-004 Write contract, domain, retrieval, and accessible UI tests before implementation.
-- [ ] CMP-005 Implement comparison request and asynchronous progress flow.
-- [ ] CMP-006 Implement evidence-backed comparison matrix and claim-level citations for every populated cell.
-- [ ] CMP-007 Implement criterion selection, source/date/version filters, and unsupported-cell explanation.
-- [ ] CMP-008 Add deterministic dataset cases for two-, three-, and four-technology comparisons.
-- [ ] CMP-009 Add Playwright journey and regression gate; prove the comparator is not a generic chat response.
+- [X] CMP-004 Write contract, domain, retrieval, and accessible UI tests before implementation. (Spec Kit T004, T010, T012–T014, T022–T023.)
+- [X] CMP-005 Implement comparison request and asynchronous progress flow. (Spec Kit T012–T020; runtime wiring remains a convergence task.)
+- [X] CMP-006 Implement evidence-backed comparison matrix and claim-level citations for every populated cell. (Spec Kit T014–T019, T024–T025.)
+- [X] CMP-007 Implement criterion selection, source/date/version filters, and unsupported-cell explanation. (Spec Kit T016–T017, T022, T028–T029.)
+- [ ] CMP-008 Add deterministic dataset cases for two-, three-, and four-technology comparisons. (Two and three are present; fourth corpus pending T032/T039.)
+- [X] CMP-009 Add Playwright journey and regression gate; prove the comparator is not a generic chat response. (Spec Kit T023, T029, T036.)
 
 ## 003 — reports, ADRs, and document artifacts
 

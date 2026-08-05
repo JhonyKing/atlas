@@ -28,7 +28,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
 | PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
-| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Spec y plan listos; implementación no iniciada | CMP-001–CMP-003; specs/002-technology-comparator/ |
+| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe y evaluador implementados; runtime, cuarta colección y baseline de 20 casos pendientes | T001–T041; specs/002-technology-comparator/ |
 | PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
 | PRD-007 | Architecture brief, ADR, release intelligence, research report | 7.3; tabla de plantillas | 003 | No iniciado | RPT-003–RPT-008 |
 | PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
@@ -77,6 +77,21 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
   permanece opt-in por su posible coste.
 - **014 Corpus real:** el runtime de producción exige un snapshot verificado y el fallback demo
   queda limitado a desarrollo; la integración de producción pasó contra el snapshot local activo.
+
+## Evidencia de avance del feature 002
+
+- **Foundation y contratos:** `T001–T011` pasaron pruebas de esquemas, migraciones PostgreSQL,
+  cuota separada de cinco comparaciones, fan-out de retrieval y restricciones por rama.
+- **P1:** `T012–T023` pasaron contratos API/SSE, persistencia, normalización, workflow, cliente
+  tipado, UI accesible y journey Playwright de dos tecnologías.
+- **Seguridad y estados:** `T024–T029` pasaron el evidence gate, fixture de prompt injection,
+  restricciones temporales/versiones y UI de estados unsupported/partial/contradictory.
+- **Bilingüe y observabilidad:** `T030–T031` y `T034` pasaron paridad Chromium, catálogos EN/ES
+  y pruebas de metadata segura para LangSmith; `T035–T036` pasaron el evaluador determinista y
+  las puertas locales (168 backend tests, 11 Playwright).
+- **Pendiente explícito:** `T032–T033` y `T039` requieren una cuarta colección aprobada; `T038`
+  debe conectar el servicio real en `create_runtime_app`; `T040` debe ampliar el baseline a 20
+  solicitudes y medir latencia/calidad; `T041` depende de resolver el runner Vitest de Windows.
 
 ## Regla de entrega
 
