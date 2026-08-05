@@ -51,6 +51,7 @@ ComparisonText = Annotated[
 class ComparisonRequest(DomainModel):
     technologies: Annotated[list[CollectionSlug], Field(min_length=2, max_length=4)]
     criteria: Annotated[list[ComparisonCriterion], Field(min_length=1)]
+    product: CollectionSlug | None = None
     version: (
         Annotated[str, StringConstraints(strip_whitespace=False, min_length=1, max_length=64)]
         | None

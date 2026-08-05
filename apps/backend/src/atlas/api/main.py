@@ -12,6 +12,8 @@ from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
+from atlas.api.routes.comparisons import ComparisonRunControl
+from atlas.api.routes.comparisons import router as comparisons_router
 from atlas.api.routes.corpus import router as corpus_router
 from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
@@ -37,6 +39,7 @@ def create_app(
     operator_service: OperatorIngestionService | None = None,
     operator_token: str | None = None,
     answer_service: AnswerRunControl | None = None,
+    comparison_service: ComparisonRunControl | None = None,
     feedback_service: FeedbackControl | None = None,
     corpus_service: CorpusStatusProvider | None = None,
     news_service: DailyNewsProvider | None = None,
@@ -74,6 +77,7 @@ def create_app(
     application.state.database_probe = resolved_database_probe
     application.state.operator_service = operator_service
     application.state.answer_service = answer_service
+    application.state.comparison_service = comparison_service
     application.state.feedback_service = feedback_service
     application.state.corpus_service = corpus_service
     application.state.news_service = news_service
@@ -85,6 +89,7 @@ def create_app(
     )
     application.include_router(health_router)
     application.include_router(answers_router)
+    application.include_router(comparisons_router)
     application.include_router(feedback_router)
     application.include_router(corpus_router)
     application.include_router(operator_ingestion_router)
@@ -110,8 +115,12 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             if isinstance(corpus_service, PostgresCorpusStatusRepository)
             else "demo-unverified"
         )
-        real_provider = use_real_provider if use_real_provider is not None else bool(
-            settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
+        real_provider = (
+            use_real_provider
+            if use_real_provider is not None
+            else bool(
+                settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
+            )
         )
         answer_graph = DemoAnswerGraph()
         if real_provider and settings.openai_api_key is not None:

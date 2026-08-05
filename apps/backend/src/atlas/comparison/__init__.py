@@ -1,5 +1,6 @@
 """Evidence-backed technology comparison contracts."""
 
+from .events import ComparisonEventOrderError, ComparisonEventWriter
 from .retrieval import (
     ComparisonRetrievalBranch,
     ComparisonRetrievalService,
@@ -19,6 +20,8 @@ __all__ = [
     "ComparisonCell",
     "ComparisonCellState",
     "ComparisonCriterion",
+    "ComparisonEventOrderError",
+    "ComparisonEventWriter",
     "ComparisonMatrix",
     "ComparisonRequest",
     "ComparisonRetrievalBranch",
