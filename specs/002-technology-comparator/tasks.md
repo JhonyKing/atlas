@@ -15,8 +15,8 @@ implement the smallest change that makes it pass.
 
 - [X] T004 [P] Write failing domain tests for `ComparisonRequest`, `ComparisonRun`, `ComparisonMatrix`, `ComparisonCell`, criterion IDs and cell-state rules in `apps/backend/tests/unit/comparison/test_schemas.py`. (Evidence: 14 domain/config tests cover selection, lifecycle, matrix coordinates, evidence requirements and criteria.)
 - [X] T005 Implement typed comparison domain schemas and validation in `apps/backend/src/atlas/comparison/schemas.py` to satisfy T004. (Evidence: strict Pydantic contracts for requests, runs, matrices and cells; targeted tests pass.)
-- [ ] T006 [P] Write failing PostgreSQL contract tests for comparison runs, cells, evidence links, snapshot IDs, retention and idempotency in `database/tests/006_comparisons.sql`.
-- [ ] T007 Implement versioned comparison tables, indexes, retention and evidence foreign keys in `database/migrations/versions/` to satisfy T006.
+- [X] T006 [P] Write failing PostgreSQL contract tests for comparison runs, cells, evidence links, snapshot IDs, retention and idempotency in `database/tests/006_comparisons.sql`. (Evidence: SQL contract checks all five tables, unique visitor/key identity, snapshot/evidence foreign keys and retention index.)
+- [X] T007 Implement versioned comparison tables, indexes, retention and evidence foreign keys in `database/migrations/versions/` to satisfy T006. (Evidence: migration `0012_comparisons`; Alembic upgrade and `psql -f database/tests/006_comparisons.sql` pass against local PostgreSQL.)
 - [ ] T008 [P] Write failing comparison-quota tests for five accepted runs, rolling expiry, idempotency and visitor isolation in `apps/backend/tests/integration/security/test_comparison_quota.py`.
 - [ ] T009 Implement the separate comparison quota reservation in `apps/backend/src/atlas/persistence/comparison_quota.py` and `database/functions/reserve_comparison_quota.sql` to satisfy T008.
 - [ ] T010 [P] Write failing retrieval fan-out tests for independent technology filters, selected snapshot and deterministic branch ordering in `apps/backend/tests/unit/comparison/test_retrieval.py`.
