@@ -28,6 +28,18 @@ button:disabled { opacity: .55; cursor: wait; }
 button.secondary { color: #172033; background: #e4e8ef; }
 .error { color: #a52525; font-weight: 700; }
 .progress { min-height: 1.5rem; margin: 1.5rem 0; color: #5865d8; font-weight: 700; }
-.answer-result { border-top: 1px solid #d6dce7; padding-top: 1.5rem; line-height: 1.6; }
-.answer-result a { color: #3542b5; font-weight: 700; }
-.answer-result p { color: #4b5568; }
+.evidence-panel { border-top: 1px solid #d6dce7; padding-top: 1.5rem; line-height: 1.6; }
+.claim-card, .citation-card { border: 1px solid #d6dce7; border-radius: .75rem; padding: 1rem; margin-top: 1rem; background: white; }
+.claim-kind { color: #3542b5; font-weight: 700; }
+.citation-card h3 { margin-top: 0; }
+.citation-card dl { display: grid; gap: .45rem; }
+.citation-card dl div { display: grid; grid-template-columns: minmax(7rem, 10rem) 1fr; gap: .75rem; }
+.citation-card dt { font-weight: 700; }
+.citation-card dd { margin: 0; }
+.citation-card blockquote { border-left: 3px solid #5865d8; margin: 1rem 0; padding-left: 1rem; color: #4b5568; }
+.citation-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+.evidence-panel a { color: #3542b5; font-weight: 700; }
+.limitations { color: #4b5568; }
+.feedback { border-top: 1px solid #d6dce7; margin-top: 1.5rem; padding-top: 1rem; }
+.feedback-actions, .feedback-details { display: grid; gap: .65rem; margin-top: .75rem; }
+.feedback-details { max-width: 30rem; }

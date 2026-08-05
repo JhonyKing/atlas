@@ -129,7 +129,7 @@ navigation.
 - [X] T054 [US2] Add composite foreign keys and database views that materialize canonical citation metadata from immutable corpus rows in `database/migrations/` and `database/functions/get_answer_result.sql` to satisfy T051
 - [X] T055 [US2] Implement citation assembly and inference labeling in `apps/backend/src/atlas/domain/citations.py` and `apps/backend/src/atlas/persistence/answer_repository.py`
 - [X] T056 [US2] Implement idempotent `PUT /v1/answers/{run_id}/feedback` and expired-content semantics in `apps/backend/src/atlas/api/routes/feedback.py` to satisfy T052
-- [ ] T057 [US2] Implement the accessible evidence panel, source metadata, canonical/revision links, and feedback controls in `apps/web/src/features/evidence/` to satisfy T053
+- [X] T057 [US2] Implement the accessible evidence panel, source metadata, canonical/revision links, and feedback controls in `apps/web/src/features/evidence/` to satisfy T053
 - [ ] T058 [US2] Add the citation-inspection and feedback Playwright journey in `apps/web/tests/e2e/evidence-inspection.spec.ts` and verify the independent-test checkpoint
 
 **Checkpoint**: User Stories 1 and 2 operate independently and citations are auditable end to end.

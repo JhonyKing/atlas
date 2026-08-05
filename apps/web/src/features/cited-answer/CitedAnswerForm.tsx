@@ -3,6 +3,9 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { cancelAnswer, streamCitedAnswer } from "./api";
+import { EvidencePanel } from "../evidence/EvidencePanel";
+import { putAnswerFeedback } from "../evidence/api";
+import type { FeedbackInput } from "../evidence/types";
 import type {
   AnswerEvent,
   AskQuestionInput,
@@ -102,6 +105,20 @@ export function CitedAnswerForm() {
     setStatus("Cancellation requested.");
   }
 
+  async function handleFeedback(feedback: FeedbackInput) {
+    if (!runId) {
+      setError("ATLAS could not associate feedback with this answer.");
+      return;
+    }
+    try {
+      await putAnswerFeedback(runId, feedback);
+      setError(null);
+      setStatus("Feedback saved.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "ATLAS could not save this feedback.");
+    }
+  }
+
   return (
     <section
       ref={shellRef}
@@ -140,30 +157,14 @@ export function CitedAnswerForm() {
         </div>
       </form>
       <p className="progress" role="status" aria-live="polite">{status}</p>
-      {answer ? <AnswerResult answer={answer} /> : null}
+      {answer ? (
+        <EvidencePanel
+          claims={answer.claims}
+          citations={answer.citations}
+          limitations={answer.limitations}
+          onFeedback={handleFeedback}
+        />
+      ) : null}
     </section>
-  );
-}
-
-function AnswerResult({ answer }: { answer: CompletedAnswer }) {
-  return (
-    <article className="answer-result" aria-labelledby="answer-title">
-      <h2 id="answer-title">Verified answer</h2>
-      <ol>
-        {answer.claims.map((claim) => <li key={claim.id}>{claim.text}</li>)}
-      </ol>
-      {answer.limitations.length ? <p>{answer.limitations.join(" ")}</p> : null}
-      <h3>Evidence</h3>
-      <ul>
-        {answer.citations.map((citation) => (
-          <li key={citation.id}>
-            <a href={citation.canonical_url} target="_blank" rel="noreferrer">
-              Open {citation.source_title}
-            </a>
-            <p>{citation.excerpt}</p>
-          </li>
-        ))}
-      </ul>
-    </article>
   );
 }
