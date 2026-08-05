@@ -4,7 +4,7 @@
 
 ## Phase 1: Source and model
 
-- [ ] T001 [P] Create the versioned feed allowlist in `corpus/manifests/news-v1.yaml`.
+- [X] T001 [P] Create the versioned feed allowlist in `corpus/manifests/news-v1.yaml` (pending operator review).
 - [ ] T002 [P] Add candidate/selection schemas and migration in `apps/backend/src/atlas/news/`.
 - [X] T003 Add fixture-feed tests for dates, malformed items, limits and attribution.
 

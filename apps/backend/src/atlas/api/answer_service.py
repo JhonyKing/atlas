@@ -42,11 +42,13 @@ class InMemoryAnswerRunService:
         quota: QuotaService | None = None,
         clock: Callable[[], datetime] | None = None,
         trace_sink: TraceSink | None = None,
+        trace_metadata: Mapping[str, object] | None = None,
     ) -> None:
         self._graph = graph
         self._quota = quota
         self._clock = clock or (lambda: datetime.now(UTC))
         self._trace_sink = trace_sink or NullTraceSink()
+        self._trace_metadata = dict(trace_metadata or {})
         self._runs: dict[UUID, _Run] = {}
         self._idempotency: dict[tuple[str, str], UUID] = {}
         self._lock = asyncio.Lock()
@@ -168,6 +170,7 @@ class InMemoryAnswerRunService:
             request_id=entry.request_id,
             run_id=entry.run_id,
             fields={
+                **self._trace_metadata,
                 "locale": entry.question.language,
                 "question_length": len(entry.question.text),
             },

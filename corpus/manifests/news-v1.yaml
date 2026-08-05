@@ -1,0 +1,19 @@
+# Candidate feed allowlist for the previous-day news feature.
+# Keep pending until an operator reviews robots, licensing and editorial scope.
+version: news-v1
+review_status: pending_operator_approval
+topic: internet-technology
+feeds:
+  - publisher: The Verge
+    url: https://www.theverge.com/rss/index.xml
+    authority_score: 0.75
+  - publisher: Ars Technica
+    url: https://feeds.arstechnica.com/arstechnica/index
+    authority_score: 0.8
+  - publisher: TechCrunch
+    url: https://techcrunch.com/feed/
+    authority_score: 0.7
+  - publisher: MIT Technology Review
+    url: https://www.technologyreview.com/feed/
+    authority_score: 0.85
+

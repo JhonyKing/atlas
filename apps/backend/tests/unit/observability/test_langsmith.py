@@ -41,6 +41,7 @@ def test_langsmith_sink_sends_only_safe_metadata() -> None:
     assert "private question" not in str(created)
     assert "private excerpt" not in str(created)
     assert "es-MX" in str(created)
+    assert "gpt-5.6-luna" in str(created)
     assert len(client.updated) == 1
     assert client.updated[0]["outputs"] == {"status": "completed", "citation_count": 2}
 
@@ -50,4 +51,3 @@ def test_null_sink_is_safe_without_langsmith() -> None:
     handle = sink.start("atlas.answer", request_id=uuid4(), run_id=uuid4())
     sink.end(handle, status="completed", fields={"secret": "never"})
     assert handle.active is False
-

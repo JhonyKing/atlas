@@ -121,6 +121,16 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             answer_service=InMemoryAnswerRunService(
                 answer_graph,
                 trace_sink=LangSmithTraceSink.from_settings(settings),
+                trace_metadata={
+                    "model": settings.atlas_answer_model,
+                    "prompt_version": "cited-answer-v1",
+                    "retrieval_version": "hybrid-v1",
+                    "embedding_profile": (
+                        f"{settings.atlas_embedding_model}:{settings.atlas_embedding_dimensions}"
+                    ),
+                    "application_version": "0.1.0",
+                    "corpus_snapshot": "demo-unverified",
+                },
             ),
             corpus_service=DemoCorpusStatusProvider(),
         )

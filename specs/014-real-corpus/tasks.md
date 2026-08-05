@@ -10,7 +10,7 @@
 
 ## Phase 2: Real snapshot (P1)
 
-- [ ] T004 Add bootstrap CLI wiring to discover, fetch, normalize, chunk, embed and promote the manifest.
+- [X] T004 Add bootstrap CLI wiring to discover, fetch, normalize, chunk, embed and promote the manifest.
 - [ ] T005 Add page/OCR/language provenance to normalized documents and chunks.
 - [ ] T006 Add duplicate-content and atomic-promotion integration tests against PostgreSQL.
 - [ ] T007 Add verification command that reports documents, pages, bytes, hashes and chunks per collection.

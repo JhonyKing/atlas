@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: ATLAS daily news
+  version: 0.1.0
+paths:
+  /v1/news/daily:
+    get:
+      operationId: getDailyNews
+      summary: Get the evidence-backed headline selected for the previous UTC day
+      responses:
+        '200':
+          description: A ready selection or an explicit unavailable state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsSelection'
+components:
+  schemas:
+    NewsSelection:
+      type: object
+      required: [status, day, timezone, candidate, candidate_count, reason_code]
+      properties:
+        status: {type: string, enum: [ready, unavailable]}
+        day: {type: string, format: date}
+        timezone: {type: string, enum: [UTC]}
+        candidate: {$ref: '#/components/schemas/NewsCandidate', nullable: true}
+        candidate_count: {type: integer, minimum: 0}
+        score: {type: number, minimum: 0, maximum: 1, nullable: true}
+        reason_code: {type: string, enum: [none, not_configured, no_evidence, insufficient_signal]}
+    NewsCandidate:
+      type: object
+      required: [title, summary, publisher, canonical_url, published_at, captured_at, content_sha256]
+      properties:
+        title: {type: string, maxLength: 300}
+        summary: {type: string, maxLength: 4000}
+        publisher: {type: string}
+        canonical_url: {type: string, format: uri}
+        published_at: {type: string, format: date-time}
+        captured_at: {type: string, format: date-time}
+        authority_score: {type: number, minimum: 0, maximum: 1}
+        topic_score: {type: number, minimum: 0, maximum: 1}
+        corroboration_count: {type: integer, minimum: 1}
+        content_sha256: {type: string, minLength: 64, maxLength: 64}
+
