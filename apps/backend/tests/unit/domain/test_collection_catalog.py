@@ -12,7 +12,7 @@ def test_catalog_prioritizes_anthropic_then_gemini_after_the_initial_three() -> 
     ]
 
 
-def test_new_connectors_are_registered_but_disabled_until_source_review() -> None:
+def test_new_connectors_are_enabled_after_source_review() -> None:
     registry = ConnectorRegistry()
-    assert registry.is_enabled(CollectionSlug.ANTHROPIC) is False
-    assert registry.is_enabled(CollectionSlug.GEMINI) is False
+    assert registry.is_enabled(CollectionSlug.ANTHROPIC) is True
+    assert registry.is_enabled(CollectionSlug.GEMINI) is True

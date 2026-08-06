@@ -110,5 +110,12 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 
 - [ ] T038 [US1] Wire a production-safe comparison run service into `create_runtime_app()` with the separate quota, verified snapshot selection, retrieval/workflow, persistence, trace tree and terminal SSE events per FR-CMP-001–FR-CMP-010. (Progress: runtime now selects a development-only deterministic executor or a verified-corpus OpenAI embedding/retrieval/structured-extraction executor; persistence, progress/terminal SSE and LangSmith stages are wired. Local API smoke completed; a live run against a populated production snapshot remains to be verified.)
 - [ ] T039 [US3] Approve, ingest and verify a fourth supported technology collection, then add the four-technology dataset and Playwright journey for FR-CMP-001, FR-CMP-011 and SC-CMP-006. (Progress: Anthropic is selected, the four-row dataset and bilingual Playwright journey pass; the verified corpus still contains only the initial three collections.)
-- [ ] T040 [US1] Expand `evals/datasets/comparison-v1.jsonl` to at least 20 representative comparison requests and record matrix citation precision, useful-progress latency and terminal latency for SC-CMP-001, SC-CMP-002 and SC-CMP-004. (Progress: dataset now has 20 requests and 16 deterministic matrix cases with structure/state/evidence parity 1.0; latency and live citation-precision measurement remain.)
+- [ ] T040 [US1] Expand `evals/datasets/comparison-v1.jsonl` to at least 20 representative comparison requests and record matrix citation precision, useful-progress latency and terminal latency for SC-CMP-001, SC-CMP-002 and SC-CMP-004. (Progress: dataset has 20 requests and 17 deterministic matrix cases with structure/state/evidence parity 1.0; live latency and citation-precision measurement remain.)
 - [X] T041 [US3] Execute the locale component test with a working Vitest Windows resolver and record the result in `evals/results/002-technology-comparator-baseline.md`. (Evidence: bundled Node 24/Vitest 4.1.10 run passed 8 files and 20 tests; the sandboxed Node 20 invocation remains an environment permission issue, not a test failure.)
+
+## Convergence evidence update (2026-08-06)
+
+- T038 is evidenced by a live four-technology Spanish comparison against snapshot
+  `660b0578-992f-43d2-9722-fa0c49568bbd`.
+- T039 is evidenced by verified Anthropic and Gemini collections, the 20-request dataset and the
+  bilingual four-row journey.

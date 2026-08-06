@@ -26,13 +26,12 @@ review decision before enabling a connector; a connector must never become activ
 
 ## Provider expansion order
 
-The initial launch manifest contains the first three collections. The expansion manifest registers
-Anthropic first and Gemini second:
+The combined expansion manifest preserves the initial three collections and adds Anthropic first
+and Gemini second:
 
 ```powershell
 atlas-corpus-bootstrap --manifest corpus/manifests/expansion-v1.yaml
 ```
 
-That manifest is intentionally `pending_source_review`, so this command is a dry-run catalog check.
-Do not pass `--execute` until the corresponding source-review files record current terms, robots and
-licensing evidence. Anthropic is the fourth comparison candidate; Gemini is the next corpus addition.
+The manifest is approved after the source-review records were completed. Its promoted snapshot
+contains 20 official sources across five collections. Future host/path changes require a new review.

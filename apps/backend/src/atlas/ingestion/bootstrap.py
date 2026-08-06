@@ -97,10 +97,11 @@ def _manifest_fingerprint(manifest: CorpusManifest) -> str:
 def _promote_snapshot(connection: psycopg.Connection[Any], manifest: CorpusManifest) -> str | None:
     """Create one immutable snapshot only after every manifest source is active."""
 
+    source_version_ids: list[str] = []
     for candidate in manifest.candidates:
         row = connection.execute(
             """
-            SELECT 1
+            SELECT s.current_version_id
             FROM atlas.sources AS s
             JOIN atlas.collections AS c ON c.id = s.collection_id
             WHERE c.slug = %s AND s.canonical_url = %s AND s.current_version_id IS NOT NULL
@@ -109,10 +110,12 @@ def _promote_snapshot(connection: psycopg.Connection[Any], manifest: CorpusManif
         ).fetchone()
         if row is None:
             return None
+        source_version_ids.append(str(row[0]))
 
     payload = {
         "version": manifest.version,
         "review_status": manifest.review_status,
+        "source_version_ids": source_version_ids,
         "sources": [
             {
                 "collection": candidate.collection.value,

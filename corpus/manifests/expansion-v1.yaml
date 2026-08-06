@@ -1,23 +1,71 @@
-# Candidate manifest for the approved technology expansion.
-# It is intentionally not the default launch manifest until source reviews are completed.
-version: expansion-v1
-review_status: pending_source_review
+# Combined manifest for the approved corpus expansion and the original launch sources.
+# It preserves the initial 12 sources while adding Anthropic and Gemini.
+version: expansion-v2
+review_status: approved
 collections:
+  langgraph:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangGraph overview
+        url: https://docs.langchain.com/oss/python/langgraph/overview
+        type: documentation
+      - title: LangGraph graph API
+        url: https://docs.langchain.com/oss/python/langgraph/graph-api
+        type: documentation
+      - title: LangGraph persistence
+        url: https://docs.langchain.com/oss/python/langgraph/persistence
+        type: documentation
+      - title: LangGraph interrupts
+        url: https://docs.langchain.com/oss/python/langgraph/interrupts
+        type: documentation
+  langchain:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangChain overview
+        url: https://docs.langchain.com/oss/python/langchain/overview
+        type: documentation
+      - title: LangChain agents
+        url: https://docs.langchain.com/oss/python/langchain/agents
+        type: documentation
+      - title: LangChain retrieval
+        url: https://docs.langchain.com/oss/python/langchain/retrieval
+        type: documentation
+      - title: LangChain middleware
+        url: https://docs.langchain.com/oss/python/langchain/middleware/overview
+        type: documentation
+  openai:
+    publisher: OpenAI
+    allowed_host: developers.openai.com
+    sources:
+      - title: OpenAI API models
+        url: https://developers.openai.com/api/docs/models
+        type: documentation
+      - title: OpenAI model and Responses guidance
+        url: https://developers.openai.com/api/docs/guides/latest-model
+        type: documentation
+      - title: OpenAI embeddings guide
+        url: https://developers.openai.com/api/docs/guides/embeddings
+        type: documentation
+      - title: OpenAI structured outputs guide
+        url: https://developers.openai.com/api/docs/guides/structured-outputs
+        type: documentation
   anthropic:
     publisher: Anthropic
-    allowed_host: docs.anthropic.com
+    allowed_host: platform.claude.com
     sources:
       - title: Anthropic documentation overview
-        url: https://docs.anthropic.com/en/docs/overview
+        url: https://platform.claude.com/docs/en/overview
         type: documentation
       - title: Anthropic API overview
-        url: https://docs.anthropic.com/en/api/overview
+        url: https://platform.claude.com/docs/en/api/overview
         type: documentation
       - title: Claude models
-        url: https://docs.anthropic.com/en/docs/about-claude/models
+        url: https://platform.claude.com/docs/en/about-claude/models
         type: documentation
       - title: Anthropic tool use
-        url: https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview
+        url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
         type: documentation
   gemini:
     publisher: Google

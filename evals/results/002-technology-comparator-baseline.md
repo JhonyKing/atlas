@@ -7,7 +7,7 @@ Mode: local deterministic/fixture validation
 
 | Gate | Result |
 |---|---|
-| Backend pytest (`apps/backend/tests`) | 177 passed, 4 skipped |
+| Backend pytest (`apps/backend/tests`) | 178 passed, 4 skipped |
 | Alembic migration (`upgrade head`) | Passed through `0015_expand_corpus_collections` |
 | Comparison offline evaluator | 17/17 matrix cases passed; structure 1.0, states 1.0, evidence parity 1.0 |
 | Frontend ESLint | Passed |
@@ -21,8 +21,8 @@ Mode: local deterministic/fixture validation
   sends provider requests and may incur cost.
 - Vitest's regular sandboxed Node 20 launcher fails before test collection because of Windows path
   permissions; the approved bundled Node 24 runtime passes all 20 component tests.
-- The four-technology fixture and journey now use Anthropic. The current verified corpus still
-  contains only LangGraph, LangChain and OpenAI; Anthropic remains pending source review and ingest.
+- The four-technology fixture and journey now use Anthropic. The verified corpus contains five
+  ready collections and 20 official sources; Anthropic and Gemini were ingested after review.
 - The runtime comparison endpoint is now wired with quota, snapshot selection, persistence and a
   fail-closed executor; the runtime now includes a development-only deterministic executor and a
   verified-corpus OpenAI embedding/retrieval/structured-extraction executor. A live run against a
@@ -30,7 +30,7 @@ Mode: local deterministic/fixture validation
 
 ## Latest convergence check (2026-08-05)
 
-- Backend suite: **177 passed, 4 skipped**.
+- Backend suite: **178 passed, 4 skipped**.
 - Runtime smoke with `use_real_provider=False`: terminal `comparison.completed` SSE with a safe
   development-only matrix; no unverified production claim is implied.
 - New unit coverage verifies extraction evidence allow-listing, executor wiring, and persisted
@@ -46,3 +46,10 @@ Mode: local deterministic/fixture validation
   SSE events with a development-only matrix.
 - Four-technology Chromium journey: **1 passed**, including English/Spanish rendering and keyboard
   selection; full Playwright baseline is now **12 passed**.
+
+## Latest real-corpus validation (2026-08-06)
+
+- Promoted snapshot: `660b0578-992f-43d2-9722-fa0c49568bbd`.
+- Five collections ready; 20 official sources, 20 pages and 4,220 chunks in total.
+- Anthropic: 4 sources / 677 chunks. Gemini: 4 sources / 898 chunks.
+- Live Spanish four-technology comparison completed all SSE stages against the promoted snapshot.

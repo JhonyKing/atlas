@@ -1,6 +1,7 @@
 """Typed runtime configuration with secret-safe field types."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal, TypedDict
 
 from pydantic import AnyHttpUrl, Field, SecretStr, field_validator, model_validator
@@ -28,7 +29,12 @@ class Settings(BaseSettings):
     """ATLAS settings loaded from environment variables or an untracked local file."""
 
     model_config = SettingsConfigDict(
-        env_file=(".env.local", ".env"),
+        env_file=(
+            ".env.local",
+            ".env",
+            str(Path(__file__).resolve().parents[4] / ".env.local"),
+            str(Path(__file__).resolve().parents[4] / ".env"),
+        ),
         env_file_encoding="utf-8",
         extra="ignore",
         frozen=True,

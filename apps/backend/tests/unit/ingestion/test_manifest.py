@@ -45,18 +45,15 @@ collections:
         load_manifest(path)
 
 
-def test_expansion_manifest_registers_anthropic_before_gemini_without_activating_it() -> None:
+def test_expansion_manifest_preserves_launch_sources_and_adds_approved_providers() -> None:
     manifest = load_manifest(EXPANSION_MANIFEST)
 
-    assert manifest.review_status == "pending_source_review"
-    assert manifest.source_count == 8
-    assert [candidate.collection.value for candidate in manifest.candidates[:4]] == [
-        "anthropic",
-        "anthropic",
-        "anthropic",
-        "anthropic",
-    ]
+    assert manifest.review_status == "approved"
+    assert manifest.source_count == 20
     assert {candidate.collection.value for candidate in manifest.candidates} == {
+        "langgraph",
+        "langchain",
+        "openai",
         "anthropic",
         "gemini",
     }

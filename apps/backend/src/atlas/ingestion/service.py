@@ -17,6 +17,14 @@ from atlas.ingestion.connectors import SourceCandidate
 from atlas.ingestion.normalizer import NormalizedDocument
 from atlas.providers.openai_embeddings import DEFAULT_EMBEDDING_PROFILE
 
+_PUBLISHERS = {
+    CollectionSlug.LANGGRAPH: "LangChain",
+    CollectionSlug.LANGCHAIN: "LangChain",
+    CollectionSlug.OPENAI: "OpenAI",
+    CollectionSlug.ANTHROPIC: "Anthropic",
+    CollectionSlug.GEMINI: "Google",
+}
+
 RunStatus = Literal["queued", "running", "succeeded", "failed", "dead_letter"]
 
 
@@ -239,7 +247,7 @@ class PostgresIngestionRepository:
                 candidate.canonical_url,
                 candidate.source_type.value,
                 candidate.title,
-                "LangChain" if candidate.collection is not CollectionSlug.OPENAI else "OpenAI",
+                _PUBLISHERS[candidate.collection],
                 document.language,
                 "official_repository" if candidate.source_revision_url else "official_docs",
             ),

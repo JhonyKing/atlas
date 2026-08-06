@@ -21,6 +21,13 @@ def test_bootstrap_defaults_to_safe_dry_run(capsys) -> None:
     assert payload["review_status"] == "approved"
 
 
-def test_bootstrap_refuses_network_execution_for_pending_source_review() -> None:
+def test_bootstrap_refuses_network_execution_for_pending_source_review(tmp_path: Path) -> None:
+    pending = tmp_path / "pending.yaml"
+    pending.write_text(
+        MANIFEST.read_text(encoding="utf-8").replace(
+            "review_status: approved", "review_status: pending_source_review"
+        ),
+        encoding="utf-8",
+    )
     with pytest.raises(RuntimeError, match="review_status=approved"):
-        main(["--manifest", str(EXPANSION_MANIFEST), "--execute"])
+        main(["--manifest", str(pending), "--execute"])
