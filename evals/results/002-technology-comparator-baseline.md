@@ -53,3 +53,10 @@ Mode: local deterministic/fixture validation
 - Five collections ready; 20 official sources, 20 pages and 4,220 chunks in total.
 - Anthropic: 4 sources / 677 chunks. Gemini: 4 sources / 898 chunks.
 - Live Spanish four-technology comparison completed all SSE stages against the promoted snapshot.
+
+## Retrieval and refresh validation (2026-08-06)
+
+- Retrieval ablations cover hybrid `k=4/8/10`, reranking and the anti-hallucination policy flag;
+  deterministic ground-truth metrics are repeatable at 1.0 for the 11 cases with IDs.
+- Failed-refresh safety validation day 1 preserved the promoted snapshot ID. Days 2-7 remain
+  scheduled work for the seven-day acceptance criterion.
