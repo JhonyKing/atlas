@@ -118,5 +118,8 @@ class ReportJob(DomainModel):
     created_at: datetime
     completed_at: datetime | None = None
     expires_at: datetime
+    model: str = "gpt-5.6-luna"
+    prompt_version: str = "report-v1"
+    corpus_snapshot: str | None = None
     document: ReportDocument | None = None
     error_code: str | None = None

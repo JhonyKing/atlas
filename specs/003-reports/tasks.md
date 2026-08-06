@@ -32,7 +32,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 - [X] T007 [P] Define typed report entities and validation schemas in `apps/backend/src/atlas/reports/schemas.py`
 - [X] T008 [P] Implement bounded local artifact storage with path-safe keys and content hashes in `apps/backend/src/atlas/reports/storage.py`
 - [X] T009 Implement report repository and lifecycle service for quota, ownership, idempotency, expiry, and safe deletion in `apps/backend/src/atlas/reports/service.py`
-- [ ] T010 [P] Add shared report error codes, request IDs, and observability fields in `apps/backend/src/atlas/reports/observability.py`
+- [X] T010 [P] Add shared report error codes, request IDs, and observability fields in `apps/backend/src/atlas/reports/observability.py`
 
 **Checkpoint**: Foundational report persistence and storage contracts are testable before any renderer or route is added.
 

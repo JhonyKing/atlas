@@ -19,3 +19,6 @@ SELECT status
 FROM atlas.report_jobs
 WHERE status IN ('accepted','planning','rendering','completed','failed','cancelled','expired','deleted');
 
+SELECT model, prompt_version
+FROM atlas.report_jobs
+WHERE model = 'gpt-5.6-luna' AND prompt_version = 'report-v1';

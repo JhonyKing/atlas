@@ -10,6 +10,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from uuid import UUID, uuid4
 
+from atlas.reports.observability import ReportTraceMetadata
 from atlas.reports.planner import ComparisonSource, plan_report
 from atlas.reports.renderers.docx import render_docx
 from atlas.reports.renderers.pdf import render_pdf
@@ -36,6 +37,7 @@ class _Entry:
         self.paths: dict[str, str] = {}
         self.events: asyncio.Queue[str | None] = asyncio.Queue()
         self.task: asyncio.Task[None] | None = None
+        self.trace_metadata: ReportTraceMetadata | None = None
 
 
 class InMemoryReportService:
@@ -47,12 +49,16 @@ class InMemoryReportService:
         limit: int = 3,
         window: timedelta = timedelta(hours=24),
         clock: Callable[[], datetime] | None = None,
+        model: str = "gpt-5.6-luna",
+        prompt_version: str = "report-v1",
     ) -> None:
         self._source = source
         self._storage = storage or LocalArtifactStorage(Path(".atlas-artifacts"))
         self._limit = limit
         self._window = window
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._model = model
+        self._prompt_version = prompt_version
         self._entries: dict[UUID, _Entry] = {}
         self._idempotency: dict[tuple[str, str], tuple[str, UUID]] = {}
         self._reservations: dict[str, list[datetime]] = {}
@@ -95,6 +101,8 @@ class InMemoryReportService:
                 status=ReportStatus.ACCEPTED,
                 created_at=now,
                 expires_at=now + timedelta(days=30),
+                model=self._model,
+                prompt_version=self._prompt_version,
             )
             self._entries[report_id] = _Entry(job)
             self._idempotency[key] = (fingerprint, report_id)
@@ -124,7 +132,15 @@ class InMemoryReportService:
         job = await self.get(report_id, owner_key_hash=owner_key_hash)
         if job.status is not ReportStatus.COMPLETED or format not in {"docx", "pdf"}:
             raise ReportNotFound(report_id)
-        entry = self._entries[report_id]
+            entry = self._entries[report_id]
+            entry.trace_metadata = ReportTraceMetadata(
+                request_id=entry.job.request_id,
+                report_id=entry.job.report_id,
+                source_run_id=entry.job.spec.source_run_id,
+                model=entry.job.model,
+                prompt_version=entry.job.prompt_version,
+                corpus_snapshot=entry.job.corpus_snapshot,
+            )
         return self._storage.get(entry.paths[format]), job
 
     async def stream(self, report_id: UUID, *, owner_key_hash: str) -> AsyncIterator[str]:

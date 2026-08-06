@@ -78,3 +78,27 @@ async def test_planner_fails_closed_for_missing_source() -> None:
     spec = ReportSpec(source_run_id=uuid4(), audience="engineer", scope="comparison")
     with pytest.raises(ReportPlanningError, match="source_run_not_found"):
         await plan_report(spec, owner_key_hash="visitor", source=Source(None))
+
+
+@pytest.mark.asyncio
+async def test_planner_fails_closed_for_completed_run_without_evidence() -> None:
+    source = Source(_completed())
+    matrix = source.response.matrix
+    assert matrix is not None
+    cells = [
+        cell.model_copy(
+            update={
+                "state": ComparisonCellState.UNSUPPORTED,
+                "evidence_ids": [],
+                "value": None,
+                "explanation": "No evidence",
+            }
+        )
+        for cell in matrix.cells
+    ]
+    source.response = source.response.model_copy(
+        update={"matrix": matrix.model_copy(update={"cells": cells})}
+    )
+    spec = ReportSpec(source_run_id=source.response.run_id, audience="engineer", scope="comparison")
+    with pytest.raises(ReportPlanningError, match="source_run_has_no_evidence"):
+        await plan_report(spec, owner_key_hash="visitor", source=source)
