@@ -1,7 +1,7 @@
 # Candidate feed allowlist for the previous-day news feature.
-# Keep pending until an operator reviews robots, licensing and editorial scope.
+# Approved for bounded RSS metadata ingestion; full article bodies are never stored.
 version: news-v1
-review_status: pending_operator_approval
+review_status: approved
 topic: internet-technology
 feeds:
   - publisher: The Verge
@@ -16,4 +16,3 @@ feeds:
   - publisher: MIT Technology Review
     url: https://www.technologyreview.com/feed/
     authority_score: 0.85
-

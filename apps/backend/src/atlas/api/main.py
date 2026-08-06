@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from functools import partial
+from pathlib import Path
 
 import psycopg
 import uvicorn
@@ -34,6 +35,7 @@ from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
 from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
+from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink
 from atlas.persistence.comparison_quota import (
@@ -123,6 +125,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
     """
 
     settings = get_settings()
+    news_service = _news_service(settings)
     if settings.atlas_env == "development":
         corpus_service = _verified_corpus_or_demo(settings)
         corpus_snapshot = (
@@ -179,6 +182,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 settings, corpus_service, executor=comparison_executor
             ),
             review_case_service=InMemoryReviewCaseService(),
+            news_service=news_service,
         )
     corpus_service = _verified_corpus_or_demo(settings)
     return create_app(
@@ -186,7 +190,18 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         comparison_service=_comparison_service(
             settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
         ),
+        news_service=news_service,
     )
+
+
+def _news_service(settings: Settings) -> DailyNewsProvider | None:
+    if not settings.atlas_news_enabled:
+        return None
+    manifest = Path(__file__).resolve().parents[5] / "corpus" / "manifests" / "news-v1.yaml"
+    try:
+        return LiveDailyNewsService(manifest)
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
 
 
 def _comparison_service(

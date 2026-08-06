@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     atlas_anonymous_comparison_limit: int = Field(default=5, ge=1)
     atlas_anonymous_window_hours: int = Field(default=24, ge=1)
     atlas_content_retention_days: int = Field(default=30, ge=1)
+    atlas_news_enabled: bool = True
 
     @field_validator(
         "openai_api_key",
