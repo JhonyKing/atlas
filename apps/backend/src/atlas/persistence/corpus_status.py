@@ -29,6 +29,8 @@ _DEFAULT_SOURCE_TYPES: dict[CollectionSlug, list[SourceType]] = {
     CollectionSlug.LANGGRAPH: [SourceType.DOCUMENTATION, SourceType.RELEASE_NOTE],
     CollectionSlug.LANGCHAIN: [SourceType.DOCUMENTATION, SourceType.CHANGELOG],
     CollectionSlug.OPENAI: [SourceType.DOCUMENTATION],
+    CollectionSlug.ANTHROPIC: [SourceType.DOCUMENTATION, SourceType.RELEASE_NOTE],
+    CollectionSlug.GEMINI: [SourceType.DOCUMENTATION, SourceType.RELEASE_NOTE],
 }
 
 

@@ -12,6 +12,8 @@ class CollectionSlug(_StringEnum):
     LANGGRAPH = "langgraph"
     LANGCHAIN = "langchain"
     OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GEMINI = "gemini"
 
 
 class SourceType(_StringEnum):

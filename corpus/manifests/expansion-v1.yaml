@@ -1,0 +1,37 @@
+# Candidate manifest for the approved technology expansion.
+# It is intentionally not the default launch manifest until source reviews are completed.
+version: expansion-v1
+review_status: pending_source_review
+collections:
+  anthropic:
+    publisher: Anthropic
+    allowed_host: docs.anthropic.com
+    sources:
+      - title: Anthropic documentation overview
+        url: https://docs.anthropic.com/en/docs/overview
+        type: documentation
+      - title: Anthropic API overview
+        url: https://docs.anthropic.com/en/api/overview
+        type: documentation
+      - title: Claude models
+        url: https://docs.anthropic.com/en/docs/about-claude/models
+        type: documentation
+      - title: Anthropic tool use
+        url: https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview
+        type: documentation
+  gemini:
+    publisher: Google
+    allowed_host: ai.google.dev
+    sources:
+      - title: Gemini API documentation
+        url: https://ai.google.dev/gemini-api/docs
+        type: documentation
+      - title: Gemini API reference
+        url: https://ai.google.dev/api
+        type: documentation
+      - title: Gemini models
+        url: https://ai.google.dev/gemini-api/docs/models
+        type: documentation
+      - title: Gemini function calling
+        url: https://ai.google.dev/gemini-api/docs/function-calling
+        type: documentation

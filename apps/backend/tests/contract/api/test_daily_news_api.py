@@ -1,4 +1,5 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from email.utils import format_datetime
 
 from fastapi.testclient import TestClient
 
@@ -18,13 +19,16 @@ def test_daily_news_is_explicitly_unavailable_until_feed_job_is_configured() -> 
 
 
 def test_daily_news_ready_payload_preserves_attribution_and_previous_day() -> None:
+    observed = datetime.now(UTC)
+    published_at = observed.replace(hour=12, minute=0, second=0, microsecond=0)
+    published_at = published_at - timedelta(days=1)
     candidates = parse_feed(
-        b"""<rss><channel><item><title>Internet signal</title>
+        f"""<rss><channel><item><title>Internet signal</title>
         <link>https://news.example/story</link>
-        <pubDate>Tue, 04 Aug 2026 12:00:00 +0000</pubDate>
-        <description>Bounded summary</description></item></channel></rss>""",
+        <pubDate>{format_datetime(published_at, usegmt=True)}</pubDate>
+        <description>Bounded summary</description></item></channel></rss>""".encode(),
         publisher="Example News",
-        captured_at=datetime(2026, 8, 5, 1, tzinfo=UTC),
+        captured_at=observed,
         authority_score=0.9,
         topic_score=0.9,
     )
@@ -39,7 +43,7 @@ def test_daily_news_ready_payload_preserves_attribution_and_previous_day() -> No
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "ready"
-    assert payload["day"] == "2026-08-04"
+    assert payload["day"] == published_at.date().isoformat()
     assert payload["timezone"] == "UTC"
     assert payload["candidate"]["publisher"] == "Example News"
     assert payload["candidate"]["canonical_url"] == "https://news.example/story"

@@ -29,7 +29,13 @@ def test_runtime_uses_verified_postgres_snapshot_when_available() -> None:
     assert isinstance(provider, PostgresCorpusStatusRepository)
     status = provider.get_status()
     assert status.snapshot_id
-    assert {item.slug.value for item in status.collections} == {"langgraph", "langchain", "openai"}
+    assert {item.slug.value for item in status.collections} == {
+        "langgraph",
+        "langchain",
+        "openai",
+        "anthropic",
+        "gemini",
+    }
     assert all(item.status.value == "ready" for item in status.collections)
 
     connection = provider._connection

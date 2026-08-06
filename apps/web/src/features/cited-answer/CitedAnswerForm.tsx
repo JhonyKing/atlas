@@ -190,6 +190,8 @@ export function CitedAnswerForm() {
           <option value="langgraph">LangGraph</option>
           <option value="langchain">LangChain</option>
           <option value="openai">OpenAI API</option>
+          <option value="anthropic">Anthropic Claude</option>
+          <option value="gemini">Google Gemini</option>
         </select>
         {error ? <p id="question-error" className="error" role="alert">{error}</p> : null}
         <div className="actions">

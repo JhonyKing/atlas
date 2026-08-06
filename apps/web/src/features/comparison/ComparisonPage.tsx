@@ -14,7 +14,13 @@ import type {
   ComparisonTechnology,
 } from "./types";
 
-const technologies: ComparisonTechnology[] = ["langgraph", "langchain", "openai"];
+const technologies: ComparisonTechnology[] = [
+  "langgraph",
+  "langchain",
+  "openai",
+  "anthropic",
+  "gemini",
+];
 const criteria: ComparisonCriterion[] = [
   "capability",
   "tool_calling",
@@ -30,6 +36,8 @@ const labels: Record<ComparisonTechnology | ComparisonCriterion, { en: string; e
   langgraph: { en: "LangGraph", es: "LangGraph" },
   langchain: { en: "LangChain", es: "LangChain" },
   openai: { en: "OpenAI", es: "OpenAI" },
+  anthropic: { en: "Anthropic Claude", es: "Anthropic Claude" },
+  gemini: { en: "Google Gemini", es: "Google Gemini" },
   capability: { en: "Capability", es: "Capacidad" },
   tool_calling: { en: "Tool calling", es: "Llamada de herramientas" },
   context: { en: "Context", es: "Contexto" },

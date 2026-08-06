@@ -1,4 +1,9 @@
-export type CollectionSlug = "langgraph" | "langchain" | "openai";
+export type CollectionSlug =
+  | "langgraph"
+  | "langchain"
+  | "openai"
+  | "anthropic"
+  | "gemini";
 
 export type AskQuestionInput = {
   question: string;

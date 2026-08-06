@@ -41,3 +41,16 @@
 | SC-COR-002 | T005, T007 |
 | SC-COR-003 | T006, T008, T014 |
 | SC-COR-004 | T010, T011, T012 |
+
+## Phase 4: Approved provider expansion
+
+- [X] T015 [P] Register `anthropic` and `gemini` in the closed collection catalog, corpus status,
+  frontend selectors, API enum and versioned database migration. (Evidence: enum order is
+  LangGraph, LangChain, OpenAI, Anthropic, Gemini; migration `0015_expand_corpus_collections`.)
+- [X] T016 [P] Add candidate manifest and governance records for Anthropic and Gemini while keeping
+  both connectors disabled. (Evidence: `corpus/manifests/expansion-v1.yaml` has eight official
+  URLs and `docs/governance/source-reviews/{anthropic,gemini}.md` records the pending review.)
+- [ ] T017 Approve, ingest and verify Anthropic as the fourth real collection, then run the four-row
+  comparison against the promoted snapshot.
+- [ ] T018 Approve, ingest and verify Gemini as the fifth real collection and add it to the corpus
+  refresh/evaluation baseline.

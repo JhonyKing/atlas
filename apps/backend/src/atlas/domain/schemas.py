@@ -175,7 +175,7 @@ class CollectionStatus(DomainModel):
 class CorpusStatus(DomainModel):
     snapshot_id: UUID
     generated_at: datetime
-    collections: Annotated[list[CollectionStatus], Field(min_length=3, max_length=3)]
+    collections: Annotated[list[CollectionStatus], Field(min_length=3, max_length=5)]
 
     @model_validator(mode="after")
     def collection_slugs_must_be_unique(self) -> CorpusStatus:

@@ -159,6 +159,22 @@ def _default_reviews() -> dict[CollectionSlug, SourceReview]:
             reviewer="ATLAS maintainers",
             reviewed_on="2026-08-04",
         ),
+        CollectionSlug.ANTHROPIC: SourceReview(
+            collection=CollectionSlug.ANTHROPIC,
+            status="disabled",
+            allowed_hosts=frozenset({"docs.anthropic.com"}),
+            allowed_paths=("/en/docs/", "/en/api/"),
+            reviewer="ATLAS maintainers",
+            reviewed_on="2026-08-05",
+        ),
+        CollectionSlug.GEMINI: SourceReview(
+            collection=CollectionSlug.GEMINI,
+            status="disabled",
+            allowed_hosts=frozenset({"ai.google.dev"}),
+            allowed_paths=("/gemini-api/docs/", "/api/"),
+            reviewer="ATLAS maintainers",
+            reviewed_on="2026-08-05",
+        ),
     }
 
 

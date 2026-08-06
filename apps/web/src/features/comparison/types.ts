@@ -1,4 +1,9 @@
-export type ComparisonTechnology = "langgraph" | "langchain" | "openai";
+export type ComparisonTechnology =
+  | "langgraph"
+  | "langchain"
+  | "openai"
+  | "anthropic"
+  | "gemini";
 export type ComparisonCriterion =
   | "capability"
   | "tool_calling"

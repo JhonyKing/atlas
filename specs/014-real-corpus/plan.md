@@ -20,7 +20,12 @@ authorized, OpenAI embeddings, pytest
 **Project Type**: Backend API, ingestion worker and eval CLI  
 **Performance Goals**: A normal refresh is resumable and does not block answer requests  
 **Constraints**: Allowlist, robots/license, SSRF controls, bounded content, atomic promotion  
-**Scale/Scope**: Initial 12+ official documents across three supported collections
+**Scale/Scope**: Initial 12+ official documents across three collections, followed by Anthropic as
+the fourth governed collection and Gemini as the fifth; comparison requests remain bounded to four
+technologies.
+
+**Expansion safety**: register new slugs and candidate manifests first, keep connectors disabled,
+and promote only after a current source-review record exists for each provider.
 
 ## Constitution Check
 
@@ -46,4 +51,3 @@ evals/
 └── run_offline.py
 docs/operations/corpus-refresh.md
 ```
-

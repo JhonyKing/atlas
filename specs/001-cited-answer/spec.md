@@ -12,7 +12,8 @@
 
 ### Session 2026-08-04
 
-- Q: Which three official collections should form the initial corpus? -> A: LangGraph documentation, LangChain documentation, and OpenAI API documentation.
+- Q: Which official collections should form the corpus? -> A: the launch corpus starts with LangGraph,
+  LangChain and OpenAI; Anthropic is the approved fourth expansion and Gemini the approved fifth.
 - Q: How frequently should the initial corpus refresh automatically? -> A: Daily automatic refresh with an operator-triggered refresh on demand.
 - Q: How long may ATLAS retain anonymous questions and diagnostic traces? -> A: Retain pseudonymized content for 30 days, then delete the content and keep only aggregate metrics.
 - Q: Should the initial corpus include official changelogs and release notes? -> A: Include documentation, changelogs, and official release notes for LangGraph, LangChain, and OpenAI.

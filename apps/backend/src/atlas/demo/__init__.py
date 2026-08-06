@@ -28,6 +28,8 @@ _EVIDENCE_IDS = {
     CollectionSlug.LANGGRAPH: UUID("00000000-0000-0000-0000-000000000811"),
     CollectionSlug.LANGCHAIN: UUID("00000000-0000-0000-0000-000000000812"),
     CollectionSlug.OPENAI: UUID("00000000-0000-0000-0000-000000000813"),
+    CollectionSlug.ANTHROPIC: UUID("00000000-0000-0000-0000-000000000814"),
+    CollectionSlug.GEMINI: UUID("00000000-0000-0000-0000-000000000815"),
 }
 
 
@@ -69,6 +71,26 @@ class DemoCorpusStatusProvider:
                     last_success_at=None,
                     last_attempt_at=now,
                     canonical_root=HttpUrl("https://platform.openai.com/docs/"),
+                ),
+                CollectionStatus(
+                    slug=CollectionSlug.ANTHROPIC,
+                    name="Anthropic Claude (demo local)",
+                    publisher="Anthropic",
+                    source_types=[SourceType.DOCUMENTATION, SourceType.RELEASE_NOTE],
+                    status=CollectionState.UNAVAILABLE,
+                    last_success_at=None,
+                    last_attempt_at=now,
+                    canonical_root=HttpUrl("https://docs.anthropic.com/en/docs/"),
+                ),
+                CollectionStatus(
+                    slug=CollectionSlug.GEMINI,
+                    name="Google Gemini (demo local)",
+                    publisher="Google",
+                    source_types=[SourceType.DOCUMENTATION, SourceType.RELEASE_NOTE],
+                    status=CollectionState.UNAVAILABLE,
+                    last_success_at=None,
+                    last_attempt_at=now,
+                    canonical_root=HttpUrl("https://ai.google.dev/gemini-api/docs/"),
                 ),
             ],
         )
@@ -129,6 +151,10 @@ class DemoAnswerGraph:
             return CollectionSlug.LANGCHAIN
         if "openai" in text or "responses api" in text:
             return CollectionSlug.OPENAI
+        if "anthropic" in text or "claude" in text:
+            return CollectionSlug.ANTHROPIC
+        if "gemini" in text:
+            return CollectionSlug.GEMINI
         return None
 
     @staticmethod
@@ -152,11 +178,27 @@ class DemoAnswerGraph:
                 "OpenAI Responses API",
                 "https://platform.openai.com/docs/api-reference/responses",
             ),
+            CollectionSlug.ANTHROPIC: (
+                "Claude provides an API for building applications with Anthropic models.",
+                "Anthropic API overview",
+                "https://docs.anthropic.com/en/api/overview",
+            ),
+            CollectionSlug.GEMINI: (
+                "The Gemini API provides content generation and multimodal model interfaces.",
+                "Gemini API overview",
+                "https://ai.google.dev/gemini-api/docs",
+            ),
         }[collection]
         return Evidence(
             id=_EVIDENCE_IDS[collection],
             source_title=data[1],
-            publisher="LangChain" if collection is not CollectionSlug.OPENAI else "OpenAI",
+            publisher={
+                CollectionSlug.LANGGRAPH: "LangChain",
+                CollectionSlug.LANGCHAIN: "LangChain",
+                CollectionSlug.OPENAI: "OpenAI",
+                CollectionSlug.ANTHROPIC: "Anthropic",
+                CollectionSlug.GEMINI: "Google",
+            }[collection],
             canonical_url=HttpUrl(data[2]),
             excerpt=data[0],
             captured_at=datetime(2026, 8, 5, tzinfo=UTC),
@@ -179,6 +221,12 @@ class DemoAnswerGraph:
                     "La Responses API de OpenAI permite construir respuestas de modelos con "
                     "entradas y salidas estructuradas."
                 ),
+                CollectionSlug.ANTHROPIC: (
+                    "La API de Anthropic permite construir aplicaciones con modelos de Claude."
+                ),
+                CollectionSlug.GEMINI: (
+                    "La API de Gemini ofrece generación de contenido e interfaces multimodales."
+                ),
             }[collection]
         return {
             CollectionSlug.LANGGRAPH: (
@@ -192,6 +240,12 @@ class DemoAnswerGraph:
             CollectionSlug.OPENAI: (
                 "The OpenAI Responses API supports model responses with structured inputs and "
                 "outputs."
+            ),
+            CollectionSlug.ANTHROPIC: (
+                "Anthropic's API supports applications built with Claude models."
+            ),
+            CollectionSlug.GEMINI: (
+                "The Gemini API provides content generation and multimodal model interfaces."
             ),
         }[collection]
 

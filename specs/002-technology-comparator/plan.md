@@ -34,8 +34,10 @@ web research; no reports, accounts, uploads or saved history in this feature; so
 remain untrusted data; anonymous comparison quota defaults to five accepted comparisons per rolling
 24 hours and must remain separate from the ten-question cited-answer quota.
 
-**Scale/Scope**: Portfolio MVP for the existing three curated collections and up to four technology
-rows per comparison. Reranking and broad model routing remain separate experiments.
+**Scale/Scope**: Portfolio MVP for the five governed catalog collections, with Anthropic prioritized
+as the fourth comparison row and Gemini available as the fifth corpus collection; each comparison
+request remains bounded to two through four technology rows. Reranking and broad model routing
+remain separate experiments.
 
 ## Constitution Check
 

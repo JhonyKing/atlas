@@ -5,6 +5,11 @@
 **Status**: Draft
 **Input**: PRD v1.1 corpus governance + Plan Maestro RAG/Evals corpus/harness requirements.
 
+**Expansion decision (2026-08-05)**: add Anthropic first as the fourth governed collection and
+Google Gemini second as the fifth collection. Anthropic is the first candidate for a four-row
+comparison; Gemini is registered for the next corpus expansion. Neither candidate is active until
+its source review records current terms, robots and licensing evidence.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Inspect a real corpus (Priority: P1)
@@ -46,6 +51,8 @@ inputs, configuration metadata and deterministic evaluator outputs.
   precision and freshness measurements.
 - **FR-COR-008**: Source content MUST be bounded, licensed/allowed and protected from SSRF and
   embedded prompt instructions.
+- **FR-COR-009**: The corpus catalog MUST represent the approved expansion order (`anthropic`, then
+  `gemini`) without enabling either connector before its source review is complete.
 
 ## Success Criteria
 
@@ -55,4 +62,3 @@ inputs, configuration metadata and deterministic evaluator outputs.
   hash.
 - **SC-COR-003**: A failed seven-day refresh validation preserves the last successful snapshot.
 - **SC-COR-004**: The harness produces repeatable metrics and records corpus/config versions.
-

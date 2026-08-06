@@ -333,7 +333,7 @@ components:
 
     CollectionSlug:
       type: string
-      enum: [langgraph, langchain, openai]
+      enum: [langgraph, langchain, openai, anthropic, gemini]
 
     CorpusStatus:
       type: object

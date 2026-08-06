@@ -76,6 +76,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.execute:
         print(json.dumps(summary, indent=2, sort_keys=True))
         return 0
+    if manifest.review_status != "approved":
+        raise RuntimeError(
+            "--execute requires a manifest with review_status=approved; "
+            "complete source governance first"
+        )
     settings = Settings()
     if settings.openai_api_key is None or not settings.openai_api_key.get_secret_value().strip():
         raise RuntimeError("--execute requires OPENAI_API_KEY in secret configuration")
@@ -153,10 +158,7 @@ async def _execute(
     connection = psycopg.connect(dsn)
     client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())  # type: ignore[union-attr]
     http_client = httpx.AsyncClient()
-    hosts = frozenset(
-        candidate.canonical_url.split("/", 3)[2]
-        for candidate in manifest.candidates
-    )
+    hosts = frozenset(candidate.canonical_url.split("/", 3)[2] for candidate in manifest.candidates)
     fetcher = SafeFetcher(client=http_client, policy=FetchPolicy(allowed_hosts=hosts))
     repository = PostgresIngestionRepository(connection)
     worker = IngestionWorker(

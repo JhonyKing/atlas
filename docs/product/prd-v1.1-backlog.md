@@ -38,7 +38,7 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [X] CMP-005 Implement comparison request and asynchronous progress flow. (Spec Kit T012–T020; runtime wiring remains a convergence task.)
 - [X] CMP-006 Implement evidence-backed comparison matrix and claim-level citations for every populated cell. (Spec Kit T014–T019, T024–T025.)
 - [X] CMP-007 Implement criterion selection, source/date/version filters, and unsupported-cell explanation. (Spec Kit T016–T017, T022, T028–T029.)
-- [ ] CMP-008 Add deterministic dataset cases for two-, three-, and four-technology comparisons. (Two and three are present; fourth corpus pending T032/T039.)
+- [ ] CMP-008 Add deterministic dataset cases for two-, three-, and four-technology comparisons. (Two, three and a four-row Anthropic case are present; verified fourth corpus remains pending T032/T039.)
 - [X] CMP-009 Add Playwright journey and regression gate; prove the comparator is not a generic chat response. (Spec Kit T023, T029, T036.)
 
 ## 003 — reports, ADRs, and document artifacts

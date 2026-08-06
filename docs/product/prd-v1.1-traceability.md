@@ -26,7 +26,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 |---|---|---|---|---|---|
 | PRD-001 | Producto público de investigación técnica con evidencia | 1–3 | 001 | Parcial | T037–T050; falta completar runtime real |
 | PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
-| PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; corpus inicial limitado a 3 colecciones |
+| PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; Anthropic es la cuarta colección en preparación y Gemini la quinta |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
 | PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe, ejecutores y baseline offline de 20 solicitudes implementados; falta cuarta colección y verificación live contra snapshot poblado | T001–T041; specs/002-technology-comparator/ |
 | PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
@@ -34,7 +34,7 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
 | PRD-009 | Feedback positivo/negativo y cita incorrecta | 5.1; 14 | 001 | Implementado con fakes | T051–T058 |
 | PRD-010 | Panel de fuentes, última actualización y cobertura | 5.1 | 001 / 005 | Parcial | T069; ING-009 |
-| PRD-011 | Corpus curado de docs, releases, papers, pricing y uploads autorizados | 6 | 005 | Parcial | T024–T030 sólo cubren 3 colecciones; ING-001–ING-015 |
+| PRD-011 | Corpus curado de docs, releases, papers, pricing y uploads autorizados | 6 | 005 | Parcial | T024–T030 cubren las tres colecciones iniciales; Anthropic/Gemini están registrados como expansión gobernada; ING-001–ING-015 |
 | PRD-012 | Gobernanza: licencia, robots, hash, takedown, obsolescencia, desactivación | 6.3; 12.3 | 005 | Parcial | T022–T026; ING-012–ING-015 |
 | PRD-013 | Router, planner, retrieval, verifier, síntesis, reporte y human review | 7; 9.2 | 006 | Parcial | T039/T044/T062–T065; AGT-001–AGT-010 |
 | PRD-014 | Checkpoints persistentes y reanudación para trabajos largos | 9.3 | 006 | No iniciado | AGT-007–AGT-009 |
@@ -88,13 +88,28 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
   restricciones temporales/versiones y UI de estados unsupported/partial/contradictory.
 - **Bilingüe y observabilidad:** `T030–T031` y `T034` pasaron paridad Chromium, catálogos EN/ES
   y pruebas de metadata segura para LangSmith; `T035–T036` pasaron el evaluador determinista y
-  las puertas locales (168 backend tests, 11 Playwright).
+  las puertas locales (177 backend tests, 12 Playwright).
 - **Pendiente explícito:** `T032–T033` y `T039` requieren una cuarta colección aprobada; `T038`
   requiere verificar una ejecución real contra un snapshot poblado (el ejecutor de embeddings,
   retrieval y extracción estructurada ya está cableado, junto con el coordinador fail-closed y la
   traza LangSmith);
   `T040` ya tiene 20 solicitudes y 16 matrices offline, pero aún debe medir latencia/calidad en
   una ejecución live; `T041` está cerrado con 8 archivos y 20 pruebas Vitest.
+
+## Decisión de expansión de colecciones (2026-08-05)
+
+- Orden aprobado por el propietario del proyecto: **Anthropic primero, Gemini después**.
+- El catálogo, la migración, el frontend y los manifiestos candidatos ya representan ambos slugs.
+- Los conectores permanecen desactivados hasta completar la revisión de términos, robots y licencia.
+- `specs/014-real-corpus/tasks.md` registra T015–T018; T017 es el siguiente paso para cerrar el
+  cuarto proveedor real.
+
+## Estado actualizado del comparador (2026-08-05)
+
+- T033 estÃ¡ cerrado: el journey de cuatro filas pasa en inglÃ©s y espaÃ±ol con navegaciÃ³n de teclado.
+- T032 tiene 20 solicitudes y 17 matrices offline, incluida una matriz de cuatro filas con Anthropic;
+  falta validarla contra un corpus real promovido.
+- Las puertas actuales son 177 pruebas backend, 12 journeys Playwright y 20 pruebas Vitest.
 
 ## Regla de entrega
 

@@ -52,7 +52,7 @@ uv run --project apps/backend alembic upgrade head
 Expected result: PostgreSQL is healthy; required extensions, tables, functions, roles, and indexes
 exist; migrations are at the repository head.
 
-## 4. Bootstrap the three allowlisted collections
+## 4. Bootstrap the launch collections
 
 Before enabling a collection, confirm that its review in `docs/governance/source-reviews/` records
 the exact terms, robots policy, licensing basis, allowed fetch paths, required attribution, reviewer,
@@ -86,7 +86,11 @@ apps\backend\.venv\Scripts\python.exe -m atlas.ingestion.verify
 
 Expected result:
 
-- all three ingestion runs reach `succeeded` or an explicitly diagnosed `partial` state;
+- all launch ingestion runs reach `succeeded` or an explicitly diagnosed `partial` state;
+
+The launch manifest currently contains the original three collections. Anthropic and Gemini are
+registered in `corpus/manifests/expansion-v1.yaml` as pending-review candidates; do not execute that
+manifest until their governance records are approved.
 - a corpus snapshot is created;
 - the previous active version remains current if any source item fails;
 - no URL outside the connector allowlists is fetched.

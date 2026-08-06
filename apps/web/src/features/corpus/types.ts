@@ -1,4 +1,9 @@
-export type CorpusCollectionSlug = "langgraph" | "langchain" | "openai";
+export type CorpusCollectionSlug =
+  | "langgraph"
+  | "langchain"
+  | "openai"
+  | "anthropic"
+  | "gemini";
 export type CorpusCollectionState = "ready" | "stale" | "refreshing" | "unavailable";
 export type CorpusSourceType = "documentation" | "changelog" | "release_note";
 

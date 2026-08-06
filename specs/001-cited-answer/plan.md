@@ -37,13 +37,14 @@ entry points: web, API, and worker
 seconds for at least 95% of normal questions and complete within 15 seconds; 95% citation precision;
 90% correct abstention and temporal-answer targets from the feature spec
 
-**Constraints**: Three allowlisted official collections; daily refresh plus manual operator trigger;
+**Constraints**: Five catalogued official collections, with the initial three launch sources and
+Anthropic/Gemini added only after source review; daily refresh plus manual operator trigger;
 10 cited-answer questions per anonymous visitor per rolling 24 hours; 30-day content retention;
 English-canonical content with `en-US`/`es-MX` public parity for this slice; no report generation,
 uploads, accounts, saved conversations, or live-web research in this feature; model text is never
 shown before citation validation
 
-**Scale/Scope**: Portfolio launch, initially up to 1,000 monthly active visitors and three curated
+**Scale/Scope**: Portfolio launch, initially up to 1,000 monthly active visitors and five curated
 collections; exact vector retrieval remains the recall ground truth and scale infrastructure is
 added only after measured need
 

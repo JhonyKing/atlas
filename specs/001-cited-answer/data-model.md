@@ -23,7 +23,7 @@ One allowlisted product collection.
 | Field | Type | Rules |
 |-------|------|-------|
 | `id` | UUID | Primary key |
-| `slug` | text | Unique: `langgraph`, `langchain`, `openai` |
+| `slug` | text | Unique: `langgraph`, `langchain`, `openai`, `anthropic`, `gemini` |
 | `display_name` | text | Required |
 | `publisher` | text | Required |
 | `base_url` | text | HTTPS canonical root |
