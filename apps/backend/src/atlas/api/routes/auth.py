@@ -8,7 +8,8 @@ from fastapi import APIRouter, Header, Request, Response, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
-from atlas.auth.ports import AuthError, AuthPort, AuthSession
+from atlas.auth.ports import AuthError, AuthSession
+from atlas.auth.service import SessionService
 
 router = APIRouter(prefix="/v1/auth", tags=["Authentication"])
 SESSION_COOKIE = "atlas_session"
@@ -39,8 +40,8 @@ class SessionResponse(BaseModel):
         )
 
 
-def _provider(request: Request) -> AuthPort | None:
-    return cast(AuthPort | None, request.app.state.auth_provider)
+def _service(request: Request) -> SessionService | None:
+    return cast(SessionService | None, request.app.state.auth_service)
 
 
 def _token(request: Request, authorization: str | None) -> str | None:
@@ -84,11 +85,11 @@ def _set_session_cookie(response: Response, token: str) -> None:
 def login(
     body: LoginRequest, request: Request, response: Response
 ) -> SessionResponse | JSONResponse:
-    provider = _provider(request)
-    if provider is None:
+    service = _service(request)
+    if service is None:
         return _auth_unavailable()
     try:
-        issued = provider.login(str(body.email), body.password)
+        issued = service.login(str(body.email), body.password)
     except AuthError:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -103,14 +104,14 @@ def get_session(
     request: Request,
     authorization: Annotated[str | None, Header()] = None,
 ) -> SessionResponse | JSONResponse:
-    provider = _provider(request)
+    service = _service(request)
     token = _token(request, authorization)
-    if provider is None:
+    if service is None:
         return _auth_unavailable()
     if token is None:
         return _unauthorized()
     try:
-        session = provider.validate(token)
+        session = service.current(token)
     except AuthError:
         return _unauthorized()
     return SessionResponse.from_session(session)
@@ -122,14 +123,14 @@ def renew_session(
     response: Response,
     authorization: Annotated[str | None, Header()] = None,
 ) -> SessionResponse | JSONResponse:
-    provider = _provider(request)
+    service = _service(request)
     token = _token(request, authorization)
-    if provider is None:
+    if service is None:
         return _auth_unavailable()
     if token is None:
         return _unauthorized()
     try:
-        issued = provider.renew(token)
+        issued = service.renew(token)
     except AuthError:
         return _unauthorized()
     _set_session_cookie(response, issued.access_token)
@@ -142,12 +143,12 @@ def logout(
     response: Response,
     authorization: Annotated[str | None, Header()] = None,
 ) -> Response | JSONResponse:
-    provider = _provider(request)
+    service = _service(request)
     token = _token(request, authorization)
-    if provider is None:
+    if service is None:
         return _auth_unavailable()
     if token is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
-    provider.revoke(token)
+    service.logout(token)
     response.delete_cookie(SESSION_COOKIE, path="/")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

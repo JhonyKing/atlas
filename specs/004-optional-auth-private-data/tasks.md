@@ -50,7 +50,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Implement provider-independent session issuance and validation in `apps/backend/src/atlas/auth/service.py`
+- [x] T022 [US1] Implement provider-independent session issuance and validation in `apps/backend/src/atlas/auth/service.py`
 - [x] T023 [US1] Implement login/session bootstrap endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [x] T024 [US1] Implement renewal token rotation and revocation endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [x] T025 [US1] Add auth dependency that distinguishes anonymous visitor context from authenticated subject in `apps/backend/src/atlas/api/dependencies.py`

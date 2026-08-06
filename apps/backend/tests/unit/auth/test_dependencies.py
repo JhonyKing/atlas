@@ -6,11 +6,13 @@ from fastapi.testclient import TestClient
 from atlas.api.dependencies import optional_subject_id
 from atlas.api.routes.auth import router as auth_router
 from atlas.auth.fake_provider import FakeAuthProvider
+from atlas.auth.service import SessionService
 
 
 def _app(provider: FakeAuthProvider) -> FastAPI:
     app = FastAPI()
     app.state.auth_provider = provider
+    app.state.auth_service = SessionService(provider)
     app.include_router(auth_router)
 
     @app.get("/subject")

@@ -29,6 +29,7 @@ from atlas.api.routes.operator_ingestion import router as operator_ingestion_rou
 from atlas.api.routes.reports import router as reports_router
 from atlas.api.routes.review_cases import router as review_cases_router
 from atlas.auth.ports import AuthPort
+from atlas.auth.service import SessionService
 from atlas.comparison.demo_executor import DemoComparisonExecutor
 from atlas.comparison.executor import (
     OpenAIComparisonObservationExtractor,
@@ -114,6 +115,7 @@ def create_app(
         else None
     )
     application.state.auth_provider = auth_provider
+    application.state.auth_service = SessionService(auth_provider) if auth_provider else None
     application.include_router(health_router)
     application.include_router(auth_router)
     application.include_router(answers_router)
