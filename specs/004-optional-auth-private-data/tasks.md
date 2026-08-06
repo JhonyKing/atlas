@@ -72,7 +72,7 @@
 
 - [x] T031 [P] [US2] Add contract tests for `GET /v1/private/resources` in `apps/backend/tests/contract/auth/test_private_resources_contract.py`
 - [x] T032 [P] [US2] Add integration tests for ownership across threads, reports, feedback, and artifacts in `apps/backend/tests/integration/security/test_cross_user_resources.py`
-- [ ] T033 [P] [US2] Add database policy tests proving user A cannot query or delete user B rows in `database/tests/011_cross_user_resources.sql`
+- [x] T033 [P] [US2] Add database policy tests proving user A cannot query or delete user B rows in `database/tests/011_cross_user_resources.sql`
 - [x] T034 [P] [US2] Add Playwright journey for private history and report ownership in `apps/web/tests/e2e/auth-private-data.spec.ts`
 
 ### Implementation for User Story 2
@@ -97,8 +97,8 @@
 
 - [x] T042 [P] [US3] Add contract tests for `POST /v1/private/uploads` and `DELETE /v1/private/uploads/{upload_id}` in `apps/backend/tests/contract/auth/test_upload_contract.py`
 - [x] T043 [P] [US3] Add integration tests for file signature, MIME, size, scan, parse, and indexing gates in `apps/backend/tests/integration/security/test_private_upload_pipeline.py`
-- [ ] T044 [P] [US3] Add database tests proving rejected uploads create no chunks or embeddings in `database/tests/012_upload_quarantine.sql`
-- [ ] T045 [P] [US3] Add Playwright journey for valid, rejected, and cross-user upload operations in `apps/web/tests/auth/private-uploads.spec.ts`
+- [x] T044 [P] [US3] Add database tests proving rejected uploads create no chunks or embeddings in `database/tests/012_upload_quarantine.sql`
+- [x] T045 [P] [US3] Add Playwright journey for valid, rejected, and cross-user upload operations in `apps/web/tests/e2e/auth-private-data.spec.ts`
 
 ### Implementation for User Story 3
 
@@ -106,8 +106,8 @@
 - [x] T047 [US3] Implement quarantine storage adapter and scan-status transitions in `apps/backend/src/atlas/uploads/quarantine.py`
 - [x] T048 [US3] Implement `POST /v1/private/uploads` and upload-status responses in `apps/backend/src/atlas/api/routes/private_data.py`
 - [x] T049 [US3] Gate parsing, chunking, embedding, and retrieval on clean scan plus ownership in `apps/backend/src/atlas/uploads/pipeline.py`
-- [ ] T050 [US3] Implement repeat-safe upload deletion and retention cleanup in `apps/backend/src/atlas/uploads/deletion.py`
-- [ ] T051 [US3] Add private upload progress, rejection, and retention messages in Spanish and English in `apps/web/src/features/private-data/PrivateUploadPanel.tsx`
+- [x] T050 [US3] Implement repeat-safe upload deletion and retention cleanup in `apps/backend/src/atlas/uploads/deletion.py`
+- [x] T051 [US3] Add private upload progress, rejection, and retention messages in Spanish and English in `apps/web/src/features/private-data/PrivateUploadPanel.tsx`
 - [x] T052 [US3] Add upload lifecycle and deletion traces with redacted storage keys in `apps/backend/src/atlas/observability/events.py`
 
 **Checkpoint**: US3 is independently demonstrable and cannot publish rejected/private content to the public corpus.
@@ -116,15 +116,15 @@
 
 **Purpose**: Close evidence, documentation, security, and reproducibility requirements for the feature.
 
-- [ ] T053 [P] Add security regression suite for SC-IDN-003, SC-IDN-005, and SC-IDN-007 in `apps/backend/tests/security/test_auth_private_data_regressions.py`
-- [ ] T054 [P] Add deterministic eval cases for login success, ownership denial, upload rejection, and idempotent deletion in `evals/cases/004-auth-private-data.jsonl`
-- [ ] T055 [P] Add browser smoke commands and expected evidence to `specs/004-optional-auth-private-data/quickstart.md`
-- [ ] T056 Run the complete quickstart, contract, integration, database, and browser suites and record results in `docs/verification/004-auth-private-data.md`
-- [ ] T057 Update `README.md` with the optional-auth flow, anonymous compatibility, private-data boundaries, and local test commands
-- [ ] T058 [P] Create architecture note `docs/architecture/004-identity-private-data.md` from the approved plan and implemented boundaries
-- [ ] T059 [P] Create ADR `docs/adr/0003-optional-auth-boundary.md` documenting AuthPort, anonymous preservation, RLS, quarantine, and deletion decisions
-- [ ] T060 Review LangSmith/observability traces to confirm no raw tokens, provider keys, visitor identifiers, or private content are emitted in `docs/verification/004-auth-private-data.md`
-- [ ] T061 Mark every completed task in this file only after its test/evidence is recorded, then run `speckit-analyze` and `speckit-converge` before declaring Feature 004 closed
+- [x] T053 [P] Add security regression suite for SC-IDN-003, SC-IDN-005, and SC-IDN-007 in `apps/backend/tests/security/test_auth_private_data_regressions.py`
+- [x] T054 [P] Add deterministic eval cases for login success, ownership denial, upload rejection, and idempotent deletion in `evals/cases/004-auth-private-data.jsonl`
+- [x] T055 [P] Add browser smoke commands and expected evidence to `specs/004-optional-auth-private-data/quickstart.md`
+- [x] T056 Run the complete quickstart, contract, integration, database, and browser suites and record results in `docs/verification/004-auth-private-data.md`
+- [x] T057 Update `README.md` with the optional-auth flow, anonymous compatibility, private-data boundaries, and local test commands
+- [x] T058 [P] Create architecture note `docs/architecture/004-identity-private-data.md` from the approved plan and implemented boundaries
+- [x] T059 [P] Create ADR `docs/adr/0003-optional-auth-boundary.md` documenting AuthPort, anonymous preservation, RLS, quarantine, and deletion decisions
+- [x] T060 Review LangSmith/observability traces to confirm no raw tokens, provider keys, visitor identifiers, or private content are emitted in `docs/verification/004-auth-private-data.md`
+- [x] T061 Mark every completed task in this file only after its test/evidence is recorded, then run `speckit-analyze` and `speckit-converge` before declaring Feature 004 closed
 
 ## Dependencies & Execution Order
 
@@ -152,17 +152,17 @@ least one executable task and one verification/evidence task:
 | FR-IDN-001 | T022-T029 | T020-T021, T055 |
 | FR-IDN-002 | T022-T025 | T018-T021 |
 | FR-IDN-003 | T026 | T020, T021 |
-| FR-IDN-004 | T035-T039 | T032-T034 |
+| FR-IDN-004 | T035-T039, T063 | T032-T034, T063 |
 | FR-IDN-005 | T036-T037 | T032-T033, T053 |
-| FR-IDN-006 | T038-T040 | T031-T034 |
-| FR-IDN-007 | T046-T049 | T042-T045 |
-| FR-IDN-008 | T040, T050 | T053, T056 |
+| FR-IDN-006 | T038-T040, T064 | T031-T034, T064 |
+| FR-IDN-007 | T046-T049, T064 | T042-T045, T064 |
+| FR-IDN-008 | T040, T050, T062 | T053, T056, T062 |
 | FR-IDN-009 | T007, T030, T041, T052 | T017, T053, T060 |
 | FR-IDN-010 | T014, T030, T041, T052 | T056, T060 |
 | SC-IDN-001 | T026-T029 | T020-T021, T055 |
-| SC-IDN-002 | T022-T025 | T018-T021, T056 |
+| SC-IDN-002 | T022-T025 | T018-T021, T056, T065 |
 | SC-IDN-003 | T036-T040 | T032-T034, T053 |
-| SC-IDN-004 | T046-T049 | T043-T045, T056 |
+| SC-IDN-004 | T046-T049, T064 | T043-T045, T056, T064 |
 | SC-IDN-005 | T047-T049 | T043-T044, T053 |
 | SC-IDN-006 | T040, T050 | T053, T056 |
 | SC-IDN-007 | T007, T030, T041, T052 | T017, T053, T060 |
@@ -174,3 +174,14 @@ least one executable task and one verification/evidence task:
 3. Add US2 ownership enforcement and validate cross-user denial at API and database layers.
 4. Add US3 quarantine and safe private ingestion.
 5. Complete the mandatory evidence and documentation tasks before marking this feature closed.
+
+## Phase 7: Convergence
+
+- [x] T062 Implement the contract's repeat-safe `DELETE /v1/account` path, revoke all sessions,
+  remove owned resources and uploads, and record a redacted account-deletion outcome per FR-IDN-008.
+- [x] T063 Add authenticated locale-preference read/update behavior and regression coverage so a new
+  session applies the saved `en-US` or `es-MX` preference per FR-IDN-004 and US2/AC3.
+- [x] T064 Record detected content type and provenance on accepted private uploads and expose the
+  metadata in the upload response before indexing per FR-IDN-006/007 and SC-IDN-004.
+- [x] T065 Add a deterministic local auth latency regression covering 100 login, renew, and logout
+  journeys under the three-second portfolio target in `apps/backend/tests/load/test_auth_latency.py`.

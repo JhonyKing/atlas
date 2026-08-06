@@ -1,0 +1,6 @@
+{"case_id":"auth-login-success","kind":"authentication","expected":"session_created","locale":"en-US"}
+{"case_id":"auth-login-es","kind":"authentication","expected":"session_created","locale":"es-MX"}
+{"case_id":"ownership-denied","kind":"ownership","expected":"not_found","locale":"en-US"}
+{"case_id":"upload-safe","kind":"upload","expected":"clean_and_parsed","locale":"en-US"}
+{"case_id":"upload-malware-rejected","kind":"upload","expected":"not_indexable","locale":"es-MX"}
+{"case_id":"deletion-repeat-safe","kind":"deletion","expected":"same_result_on_retry","locale":"en-US"}

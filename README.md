@@ -30,3 +30,33 @@ The public contract and implementation work remain tracked in:
 
 This first slice does not claim the remaining report catalog or live LangSmith report-quality
 evaluation is complete; those tasks stay open in `tasks.md`.
+
+## Feature 004: optional authentication and private data
+
+Feature 004 adds optional sign-in without breaking anonymous use. Authenticated sessions are held
+in an HttpOnly cookie, private resources are checked by owner in the API and PostgreSQL RLS, and
+uploads are validated, quarantined, scanned, and only then allowed to become indexable. Deletion
+requests are repeat-safe through idempotency keys. The UI defaults to Spanish (`es-MX`) and keeps
+English labels available.
+
+The executable source of truth is:
+
+- `specs/004-optional-auth-private-data/spec.md`
+- `specs/004-optional-auth-private-data/plan.md`
+- `specs/004-optional-auth-private-data/tasks.md`
+- `specs/004-optional-auth-private-data/quickstart.md`
+- `docs/architecture/004-identity-private-data.md`
+- `docs/adr/0003-optional-auth-boundary.md`
+
+Run the local verification from the repository root:
+
+```powershell
+.\scripts\verify-auth.ps1
+pnpm --filter @atlas/web lint
+pnpm --filter @atlas/web typecheck
+pnpm --filter @atlas/web test:e2e -- --project=chromium
+```
+
+Apply the database migrations with Docker PostgreSQL running, then execute the four SQL contracts
+listed in the feature quickstart. The complete recorded evidence is in
+`docs/verification/004-auth-private-data.md`.

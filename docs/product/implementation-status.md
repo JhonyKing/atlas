@@ -12,7 +12,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 001 | Respuesta citada y UX bilingüe | En progreso | 5 | `specs/001-cited-answer/tasks.md` |
 | 002 | Comparador tecnológico | En progreso/evidencia live | 4 | `specs/002-technology-comparator/tasks.md` |
 | 003 | Reportes y documentos DOCX/PDF | Cerrada — MVP vertical | 0 | `specs/003-reports/tasks.md` |
-| 004 | Auth, sesiones y datos privados | En progreso — MVP auth | 49 | `specs/004-optional-auth-private-data/tasks.md` |
+| 004 | Auth, sesiones y datos privados | Cerrada — MVP auth y datos privados | 0 | `specs/004-optional-auth-private-data/tasks.md` |
 | 005–012 | Corpus expandido, agentes, retrieval, router, seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
 | 013 | LangSmith y observabilidad | Cerrado en esta fase | 0 | `specs/013-observability/tasks.md` |
 | 014 | Corpus real y harness | En progreso | 1 | `specs/014-real-corpus/tasks.md` |

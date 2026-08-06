@@ -47,7 +47,7 @@ export function SessionPanel({ locale = "es-MX" }: SessionPanelProps) {
           <button type="submit">{copy.signIn}</button>
         </form>
       )}
-      <p role="status">{message}</p>
+      <p aria-live="polite" data-testid="auth-status">{message}</p>
     </section>
   );
 }
