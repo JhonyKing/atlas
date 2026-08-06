@@ -44,6 +44,14 @@ paths:
       responses:
         '200': {description: Resources owned by the current user}
         '401': {description: Authentication required}
+  /v1/private/resources/{resource_id}:
+    delete:
+      operationId: deletePrivateResource
+      parameters:
+        - {in: path, name: resource_id, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '202': {description: Repeat-safe deletion accepted}
+        '404': {description: Not found for this owner}
   /v1/private/uploads:
     post:
       operationId: createPrivateUpload

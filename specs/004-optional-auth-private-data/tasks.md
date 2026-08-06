@@ -70,19 +70,19 @@
 
 ### Tests for User Story 2 (write first and verify failure)
 
-- [ ] T031 [P] [US2] Add contract tests for `GET /v1/private/resources` in `apps/backend/tests/contract/auth/test_private_resources_contract.py`
-- [ ] T032 [P] [US2] Add integration tests for ownership across threads, reports, feedback, and artifacts in `apps/backend/tests/integration/security/test_cross_user_resources.py`
+- [x] T031 [P] [US2] Add contract tests for `GET /v1/private/resources` in `apps/backend/tests/contract/auth/test_private_resources_contract.py`
+- [x] T032 [P] [US2] Add integration tests for ownership across threads, reports, feedback, and artifacts in `apps/backend/tests/integration/security/test_cross_user_resources.py`
 - [ ] T033 [P] [US2] Add database policy tests proving user A cannot query or delete user B rows in `database/tests/011_cross_user_resources.sql`
 - [ ] T034 [P] [US2] Add Playwright journey for private history and report ownership in `apps/web/tests/auth/private-resources.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T035 [US2] Add ownership grants and resource-owner lookup service in `apps/backend/src/atlas/privacy/ownership.py`
-- [ ] T036 [US2] Enforce application-level ownership checks for existing thread, report, feedback, and artifact repositories in `apps/backend/src/atlas/privacy/guards.py`
+- [x] T035 [US2] Add ownership grants and resource-owner lookup service in `apps/backend/src/atlas/privacy/ownership.py`
+- [x] T036 [US2] Enforce application-level ownership checks for existing thread, report, feedback, and artifact repositories in `apps/backend/src/atlas/privacy/guards.py`
 - [ ] T037 [US2] Enforce database RLS session variables and policies for owned resources in `database/migrations/versions/0020_private_data_rls.py`
-- [ ] T038 [US2] Implement private-resource list and deletion endpoints in `apps/backend/src/atlas/api/routes/private_data.py`
+- [x] T038 [US2] Implement private-resource list and deletion endpoints in `apps/backend/src/atlas/api/routes/private_data.py`
 - [ ] T039 [US2] Add authenticated history/report navigation and ownership errors in `apps/web/src/features/private-data/PrivateResourcesPanel.tsx`
-- [ ] T040 [US2] Add repeat-safe deletion command handling with idempotency keys in `apps/backend/src/atlas/privacy/deletion.py`
+- [x] T040 [US2] Add repeat-safe deletion command handling with idempotency keys in `apps/backend/src/atlas/privacy/deletion.py`
 - [ ] T041 [US2] Add ownership-decision traces without raw private content in `apps/backend/src/atlas/observability/events.py`
 
 **Checkpoint**: US1 and US2 work independently, and cross-user access tests pass at both API and database layers.
