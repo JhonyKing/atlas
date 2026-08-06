@@ -78,15 +78,11 @@ async def plan_report(
         raise ReportPlanningError("source_run_has_no_evidence")
 
     citation_ids = [citation.citation_id for citation in citations]
-    citation_by_evidence = {
-        citation.evidence_id: citation.citation_id for citation in citations
-    }
+    citation_by_evidence = {citation.evidence_id: citation.citation_id for citation in citations}
     matrix_lines = []
     for cell in run.matrix.cells:
         value = cell.value or cell.explanation or "No supported evidence"
-        refs = ", ".join(
-            citation_by_evidence[evidence_id] for evidence_id in cell.evidence_ids
-        )
+        refs = ", ".join(citation_by_evidence[evidence_id] for evidence_id in cell.evidence_ids)
         matrix_lines.append(
             f"{cell.technology_id.value} / {cell.criterion_id.value}: {value} "
             f"[{refs or 'abstained'}]"
