@@ -12,7 +12,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 001 | Respuesta citada y UX bilingüe | En progreso | 5 | `specs/001-cited-answer/tasks.md` |
 | 002 | Comparador tecnológico | En progreso/evidencia live | 4 | `specs/002-technology-comparator/tasks.md` |
 | 003 | Reportes y documentos DOCX/PDF | Cerrada — MVP vertical | 0 | `specs/003-reports/tasks.md` |
-| 004 | Auth, sesiones y datos privados | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
+| 004 | Auth, sesiones y datos privados | En progreso — SpecKit + foundation | 55 | `specs/004-optional-auth-private-data/tasks.md` |
 | 005–012 | Corpus expandido, agentes, retrieval, router, seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
 | 013 | LangSmith y observabilidad | Cerrado en esta fase | 0 | `specs/013-observability/tasks.md` |
 | 014 | Corpus real y harness | En progreso | 1 | `specs/014-real-corpus/tasks.md` |
@@ -25,7 +25,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 
 1. Cerrar las evidencias pendientes de 001, 002 y 014: quickstart, refresh de siete días,
    usabilidad externa y revisión de las casillas de convergencia.
-2. Implementar feature 003: generación de reportes DOCX/PDF con citas, descarga y expiración.
+2. Continuar Feature 004 desde el MVP de autenticación y cerrar cada historia con evidencia.
 3. Crear el SpecKit de feature 016 y conectar el harness a LangSmith con métricas reproducibles.
 4. Ejecutar el corte de portfolio en feature 012: README, arquitectura, costes, latencia,
    seguridad, demo y tabla de evaluaciones.
