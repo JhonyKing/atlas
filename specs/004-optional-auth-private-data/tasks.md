@@ -25,11 +25,11 @@
 - [x] T006 [P] Write the AuthPort, session, ownership, and deletion service interfaces in `apps/backend/src/atlas/auth/ports.py`
 - [x] T007 [P] Write redaction helpers for session tokens, provider keys, visitor IDs, and private content in `apps/backend/src/atlas/privacy/redaction.py`
 - [ ] T008 Create the User, Session, OwnershipGrant, PrivateUpload, and DeletionJob SQLAlchemy models in `apps/backend/src/atlas/auth/models.py` and `apps/backend/src/atlas/uploads/models.py`
-- [ ] T009 Create Alembic migration `database/migrations/versions/0018_identity.py` for users, sessions, and ownership grants
-- [ ] T010 Create Alembic migration `database/migrations/versions/0019_private_data.py` for private uploads and deletion jobs
-- [ ] T011 [P] Add database row-level security policies and indexes in `database/migrations/versions/0020_private_data_rls.py`
-- [ ] T012 [P] Add SQL tests for identity isolation in `database/tests/009_identity_rls.sql`
-- [ ] T013 [P] Add SQL tests for private-resource isolation and deletion scope in `database/tests/010_private_data_rls.sql`
+- [x] T009 Create Alembic migration `database/migrations/versions/0018_identity.py` for users, sessions, and ownership grants
+- [x] T010 Create Alembic migration `database/migrations/versions/0019_private_data.py` for private uploads and deletion jobs
+- [x] T011 [P] Add database row-level security policies and indexes in `database/migrations/versions/0020_private_data_rls.py`
+- [x] T012 [P] Add SQL tests for identity isolation in `database/tests/009_identity_rls.sql`
+- [x] T013 [P] Add SQL tests for private-resource isolation and deletion scope in `database/tests/010_private_data_rls.sql`
 - [x] T014 [P] Add request-context fields and ownership-decision events to `apps/backend/src/atlas/observability/events.py`
 - [ ] T015 [P] Add contract-test helpers for authenticated and anonymous requests in `apps/backend/tests/contract/auth/conftest.py`
 - [x] T016 Add a deterministic local AuthPort adapter in `apps/backend/src/atlas/auth/fake_provider.py`
@@ -79,7 +79,7 @@
 
 - [x] T035 [US2] Add ownership grants and resource-owner lookup service in `apps/backend/src/atlas/privacy/ownership.py`
 - [x] T036 [US2] Enforce application-level ownership checks for existing thread, report, feedback, and artifact repositories in `apps/backend/src/atlas/privacy/guards.py`
-- [ ] T037 [US2] Enforce database RLS session variables and policies for owned resources in `database/migrations/versions/0020_private_data_rls.py`
+- [x] T037 [US2] Enforce database RLS session variables and policies for owned resources in `database/migrations/versions/0020_private_data_rls.py`
 - [x] T038 [US2] Implement private-resource list and deletion endpoints in `apps/backend/src/atlas/api/routes/private_data.py`
 - [ ] T039 [US2] Add authenticated history/report navigation and ownership errors in `apps/web/src/features/private-data/PrivateResourcesPanel.tsx`
 - [x] T040 [US2] Add repeat-safe deletion command handling with idempotency keys in `apps/backend/src/atlas/privacy/deletion.py`
