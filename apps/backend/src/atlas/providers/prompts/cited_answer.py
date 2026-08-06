@@ -35,8 +35,14 @@ def build_cited_answer_input(question: Question, evidence: Sequence[Evidence]) -
         "Use only the evidence IDs below; do not infer an ID that is not present.",
     ]
     for record in evidence:
+        published = record.published_at.isoformat() if record.published_at else "unspecified"
         blocks.append(
             f'<untrusted_evidence id="{record.id}">\n'
+            f"source_title={escape(record.source_title, quote=False)}\n"
+            f"publisher={escape(record.publisher, quote=False)}\n"
+            f"captured_at={record.captured_at.isoformat()}\n"
+            f"published_at={published}\n"
+            f"version={escape(record.version_label or 'unspecified', quote=False)}\n"
             f"{escape(record.excerpt, quote=False)}\n"
             "</untrusted_evidence>"
         )

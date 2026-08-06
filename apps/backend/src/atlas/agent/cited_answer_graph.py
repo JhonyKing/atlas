@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal, NotRequired, Protocol, TypedDict, cast
@@ -140,7 +141,9 @@ class CitedAnswerGraph:
         visited = _visit(state, "retrieve")
         question = state["question"]
         try:
-            vectors = await self._dependencies.embedding_provider.embed([question.normalized_text])
+            vectors = await self._dependencies.embedding_provider.embed(
+                [_retrieval_query(question.normalized_text)]
+            )
             if len(vectors) != 1:
                 raise ValueError("embedding provider returned an unexpected vector count")
             rows = await self._dependencies.retriever.retrieve(
@@ -294,6 +297,24 @@ class CitedAnswerGraph:
 
 def _visit(state: CitedAnswerState, node: str) -> list[str]:
     return [*state.get("visited", []), node]
+
+
+_TEMPORAL_QUERY_RE = re.compile(
+    r"\b(last|past|previous|recent|latest|changed|change|new|release|year|quarter)\b"
+    r"|\b(últim[oa]s?|cambi[óo]|nuev[oa]s?|lanzamientos?|año)\b",
+    re.IGNORECASE,
+)
+
+
+def _retrieval_query(normalized_question: str) -> str:
+    """Add bounded temporal vocabulary so change questions reach release/version chunks."""
+
+    if not _TEMPORAL_QUERY_RE.search(normalized_question):
+        return normalized_question
+    return (
+        f"{normalized_question} releases changes new models version history "
+        "dated 2025 2026"
+    )
 
 
 def _controlled_error(

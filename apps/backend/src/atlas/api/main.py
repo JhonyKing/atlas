@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
+from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
 from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
@@ -32,7 +33,7 @@ from atlas.comparison.executor import (
 )
 from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusComparisonBranchRetriever
 from atlas.config import Settings, get_settings
-from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider, OpenAIConnectedDemoGraph
+from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
 from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
@@ -48,6 +49,7 @@ from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpus
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
+from atlas.retrieval.service import RetrievalService
 
 
 def create_app(
@@ -155,7 +157,12 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                     "development-anonymous-visitor",
                 ),
             )
-            answer_graph = OpenAIConnectedDemoGraph(generator)
+            answer_graph = _answer_graph(
+                settings,
+                corpus_service,
+                client=client,
+                generator=generator,
+            ) or answer_graph
         comparison_executor = _comparison_executor(
             settings,
             corpus_service,
@@ -258,6 +265,44 @@ def _comparison_executor(
             embedding_provider=OpenAIEmbeddingsAdapter(client=client),
             retrieval=ComparisonRetrievalService(CorpusComparisonBranchRetriever(repository)),
             extractor=extractor,
+        )
+    except Exception:
+        if connection is not None:
+            connection.close()
+        return None
+
+
+def _answer_graph(
+    settings: Settings,
+    corpus_service: CorpusStatusProvider,
+    *,
+    client: AsyncOpenAI,
+    generator: OpenAIResponsesAdapter,
+) -> CitedAnswerGraph | None:
+    """Wire real evidence retrieval into the cited-answer graph.
+
+    The local development fallback remains available when PostgreSQL is unavailable, but a
+    configured provider must use the promoted corpus rather than the old demo evidence pack.
+    The repository owns its connection for the lifetime of the graph process.
+    """
+
+    if not isinstance(corpus_service, PostgresCorpusStatusRepository):
+        return None
+    connection = None
+    try:
+        dsn = settings.database_url.get_secret_value().replace(
+            "postgresql+psycopg://", "postgresql://", 1
+        )
+        connection = psycopg.connect(dsn)
+        repository = PostgresCorpusRepository(connection)
+        return CitedAnswerGraph(
+            CitedAnswerDependencies(
+                embedding_provider=OpenAIEmbeddingsAdapter(client=client),
+                retriever=RetrievalService(repository),
+                answer_generator=generator,
+                top_k=20,
+                timeout_seconds=15.0,
+            )
         )
     except Exception:
         if connection is not None:
