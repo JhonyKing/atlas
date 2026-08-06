@@ -1,0 +1,66 @@
+openapi: 3.1.0
+info:
+  title: ATLAS Optional Auth and Private Data Contract
+  version: 0.1.0
+paths:
+  /v1/auth/session:
+    get:
+      operationId: getSession
+      responses:
+        '200': {description: Authenticated session}
+        '401': {description: No authenticated session}
+    delete:
+      operationId: logout
+      responses:
+        '204': {description: Session revoked}
+  /v1/auth/renew:
+    post:
+      operationId: renewSession
+      responses:
+        '200': {description: Renewed session}
+        '401': {description: Session cannot be renewed}
+  /v1/private/resources:
+    get:
+      operationId: listPrivateResources
+      responses:
+        '200': {description: Resources owned by the current user}
+        '401': {description: Authentication required}
+  /v1/private/uploads:
+    post:
+      operationId: createPrivateUpload
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 16}}
+      responses:
+        '202': {description: Upload quarantined for validation}
+        '400': {description: File rejected}
+        '401': {description: Authentication required}
+  /v1/private/uploads/{upload_id}:
+    delete:
+      operationId: deletePrivateUpload
+      parameters:
+        - {in: path, name: upload_id, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '202': {description: Repeat-safe deletion accepted}
+        '404': {description: Not found for this owner}
+  /v1/account:
+    delete:
+      operationId: deleteAccount
+      parameters:
+        - {in: header, name: Idempotency-Key, required: true, schema: {type: string, minLength: 16}}
+      responses:
+        '202': {description: Account deletion accepted}
+        '401': {description: Authentication required}
+components:
+  schemas:
+    Session:
+      type: object
+      additionalProperties: false
+      required: [user_id, expires_at]
+      properties:
+        user_id: {type: string, format: uuid}
+        locale: {type: string, enum: [en-US, es-MX]}
+        expires_at: {type: string, format: date-time}
+    UploadStatus:
+      type: string
+      enum: [pending, clean, rejected, error, deleted]
+
