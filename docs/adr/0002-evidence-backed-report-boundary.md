@@ -15,7 +15,8 @@ neutral structured representation and are validated before publication.
 
 This preserves the project's evidence-first constitution and prevents format-specific or
 language-specific citation drift. Separating metadata from binary files also provides a clean seam
-for expiry, ownership, idempotency, reproducibility, and a future managed object store.
+for expiry, ownership, idempotency, reproducibility metadata (model, prompt version, and corpus
+snapshot), and a future managed object store.
 
 ## Consequences
 
@@ -23,4 +24,3 @@ for expiry, ownership, idempotency, reproducibility, and a future managed object
 - The first implementation is intentionally in-process and local; worker and object-store scale
   are deferred until measured demand requires them.
 - Spanish is a presentation locale. Original evidence remains labelled and traceable.
-

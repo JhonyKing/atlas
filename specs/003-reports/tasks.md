@@ -124,8 +124,8 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 - [X] T042 [P] Add report architecture decision record based on the delivered boundary in `docs/adr/0002-evidence-backed-report-boundary.md`
 - [X] T043 [P] Add report architecture diagram and lifecycle/observability notes in `docs/architecture/003-reports.md`
 - [X] T044 [P] Update README usage, report API quickstart, supported formats, locale behavior, and verification commands in `README.md`
-- [ ] T045 Run `specs/003-reports/quickstart.md`, backend/web tests, SQL contracts, deterministic report evals, and artifact visual QA; record evidence in `docs/product/implementation-status.md`
-- [ ] T046 Review final `spec.md`, `plan.md`, `tasks.md`, actual diff, and commit history; update README, relevant ADRs, and architecture docs only for behavior actually delivered, then run link and SpecKit consistency checks
+- [X] T045 Run `specs/003-reports/quickstart.md`, backend/web tests, SQL contracts, deterministic report evals, and artifact visual QA; record evidence in `docs/product/implementation-status.md`
+- [X] T046 Review final `spec.md`, `plan.md`, `tasks.md`, actual diff, and commit history; update README, relevant ADRs, and architecture docs only for behavior actually delivered, then run link and SpecKit consistency checks
 
 ---
 

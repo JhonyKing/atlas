@@ -10,6 +10,8 @@ preserving report. The backend exposes report job lifecycle routes under `/v1/re
 both DOCX and PDF from one neutral representation, validates that artifacts contain their evidence
 manifest, and supports bilingual presentation (`en-US` and `es-MX`). Local artifacts are bounded
 and expire after 30 days; ownership and idempotency are enforced at the API boundary.
+Each job also records model, prompt-version, source-run, and corpus-snapshot metadata for
+reproducibility.
 
 Run the focused verification from the repository root:
 
@@ -28,4 +30,3 @@ The public contract and implementation work remain tracked in:
 
 This first slice does not claim the remaining report catalog or live LangSmith report-quality
 evaluation is complete; those tasks stay open in `tasks.md`.
-

@@ -46,3 +46,14 @@ $f = 'specs/014-real-corpus/tasks.md'
 
 El backlog completo mantiene la trazabilidad PRD → feature → tarea:
 `docs/product/prd-v1.1-backlog.md`.
+
+## Evidencia de verificación de Feature 003
+
+- Backend completo: `196 passed, 4 skipped, 3 warnings`.
+- Contratos, unitarias e integración de reportes: `13 passed`.
+- Migraciones `0016_reports` y `0017_report_metadata` aplicadas en PostgreSQL de Docker Desktop;
+  `database/tests/008_reports.sql` pasó.
+- Journeys Playwright de generación, DOCX/PDF/eliminación y español: `3 passed`.
+- Evaluación determinista bilingüe: `1 passed`.
+- PDF renderizado a PNG e inspeccionado visualmente; el validador también exige contenido visible
+  en cada página y manifiesto de citas.

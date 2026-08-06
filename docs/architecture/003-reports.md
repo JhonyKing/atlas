@@ -7,8 +7,9 @@ change citation identity. `validation.py` checks citation membership, DOCX XML, 
 and required references before the job becomes `completed`.
 
 The first local coordinator is in-process and uses bounded storage. The metadata migration
-(`0016_reports`) is the durable seam for a later worker/object-store implementation; it records
-owner digest, source run, idempotency key, lifecycle state, expiry, content hash, and size.
+(`0016_reports` plus `0017_report_metadata`) is the durable seam for a later worker/object-store
+implementation; it records owner digest, source run, idempotency key, lifecycle state, expiry,
+content hash, size, model, prompt version, and corpus snapshot.
 
 Every report request receives the existing request identifier and is associated with the anonymous
 visitor digest. Provider keys and raw visitor identifiers are never copied into artifacts. The
@@ -26,4 +27,3 @@ ReportSpec -> planner -> ReportRepresentation -> DOCX/PDF renderers
                                         v
                                bounded artifact storage
 ```
-
