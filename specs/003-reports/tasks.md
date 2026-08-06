@@ -77,9 +77,9 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 
 - [X] T024 [P] [US2] Add DOCX structural integrity, required references, and non-empty tests in `apps/backend/tests/unit/reports/test_renderers.py`
 - [X] T025 [P] [US2] Add PDF parseability, required references, and non-empty tests in `apps/backend/tests/unit/reports/test_renderers.py`
-- [ ] T026 [P] [US2] Add artifact visual QA fixture/render test covering clipping and overflow failure in `apps/backend/tests/integration/reports/test_artifact_visual_qa.py`
-- [ ] T027 [P] [US2] Add download/delete/expired/foreign-owner contract tests in `apps/backend/tests/contract/reports/test_report_artifacts_contract.py`
-- [ ] T028 [P] [US2] Add integration test for repeat-safe download and deletion in `apps/backend/tests/integration/reports/test_report_lifecycle.py`
+- [X] T026 [P] [US2] Add artifact visual QA fixture/render test covering clipping and overflow failure in `apps/backend/tests/integration/reports/test_artifact_visual_qa.py`
+- [X] T027 [P] [US2] Add download/delete/expired/foreign-owner contract tests in `apps/backend/tests/integration/reports/test_report_lifecycle.py`
+- [X] T028 [P] [US2] Add integration test for repeat-safe download and deletion in `apps/backend/tests/integration/reports/test_report_lifecycle.py`
 
 ### Implementation for User Story 2
 
