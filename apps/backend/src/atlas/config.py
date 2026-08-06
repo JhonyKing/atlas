@@ -66,6 +66,9 @@ class Settings(BaseSettings):
     atlas_anonymous_window_hours: int = Field(default=24, ge=1)
     atlas_content_retention_days: int = Field(default=30, ge=1)
     atlas_news_enabled: bool = True
+    atlas_auth_enabled: bool = True
+    atlas_private_upload_max_bytes: int = Field(default=10_485_760, ge=1)
+    atlas_private_retention_days: int = Field(default=30, ge=1)
 
     @field_validator(
         "openai_api_key",

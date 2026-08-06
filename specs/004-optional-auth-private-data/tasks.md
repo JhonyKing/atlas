@@ -11,10 +11,10 @@
 **Purpose**: Establish feature-specific modules and test fixtures without changing anonymous behavior.
 
 - [x] T001 Create feature module directories under `apps/backend/src/atlas/auth/`, `apps/backend/src/atlas/privacy/`, and `apps/backend/src/atlas/uploads/`
-- [ ] T002 [P] Create frontend feature directories under `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`
-- [ ] T003 [P] Add feature environment settings and safe defaults in `apps/backend/src/atlas/config.py`
-- [ ] T004 [P] Add deterministic fake-auth and private-data fixtures in `apps/backend/tests/fixtures/auth_private_data.py`
-- [ ] T005 [P] Add the feature quickstart commands to `Makefile` or the repository task runner configuration
+- [x] T002 [P] Create frontend feature directories under `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`
+- [x] T003 [P] Add feature environment settings and safe defaults in `apps/backend/src/atlas/config.py`
+- [x] T004 [P] Add deterministic fake-auth and private-data fixtures in `apps/backend/tests/fixtures/auth_private_data.py`
+- [x] T005 [P] Add the feature quickstart commands to `Makefile` or the repository task runner configuration
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
@@ -24,14 +24,14 @@
 
 - [x] T006 [P] Write the AuthPort, session, ownership, and deletion service interfaces in `apps/backend/src/atlas/auth/ports.py`
 - [x] T007 [P] Write redaction helpers for session tokens, provider keys, visitor IDs, and private content in `apps/backend/src/atlas/privacy/redaction.py`
-- [ ] T008 Create the User, Session, OwnershipGrant, PrivateUpload, and DeletionJob SQLAlchemy models in `apps/backend/src/atlas/auth/models.py` and `apps/backend/src/atlas/uploads/models.py`
+- [x] T008 Create the User, Session, OwnershipGrant, PrivateUpload, and DeletionJob SQLAlchemy models in `apps/backend/src/atlas/auth/models.py` and `apps/backend/src/atlas/uploads/models.py`
 - [x] T009 Create Alembic migration `database/migrations/versions/0018_identity.py` for users, sessions, and ownership grants
 - [x] T010 Create Alembic migration `database/migrations/versions/0019_private_data.py` for private uploads and deletion jobs
 - [x] T011 [P] Add database row-level security policies and indexes in `database/migrations/versions/0020_private_data_rls.py`
 - [x] T012 [P] Add SQL tests for identity isolation in `database/tests/009_identity_rls.sql`
 - [x] T013 [P] Add SQL tests for private-resource isolation and deletion scope in `database/tests/010_private_data_rls.sql`
 - [x] T014 [P] Add request-context fields and ownership-decision events to `apps/backend/src/atlas/observability/events.py`
-- [ ] T015 [P] Add contract-test helpers for authenticated and anonymous requests in `apps/backend/tests/contract/auth/conftest.py`
+- [x] T015 [P] Add contract-test helpers for authenticated and anonymous requests in `apps/backend/tests/contract/auth/conftest.py`
 - [x] T016 Add a deterministic local AuthPort adapter in `apps/backend/src/atlas/auth/fake_provider.py`
 - [x] T017 Add unit tests proving fake-provider sessions expire, revoke, and never expose raw tokens in `apps/backend/tests/unit/auth/test_fake_provider.py`
 
@@ -54,7 +54,7 @@
 - [x] T023 [US1] Implement login/session bootstrap endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [x] T024 [US1] Implement renewal token rotation and revocation endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [x] T025 [US1] Add auth dependency that distinguishes anonymous visitor context from authenticated subject in `apps/backend/src/atlas/api/dependencies.py`
-- [ ] T026 [US1] Preserve anonymous HMAC quota accounting when a user authenticates in `apps/backend/src/atlas/quotas/service.py`
+- [x] T026 [US1] Preserve anonymous HMAC quota accounting when a user authenticates in `apps/backend/src/atlas/quotas/service.py`
 - [x] T027 [US1] Add Spanish and English auth labels, errors, and locale selection in `apps/web/src/features/auth/i18n.ts`
 - [x] T028 [US1] Add sign-in, session status, renew, and logout UI state in `apps/web/src/features/auth/SessionPanel.tsx`
 - [x] T029 [US1] Wire session bootstrap and logout controls into `apps/web/src/app/page.tsx`

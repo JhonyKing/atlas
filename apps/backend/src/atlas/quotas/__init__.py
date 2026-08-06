@@ -1,0 +1,1 @@
+"""Quota identity compatibility layer."""
