@@ -17,9 +17,9 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 **Purpose**: Establish report package structure and deterministic fixtures without changing existing answer behavior.
 
 - [X] T001 Create report package directories and module boundaries under `apps/backend/src/atlas/reports/` and `apps/backend/tests/{contract,unit,integration}/reports/`
-- [ ] T002 [P] Add report test fixtures and a deterministic completed-comparison source run in `apps/backend/tests/fixtures/reports/comparison_run.json`
-- [ ] T003 [P] Add report evaluation cases and expected citation manifests in `evals/datasets/report-v1.jsonl`
-- [ ] T004 [P] Add report feature types and API client boundary under `apps/web/src/features/reports/`
+- [X] T002 [P] Add report test fixtures and a deterministic completed-comparison source run in `apps/backend/tests/fixtures/reports/comparison_run.json`
+- [X] T003 [P] Add report evaluation cases and expected citation manifests in `evals/datasets/report-v1.jsonl`
+- [X] T004 [P] Add report feature types and API client boundary under `apps/web/src/features/reports/`
 
 ---
 
@@ -47,8 +47,8 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 ### Tests for User Story 1 (write first)
 
 - [ ] T011 [P] [US1] Add OpenAPI contract tests for create/status/report progress endpoints in `apps/backend/tests/contract/reports/test_report_create_contract.py`
-- [ ] T012 [P] [US1] Add unit tests for valid/invalid `ReportSpec`, unsupported type, missing source run, and source ownership in `apps/backend/tests/unit/reports/test_schemas.py`
-- [ ] T013 [P] [US1] Add unit tests for idempotency replay and parameter conflict behavior in `apps/backend/tests/unit/reports/test_idempotency.py`
+- [X] T012 [P] [US1] Add unit tests for valid/invalid `ReportSpec`, unsupported type, missing source run, and source ownership in `apps/backend/tests/unit/reports/test_schemas.py`
+- [X] T013 [P] [US1] Add unit tests for idempotency replay and parameter conflict behavior in `apps/backend/tests/unit/reports/test_idempotency.py`
 - [X] T014 [P] [US1] Add planner tests proving source citations are preserved and citation-less factual sections fail closed in `apps/backend/tests/unit/reports/test_planner.py`
 - [X] T015 [P] [US1] Add API integration test for create-to-completed report lifecycle and downloads in `apps/backend/tests/contract/api/test_reports.py`
 

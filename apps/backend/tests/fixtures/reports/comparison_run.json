@@ -1,0 +1,25 @@
+{
+  "run_id": "00000000-0000-0000-0000-000000000003",
+  "status": "completed",
+  "locale": "en-US",
+  "matrix": {
+    "technology_ids": ["openai", "anthropic"],
+    "criterion_ids": ["capability"],
+    "cells": [
+      {
+        "technology_id": "openai",
+        "criterion_id": "capability",
+        "state": "supported",
+        "value": "documented capability",
+        "evidence_ids": ["00000000-0000-0000-0000-000000000301"]
+      },
+      {
+        "technology_id": "anthropic",
+        "criterion_id": "capability",
+        "state": "supported",
+        "value": "documented capability",
+        "evidence_ids": ["00000000-0000-0000-0000-000000000302"]
+      }
+    ]
+  }
+}
