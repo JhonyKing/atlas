@@ -60,3 +60,7 @@ Mode: local deterministic/fixture validation
   deterministic ground-truth metrics are repeatable at 1.0 for the 11 cases with IDs.
 - Failed-refresh safety validation day 1 preserved the promoted snapshot ID. Days 2-7 remain
   scheduled work for the seven-day acceptance criterion.
+- T040 live measurement: a Spanish four-technology / three-criterion run completed 12 cells in
+  **76,712 ms** with HTTP 200 and no failed SSE event. Offline citation precision remains **1.0**;
+  live citation precision is intentionally unreported until real-source ground-truth IDs are
+  manually reviewed (`evals/results/live-comparator-t040.json`).

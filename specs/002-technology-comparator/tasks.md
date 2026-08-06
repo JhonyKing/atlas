@@ -119,3 +119,6 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   `660b0578-992f-43d2-9722-fa0c49568bbd`.
 - T039 is evidenced by verified Anthropic and Gemini collections, the 20-request dataset and the
   bilingual four-row journey.
+- T040 live latency evidence is recorded in `evals/results/live-comparator-t040.json`: 76,712 ms
+  for four technologies and three criteria; live citation precision remains pending manual ground
+  truth review.

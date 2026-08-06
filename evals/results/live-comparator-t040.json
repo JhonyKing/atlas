@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-08-06",
+  "language": "es-MX",
+  "technologies": ["langgraph", "langchain", "openai", "anthropic"],
+  "criteria": ["capability", "tool_calling", "context"],
+  "status_code": 200,
+  "terminal_event": "comparison.completed",
+  "failed_events": 0,
+  "technology_cells": 12,
+  "elapsed_ms": 76712,
+  "offline_citation_precision": 1.0,
+  "live_citation_precision": null,
+  "snapshot_id": "660b0578-992f-43d2-9722-fa0c49568bbd",
+  "note": "Live citation precision remains null because the current dataset does not map these real-source cells to manually reviewed ground truth IDs."
+}
