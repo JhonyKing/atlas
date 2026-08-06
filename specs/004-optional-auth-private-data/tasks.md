@@ -46,7 +46,7 @@
 - [x] T018 [P] [US1] Add OpenAPI contract tests for `GET/DELETE /v1/auth/session` in `apps/backend/tests/contract/auth/test_session_contract.py`
 - [x] T019 [P] [US1] Add OpenAPI contract tests for `POST /v1/auth/renew` in `apps/backend/tests/contract/auth/test_renew_contract.py`
 - [x] T020 [P] [US1] Add integration tests for anonymous quota preservation and optional sign-in in `apps/backend/tests/integration/auth/test_anonymous_transition.py`
-- [ ] T021 [P] [US1] Add Playwright journeys for sign-in, renewal, logout, and revoked-session rejection in `apps/web/tests/auth/session.spec.ts`
+- [x] T021 [P] [US1] Add Playwright journeys for sign-in, renewal, logout, and revoked-session rejection in `apps/web/tests/e2e/auth-private-data.spec.ts`
 
 ### Implementation for User Story 1
 
@@ -58,7 +58,7 @@
 - [x] T027 [US1] Add Spanish and English auth labels, errors, and locale selection in `apps/web/src/features/auth/i18n.ts`
 - [x] T028 [US1] Add sign-in, session status, renew, and logout UI state in `apps/web/src/features/auth/SessionPanel.tsx`
 - [x] T029 [US1] Wire session bootstrap and logout controls into `apps/web/src/app/page.tsx`
-- [ ] T030 [US1] Add redacted auth audit events and request IDs to all auth routes in `apps/backend/src/atlas/api/routes/auth.py`
+- [x] T030 [US1] Add redacted auth audit events and request IDs to all auth routes in `apps/backend/src/atlas/api/routes/auth.py`
 
 **Checkpoint**: US1 is independently demonstrable without private uploads or saved-resource migration.
 
@@ -73,7 +73,7 @@
 - [x] T031 [P] [US2] Add contract tests for `GET /v1/private/resources` in `apps/backend/tests/contract/auth/test_private_resources_contract.py`
 - [x] T032 [P] [US2] Add integration tests for ownership across threads, reports, feedback, and artifacts in `apps/backend/tests/integration/security/test_cross_user_resources.py`
 - [ ] T033 [P] [US2] Add database policy tests proving user A cannot query or delete user B rows in `database/tests/011_cross_user_resources.sql`
-- [ ] T034 [P] [US2] Add Playwright journey for private history and report ownership in `apps/web/tests/auth/private-resources.spec.ts`
+- [x] T034 [P] [US2] Add Playwright journey for private history and report ownership in `apps/web/tests/e2e/auth-private-data.spec.ts`
 
 ### Implementation for User Story 2
 
@@ -83,7 +83,7 @@
 - [x] T038 [US2] Implement private-resource list and deletion endpoints in `apps/backend/src/atlas/api/routes/private_data.py`
 - [x] T039 [US2] Add authenticated history/report navigation and ownership errors in `apps/web/src/features/private-data/PrivateResourcesPanel.tsx`
 - [x] T040 [US2] Add repeat-safe deletion command handling with idempotency keys in `apps/backend/src/atlas/privacy/deletion.py`
-- [ ] T041 [US2] Add ownership-decision traces without raw private content in `apps/backend/src/atlas/observability/events.py`
+- [x] T041 [US2] Add ownership-decision traces without raw private content in `apps/backend/src/atlas/observability/events.py`
 
 **Checkpoint**: US1 and US2 work independently, and cross-user access tests pass at both API and database layers.
 
@@ -108,7 +108,7 @@
 - [x] T049 [US3] Gate parsing, chunking, embedding, and retrieval on clean scan plus ownership in `apps/backend/src/atlas/uploads/pipeline.py`
 - [ ] T050 [US3] Implement repeat-safe upload deletion and retention cleanup in `apps/backend/src/atlas/uploads/deletion.py`
 - [ ] T051 [US3] Add private upload progress, rejection, and retention messages in Spanish and English in `apps/web/src/features/private-data/PrivateUploadPanel.tsx`
-- [ ] T052 [US3] Add upload lifecycle and deletion traces with redacted storage keys in `apps/backend/src/atlas/observability/events.py`
+- [x] T052 [US3] Add upload lifecycle and deletion traces with redacted storage keys in `apps/backend/src/atlas/observability/events.py`
 
 **Checkpoint**: US3 is independently demonstrable and cannot publish rejected/private content to the public corpus.
 

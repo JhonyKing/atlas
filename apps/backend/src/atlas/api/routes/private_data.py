@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 
 from atlas.auth.service import SessionService
+from atlas.observability.events import record_security_event
 from atlas.privacy.deletion import DeletionIdempotencyConflict, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService, ResourceNotFound
 from atlas.uploads.pipeline import PrivateUploadPipeline, UploadRejected
@@ -100,6 +101,12 @@ def list_private_resources(
         return _unauthorized()
     if service is None:
         return JSONResponse(status_code=503, content={"detail": "Private data unavailable"})
+    record_security_event(
+        request,
+        operation="private.resources.list",
+        subject_id=subject_id,
+        ownership_decision="owner_only",
+    )
     return PrivateResourceList(
         items=[
             PrivateResourceItem(
@@ -132,7 +139,19 @@ def delete_private_resource(
     except DeletionIdempotencyConflict:
         return JSONResponse(status_code=409, content={"detail": "Idempotency key conflict"})
     except ResourceNotFound:
+        record_security_event(
+            request,
+            operation="private.resource.delete.denied",
+            subject_id=subject_id,
+            ownership_decision="denied",
+        )
         return JSONResponse(status_code=404, content={"detail": "Private resource not found"})
+    record_security_event(
+        request,
+        operation="private.resource.delete.accepted",
+        subject_id=subject_id,
+        ownership_decision="owner_only",
+    )
     return JSONResponse(
         status_code=status.HTTP_202_ACCEPTED,
         content={"status": "deletion_accepted"},
@@ -171,6 +190,12 @@ def create_private_upload(
             idempotency_key=idempotency_key,
         )
     except UploadRejected as exc:
+        record_security_event(
+            request,
+            operation="private.upload.rejected",
+            subject_id=subject_id,
+            fields={"filename": body.filename, "content": "[omitted]"},
+        )
         return JSONResponse(
             status_code=400,
             content={
@@ -178,6 +203,12 @@ def create_private_upload(
                 "indexable": bool(exc.record and exc.record.indexable),
             },
         )
+    record_security_event(
+        request,
+        operation="private.upload.accepted",
+        subject_id=subject_id,
+        fields={"filename": body.filename, "content_hash": record.content_hash},
+    )
     return PrivateUploadResponse(
         upload_id=record.upload_id,
         filename=record.filename,

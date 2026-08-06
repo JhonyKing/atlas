@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from atlas.auth.ports import AuthError, AuthSession
 from atlas.auth.service import SessionService
+from atlas.observability.events import record_security_event
 
 router = APIRouter(prefix="/v1/auth", tags=["Authentication"])
 SESSION_COOKIE = "atlas_session"
@@ -91,11 +92,17 @@ def login(
     try:
         issued = service.login(str(body.email), body.password)
     except AuthError:
+        record_security_event(request, operation="auth.login.failed", subject_id=None)
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"detail": "Invalid credentials"},
         )
     _set_session_cookie(response, issued.access_token)
+    record_security_event(
+        request,
+        operation="auth.login.succeeded",
+        subject_id=issued.session.subject_id,
+    )
     return SessionResponse.from_session(issued.session)
 
 
@@ -114,6 +121,7 @@ def get_session(
         session = service.current(token)
     except AuthError:
         return _unauthorized()
+    record_security_event(request, operation="auth.session.read", subject_id=session.subject_id)
     return SessionResponse.from_session(session)
 
 
@@ -134,6 +142,11 @@ def renew_session(
     except AuthError:
         return _unauthorized()
     _set_session_cookie(response, issued.access_token)
+    record_security_event(
+        request,
+        operation="auth.session.renewed",
+        subject_id=issued.session.subject_id,
+    )
     return SessionResponse.from_session(issued.session)
 
 
@@ -150,5 +163,6 @@ def logout(
     if token is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     service.logout(token)
+    record_security_event(request, operation="auth.session.revoked", subject_id=None)
     response.delete_cookie(SESSION_COOKIE, path="/")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
