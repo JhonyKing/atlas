@@ -19,6 +19,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 015 | Noticia del día anterior | Cerrado funcionalmente | 0 | `specs/015-daily-news/tasks.md` |
 | 016 | Harness conectado a LangSmith | Pendiente de especificar | — | `docs/product/prd-v1.1-backlog.md` |
 
+| 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
+
 ## Orden recomendado para terminar el MVP de portafolio
 
 1. Cerrar las evidencias pendientes de 001, 002 y 014: quickstart, refresh de siete días,

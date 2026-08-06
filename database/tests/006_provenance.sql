@@ -2,10 +2,12 @@
 \set ON_ERROR_STOP on
 
 DO $$
+DECLARE
+  table_name_value text;
 BEGIN
-  FOREACH table_name IN ARRAY ARRAY['source_versions', 'chunks'] LOOP
-    IF to_regclass('atlas.' || table_name) IS NULL THEN
-      RAISE EXCEPTION 'atlas.% table is missing', table_name;
+  FOREACH table_name_value IN ARRAY ARRAY['source_versions', 'chunks'] LOOP
+    IF to_regclass('atlas.' || table_name_value) IS NULL THEN
+      RAISE EXCEPTION 'atlas.% table is missing', table_name_value;
     END IF;
   END LOOP;
   IF (
