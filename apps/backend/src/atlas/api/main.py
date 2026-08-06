@@ -16,6 +16,7 @@ from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
+from atlas.api.routes.auth import account_router as account_router
 from atlas.api.routes.auth import router as auth_router
 from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.api.routes.comparisons import router as comparisons_router
@@ -52,12 +53,13 @@ from atlas.persistence.comparison_repository import InMemoryComparisonRepository
 from atlas.persistence.corpus_repository import PostgresCorpusRepository
 from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
-from atlas.privacy.deletion import IdempotentDeletionService
+from atlas.privacy.deletion import AccountDeletionService, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 from atlas.reports.service import InMemoryReportService
 from atlas.retrieval.service import RetrievalService
+from atlas.uploads.deletion import UploadDeletionService
 from atlas.uploads.pipeline import PrivateUploadPipeline
 
 
@@ -124,11 +126,24 @@ def create_app(
     application.state.auth_service = SessionService(auth_provider) if auth_provider else None
     application.state.private_resource_service = private_resource_service
     application.state.private_upload_pipeline = private_upload_pipeline
+    application.state.private_upload_deletion = (
+        UploadDeletionService(private_upload_pipeline) if private_upload_pipeline else None
+    )
     application.state.private_deletion_service = (
         IdempotentDeletionService(private_resource_service) if private_resource_service else None
     )
+    application.state.account_deletion_service = (
+        AccountDeletionService(
+            private_resource_service,
+            private_upload_pipeline,
+            application.state.auth_service.delete_account,
+        )
+        if private_resource_service and private_upload_pipeline and application.state.auth_service
+        else None
+    )
     application.include_router(health_router)
     application.include_router(auth_router)
+    application.include_router(account_router)
     application.include_router(private_data_router)
     application.include_router(answers_router)
     application.include_router(comparisons_router)

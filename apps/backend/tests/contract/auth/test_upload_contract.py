@@ -38,6 +38,8 @@ def test_valid_upload_is_quarantined_then_clean() -> None:
     assert response.status_code == 202
     assert response.json()["scan_status"] == "clean"
     assert response.json()["parse_status"] == "parsed"
+    assert response.json()["detected_content_type"] == "text/markdown"
+    assert response.json()["provenance"] == "private_upload"
 
 
 def test_rejected_upload_is_never_indexable() -> None:

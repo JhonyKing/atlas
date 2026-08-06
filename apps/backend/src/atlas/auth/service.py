@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import UUID
 
 from atlas.auth.ports import AuthError, AuthPort, AuthSession, IssuedSession
 
@@ -36,3 +37,17 @@ class SessionService:
         if not access_token:
             return False
         return self._provider.revoke(access_token, now=now)
+
+    def delete_account(self, subject_id: UUID, *, now: datetime | None = None) -> int:
+        return self._provider.revoke_subject(subject_id, now=now)
+
+    def get_locale(self, subject_id: UUID) -> str:
+        return self._provider.get_locale(subject_id)
+
+    def set_locale(self, subject_id: UUID, locale: str) -> str:
+        return self._provider.set_locale(subject_id, locale)
+
+    def subject_for_token(self, access_token: str | None) -> UUID:
+        if not access_token:
+            raise AuthError("invalid session")
+        return self._provider.subject_for_token(access_token)

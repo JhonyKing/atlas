@@ -38,6 +38,28 @@ paths:
       responses:
         '200': {description: Renewed session}
         '401': {description: Session cannot be renewed}
+  /v1/auth/preferences:
+    get:
+      operationId: getLocalePreference
+      responses:
+        '200': {description: Saved locale preference}
+        '401': {description: Authentication required}
+    patch:
+      operationId: updateLocalePreference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [locale]
+              properties:
+                locale: {type: string, enum: [en-US, es-MX]}
+      responses:
+        '200': {description: Locale preference saved}
+        '400': {description: Unsupported locale}
+        '401': {description: Authentication required}
   /v1/private/resources:
     get:
       operationId: listPrivateResources

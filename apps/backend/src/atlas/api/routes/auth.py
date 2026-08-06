@@ -13,6 +13,7 @@ from atlas.auth.service import SessionService
 from atlas.observability.events import record_security_event
 
 router = APIRouter(prefix="/v1/auth", tags=["Authentication"])
+account_router = APIRouter(prefix="/v1/account", tags=["Account"])
 SESSION_COOKIE = "atlas_session"
 
 
@@ -39,6 +40,24 @@ class SessionResponse(BaseModel):
             issued_at=session.issued_at.isoformat(),
             expires_at=session.expires_at.isoformat(),
         )
+
+
+class LocalePreference(BaseModel):
+    locale: str
+
+
+def _subject(
+    request: Request,
+    authorization: str | None,
+) -> tuple[SessionService | None, AuthSession | None]:
+    service = _service(request)
+    token = _token(request, authorization)
+    if service is None or token is None:
+        return service, None
+    try:
+        return service, service.current(token)
+    except AuthError:
+        return service, None
 
 
 def _service(request: Request) -> SessionService | None:
@@ -166,3 +185,76 @@ def logout(
     record_security_event(request, operation="auth.session.revoked", subject_id=None)
     response.delete_cookie(SESSION_COOKIE, path="/")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/preferences", response_model=LocalePreference)
+def get_preferences(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> LocalePreference | JSONResponse:
+    service, session = _subject(request, authorization)
+    if service is None:
+        return _auth_unavailable()
+    if session is None:
+        return _unauthorized()
+    return LocalePreference(locale=service.get_locale(session.subject_id))
+
+
+@router.patch("/preferences", response_model=LocalePreference)
+def update_preferences(
+    body: LocalePreference,
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> LocalePreference | JSONResponse:
+    service, session = _subject(request, authorization)
+    if service is None:
+        return _auth_unavailable()
+    if session is None:
+        return _unauthorized()
+    try:
+        locale = service.set_locale(session.subject_id, body.locale)
+    except AuthError:
+        return JSONResponse(status_code=400, content={"detail": "Unsupported locale"})
+    record_security_event(request, operation="auth.locale.updated", subject_id=session.subject_id)
+    return LocalePreference(locale=locale)
+
+
+@account_router.delete("", status_code=status.HTTP_202_ACCEPTED)
+def delete_account(
+    request: Request,
+    response: Response,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+    authorization: Annotated[str | None, Header()] = None,
+) -> JSONResponse:
+    service, session = _subject(request, authorization)
+    account_deletion = getattr(request.app.state, "account_deletion_service", None)
+    if service is None:
+        return _auth_unavailable()
+    if session is None:
+        token = _token(request, authorization)
+        if token is None:
+            return _unauthorized()
+        try:
+            subject_id = service.subject_for_token(token)
+        except AuthError:
+            return _unauthorized()
+    else:
+        subject_id = session.subject_id
+    if account_deletion is None:
+        return JSONResponse(status_code=503, content={"detail": "Account deletion unavailable"})
+    if idempotency_key is None or len(idempotency_key.strip()) < 8:
+        return JSONResponse(status_code=400, content={"detail": "Idempotency-Key is required"})
+    try:
+        account_deletion.request(subject_id, idempotency_key)
+    except ValueError:
+        return JSONResponse(status_code=400, content={"detail": "Invalid Idempotency-Key"})
+    response.delete_cookie(SESSION_COOKIE, path="/")
+    record_security_event(
+        request,
+        operation="auth.account.deletion.accepted",
+        subject_id=subject_id,
+    )
+    return JSONResponse(
+        status_code=status.HTTP_202_ACCEPTED,
+        content={"status": "deletion_accepted"},
+    )

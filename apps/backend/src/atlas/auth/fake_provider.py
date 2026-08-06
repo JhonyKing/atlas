@@ -32,6 +32,7 @@ class FakeAuthProvider(AuthPort):
         }
         self._ttl = ttl
         self._sessions: dict[str, _StoredSession] = {}
+        self._locales: dict[UUID, str] = {}
 
     def login(
         self,
@@ -74,6 +75,41 @@ class FakeAuthProvider(AuthPort):
             revoked_at=revoked_at,
         )
         return True
+
+    def revoke_subject(self, subject_id: UUID, *, now: datetime | None = None) -> int:
+        revoked_at = utc_now(now)
+        count = 0
+        for stored in self._sessions.values():
+            if stored.session.subject_id != subject_id or stored.session.revoked_at is not None:
+                continue
+            stored.session = AuthSession(
+                session_id=stored.session.session_id,
+                subject_id=stored.session.subject_id,
+                issued_at=stored.session.issued_at,
+                expires_at=stored.session.expires_at,
+                revoked_at=revoked_at,
+            )
+            count += 1
+        return count
+
+    def get_locale(self, subject_id: UUID) -> str:
+        if not any(
+            configured_subject == subject_id for _, configured_subject in self._users.values()
+        ):
+            raise AuthError("invalid subject")
+        return self._locales.get(subject_id, "es-MX")
+
+    def set_locale(self, subject_id: UUID, locale: str) -> str:
+        if locale not in {"en-US", "es-MX"}:
+            raise AuthError("unsupported locale")
+        self._locales[subject_id] = locale
+        return locale
+
+    def subject_for_token(self, access_token: str) -> UUID:
+        stored = self._sessions.get(self._hash(access_token))
+        if stored is None:
+            raise AuthError("invalid session")
+        return stored.session.subject_id
 
     def _issue(self, subject_id: UUID, *, now: datetime | None = None) -> IssuedSession:
         issued_at = utc_now(now)
