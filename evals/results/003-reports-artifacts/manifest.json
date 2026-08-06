@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-06T21:41:43.836470+00:00",
+  "source_run_id": "9ece3d19-d464-4f53-b214-bfee1ca66f20",
+  "report_format": "comparison",
+  "locale": "en-US",
+  "artifacts": {
+    "pdf": {
+      "path": "evals\\results\\003-reports-artifacts\\comparison-report-en-US.pdf",
+      "bytes": 2093,
+      "sha256": "c286c9b2426d47eec83635eb87cd7a16d1258a9f68f48486d2dcdb4c0bb4729b"
+    },
+    "docx": {
+      "path": "evals\\results\\003-reports-artifacts\\comparison-report-en-US.docx",
+      "bytes": 37005,
+      "sha256": "54470ab1713f877915184b0fea341bec246ce98f037523c2b0ae8259d3baf7c3"
+    }
+  }
+}
