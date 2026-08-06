@@ -10,7 +10,7 @@
 
 **Purpose**: Establish feature-specific modules and test fixtures without changing anonymous behavior.
 
-- [ ] T001 Create feature module directories under `apps/backend/src/atlas/auth/`, `apps/backend/src/atlas/privacy/`, and `apps/backend/src/atlas/uploads/`
+- [x] T001 Create feature module directories under `apps/backend/src/atlas/auth/`, `apps/backend/src/atlas/privacy/`, and `apps/backend/src/atlas/uploads/`
 - [ ] T002 [P] Create frontend feature directories under `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`
 - [ ] T003 [P] Add feature environment settings and safe defaults in `apps/backend/src/atlas/config.py`
 - [ ] T004 [P] Add deterministic fake-auth and private-data fixtures in `apps/backend/tests/fixtures/auth_private_data.py`
@@ -22,18 +22,18 @@
 
 **Checkpoint**: No user story work is complete until these primitives pass their contract and security tests.
 
-- [ ] T006 [P] Write the AuthPort, session, ownership, and deletion service interfaces in `apps/backend/src/atlas/auth/ports.py`
-- [ ] T007 [P] Write redaction helpers for session tokens, provider keys, visitor IDs, and private content in `apps/backend/src/atlas/privacy/redaction.py`
+- [x] T006 [P] Write the AuthPort, session, ownership, and deletion service interfaces in `apps/backend/src/atlas/auth/ports.py`
+- [x] T007 [P] Write redaction helpers for session tokens, provider keys, visitor IDs, and private content in `apps/backend/src/atlas/privacy/redaction.py`
 - [ ] T008 Create the User, Session, OwnershipGrant, PrivateUpload, and DeletionJob SQLAlchemy models in `apps/backend/src/atlas/auth/models.py` and `apps/backend/src/atlas/uploads/models.py`
 - [ ] T009 Create Alembic migration `database/migrations/versions/0018_identity.py` for users, sessions, and ownership grants
 - [ ] T010 Create Alembic migration `database/migrations/versions/0019_private_data.py` for private uploads and deletion jobs
 - [ ] T011 [P] Add database row-level security policies and indexes in `database/migrations/versions/0020_private_data_rls.py`
 - [ ] T012 [P] Add SQL tests for identity isolation in `database/tests/009_identity_rls.sql`
 - [ ] T013 [P] Add SQL tests for private-resource isolation and deletion scope in `database/tests/010_private_data_rls.sql`
-- [ ] T014 [P] Add request-context fields and ownership-decision events to `apps/backend/src/atlas/observability/events.py`
+- [x] T014 [P] Add request-context fields and ownership-decision events to `apps/backend/src/atlas/observability/events.py`
 - [ ] T015 [P] Add contract-test helpers for authenticated and anonymous requests in `apps/backend/tests/contract/auth/conftest.py`
-- [ ] T016 Add a deterministic local AuthPort adapter in `apps/backend/src/atlas/auth/fake_provider.py`
-- [ ] T017 Add unit tests proving fake-provider sessions expire, revoke, and never expose raw tokens in `apps/backend/tests/unit/auth/test_fake_provider.py`
+- [x] T016 Add a deterministic local AuthPort adapter in `apps/backend/src/atlas/auth/fake_provider.py`
+- [x] T017 Add unit tests proving fake-provider sessions expire, revoke, and never expose raw tokens in `apps/backend/tests/unit/auth/test_fake_provider.py`
 
 ## Phase 3: User Story 1 - Sign in without losing anonymous work (Priority: P1) - MVP
 
