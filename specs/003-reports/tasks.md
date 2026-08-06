@@ -46,7 +46,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 
 ### Tests for User Story 1 (write first)
 
-- [ ] T011 [P] [US1] Add OpenAPI contract tests for create/status/report progress endpoints in `apps/backend/tests/contract/reports/test_report_create_contract.py`
+- [X] T011 [P] [US1] Add OpenAPI contract tests for create/status/report progress endpoints in `apps/backend/tests/contract/reports/test_report_create_contract.py`
 - [X] T012 [P] [US1] Add unit tests for valid/invalid `ReportSpec`, unsupported type, missing source run, and source ownership in `apps/backend/tests/unit/reports/test_schemas.py`
 - [X] T013 [P] [US1] Add unit tests for idempotency replay and parameter conflict behavior in `apps/backend/tests/unit/reports/test_idempotency.py`
 - [X] T014 [P] [US1] Add planner tests proving source citations are preserved and citation-less factual sections fail closed in `apps/backend/tests/unit/reports/test_planner.py`
@@ -110,7 +110,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 
 - [X] T038 [P] [US3] Add report localization catalog for English and Mexican Spanish in `apps/backend/src/atlas/reports/planner.py`
 - [X] T039 [US3] Apply localized presentation text without translating source excerpts or citation identities in `apps/backend/src/atlas/reports/planner.py`
-- [ ] T040 [US3] Add locale selector and Spanish report labels in `apps/web/src/features/reports/ReportRequest.tsx` and `apps/web/src/features/reports/ReportArtifacts.tsx`
+- [X] T040 [US3] Add locale-aware labels and original-evidence messaging in `apps/web/src/features/reports/ReportRequest.tsx`
 - [X] T041 [US3] Add bilingual deterministic report evaluation cases and citation parity assertions in `evals/datasets/report-v1.jsonl` and `apps/backend/tests/unit/evaluation/test_report_evals.py`
 
 **Checkpoint**: All three stories are independently testable and preserve one evidence graph across locales.
