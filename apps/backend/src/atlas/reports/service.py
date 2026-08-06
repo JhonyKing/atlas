@@ -132,15 +132,7 @@ class InMemoryReportService:
         job = await self.get(report_id, owner_key_hash=owner_key_hash)
         if job.status is not ReportStatus.COMPLETED or format not in {"docx", "pdf"}:
             raise ReportNotFound(report_id)
-            entry = self._entries[report_id]
-            entry.trace_metadata = ReportTraceMetadata(
-                request_id=entry.job.request_id,
-                report_id=entry.job.report_id,
-                source_run_id=entry.job.spec.source_run_id,
-                model=entry.job.model,
-                prompt_version=entry.job.prompt_version,
-                corpus_snapshot=entry.job.corpus_snapshot,
-            )
+        entry = self._entries[report_id]
         return self._storage.get(entry.paths[format]), job
 
     async def stream(self, report_id: UUID, *, owner_key_hash: str) -> AsyncIterator[str]:
@@ -155,6 +147,14 @@ class InMemoryReportService:
 
     async def _run(self, report_id: UUID) -> None:
         entry = self._entries[report_id]
+        entry.trace_metadata = ReportTraceMetadata(
+            request_id=entry.job.request_id,
+            report_id=entry.job.report_id,
+            source_run_id=entry.job.spec.source_run_id,
+            model=entry.job.model,
+            prompt_version=entry.job.prompt_version,
+            corpus_snapshot=entry.job.corpus_snapshot,
+        )
         try:
             entry.job = entry.job.model_copy(update={"status": ReportStatus.PLANNING})
             entry.events.put_nowait('{"event":"report.planning","status":"planning"}')
