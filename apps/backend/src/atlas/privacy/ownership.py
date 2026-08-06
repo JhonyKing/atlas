@@ -14,6 +14,10 @@ ResourceType = Literal["thread", "report", "feedback", "artifact", "upload"]
 class ResourceNotFound(KeyError):
     """Resource is absent or belongs to another subject."""
 
+    def __init__(self, resource_id: UUID | None = None) -> None:
+        del resource_id
+        super().__init__("private resource not found")
+
 
 @dataclass(frozen=True, slots=True)
 class PrivateResource:
@@ -80,3 +84,10 @@ class InMemoryOwnershipService:
                 deleted_at=datetime.now(UTC),
             )
             return True
+
+    def delete_all(self, owner_id: UUID) -> int:
+        deleted = 0
+        for resource in self.list_owned(owner_id):
+            if self.delete_owned(owner_id, resource.resource_id):
+                deleted += 1
+        return deleted

@@ -22,6 +22,7 @@ class PrivateUploadModel(IdentityBase):
     storage_key: Mapped[str] = mapped_column(Text, unique=True)
     declared_content_type: Mapped[str] = mapped_column(String(160))
     detected_content_type: Mapped[str | None] = mapped_column(String(160))
+    provenance: Mapped[str] = mapped_column(String(64), default="private_upload")
     size_bytes: Mapped[int] = mapped_column(BIGINT)
     content_hash: Mapped[str | None] = mapped_column(CHAR(64))
     scan_status: Mapped[str] = mapped_column(String(16))

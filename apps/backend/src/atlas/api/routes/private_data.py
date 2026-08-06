@@ -15,6 +15,7 @@ from atlas.auth.service import SessionService
 from atlas.observability.events import record_security_event
 from atlas.privacy.deletion import DeletionIdempotencyConflict, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService, ResourceNotFound
+from atlas.uploads.deletion import UploadDeletionService
 from atlas.uploads.pipeline import PrivateUploadPipeline, UploadRejected
 
 router = APIRouter(prefix="/v1/private", tags=["Private data"])
@@ -44,6 +45,8 @@ class PrivateUploadRequest(BaseModel):
 class PrivateUploadResponse(BaseModel):
     upload_id: UUID
     filename: str
+    detected_content_type: str
+    provenance: str
     scan_status: str
     parse_status: str
     indexable: bool
@@ -80,6 +83,10 @@ def _deletion(request: Request) -> IdempotentDeletionService | None:
 
 def _uploads(request: Request) -> PrivateUploadPipeline | None:
     return cast(PrivateUploadPipeline | None, request.app.state.private_upload_pipeline)
+
+
+def _upload_deletion(request: Request) -> UploadDeletionService | None:
+    return cast(UploadDeletionService | None, request.app.state.private_upload_deletion)
 
 
 def _unauthorized() -> JSONResponse:
@@ -212,6 +219,8 @@ def create_private_upload(
     return PrivateUploadResponse(
         upload_id=record.upload_id,
         filename=record.filename,
+        detected_content_type=record.detected_content_type,
+        provenance=record.provenance,
         scan_status=record.scan_status,
         parse_status=record.parse_status,
         indexable=record.indexable,
@@ -227,16 +236,18 @@ def create_private_upload(
 def delete_private_upload(
     upload_id: UUID,
     request: Request,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
     authorization: Annotated[str | None, Header()] = None,
 ) -> JSONResponse:
     subject_id = _subject(request, authorization)
-    pipeline = _uploads(request)
+    deletion = _upload_deletion(request)
     if subject_id is None:
         return _unauthorized()
-    if pipeline is None:
+    if deletion is None:
         return JSONResponse(status_code=503, content={"detail": "Upload service unavailable"})
+    key = idempotency_key or f"upload-delete-{upload_id}"
     try:
-        pipeline.delete(subject_id, upload_id)
+        deletion.delete(subject_id, upload_id, key)
     except KeyError:
         return JSONResponse(status_code=404, content={"detail": "Private upload not found"})
     return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content={"status": "deleted"})

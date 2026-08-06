@@ -23,6 +23,7 @@ class UploadValidationError(ValueError):
 class ValidatedUpload:
     filename: str
     declared_content_type: str
+    detected_content_type: str
     size_bytes: int
     content: bytes
 
@@ -56,4 +57,4 @@ def validate_upload(
             content.decode("utf-8")
         except UnicodeDecodeError as exc:
             raise UploadValidationError("text must be valid UTF-8") from exc
-    return ValidatedUpload(filename, normalized_type, len(content), content)
+    return ValidatedUpload(filename, normalized_type, normalized_type, len(content), content)

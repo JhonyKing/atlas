@@ -38,7 +38,11 @@ def test_langsmith_sink_sends_only_safe_metadata() -> None:
         },
         tags=("answer", "es-MX"),
     )
-    sink.end(handle, status="completed", fields={"citation_count": 2})
+    sink.end(
+        handle,
+        status="completed",
+        fields={"citation_count": 2, "private_content": "must not leave process"},
+    )
 
     assert len(client.created) == 1
     created = client.created[0]

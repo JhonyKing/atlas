@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from atlas.uploads.quarantine import QuarantineStore
@@ -25,12 +25,15 @@ class PrivateUploadRecord:
     owner_id: UUID
     filename: str
     declared_content_type: str
+    detected_content_type: str
+    provenance: str
     size_bytes: int
     content_hash: str
     scan_status: str
     parse_status: str
     indexable: bool
     created_at: datetime
+    retention_until: datetime
 
 
 class PrivateUploadPipeline:
@@ -65,17 +68,21 @@ class PrivateUploadPipeline:
         )
         digest = hashlib.sha256(validated.content).hexdigest()
         scan_status = "rejected" if b"EICAR-STANDARD-ANTIVIRUS-TEST-FILE" in content else "clean"
+        created_at = datetime.now(UTC)
         record = PrivateUploadRecord(
             upload_id=quarantine.object_id,
             owner_id=owner_id,
             filename=validated.filename,
             declared_content_type=validated.declared_content_type,
+            detected_content_type=validated.detected_content_type,
+            provenance="private_upload",
             size_bytes=validated.size_bytes,
             content_hash=digest,
             scan_status=scan_status,
             parse_status="rejected" if scan_status == "rejected" else "parsed",
             indexable=scan_status == "clean",
-            created_at=datetime.now(UTC),
+            created_at=created_at,
+            retention_until=created_at + timedelta(days=30),
         )
         self._records[record.upload_id] = record
         if idempotency_key:
@@ -94,7 +101,18 @@ class PrivateUploadPipeline:
     def indexable_uploads(self) -> list[PrivateUploadRecord]:
         return [record for record in self._records.values() if record.indexable]
 
+    def records(self) -> list[PrivateUploadRecord]:
+        return list(self._records.values())
+
     def delete(self, owner_id: UUID, upload_id: UUID) -> None:
         record = self.get(owner_id, upload_id)
         self._records.pop(record.upload_id, None)
         self._quarantine.delete(record.upload_id)
+
+    def delete_owner(self, owner_id: UUID) -> int:
+        owned = [
+            record.upload_id for record in self._records.values() if record.owner_id == owner_id
+        ]
+        for upload_id in owned:
+            self.delete(owner_id, upload_id)
+        return len(owned)

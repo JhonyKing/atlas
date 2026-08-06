@@ -23,6 +23,19 @@ _SENSITIVE_FIELD_PARTS = (
 _SAFE_METADATA_FIELDS = frozenset({"prompt_version"})
 
 
+def safe_scalar_fields(
+    fields: Mapping[str, Any] | None = None,
+) -> dict[str, str | int | float | bool]:
+    """Keep only non-sensitive scalar fields for trace completion metadata."""
+
+    attributes = span_attributes(request_id=UUID(int=0), operation="trace.end", fields=fields)
+    return {
+        key.removeprefix("atlas."): value
+        for key, value in attributes.items()
+        if key not in {"atlas.request_id", "atlas.operation"}
+    }
+
+
 def span_attributes(
     *,
     request_id: UUID,

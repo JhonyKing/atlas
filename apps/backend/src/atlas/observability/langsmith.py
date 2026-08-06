@@ -9,7 +9,7 @@ from typing import Any, Literal, Protocol
 from uuid import UUID, uuid4
 
 from atlas.config import Settings
-from atlas.observability.telemetry import span_attributes
+from atlas.observability.telemetry import safe_scalar_fields, span_attributes
 
 try:  # The dependency is declared, but imports stay optional for minimal tooling.
     from langsmith import Client
@@ -145,7 +145,7 @@ class LangSmithTraceSink:
     ) -> None:
         if not handle.active:
             return
-        safe = {key.removeprefix("atlas."): value for key, value in (fields or {}).items()}
+        safe = safe_scalar_fields(fields)
         try:
             self._client.update_run(
                 handle.run_id,
