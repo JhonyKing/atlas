@@ -16,6 +16,7 @@ from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
+from atlas.api.routes.auth import router as auth_router
 from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.api.routes.comparisons import router as comparisons_router
 from atlas.api.routes.corpus import router as corpus_router
@@ -27,6 +28,7 @@ from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
 from atlas.api.routes.reports import router as reports_router
 from atlas.api.routes.review_cases import router as review_cases_router
+from atlas.auth.ports import AuthPort
 from atlas.comparison.demo_executor import DemoComparisonExecutor
 from atlas.comparison.executor import (
     OpenAIComparisonObservationExtractor,
@@ -67,6 +69,7 @@ def create_app(
     review_case_service: ReviewCaseListing | None = None,
     report_service: InMemoryReportService | None = None,
     visitor_hmac_secret: str | None = None,
+    auth_provider: AuthPort | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -110,7 +113,9 @@ def create_app(
         if settings.atlas_operator_token is not None
         else None
     )
+    application.state.auth_provider = auth_provider
     application.include_router(health_router)
+    application.include_router(auth_router)
     application.include_router(answers_router)
     application.include_router(comparisons_router)
     application.include_router(feedback_router)

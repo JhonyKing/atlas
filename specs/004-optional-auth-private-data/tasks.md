@@ -43,16 +43,16 @@
 
 ### Tests for User Story 1 (write first and verify failure)
 
-- [ ] T018 [P] [US1] Add OpenAPI contract tests for `GET/DELETE /v1/auth/session` in `apps/backend/tests/contract/auth/test_session_contract.py`
-- [ ] T019 [P] [US1] Add OpenAPI contract tests for `POST /v1/auth/renew` in `apps/backend/tests/contract/auth/test_renew_contract.py`
+- [x] T018 [P] [US1] Add OpenAPI contract tests for `GET/DELETE /v1/auth/session` in `apps/backend/tests/contract/auth/test_session_contract.py`
+- [x] T019 [P] [US1] Add OpenAPI contract tests for `POST /v1/auth/renew` in `apps/backend/tests/contract/auth/test_renew_contract.py`
 - [ ] T020 [P] [US1] Add integration tests for anonymous quota preservation and optional sign-in in `apps/backend/tests/integration/auth/test_anonymous_transition.py`
 - [ ] T021 [P] [US1] Add Playwright journeys for sign-in, renewal, logout, and revoked-session rejection in `apps/web/tests/auth/session.spec.ts`
 
 ### Implementation for User Story 1
 
 - [ ] T022 [US1] Implement provider-independent session issuance and validation in `apps/backend/src/atlas/auth/service.py`
-- [ ] T023 [US1] Implement login/session bootstrap endpoint in `apps/backend/src/atlas/api/routes/auth.py`
-- [ ] T024 [US1] Implement renewal token rotation and revocation endpoint in `apps/backend/src/atlas/api/routes/auth.py`
+- [x] T023 [US1] Implement login/session bootstrap endpoint in `apps/backend/src/atlas/api/routes/auth.py`
+- [x] T024 [US1] Implement renewal token rotation and revocation endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [ ] T025 [US1] Add auth dependency that distinguishes anonymous visitor context from authenticated subject in `apps/backend/src/atlas/api/dependencies.py`
 - [ ] T026 [US1] Preserve anonymous HMAC quota accounting when a user authenticates in `apps/backend/src/atlas/quotas/service.py`
 - [ ] T027 [US1] Add Spanish and English auth labels, errors, and locale selection in `apps/web/src/features/auth/i18n.ts`
