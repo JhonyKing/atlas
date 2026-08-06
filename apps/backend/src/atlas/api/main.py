@@ -58,6 +58,7 @@ from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 from atlas.reports.service import InMemoryReportService
 from atlas.retrieval.service import RetrievalService
+from atlas.uploads.pipeline import PrivateUploadPipeline
 
 
 def create_app(
@@ -75,6 +76,7 @@ def create_app(
     visitor_hmac_secret: str | None = None,
     auth_provider: AuthPort | None = None,
     private_resource_service: InMemoryOwnershipService | None = None,
+    private_upload_pipeline: PrivateUploadPipeline | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -121,6 +123,7 @@ def create_app(
     application.state.auth_provider = auth_provider
     application.state.auth_service = SessionService(auth_provider) if auth_provider else None
     application.state.private_resource_service = private_resource_service
+    application.state.private_upload_pipeline = private_upload_pipeline
     application.state.private_deletion_service = (
         IdempotentDeletionService(private_resource_service) if private_resource_service else None
     )

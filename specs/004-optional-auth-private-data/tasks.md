@@ -95,17 +95,17 @@
 
 ### Tests for User Story 3 (write first and verify failure)
 
-- [ ] T042 [P] [US3] Add contract tests for `POST /v1/private/uploads` and `DELETE /v1/private/uploads/{upload_id}` in `apps/backend/tests/contract/auth/test_upload_contract.py`
-- [ ] T043 [P] [US3] Add integration tests for file signature, MIME, size, scan, parse, and indexing gates in `apps/backend/tests/integration/security/test_private_upload_pipeline.py`
+- [x] T042 [P] [US3] Add contract tests for `POST /v1/private/uploads` and `DELETE /v1/private/uploads/{upload_id}` in `apps/backend/tests/contract/auth/test_upload_contract.py`
+- [x] T043 [P] [US3] Add integration tests for file signature, MIME, size, scan, parse, and indexing gates in `apps/backend/tests/integration/security/test_private_upload_pipeline.py`
 - [ ] T044 [P] [US3] Add database tests proving rejected uploads create no chunks or embeddings in `database/tests/012_upload_quarantine.sql`
 - [ ] T045 [P] [US3] Add Playwright journey for valid, rejected, and cross-user upload operations in `apps/web/tests/auth/private-uploads.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T046 [US3] Implement upload metadata, allowlist validation, and content-signature checks in `apps/backend/src/atlas/uploads/validation.py`
-- [ ] T047 [US3] Implement quarantine storage adapter and scan-status transitions in `apps/backend/src/atlas/uploads/quarantine.py`
-- [ ] T048 [US3] Implement `POST /v1/private/uploads` and upload-status responses in `apps/backend/src/atlas/api/routes/private_data.py`
-- [ ] T049 [US3] Gate parsing, chunking, embedding, and retrieval on clean scan plus ownership in `apps/backend/src/atlas/uploads/pipeline.py`
+- [x] T046 [US3] Implement upload metadata, allowlist validation, and content-signature checks in `apps/backend/src/atlas/uploads/validation.py`
+- [x] T047 [US3] Implement quarantine storage adapter and scan-status transitions in `apps/backend/src/atlas/uploads/quarantine.py`
+- [x] T048 [US3] Implement `POST /v1/private/uploads` and upload-status responses in `apps/backend/src/atlas/api/routes/private_data.py`
+- [x] T049 [US3] Gate parsing, chunking, embedding, and retrieval on clean scan plus ownership in `apps/backend/src/atlas/uploads/pipeline.py`
 - [ ] T050 [US3] Implement repeat-safe upload deletion and retention cleanup in `apps/backend/src/atlas/uploads/deletion.py`
 - [ ] T051 [US3] Add private upload progress, rejection, and retention messages in Spanish and English in `apps/web/src/features/private-data/PrivateUploadPanel.tsx`
 - [ ] T052 [US3] Add upload lifecycle and deletion traces with redacted storage keys in `apps/backend/src/atlas/observability/events.py`

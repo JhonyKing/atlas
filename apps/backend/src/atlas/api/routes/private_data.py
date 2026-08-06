@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 from typing import Annotated, cast
 from uuid import UUID
 
@@ -12,6 +14,7 @@ from pydantic import BaseModel, ConfigDict
 from atlas.auth.service import SessionService
 from atlas.privacy.deletion import DeletionIdempotencyConflict, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService, ResourceNotFound
+from atlas.uploads.pipeline import PrivateUploadPipeline, UploadRejected
 
 router = APIRouter(prefix="/v1/private", tags=["Private data"])
 
@@ -27,6 +30,23 @@ class PrivateResourceItem(BaseModel):
 
 class PrivateResourceList(BaseModel):
     items: list[PrivateResourceItem]
+
+
+class PrivateUploadRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    filename: str
+    declared_content_type: str
+    content_base64: str
+
+
+class PrivateUploadResponse(BaseModel):
+    upload_id: UUID
+    filename: str
+    scan_status: str
+    parse_status: str
+    indexable: bool
+    content_hash: str
 
 
 def _token(request: Request, authorization: str | None) -> str | None:
@@ -55,6 +75,10 @@ def _service(request: Request) -> InMemoryOwnershipService | None:
 
 def _deletion(request: Request) -> IdempotentDeletionService | None:
     return cast(IdempotentDeletionService | None, request.app.state.private_deletion_service)
+
+
+def _uploads(request: Request) -> PrivateUploadPipeline | None:
+    return cast(PrivateUploadPipeline | None, request.app.state.private_upload_pipeline)
 
 
 def _unauthorized() -> JSONResponse:
@@ -113,3 +137,75 @@ def delete_private_resource(
         status_code=status.HTTP_202_ACCEPTED,
         content={"status": "deletion_accepted"},
     )
+
+
+@router.post(
+    "/uploads",
+    response_model=PrivateUploadResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def create_private_upload(
+    body: PrivateUploadRequest,
+    request: Request,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+    authorization: Annotated[str | None, Header()] = None,
+) -> PrivateUploadResponse | JSONResponse:
+    subject_id = _subject(request, authorization)
+    pipeline = _uploads(request)
+    if subject_id is None:
+        return _unauthorized()
+    if pipeline is None:
+        return JSONResponse(status_code=503, content={"detail": "Upload service unavailable"})
+    if idempotency_key is None or len(idempotency_key.strip()) < 8:
+        return JSONResponse(status_code=400, content={"detail": "Idempotency-Key is required"})
+    try:
+        content = base64.b64decode(body.content_base64, validate=True)
+    except (ValueError, binascii.Error):
+        return JSONResponse(status_code=400, content={"detail": "content_base64 is invalid"})
+    try:
+        record = pipeline.submit(
+            subject_id,
+            filename=body.filename,
+            declared_content_type=body.declared_content_type,
+            content=content,
+            idempotency_key=idempotency_key,
+        )
+    except UploadRejected as exc:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "detail": str(exc),
+                "indexable": bool(exc.record and exc.record.indexable),
+            },
+        )
+    return PrivateUploadResponse(
+        upload_id=record.upload_id,
+        filename=record.filename,
+        scan_status=record.scan_status,
+        parse_status=record.parse_status,
+        indexable=record.indexable,
+        content_hash=record.content_hash,
+    )
+
+
+@router.delete(
+    "/uploads/{upload_id}",
+    response_model=None,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def delete_private_upload(
+    upload_id: UUID,
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> JSONResponse:
+    subject_id = _subject(request, authorization)
+    pipeline = _uploads(request)
+    if subject_id is None:
+        return _unauthorized()
+    if pipeline is None:
+        return JSONResponse(status_code=503, content={"detail": "Upload service unavailable"})
+    try:
+        pipeline.delete(subject_id, upload_id)
+    except KeyError:
+        return JSONResponse(status_code=404, content={"detail": "Private upload not found"})
+    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content={"status": "deleted"})
