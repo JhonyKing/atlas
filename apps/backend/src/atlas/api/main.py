@@ -25,6 +25,7 @@ from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
 from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
+from atlas.api.routes.reports import router as reports_router
 from atlas.api.routes.review_cases import router as review_cases_router
 from atlas.comparison.demo_executor import DemoComparisonExecutor
 from atlas.comparison.executor import (
@@ -49,6 +50,7 @@ from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpus
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
+from atlas.reports.service import InMemoryReportService
 from atlas.retrieval.service import RetrievalService
 
 
@@ -63,6 +65,7 @@ def create_app(
     corpus_service: CorpusStatusProvider | None = None,
     news_service: DailyNewsProvider | None = None,
     review_case_service: ReviewCaseListing | None = None,
+    report_service: InMemoryReportService | None = None,
     visitor_hmac_secret: str | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
@@ -101,6 +104,7 @@ def create_app(
     application.state.corpus_service = corpus_service
     application.state.news_service = news_service
     application.state.review_case_service = review_case_service
+    application.state.report_service = report_service
     application.state.operator_token = operator_token or (
         settings.atlas_operator_token.get_secret_value()
         if settings.atlas_operator_token is not None
@@ -114,6 +118,7 @@ def create_app(
     application.include_router(operator_ingestion_router)
     application.include_router(review_cases_router)
     application.include_router(news_router)
+    application.include_router(reports_router)
     return application
 
 
@@ -157,17 +162,23 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                     "development-anonymous-visitor",
                 ),
             )
-            answer_graph = _answer_graph(
-                settings,
-                corpus_service,
-                client=client,
-                generator=generator,
-            ) or answer_graph
+            answer_graph = (
+                _answer_graph(
+                    settings,
+                    corpus_service,
+                    client=client,
+                    generator=generator,
+                )
+                or answer_graph
+            )
         comparison_executor = _comparison_executor(
             settings,
             corpus_service,
             client=client if real_provider and settings.openai_api_key is not None else None,
             allow_real=real_provider,
+        )
+        comparison_service = _comparison_service(
+            settings, corpus_service, executor=comparison_executor
         )
         return create_app(
             answer_service=InMemoryAnswerRunService(
@@ -185,18 +196,19 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 },
             ),
             corpus_service=corpus_service,
-            comparison_service=_comparison_service(
-                settings, corpus_service, executor=comparison_executor
-            ),
+            comparison_service=comparison_service,
+            report_service=_report_service(settings, comparison_service=comparison_service),
             review_case_service=InMemoryReviewCaseService(),
             news_service=news_service,
         )
     corpus_service = _verified_corpus_or_demo(settings)
+    comparison_service = _comparison_service(
+        settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
+    )
     return create_app(
         corpus_service=corpus_service,
-        comparison_service=_comparison_service(
-            settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
-        ),
+        comparison_service=comparison_service,
+        report_service=_report_service(settings, comparison_service=comparison_service),
         news_service=news_service,
     )
 
@@ -232,6 +244,22 @@ def _comparison_service(
         trace_sink=LangSmithTraceSink.from_settings(settings),
         model=settings.atlas_answer_model,
     )
+
+
+def _report_service(settings: Settings, *, comparison_service) -> InMemoryReportService:
+    """Wire reports to the same comparison source; local storage is intentionally bounded."""
+
+    del settings
+    source = comparison_service
+    if source is None:
+        # Runtime wiring is completed after app construction in ``create_runtime_app``.
+        class _Unavailable:
+            async def get_status(self, run_id, *, visitor_key_hash):
+                del run_id, visitor_key_hash
+                return None
+
+        source = _Unavailable()
+    return InMemoryReportService(source=source)
 
 
 def _comparison_executor(
