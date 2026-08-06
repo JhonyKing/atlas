@@ -111,7 +111,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 - [X] T038 [P] [US3] Add report localization catalog for English and Mexican Spanish in `apps/backend/src/atlas/reports/planner.py`
 - [X] T039 [US3] Apply localized presentation text without translating source excerpts or citation identities in `apps/backend/src/atlas/reports/planner.py`
 - [ ] T040 [US3] Add locale selector and Spanish report labels in `apps/web/src/features/reports/ReportRequest.tsx` and `apps/web/src/features/reports/ReportArtifacts.tsx`
-- [ ] T041 [US3] Add bilingual deterministic report evaluation cases and citation parity assertions in `evals/datasets/report-v1.jsonl` and `evals/tests/test_report_evals.py`
+- [X] T041 [US3] Add bilingual deterministic report evaluation cases and citation parity assertions in `evals/datasets/report-v1.jsonl` and `apps/backend/tests/unit/evaluation/test_report_evals.py`
 
 **Checkpoint**: All three stories are independently testable and preserve one evidence graph across locales.
 
