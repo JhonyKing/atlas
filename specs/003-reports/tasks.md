@@ -61,7 +61,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 - [X] T020 [US1] Register report routes and report-specific quota dependency in `apps/backend/src/atlas/api/main.py`
 - [X] T021 [US1] Add report request/progress form and error states for the comparison MVP in `apps/web/src/features/reports/ReportRequest.tsx`
 - [X] T022 [US1] Add report API client and progress event handling in `apps/web/src/features/reports/report-client.ts`
-- [ ] T023 [US1] Add browser journey for generating a cited report in `apps/web/tests/e2e/reports.spec.ts`
+- [X] T023 [US1] Add browser journey for generating a cited report in `apps/web/tests/e2e/reports.spec.ts`
 
 **Checkpoint**: User Story 1 works independently and produces a structured, citation-validated report job from a completed comparison run.
 
@@ -88,7 +88,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 - [X] T031 [US2] Implement structural and visual artifact validation before completed state in `apps/backend/src/atlas/reports/validation.py`
 - [X] T032 [US2] Add download and repeat-safe delete/expiry routes in `apps/backend/src/atlas/api/routes/reports.py`
 - [X] T033 [US2] Add download/delete controls and safe not-found messaging in `apps/web/src/features/reports/ReportRequest.tsx`
-- [ ] T034 [US2] Add browser journey for DOCX/PDF download and deletion in `apps/web/tests/e2e/reports-artifacts.spec.ts`
+- [X] T034 [US2] Add browser journey for DOCX/PDF download and deletion in `apps/web/tests/e2e/reports-artifacts.spec.ts`
 
 **Checkpoint**: User Stories 1 and 2 both work; artifacts are inspectable, downloadable, and safely retired.
 
@@ -104,7 +104,7 @@ description: "Dependency-ordered implementation tasks for Feature 003"
 
 - [X] T035 [P] [US3] Add unit tests for locale validation and deterministic heading/label translations in `apps/backend/tests/unit/reports/test_localization.py`
 - [X] T036 [P] [US3] Add bilingual citation-manifest parity tests in `apps/backend/tests/unit/reports/test_localization.py`
-- [ ] T037 [P] [US3] Add browser journey for Spanish report generation and original-evidence labels in `apps/web/tests/e2e/reports-es.spec.ts`
+- [X] T037 [P] [US3] Add browser journey for Spanish report generation and original-evidence labels in `apps/web/tests/e2e/reports-es.spec.ts`
 
 ### Implementation for User Story 3
 
