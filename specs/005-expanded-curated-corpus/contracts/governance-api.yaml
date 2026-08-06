@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: ATLAS Ingestion Governance Contract
+  version: 0.1.0
+paths:
+  /v1/corpus/governance:
+    get:
+      operationId: getIngestionGovernance
+      summary: Return approved collections and coverage metrics
+      responses:
+        '200':
+          description: Governed catalog and coverage snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GovernanceResponse'
+  /v1/corpus/governance/{collection}/disable:
+    post:
+      operationId: disableIngestionCollection
+      parameters:
+        - in: path
+          name: collection
+          required: true
+          schema: {type: string}
+      responses:
+        '202': {description: Collection disabled atomically}
+        '404': {description: Unknown collection}
+components:
+  schemas:
+    GovernanceResponse:
+      type: object
+      additionalProperties: false
+      required: [collections, coverage]
+      properties:
+        collections:
+          type: array
+          items: {$ref: '#/components/schemas/Collection'}
+        coverage:
+          type: object
+          additionalProperties: true
+    Collection:
+      type: object
+      additionalProperties: false
+      required: [slug, display_name, kind, policy_state, enabled]
+      properties:
+        slug: {type: string}
+        display_name: {type: string}
+        kind: {type: string, enum: [framework, model_provider]}
+        policy_state: {type: string, enum: [pending, approved, disabled, takedown]}
+        enabled: {type: boolean}
+        source_count: {type: integer, minimum: 0}
+        stale_count: {type: integer, minimum: 0}
