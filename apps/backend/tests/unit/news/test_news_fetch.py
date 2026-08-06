@@ -1,6 +1,7 @@
 import httpx
 import pytest
 
+from atlas.news.feeds import parse_feed
 from atlas.news.fetch import FeedError, FeedPolicy, NewsFeedFetcher
 
 RSS = b"""<rss><channel><item>
@@ -61,3 +62,16 @@ async def test_fetch_blocks_pending_review_and_oversized_feed() -> None:
                     max_bytes=8,
                 ),
             ).fetch("https://news.example/feed.xml", publisher="Example")
+
+
+def test_feed_topic_score_penalizes_non_technology_metadata() -> None:
+    payload = b"""<rss><channel><item><title>Puzzle Corner</title>
+    <link>https://news.example/puzzle</link>
+    <pubDate>Tue, 04 Aug 2026 12:00:00 +0000</pubDate>
+    <description>Games and puzzles for the weekend.</description>
+    </item></channel></rss>"""
+
+    candidates = parse_feed(payload, publisher="Example", topic_score=0.9)
+
+    assert len(candidates) == 1
+    assert candidates[0].topic_score == 0.2

@@ -21,7 +21,10 @@
 - [X] T009 Add localized `DailyNews` card at `/en` and `/es` with original-language labels.
 - [X] T010 Add API/UI tests for locale parity, attribution, dates, links and unavailable state.
 - [X] T011 Add retention, correction/takedown and copyright documentation.
-- [ ] T012 Run analyze/converge and capture evidence of one real execution.
+- [X] T012 Run analyze/converge and capture evidence of one real execution. (Evidence:
+  `evals/results/daily-news-real-execution.json` records four successful RSS fetches, 60 candidates,
+  UTC previous-day filtering and a technology-relevant selected story. Permanent activation remains
+  review-gated.)
 
 ## Requirement coverage
 

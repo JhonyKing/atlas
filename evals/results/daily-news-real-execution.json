@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-08-06T17:37:43Z",
+  "target_day": "2026-08-05",
+  "execution_mode": "isolated-approved-policy",
+  "feed_count": 4,
+  "feeds_succeeded": 4,
+  "candidate_count": 60,
+  "selection_status": "ready",
+  "selected_publisher": "MIT Technology Review",
+  "selected_title": "The Download: NASA’s new telescope and Chinese tech import curbs",
+  "selected_url": "https://www.technologyreview.com/2026/08/05/1141212/the-download-nasa-telescope-chinese-tech-import-curbs/",
+  "selected_published_at": "2026-08-05T12:10:00Z",
+  "selected_score": 0.694167,
+  "timezone": "UTC",
+  "safety_note": "The permanent news manifest remains pending_operator_approval; this was an isolated validation run."
+}

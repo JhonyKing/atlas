@@ -62,7 +62,7 @@ def parse_feed(
                 published_at=published,
                 captured_at=captured,
                 authority_score=authority_score,
-                topic_score=topic_score,
+                topic_score=_topic_score(title, summary, topic_score),
                 content_sha256=digest,
             )
         )
@@ -103,6 +103,34 @@ def _parse_date(value: str) -> datetime | None:
 def _bounded_summary(value: str) -> str:
     value = re.sub(r"<[^>]+>", " ", value)
     return " ".join(value.split())[:4000]
+
+
+_TECHNOLOGY_TERMS = {
+    "ai",
+    "artificial intelligence",
+    "cloud",
+    "cyber",
+    "cybersecurity",
+    "data",
+    "internet",
+    "model",
+    "online",
+    "openai",
+    "privacy",
+    "software",
+    "tech",
+    "technology",
+    "web",
+}
+
+
+def _topic_score(title: str, summary: str, configured_score: float) -> float:
+    """Bound the editorial hint by explicit technology terms in feed metadata."""
+
+    haystack = f"{title} {summary}".casefold()
+    matches = sum(term in haystack for term in _TECHNOLOGY_TERMS)
+    evidence_score = 0.2 if matches == 0 else min(1.0, 0.4 + 0.15 * matches)
+    return round(min(configured_score, evidence_score), 6)
 
 
 __all__ = ["FeedError", "parse_feed"]
