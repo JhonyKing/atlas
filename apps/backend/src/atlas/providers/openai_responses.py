@@ -115,6 +115,10 @@ class OpenAIResponsesAdapter:
                     retryable=retryable,
                 ) from exc
             except Exception as exc:
+                if attempt < self._max_retries:
+                    if self._retry_delay:
+                        await asyncio.sleep(self._retry_delay * (2**attempt))
+                    continue
                 raise ProviderAdapterError("provider response could not be parsed") from exc
 
             parsed = response.output_parsed

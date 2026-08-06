@@ -15,6 +15,7 @@ from atlas.agent.verification import verify_draft
 from atlas.domain import (
     AnswerDraft,
     AnswerStatus,
+    CollectionSlug,
     ControlledError,
     ErrorCode,
     Evidence,
@@ -146,8 +147,9 @@ class CitedAnswerGraph:
             )
             if len(vectors) != 1:
                 raise ValueError("embedding provider returned an unexpected vector count")
+            retrieval_question = _scoped_question(question)
             rows = await self._dependencies.retriever.retrieve(
-                question,
+                retrieval_question,
                 vectors[0],
                 top_k=self._dependencies.top_k,
             )
@@ -315,6 +317,25 @@ def _retrieval_query(normalized_question: str) -> str:
         f"{normalized_question} releases changes new models version history "
         "dated 2025 2026"
     )
+
+
+def _scoped_question(question: Question) -> Question:
+    """Narrow retrieval when the visitor names one supported product explicitly."""
+
+    if question.product is not None:
+        return question
+    text = question.normalized_text
+    terms = (
+        (CollectionSlug.LANGGRAPH, ("langgraph",)),
+        (CollectionSlug.LANGCHAIN, ("langchain",)),
+        (CollectionSlug.OPENAI, ("openai", "responses api")),
+        (CollectionSlug.ANTHROPIC, ("anthropic", "claude")),
+        (CollectionSlug.GEMINI, ("gemini",)),
+    )
+    for collection, candidates in terms:
+        if any(candidate in text for candidate in candidates):
+            return question.model_copy(update={"product": collection})
+    return question
 
 
 def _controlled_error(
