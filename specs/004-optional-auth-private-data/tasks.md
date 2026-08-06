@@ -55,9 +55,9 @@
 - [x] T024 [US1] Implement renewal token rotation and revocation endpoint in `apps/backend/src/atlas/api/routes/auth.py`
 - [x] T025 [US1] Add auth dependency that distinguishes anonymous visitor context from authenticated subject in `apps/backend/src/atlas/api/dependencies.py`
 - [ ] T026 [US1] Preserve anonymous HMAC quota accounting when a user authenticates in `apps/backend/src/atlas/quotas/service.py`
-- [ ] T027 [US1] Add Spanish and English auth labels, errors, and locale selection in `apps/web/src/features/auth/i18n.ts`
-- [ ] T028 [US1] Add sign-in, session status, renew, and logout UI state in `apps/web/src/features/auth/SessionPanel.tsx`
-- [ ] T029 [US1] Wire session bootstrap and logout controls into `apps/web/src/app/page.tsx`
+- [x] T027 [US1] Add Spanish and English auth labels, errors, and locale selection in `apps/web/src/features/auth/i18n.ts`
+- [x] T028 [US1] Add sign-in, session status, renew, and logout UI state in `apps/web/src/features/auth/SessionPanel.tsx`
+- [x] T029 [US1] Wire session bootstrap and logout controls into `apps/web/src/app/page.tsx`
 - [ ] T030 [US1] Add redacted auth audit events and request IDs to all auth routes in `apps/backend/src/atlas/api/routes/auth.py`
 
 **Checkpoint**: US1 is independently demonstrable without private uploads or saved-resource migration.
@@ -81,7 +81,7 @@
 - [x] T036 [US2] Enforce application-level ownership checks for existing thread, report, feedback, and artifact repositories in `apps/backend/src/atlas/privacy/guards.py`
 - [x] T037 [US2] Enforce database RLS session variables and policies for owned resources in `database/migrations/versions/0020_private_data_rls.py`
 - [x] T038 [US2] Implement private-resource list and deletion endpoints in `apps/backend/src/atlas/api/routes/private_data.py`
-- [ ] T039 [US2] Add authenticated history/report navigation and ownership errors in `apps/web/src/features/private-data/PrivateResourcesPanel.tsx`
+- [x] T039 [US2] Add authenticated history/report navigation and ownership errors in `apps/web/src/features/private-data/PrivateResourcesPanel.tsx`
 - [x] T040 [US2] Add repeat-safe deletion command handling with idempotency keys in `apps/backend/src/atlas/privacy/deletion.py`
 - [ ] T041 [US2] Add ownership-decision traces without raw private content in `apps/backend/src/atlas/observability/events.py`
 
