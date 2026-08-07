@@ -1,2 +1,1 @@
 {"collection": "anthropic", "day": 1, "failed_run_status": "failed", "observed_at": "2026-08-06T04:47:47.657605+00:00", "snapshot_after": "660b0578-992f-43d2-9722-fa0c49568bbd", "snapshot_before": "660b0578-992f-43d2-9722-fa0c49568bbd", "snapshot_preserved": true}
-{"collection": "anthropic", "day": 2, "failed_run_status": "failed", "observed_at": "2026-08-07T06:08:20.278668+00:00", "snapshot_after": "660b0578-992f-43d2-9722-fa0c49568bbd", "snapshot_before": "660b0578-992f-43d2-9722-fa0c49568bbd", "snapshot_preserved": true}

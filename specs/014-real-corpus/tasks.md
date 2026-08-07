@@ -23,7 +23,7 @@
 - [X] T011 Add separate eval environment instructions and HTTP runner in `evals/run_offline.py`.
 - [X] T012 Implement Hit@k, MRR, context precision/recall, citation precision and freshness evaluators.
 - [X] T013 Add retrieval ablations for k=4/8/10, hybrid retrieval, reranking and anti-hallucination prompting. (Evidence: `evals/retrieval_ablations.py` and `evals/results/retrieval-ablations-v1.json` cover all five configurations with repeatable metrics.)
-- [ ] T014 Run seven-day refresh validation, publish results and run analyze/converge. (Progress: days 1 and 2 recorded in `evals/results/refresh-validation.jsonl`; the validator must be run on days 3 through 7 before this task is closed.)
+- [ ] T014 Run seven-day refresh validation, publish results and run analyze/converge. (Progress: day 1 recorded in `evals/results/refresh-validation.jsonl`; the validator must be run on days 2 through 7 before this task is closed.)
 
 ## Requirement coverage
 
