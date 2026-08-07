@@ -24,6 +24,8 @@ task remains open.
 | 016 — LangSmith evaluation harness | Structured graders, secret-free negative export, opt-in online linkage and fail-closed promotion gate are implemented. | Evaluation suite and fixture gate evidence are recorded in `docs/verification/016-langsmith-evaluation-harness.md`. | Live judge, human annotation and production measurements remain pending. | **Met for local slice** — SpecKit tasks 0 open. |
 | 017 — CI/CD hardening | Fresh-database migrations/contracts, pinned browser journeys, security checks and deterministic evaluation artifacts are wired into GitHub Actions. | Workflow YAML/Compose validation passed locally; evaluation unit gate **20 passed**; evidence is in `docs/verification/017-cicd-hardening.md`. | GitHub branch-protection settings and a completed hosted-run record require repository access. | **Met for repository slice** — SpecKit tasks 0 open. |
 
+| 018 - Production deployment | Planning artifacts define Vercel web, Supabase managed data/auth/storage, managed API/worker, release gates, evidence, observability, backups, and rollback. | Specification and contract artifacts reviewed; no real Vercel/Supabase/container deployment has been claimed. | All implementation tasks and operator-owned environment evidence are pending, including URLs, migration head, bilingual smoke, traces, backup/restore, and rollback. | **Not started** - planning artifacts exist; implementation and external evidence remain open. |
+
 ## Branch mapping
 
 - Stable Feature 003 branch: `codex/release-feature-003`, based on `a2cfed8` plus the artifact-evidence commit.

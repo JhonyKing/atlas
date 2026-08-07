@@ -151,7 +151,7 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [ ] SCL-008 Run read, answer, report, ingestion, and launch-spike load scenarios.
 - [ ] SCL-009 Measure 99.5% API availability, TTFT p50 <1.5 s, normal p95 <12 s, report <3 min, uncontrolled errors <1%.
 - [ ] SCL-010 Validate citation rate ≥95% and cost budget by task type.
-- [ ] SCL-011 Produce beta deployment, domain, analytics, backups, alerts, and runbooks.
+ - [ ] SCL-011 Produce beta deployment, domain, analytics, backups, alerts, and runbooks. Tracked by SpecKit Feature 018 (`specs/018-production-deployment/`).
 - [ ] SCL-012 Produce scale decision record for 10k/100k MAU; do not claim capacity without evidence.
 
 ## 011 — evaluation, observability, and quality loop
