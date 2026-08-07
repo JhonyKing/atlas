@@ -39,8 +39,8 @@
 - [X] T022 Enforce reviewer authorization, expiry, decision idempotency, evidence-preserving edits, and rejection terminal states.
 - [X] T023 Add publication guard that accepts only approved/validated review outcomes and never publishes partial artifacts.
 - [ ] T024 Add API routes for run status, review request, approve/edit/reject, resume, and safe error responses.
-- [ ] T025 Add Spanish/English review panel and pending/approved/edited/rejected states in `apps/web/src/features/agent/ReviewPanel.tsx`.
-- [ ] T026 Add Playwright review and resume journeys in `apps/web/tests/e2e/agent-review.spec.ts`.
+- [X] T025 Add Spanish/English review panel and pending/approved/edited/rejected states in `apps/web/src/features/agent/ReviewPanel.tsx`.
+- [X] T026 Add Playwright review and resume journeys in `apps/web/tests/e2e/agent-review.spec.ts`.
 
 ## Phase 5: Observability, evaluation, and documentation
 

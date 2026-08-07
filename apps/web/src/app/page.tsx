@@ -6,9 +6,10 @@ import { ReportRequest } from "@/features/reports/ReportRequest";
 import { SessionPanel } from "@/features/auth/SessionPanel";
 import { PrivateResourcesPanel } from "@/features/private-data/PrivateResourcesPanel";
 import { PrivateUploadPanel } from "@/features/private-data/PrivateUploadPanel";
+import { ReviewPanel } from "@/features/agent/ReviewPanel";
 
 export function HomePage() {
-  return <main><CorpusStatus /><GovernancePanel /><DailyNews /><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /><CitedAnswerForm /><ReportRequest /></main>;
+  return <main><CorpusStatus /><GovernancePanel /><ReviewPanel /><DailyNews /><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /><CitedAnswerForm /><ReportRequest /></main>;
 }
 
 export default HomePage;
