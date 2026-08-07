@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
+from atlas.agent.checkpoints import InMemoryCheckpointRepository
 from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.review import ReviewService
@@ -141,6 +142,7 @@ def create_app(
     application.state.governance_service = governance_service
     application.state.agent_orchestrator = AgentOrchestrator()
     application.state.agent_review_service = ReviewService()
+    application.state.agent_checkpoint_service = InMemoryCheckpointRepository()
     application.state.account_deletion_service = (
         AccountDeletionService(
             private_resource_service,

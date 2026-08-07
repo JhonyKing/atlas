@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from atlas.agent.state import AtlasState, RoutePlan
+from atlas.agent.state import AtlasState, NodeEvent, RoutePlan
 
 
 def test_state_requires_typed_route_and_version_metadata() -> None:
@@ -14,3 +14,5 @@ def test_state_requires_typed_route_and_version_metadata() -> None:
     assert state.route.intent == "factual"
     assert state.state_version == 1
     assert state.node_history == []
+    state.node_events.append(NodeEvent(node="classify", outcome="completed", latency_ms=1.0))
+    assert state.node_events[0].node == "classify"

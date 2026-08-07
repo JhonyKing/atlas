@@ -9,10 +9,10 @@
 - [X] T001 Create agent unit, contract, integration, security, and browser test directories.
 - [X] T002 Add deterministic fixtures for questions, route plans, checkpoints, reviews, and clock control.
 - [X] T003 Add Feature 006 verification script/package command and bounded settings for node/checkpoint/review TTLs.
-- [ ] T004 Add failing `AtlasState`, `RoutePlan`, `Checkpoint`, `ReviewRequest`, and `NodeEvent` schema tests.
-- [ ] T005 Add failing graph route/node-order contract tests for factual, comparison, report, abstention, and cancellation paths.
+- [X] T004 Add failing `AtlasState`, `RoutePlan`, `Checkpoint`, `ReviewRequest`, and `NodeEvent` schema tests.
+- [X] T005 Add failing graph route/node-order contract tests for factual, comparison, report, abstention, and cancellation paths.
 - [ ] T006 Add failing checkpoint/replay tests for crash recovery, duplicate resume, corruption, expiry, and concurrency.
-- [ ] T007 Add failing review contract/security tests for approve, validated edit, reject, unauthorized, expiry, duplicate decision, and citation removal.
+- [X] T007 Add failing review contract/security tests for approve, validated edit, reject, unauthorized, expiry, duplicate decision, and citation removal.
 - [ ] T008 Add failing API and SQL contract tests for status, checkpoint, review, and publication boundaries.
 
 ## Phase 2: State, classification, planning, and graph (P1)
@@ -38,13 +38,13 @@
 - [X] T021 Implement review request/decision state machine in `apps/backend/src/atlas/agent/review.py`.
 - [X] T022 Enforce reviewer authorization, expiry, decision idempotency, evidence-preserving edits, and rejection terminal states.
 - [X] T023 Add publication guard that accepts only approved/validated review outcomes and never publishes partial artifacts.
-- [ ] T024 Add API routes for run status, review request, approve/edit/reject, resume, and safe error responses.
+- [X] T024 Add API routes for run status, review request, approve/edit/reject, resume, and safe error responses.
 - [X] T025 Add Spanish/English review panel and pending/approved/edited/rejected states in `apps/web/src/features/agent/ReviewPanel.tsx`.
 - [X] T026 Add Playwright review and resume journeys in `apps/web/tests/e2e/agent-review.spec.ts`.
 
 ## Phase 5: Observability, evaluation, and documentation
 
-- [ ] T027 Add route/node/checkpoint/review telemetry with request/run/thread IDs, latency, outcome, versions, and safe error code.
+- [X] T027 Add route/node/checkpoint/review telemetry with request/run/thread IDs, latency, outcome, versions, and safe error code.
 - [ ] T028 Add deterministic evaluation cases for node order, abstention, replay, review gating, and no-secret state.
 - [ ] T029 Run targeted/full backend tests, migration/SQL contract, lint, mypy, and browser suite; record `docs/verification/006-agent-graph-human-review.md`.
 - [ ] T030 Update README with Feature 006 scope, review workflow, checkpoint guarantees, and verification command.

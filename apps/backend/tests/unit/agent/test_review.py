@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
@@ -36,3 +37,14 @@ def test_rejection_is_not_publishable_and_unauthorized_decision_fails() -> None:
         service.decide(request.id, reviewer_id="user-2", action="approve", decision_key="d2")
     service.decide(request.id, reviewer_id="user-1", action="reject", decision_key="d3")
     assert service.can_publish(request.id) is False
+
+
+def test_expired_review_cannot_be_decided() -> None:
+    now = [datetime(2026, 8, 6, tzinfo=UTC)]
+    service = ReviewService(ttl_hours=1, now=lambda: now[0])
+    request = service.create(
+        run_id=uuid4(), evidence_ids=["ev-1"], proposed_text="Verified answer", reviewer_id="user-1"
+    )
+    now[0] += timedelta(hours=2)
+    with pytest.raises(ValueError, match="expired"):
+        service.decide(request.id, reviewer_id="user-1", action="approve", decision_key="expired")

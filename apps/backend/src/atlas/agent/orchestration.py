@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from time import perf_counter
 from typing import Literal
 
-from atlas.agent.state import AtlasState, Freshness, Intent, RouteName, RoutePlan
+from atlas.agent.state import AtlasState, Freshness, Intent, NodeEvent, RouteName, RoutePlan
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,13 +74,34 @@ class AgentOrchestrator:
     def run(self, state: AtlasState, *, cancelled: bool = False) -> AtlasState:
         """Execute deterministic routing nodes; provider work remains behind ports."""
 
+        started = perf_counter()
         prepared = self.prepare(state)
         if cancelled:
             return prepared.model_copy(
                 update={
                     "node_history": [*prepared.node_history, "abstain"],
                     "errors": ["cancelled"],
+                    "node_events": [
+                        NodeEvent(
+                            node="abstain",
+                            outcome="cancelled",
+                            latency_ms=(perf_counter() - started) * 1000,
+                        )
+                    ],
                 }
             )
         terminal = prepared.route.route
-        return prepared.model_copy(update={"node_history": [*prepared.node_history, terminal]})
+        return prepared.model_copy(
+            update={
+                "node_history": [*prepared.node_history, terminal],
+                "node_events": [
+                    NodeEvent(node="classify", outcome="completed", latency_ms=0),
+                    NodeEvent(node="plan", outcome="completed", latency_ms=0),
+                    NodeEvent(
+                        node=terminal,
+                        outcome="abstained" if terminal == "abstain" else "completed",
+                        latency_ms=(perf_counter() - started) * 1000,
+                    ),
+                ],
+            }
+        )

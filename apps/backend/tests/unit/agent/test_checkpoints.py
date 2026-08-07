@@ -41,3 +41,12 @@ def test_resume_claim_is_single_use_and_expiry_is_enforced() -> None:
     clock[0] = now + timedelta(hours=2)
     with pytest.raises(Exception, match="expired"):
         expired.resume(state.thread_id, replay_key="r1")
+
+
+def test_resume_rejects_tampered_safe_summary() -> None:
+    repository = InMemoryCheckpointRepository()
+    state = AtlasState(thread_id=uuid4(), request="first")
+    checkpoint = repository.save(state, node="classify", replay_key="r1")
+    checkpoint.safe_summary["node"] = "tampered"
+    with pytest.raises(Exception, match="integrity"):
+        repository.resume(state.thread_id, replay_key="r1")

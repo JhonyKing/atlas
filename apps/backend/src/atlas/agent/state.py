@@ -25,6 +25,15 @@ class RoutePlan(BaseModel):
     evidence_budget: int = Field(default=8, ge=1, le=32)
 
 
+class NodeEvent(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    node: str
+    outcome: Literal["completed", "abstained", "cancelled", "failed"]
+    latency_ms: float = Field(ge=0)
+    safe_error: str | None = None
+
+
 class AtlasState(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -41,6 +50,7 @@ class AtlasState(BaseModel):
     quality: str | None = None
     errors: list[str] = Field(default_factory=list, max_length=8)
     node_history: list[str] = Field(default_factory=list, max_length=64)
+    node_events: list[NodeEvent] = Field(default_factory=list, max_length=64)
     state_version: int = Field(default=1, ge=1)
     corpus_version: str = "unknown"
     prompt_version: str = "unknown"
