@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -56,6 +57,31 @@ class FakeExtractor:
         ]
 
 
+class BoundedExtractor(FakeExtractor):
+    def __init__(self) -> None:
+        self.active = 0
+        self.max_active = 0
+
+    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+        self.active += 1
+        self.max_active = max(self.max_active, self.active)
+        try:
+            await asyncio.sleep(0)
+            return await super().extract(branch)
+        finally:
+            self.active -= 1
+
+
+class CancellingExtractor(FakeExtractor):
+    def __init__(self, state: dict[str, bool]) -> None:
+        self._state = state
+
+    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+        self._state["cancelled"] = True
+        await asyncio.sleep(0)
+        return await super().extract(branch)
+
+
 @pytest.mark.asyncio
 async def test_workflow_fanout_builds_matrix_and_applies_evidence_gate() -> None:
     workflow = ComparisonWorkflow(FakeRetrieval(), FakeExtractor())
@@ -89,4 +115,51 @@ async def test_workflow_stops_before_publishing_when_cancelled() -> None:
             snapshot_id=uuid4(),
             embeddings={ComparisonCriterion.LATENCY: [0.1]},
             is_cancelled=lambda: True,
+        )
+
+
+@pytest.mark.asyncio
+async def test_workflow_extracts_independent_branches_with_bounded_concurrency() -> None:
+    extractor = BoundedExtractor()
+    workflow = ComparisonWorkflow(FakeRetrieval(), extractor, max_extraction_concurrency=2)
+    request = ComparisonRequest(
+        technologies=[CollectionSlug.LANGGRAPH, CollectionSlug.OPENAI],
+        criteria=[ComparisonCriterion.CAPABILITY, ComparisonCriterion.CONTEXT],
+    )
+
+    matrix = await workflow.run(
+        request,
+        snapshot_id=uuid4(),
+        embeddings={
+            ComparisonCriterion.CAPABILITY: [0.1],
+            ComparisonCriterion.CONTEXT: [0.2],
+        },
+    )
+
+    assert len(matrix.cells) == 4
+    assert extractor.max_active == 2
+
+
+@pytest.mark.asyncio
+async def test_workflow_propagates_cancellation_from_parallel_branch() -> None:
+    state = {"cancelled": False}
+    workflow = ComparisonWorkflow(
+        FakeRetrieval(),
+        CancellingExtractor(state),
+        max_extraction_concurrency=4,
+    )
+    request = ComparisonRequest(
+        technologies=[CollectionSlug.LANGGRAPH, CollectionSlug.OPENAI],
+        criteria=[ComparisonCriterion.CAPABILITY, ComparisonCriterion.CONTEXT],
+    )
+
+    with pytest.raises(ComparisonWorkflowCancelled):
+        await workflow.run(
+            request,
+            snapshot_id=uuid4(),
+            embeddings={
+                ComparisonCriterion.CAPABILITY: [0.1],
+                ComparisonCriterion.CONTEXT: [0.2],
+            },
+            is_cancelled=lambda: state["cancelled"],
         )

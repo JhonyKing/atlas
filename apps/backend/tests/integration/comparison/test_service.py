@@ -63,6 +63,10 @@ async def test_service_emits_terminal_matrix_only_after_executor_completes() -> 
     frames = [frame async for frame in service.stream(run_id, visitor_key_hash="a" * 64)]
 
     assert any("comparison.accepted" in frame for frame in frames)
+    progress_frame = next(
+        frame for frame in frames if "comparison.retrieval.started" in frame
+    )
+    assert '"elapsed_ms":' in progress_frame
     assert any("comparison.completed" in frame for frame in frames)
     assert "Fixture has no comparison evidence." in "".join(frames)
 

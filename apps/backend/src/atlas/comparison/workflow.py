@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable, Mapping, Sequence
 from typing import Protocol
 from uuid import UUID
 
 from atlas.comparison.normalization import ComparisonObservation, normalize_observations
 from atlas.comparison.retrieval import ComparisonRetrievalBranch, ComparisonRetrievalService
-from atlas.comparison.schemas import ComparisonCellState, ComparisonMatrix, ComparisonRequest
+from atlas.comparison.schemas import (
+    ComparisonCell,
+    ComparisonCellState,
+    ComparisonCriterion,
+    ComparisonMatrix,
+    ComparisonRequest,
+)
 
 
 class ComparisonWorkflowCancelled(RuntimeError):
@@ -28,16 +35,21 @@ class ComparisonWorkflow:
         self,
         retrieval: ComparisonRetrievalService,
         extractor: ComparisonObservationExtractor,
+        *,
+        max_extraction_concurrency: int = 4,
     ) -> None:
+        if max_extraction_concurrency < 1:
+            raise ValueError("max_extraction_concurrency must be positive")
         self._retrieval = retrieval
         self._extractor = extractor
+        self._max_extraction_concurrency = max_extraction_concurrency
 
     async def run(
         self,
         request: ComparisonRequest,
         *,
         snapshot_id: UUID,
-        embeddings: Mapping,
+        embeddings: Mapping[ComparisonCriterion, Sequence[float]],
         top_k: int = 8,
         is_cancelled: Callable[[], bool] | None = None,
     ) -> ComparisonMatrix:
@@ -48,17 +60,28 @@ class ComparisonWorkflow:
             embeddings=dict(embeddings),
             top_k=top_k,
         )
-        cells = []
-        for branch in branches:
-            _check_cancelled(is_cancelled)
-            observations = list(await self._extractor.extract(branch))
-            cells.append(
-                normalize_observations(
+        semaphore = asyncio.Semaphore(self._max_extraction_concurrency)
+
+        async def extract_branch(branch: ComparisonRetrievalBranch) -> ComparisonCell:
+            async with semaphore:
+                _check_cancelled(is_cancelled)
+                observations = list(await self._extractor.extract(branch))
+                _check_cancelled(is_cancelled)
+                return normalize_observations(
                     technology_id=branch.technology,
                     criterion_id=branch.criterion,
                     observations=observations,
                 )
-            )
+
+        tasks = [asyncio.create_task(extract_branch(branch)) for branch in branches]
+        try:
+            cells = list(await asyncio.gather(*tasks))
+        except BaseException:
+            for task in tasks:
+                if not task.done():
+                    task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise
         matrix = ComparisonMatrix(
             technology_ids=request.technologies,
             criterion_ids=request.criteria,

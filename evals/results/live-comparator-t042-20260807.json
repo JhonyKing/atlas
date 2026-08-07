@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-08-07",
+  "run_id": "2a317ed1-a0b9-4f6c-9227-f6fcdf93f382",
+  "language": "es-MX",
+  "technologies": ["langgraph", "langchain", "openai", "anthropic"],
+  "criteria": ["capability", "tool_calling", "context"],
+  "status_code": 200,
+  "terminal_event": "comparison.completed",
+  "failed_events": 0,
+  "technology_cells": 12,
+  "useful_progress_elapsed_ms": 0,
+  "elapsed_ms": 18590,
+  "performance_goals": {
+    "useful_progress_under_2000_ms": true,
+    "terminal_under_30000_ms": true
+  },
+  "implementation": {
+    "extraction_concurrency": 4,
+    "progress_event": "comparison.retrieval.started"
+  },
+  "note": "Live local evidence after bounded concurrent extraction and early progress emission."
+}

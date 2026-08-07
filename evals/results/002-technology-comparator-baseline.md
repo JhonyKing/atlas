@@ -78,3 +78,12 @@ Mode: local deterministic/fixture validation
   `evals/results/live-comparator-t040-20260807-review.md` and the provisional ground truth in
   `evals/results/live-comparator-t040-20260807-ground-truth.json`; owner confirmation is still
   required before T040 is marked complete.
+
+## T042 live performance validation (2026-08-07)
+
+- After bounded concurrent extraction and early progress emission, a Spanish four-technology run
+  completed **12 cells** with HTTP 200 and no failed SSE event.
+- Useful progress was observed at **0 ms** and terminal completion at **18,590 ms**, meeting the
+  SC-CMP-004 goals of under two seconds and under 30 seconds for this launch scenario.
+- The comparison regression suite now passes **37 tests**, including bounded-concurrency and
+  cancellation propagation checks. Evidence: `evals/results/live-comparator-t042-20260807.json`.

@@ -125,8 +125,10 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 
 ## Phase 8: Convergence
 
-- [ ] T042 [US1] Reduce comparison terminal latency per SC-CMP-004 and the plan performance goal:
+- [X] T042 [US1] Reduce comparison terminal latency per SC-CMP-004 and the plan performance goal:
   execute independent technology/criterion extraction branches concurrently with bounded
   concurrency, preserve cancellation and LangSmith stage metadata, emit a measurable useful-progress
   timestamp, and add a deterministic/integration regression proving the workflow remains safe and
-  reaches the terminal budget under the launch scenario (partial, HIGH).
+  reaches the terminal budget under the launch scenario (Evidence: 37 comparison tests pass; Ruff and
+  targeted mypy pass; the live Spanish four-technology run completed 12 cells with useful progress at
+  0 ms and terminal latency 18,590 ms in `evals/results/live-comparator-t042-20260807.json`).

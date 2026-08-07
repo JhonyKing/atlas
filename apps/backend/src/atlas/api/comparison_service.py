@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import time
 from collections.abc import AsyncIterator, Callable, Mapping
 from datetime import UTC, date, datetime, timedelta
 from typing import Protocol
@@ -40,6 +41,7 @@ class _Entry:
         self.task: asyncio.Task[None] | None = None
         self.cancelled = False
         self.matrix: ComparisonMatrix | None = None
+        self.accepted_monotonic = time.perf_counter()
 
 
 class InMemoryComparisonRunService:
@@ -146,6 +148,17 @@ class InMemoryComparisonRunService:
             yield frame
 
     async def _execute(self, entry: _Entry, writer: ComparisonEventWriter) -> None:
+        entry.queue.put_nowait(
+            writer.emit(
+                "comparison.retrieval.started",
+                {
+                    "status": "retrieving",
+                    "elapsed_ms": max(
+                        0, int((time.perf_counter() - entry.accepted_monotonic) * 1000)
+                    ),
+                },
+            )
+        )
         trace_tree = ComparisonTraceTree.start(
             self._trace_sink,
             request_id=entry.run.request_id,
@@ -171,9 +184,6 @@ class InMemoryComparisonRunService:
             return
         try:
             retrieval_trace = trace_tree.start_stage("retrieval")
-            entry.queue.put_nowait(
-                writer.emit("comparison.retrieval.started", {"status": "retrieving"})
-            )
             matrix = await self._executor.run(
                 entry.comparison,
                 snapshot_id=entry.run.snapshot_id,
