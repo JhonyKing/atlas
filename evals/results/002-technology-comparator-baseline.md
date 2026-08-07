@@ -67,3 +67,14 @@ Mode: local deterministic/fixture validation
   no failed SSE event. Its cell-level evidence IDs are preserved in
   `evals/results/live-comparator-t040-20260807.json`; citation precision remains pending manual
   ground-truth review.
+
+## Latest deterministic evaluator rerun (2026-08-07)
+
+- The bundled backend runtime evaluated all **20 prepared requests / 17 matrix cases** from
+  `evals/datasets/comparison-v1.jsonl`.
+- Result: **17/17 passed**; matrix structure accuracy, state accuracy and evidence-ID parity were
+  each **1.0** in deterministic fixture mode.
+- The live citation review is captured separately in
+  `evals/results/live-comparator-t040-20260807-review.md` and the provisional ground truth in
+  `evals/results/live-comparator-t040-20260807-ground-truth.json`; owner confirmation is still
+  required before T040 is marked complete.
