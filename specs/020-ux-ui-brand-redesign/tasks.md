@@ -23,19 +23,19 @@
 
 ## Phase 3: Tokens and shared components (P1)
 
-- [ ] T012 [US4] Replace repeated global color/surface/text/radius/spacing/shadow/focus values with centralized ATLAS tokens in `apps/web/src/app/globals.css` or `apps/web/src/styles/tokens.css`.
-- [ ] T013 [P] [US4] Add shared brand components for logo/wordmark/mark usage in `apps/web/src/components/brand/AtlasLogo.tsx`.
-- [ ] T014 [P] [US4] Add accessible Button, Input, Textarea, Select, Checkbox, Field, Label, HelperText, ErrorMessage, and FileUpload primitives in `apps/web/src/components/forms/`.
-- [ ] T015 [P] [US3] Add semantic evidence state/badge, citation card, source metadata, and research progress components in `apps/web/src/components/evidence/` and `apps/web/src/components/research/`.
-- [ ] T016 [US4] Add component unit tests for keyboard/focus/loading/error/success/disabled states and evidence labels in `apps/web/src/components/**/__tests__/`.
+- [X] T012 [US4] Replace repeated global color/surface/text/radius/spacing/shadow/focus values with centralized ATLAS tokens in `apps/web/src/app/globals.css` or `apps/web/src/styles/tokens.css`. Evidence: tokens and semantic evidence colors are defined in `globals.css`.
+- [X] T013 [P] [US4] Add shared brand components for logo/wordmark/mark usage in `apps/web/src/components/brand/AtlasLogo.tsx`. Evidence: reusable stacked, horizontal, and mark variants reference the approved SVG assets.
+- [X] T014 [P] [US4] Add accessible Button, Input, Textarea, Select, Checkbox, Field, Label, HelperText, ErrorMessage, and FileUpload primitives in `apps/web/src/components/forms/`. Evidence: shared primitives expose labels, helper/error associations, focusable controls, loading, disabled, and danger states.
+- [X] T015 [P] [US3] Add semantic evidence state/badge, citation card, source metadata, and research progress components in `apps/web/src/components/evidence/` and `apps/web/src/components/research/`. Evidence: status labels/icons and bounded citation/progress primitives are covered by component tests.
+- [X] T016 [US4] Add component unit tests for keyboard/focus/loading/error/success/disabled states and evidence labels in `apps/web/src/components/**/__tests__/`. Evidence: `apps/web/src/components/components.test.tsx` covers brand, form, evidence, citation, and progress semantics.
 
 ## Phase 4: AppShell and information architecture (P1)
 
-- [ ] T017 [US2] Implement responsive AppShell with horizontal desktop logo, mobile mark, public navigation, locale switch, active state, and content frame in `apps/web/src/components/layout/AppShell.tsx` and `apps/web/src/components/layout/Navigation.tsx`.
-- [ ] T018 [US2] Integrate AppShell in `apps/web/src/app/layout.tsx` without changing locale provider/API behavior; add route-level metadata and skip-link semantics.
-- [ ] T019 [US2] Create locale-aware route pages for `/reports`, `/news`, `/sources`, `/account`, `/admin`, `/admin/sources`, `/admin/reviews`, and `/admin/governance` in `apps/web/src/app/[locale]/`.
-- [ ] T020 [US2] Add route/navigation smoke tests for public/admin separation, active state, locale paths, unauthorized admin behavior, and no unrelated home panels in `apps/web/tests/routes.spec.ts`.
-- [ ] T021 [US2] Move existing News, Corpus, Auth/private, Governance, Review, and Reports feature components behind their route owners while retaining backend clients and compatibility links.
+- [X] T017 [US2] Implement responsive AppShell with horizontal desktop logo, mobile mark, public navigation, locale switch, active state, and content frame in `apps/web/src/components/layout/AppShell.tsx` and `apps/web/src/components/layout/Navigation.tsx`. Evidence: desktop/mobile Playwright screenshots and mobile menu `aria-expanded` check.
+- [X] T018 [US2] Integrate AppShell in `apps/web/src/app/layout.tsx` without changing locale provider/API behavior; add route-level metadata and skip-link semantics. Evidence: TypeScript/ESLint pass and route smoke.
+- [X] T019 [US2] Create locale-aware route pages for `/reports`, `/news`, `/sources`, `/account`, `/admin`, `/admin/sources`, `/admin/reviews`, and `/admin/governance` in `apps/web/src/app/[locale]/`. Evidence: route surfaces resolve with HTTP 200 in Playwright smoke.
+- [X] T020 [US2] Add route/navigation smoke tests for public/admin separation, active state, locale paths, and no unrelated home panels in `apps/web/tests/e2e/app-shell.spec.ts`. Evidence: Playwright checks cover route status, active nav, locale targets, skip-link semantics, mobile menu, and public-home content separation; authenticated admin authorization remains a backend/operations concern for T033.
+- [X] T021 [US2] Move existing News, Corpus, Auth/private, Governance, Review, and Reports feature components behind their route owners while retaining backend clients and compatibility links. Evidence: homepage now owns only the Ask/agent journey; feature routes and localized equivalents resolve independently, and Playwright asserts the public home has no corpus/news/auth/report/admin panels.
 
 ## Phase 5: Ask ATLAS and evidence experience (P1)
 

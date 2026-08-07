@@ -335,7 +335,17 @@ function getInitialLocale(): Locale {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
+  // Render the same locale on the server and the first client pass. The URL,
+  // browser language and persisted preference are applied after hydration so
+  // localized routes do not produce a different AppShell during hydration.
+  const [locale, setLocaleState] = useState<Locale>("en-US");
+
+  useEffect(() => {
+    const initial = getInitialLocale();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- apply the persisted/path locale after the stable SSR pass
+    setLocaleState(initial);
+    document.documentElement.lang = initial;
+  }, []);
 
   const setLocale = (next: Locale) => {
     setLocaleState(next);

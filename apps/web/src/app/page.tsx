@@ -1,16 +1,8 @@
 import { CitedAnswerForm } from "@/features/cited-answer/CitedAnswerForm";
-import { CorpusStatus } from "@/features/corpus/CorpusStatus";
-import { GovernancePanel } from "@/features/corpus/GovernancePanel";
-import { DailyNews } from "@/features/news/DailyNews";
-import { ReportRequest } from "@/features/reports/ReportRequest";
-import { SessionPanel } from "@/features/auth/SessionPanel";
-import { PrivateResourcesPanel } from "@/features/private-data/PrivateResourcesPanel";
-import { PrivateUploadPanel } from "@/features/private-data/PrivateUploadPanel";
-import { ReviewPanel } from "@/features/agent/ReviewPanel";
 import { AgentWorkspace } from "@/features/agent/AgentWorkspace";
 
 export function HomePage() {
-  return <main><AgentWorkspace /><CorpusStatus /><GovernancePanel /><ReviewPanel /><DailyNews /><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /><CitedAnswerForm /><ReportRequest /></main>;
+  return <main className="ask-page"><AgentWorkspace /><CitedAnswerForm /></main>;
 }
 
 export default HomePage;
