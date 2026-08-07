@@ -1,2 +1,10 @@
 {"id":"report-en-comparison","locale":"en-US","required_sections":["Executive summary","Comparison matrix","Limitations","References"]}
 {"id":"report-es-comparison","locale":"es-MX","required_sections":["Resumen ejecutivo","Matriz de comparación","Limitaciones","Referencias"]}
+{"id":"report-en-architecture","locale":"en-US","required_sections":["Executive summary","References"]}
+{"id":"report-es-architecture","locale":"es-MX","required_sections":["Resumen ejecutivo","Referencias"]}
+{"id":"report-en-adr","locale":"en-US","required_sections":["Executive summary","References"]}
+{"id":"report-es-adr","locale":"es-MX","required_sections":["Resumen ejecutivo","Referencias"]}
+{"id":"report-en-release","locale":"en-US","required_sections":["Executive summary","References"]}
+{"id":"report-es-release","locale":"es-MX","required_sections":["Resumen ejecutivo","Referencias"]}
+{"id":"report-en-research","locale":"en-US","required_sections":["Executive summary","References"]}
+{"id":"report-es-research","locale":"es-MX","required_sections":["Resumen ejecutivo","Referencias"]}
