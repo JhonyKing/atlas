@@ -22,7 +22,7 @@
 - [X] T011 Implement bounded question decomposition, source/date criteria, evidence budget, and report path planning.
 - [X] T012 Implement explicit graph orchestration and conditional routes in `apps/backend/src/atlas/agent/orchestration.py`.
 - [X] T013 Add node-level timeout, cancellation, state-isolation, safe-error, and redacted event handling.
-- [ ] T014 Integrate existing cited-answer verification and report-spec validation without bypassing their contracts.
+- [X] T014 Integrate existing cited-answer verification and report-spec validation without bypassing their contracts.
 
 ## Phase 3: Durable checkpoints and replay (P1)
 
@@ -50,7 +50,7 @@
 - [X] T030 Update README with Feature 006 scope, review workflow, checkpoint guarantees, and verification command.
 - [X] T031 Create `docs/architecture/006-agent-graph-human-review.md` and `docs/adr/0005-explicit-agent-orchestration.md`.
 - [X] T032 Update PRD backlog/status matrix and add documentation task evidence.
-- [ ] T033 Run SpecKit Analyze and Converge; append and implement any remaining traceable tasks before closure.
+- [X] T033 Run SpecKit Analyze and Converge; append and implement any remaining traceable tasks before closure.
 
 ## Dependencies and Execution Order
 

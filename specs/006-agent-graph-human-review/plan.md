@@ -49,7 +49,8 @@ apps/backend/src/atlas/agent/
 ├── state.py                 # AtlasState, RoutePlan, versioned state schemas
 ├── orchestration.py         # classifier/planner and explicit graph routes
 ├── checkpoints.py           # repository and idempotent resume adapter
-└── review.py                # review request/decision state machine
+├── review.py                # review request/decision state machine
+└── publication.py           # existing answer/report validation boundary
 apps/backend/src/atlas/api/routes/agent.py
 apps/backend/tests/unit/agent/
 apps/backend/tests/integration/agent/

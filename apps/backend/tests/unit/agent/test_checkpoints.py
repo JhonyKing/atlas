@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from time import perf_counter
 from uuid import uuid4
 
 import pytest
@@ -50,3 +51,14 @@ def test_resume_rejects_tampered_safe_summary() -> None:
     checkpoint.safe_summary["node"] = "tampered"
     with pytest.raises(Exception, match="integrity"):
         repository.resume(state.thread_id, replay_key="r1")
+
+
+def test_checkpoint_reads_and_writes_meet_local_latency_budget() -> None:
+    repository = InMemoryCheckpointRepository()
+    state = AtlasState(request="latency")
+    started = perf_counter()
+    for index in range(100):
+        repository.save(state, node="plan", replay_key=f"latency-{index}")
+        repository.resume(state.thread_id, replay_key=f"latency-{index}")
+    elapsed_ms = (perf_counter() - started) * 1000
+    assert elapsed_ms < 250
