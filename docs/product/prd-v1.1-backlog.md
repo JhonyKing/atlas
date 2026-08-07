@@ -43,18 +43,18 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 003 — reports, ADRs, and document artifacts
 
-- [ ] RPT-001 Run `/speckit.specify` for asynchronous report generation from an existing research run.
-- [ ] RPT-002 Specify report types: technology comparison, architecture brief, ADR, release intelligence, and research report.
-- [ ] RPT-003 Plan neutral `ReportSpec`, section schemas, citation policy, artifact storage, job state, and retry/idempotency semantics.
-- [ ] RPT-004 Write JSON-schema, authorization, queue, render, citation, and artifact-integrity tests before implementation.
-- [ ] RPT-005 Implement report planning and validated intermediate JSON with audience, scope, criteria, and required sections.
-- [ ] RPT-006 Implement DOCX renderer with cover, executive summary, analysis, recommendation, risks, costs, implementation plan, and references.
-- [ ] RPT-007 Implement PDF rendering and visual QA; fail a release on clipping, overflow, missing citations, or invalid links.
-- [ ] RPT-008 Implement asynchronous progress, artifact retention, resumable jobs, and repeat-safe download.
-- [ ] RPT-009 Implement EN/ES renderers with semantic and citation parity; original excerpts remain clearly marked.
-- [ ] RPT-010 Add report quota separate from anonymous cited-answer quota.
-- [ ] RPT-011 Add ten structured report evaluation cases and artifact regression snapshots.
-- [ ] RPT-012 Add user-facing report summary, download, delete, and expired-artifact semantics.
+- [X] RPT-001 Run `/speckit.specify` for asynchronous report generation from an existing research run.
+- [X] RPT-002 Specify report types: technology comparison, architecture brief, ADR, release intelligence, and research report.
+- [X] RPT-003 Plan neutral `ReportSpec`, section schemas, citation policy, artifact storage, job state, and retry/idempotency semantics.
+- [X] RPT-004 Write JSON-schema, authorization, queue, render, citation, and artifact-integrity tests before implementation.
+- [X] RPT-005 Implement report planning and validated intermediate JSON with audience, scope, criteria, and required sections.
+- [X] RPT-006 Implement DOCX renderer with cover, executive summary, analysis, recommendation, risks, costs, implementation plan, and references.
+- [X] RPT-007 Implement PDF rendering and visual QA; fail a release on clipping, overflow, missing citations, or invalid links.
+- [X] RPT-008 Implement asynchronous progress, artifact retention, resumable jobs, and repeat-safe download.
+- [X] RPT-009 Implement EN/ES renderers with semantic and citation parity; original excerpts remain clearly marked.
+- [X] RPT-010 Add report quota separate from anonymous cited-answer quota.
+- [X] RPT-011 Add ten structured report evaluation cases and artifact regression snapshots.
+- [X] RPT-012 Add user-facing report summary, download, delete, and expired-artifact semantics.
 
 ## 004 — optional authentication, sessions, uploads, and private data
 
