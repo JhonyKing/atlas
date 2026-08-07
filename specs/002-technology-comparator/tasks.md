@@ -122,3 +122,11 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 - T040 live latency evidence is recorded in `evals/results/live-comparator-t040.json`: 76,712 ms
   for four technologies and three criteria; live citation precision remains pending manual ground
   truth review.
+
+## Phase 8: Convergence
+
+- [ ] T042 [US1] Reduce comparison terminal latency per SC-CMP-004 and the plan performance goal:
+  execute independent technology/criterion extraction branches concurrently with bounded
+  concurrency, preserve cancellation and LangSmith stage metadata, emit a measurable useful-progress
+  timestamp, and add a deterministic/integration regression proving the workflow remains safe and
+  reaches the terminal budget under the launch scenario (partial, HIGH).
