@@ -6,7 +6,7 @@
 
 ## Phase 1: Setup and contracts
 
-- [ ] T001 Create agent unit, contract, integration, security, and browser test directories.
+- [X] T001 Create agent unit, contract, integration, security, and browser test directories.
 - [ ] T002 Add deterministic fixtures for questions, route plans, checkpoints, reviews, and clock control.
 - [ ] T003 Add Feature 006 verification script/package command and bounded settings for node/checkpoint/review TTLs.
 - [ ] T004 Add failing `AtlasState`, `RoutePlan`, `Checkpoint`, `ReviewRequest`, and `NodeEvent` schema tests.
@@ -17,9 +17,9 @@
 
 ## Phase 2: State, classification, planning, and graph (P1)
 
-- [ ] T009 Implement typed state and version metadata in `apps/backend/src/atlas/agent/state.py`.
-- [ ] T010 Implement deterministic intent/depth/language/risk/freshness classification with safe fallback.
-- [ ] T011 Implement bounded question decomposition, source/date criteria, evidence budget, and report path planning.
+- [X] T009 Implement typed state and version metadata in `apps/backend/src/atlas/agent/state.py`.
+- [X] T010 Implement deterministic intent/depth/language/risk/freshness classification with safe fallback.
+- [X] T011 Implement bounded question decomposition, source/date criteria, evidence budget, and report path planning.
 - [ ] T012 Implement explicit graph orchestration and conditional routes in `apps/backend/src/atlas/agent/orchestration.py`.
 - [ ] T013 Add node-level timeout, cancellation, state-isolation, safe-error, and redacted event handling.
 - [ ] T014 Integrate existing cited-answer verification and report-spec validation without bypassing their contracts.
@@ -35,7 +35,7 @@
 
 ## Phase 4: Human review boundary (P1)
 
-- [ ] T021 Implement review request/decision state machine in `apps/backend/src/atlas/agent/review.py`.
+- [X] T021 Implement review request/decision state machine in `apps/backend/src/atlas/agent/review.py`.
 - [ ] T022 Enforce reviewer authorization, expiry, decision idempotency, evidence-preserving edits, and rejection terminal states.
 - [ ] T023 Add publication guard that accepts only approved/validated review outcomes and never publishes partial artifacts.
 - [ ] T024 Add API routes for run status, review request, approve/edit/reject, resume, and safe error responses.

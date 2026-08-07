@@ -313,10 +313,7 @@ def _retrieval_query(normalized_question: str) -> str:
 
     if not _TEMPORAL_QUERY_RE.search(normalized_question):
         return normalized_question
-    return (
-        f"{normalized_question} releases changes new models version history "
-        "dated 2025 2026"
-    )
+    return f"{normalized_question} releases changes new models version history dated 2025 2026"
 
 
 def _scoped_question(question: Question) -> Question:

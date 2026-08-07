@@ -225,9 +225,7 @@ async def test_graph_converts_provider_timeout_to_controlled_abstention() -> Non
 async def test_graph_honors_cancellation_before_retrieval() -> None:
     graph, retriever, _ = build_graph([], make_draft(uuid4()))
 
-    result = await graph.ainvoke(
-        {"question": Question(text="Cancel me"), "cancelled": True}
-    )
+    result = await graph.ainvoke({"question": Question(text="Cancel me"), "cancelled": True})
 
     assert answer_of(result).answer_status is AnswerStatus.ABSTAINED
     assert error_of(result).code is ErrorCode.CANCELLED
