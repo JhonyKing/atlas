@@ -86,5 +86,38 @@
     "artifact": "evals/results/live-comparator-t040-20260807-complete-review.md",
     "preserved_as": "human-reviewed pre-fix regression/failure; not overwritten"
   },
-  "review_status": "pending_owner_review"
+  "owner_review": {
+    "reviewed_at": "2026-08-07",
+    "status": "citations_accepted_latency_gate_open",
+    "citation_precision": {
+      "cited_cells": 11,
+      "supported_cells": 11,
+      "value": 1.0
+    },
+    "verdicts": [
+      {"technology_id":"langgraph","criterion_id":"capability","verdict":"yes"},
+      {"technology_id":"langgraph","criterion_id":"tool_calling","verdict":"yes"},
+      {"technology_id":"langgraph","criterion_id":"context","verdict":"yes"},
+      {"technology_id":"langchain","criterion_id":"capability","verdict":"yes"},
+      {"technology_id":"langchain","criterion_id":"tool_calling","verdict":"yes"},
+      {"technology_id":"langchain","criterion_id":"context","verdict":"yes"},
+      {"technology_id":"openai","criterion_id":"capability","verdict":"yes"},
+      {"technology_id":"openai","criterion_id":"tool_calling","verdict":"yes"},
+      {"technology_id":"openai","criterion_id":"context","verdict":"expected_unsupported"},
+      {"technology_id":"anthropic","criterion_id":"capability","verdict":"yes"},
+      {"technology_id":"anthropic","criterion_id":"tool_calling","verdict":"yes"},
+      {"technology_id":"anthropic","criterion_id":"context","verdict":"yes"}
+    ],
+    "latency_gate": {
+      "status": "open",
+      "reason": "The corrected T043 artifact records terminal latency but not useful-progress latency for this same run.",
+      "separate_evidence": {
+        "run_id": "2a317ed1-a0b9-4f6c-9227-f6fcdf93f382",
+        "artifact": "evals/results/live-comparator-t042-20260807.json",
+        "useful_progress_elapsed_ms": 0,
+        "terminal_elapsed_ms": 18590
+      }
+    }
+  },
+  "review_status": "owner_reviewed_citations_t040_open_latency_gate"
 }
