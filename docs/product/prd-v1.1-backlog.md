@@ -156,18 +156,18 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 011 — evaluation, observability, and quality loop
 
-- [ ] EVA-001 Run `/speckit.specify` for the complete evaluation lifecycle.
+- [X] EVA-001 Run `/speckit.specify` for the complete evaluation lifecycle.
 - [ ] EVA-002 Expand golden dataset to 25 factual, 20 temporal, 15 comparative, 10 abstention, 10 injection, 10 report, and 10 bilingual cases.
-- [ ] EVA-003 Implement deterministic schema/link/length/duplicate/report-structure evaluators.
-- [ ] EVA-004 Implement retrieval metrics and freshness evaluator.
+- [X] EVA-003 Implement deterministic schema/link/length/duplicate/report-structure evaluators.
+- [X] EVA-004 Implement retrieval metrics and freshness evaluator.
 - [ ] EVA-005 Implement generation faithfulness/relevance/completeness/clarity/utility judge with bias controls.
 - [ ] EVA-006 Implement citation entailment, version correctness, and source sufficiency evaluator.
-- [ ] EVA-007 Implement human feedback/annotation queue and difficult-case review.
-- [ ] EVA-008 Implement online security/format/anomaly/latency/cost evaluators.
-- [ ] EVA-009 Run regression sample on every prompt/retrieval/model/chunking change.
-- [ ] EVA-010 Block deploy on citation, hallucination, schema, cost, or latency threshold regressions.
-- [ ] EVA-011 Add traces/tags for node, tool, model, tokens, cost, prompt, embedding, index, corpus, and locale versions.
-- [ ] EVA-012 Add private quality dashboard and public summarized methodology/results page.
+- [X] EVA-007 Implement human feedback/annotation queue and difficult-case review.
+- [X] EVA-008 Implement online security/format/anomaly/latency/cost evaluators.
+- [X] EVA-009 Run regression sample on every prompt/retrieval/model/chunking change.
+- [X] EVA-010 Block deploy on citation, hallucination, schema, cost, or latency threshold regressions.
+- [X] EVA-011 Add traces/tags for node, tool, model, tokens, cost, prompt, embedding, index, corpus, and locale versions.
+- [X] EVA-012 Add private quality dashboard and public summarized methodology/results page.
 
 ## 012 — portfolio productization and proof
 

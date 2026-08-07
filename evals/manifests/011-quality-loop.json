@@ -1,0 +1,14 @@
+{
+  "dataset": "atlas-quality-loop",
+  "version": "011-v1",
+  "target_counts": {
+    "factual": 25,
+    "temporal": 20,
+    "comparative": 15,
+    "abstention": 10,
+    "injection": 10,
+    "report": 10,
+    "bilingual": 10
+  },
+  "fixture_policy": "Counts are a target manifest; live judge and external annotation evidence are tracked separately."
+}

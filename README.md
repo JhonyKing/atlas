@@ -178,3 +178,20 @@ spike scenarios; it does not claim live load capacity.
 ```powershell
 pnpm test:slo
 ```
+
+## Feature 011: evaluation and quality loop
+
+Feature 011 unifies deterministic schema, citation, retrieval, freshness and report checks with
+versioned judge contracts, online security/anomaly signals, safe trace tags and fail-closed quality
+gates. Public methodology contains aggregates only.
+
+- `specs/011-evaluation-quality-loop/tasks.md`
+- `docs/architecture/011-evaluation-quality-loop.md`
+- `docs/adr/0010-deterministic-quality-before-judges.md`
+- `docs/verification/011-evaluation-quality-loop.md`
+- `docs/quality/public-methodology.md`
+
+```powershell
+pnpm test:evals
+pnpm test:eval-regression
+```

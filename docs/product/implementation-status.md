@@ -19,7 +19,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 008 | Router de modelos, GPT-5.6 Luna y controles de coste | Cerrada — router medido, resiliencia, pricing, budgets, cache y batch eval | 0 | `specs/008-model-router-gpt56-luna/tasks.md` |
 | 009 | Seguridad, privacidad y gobernanza | En progreso — controles locales implementados; revisión externa abierta | 1 | `specs/009-security-privacy-governance/tasks.md` |
 | 010 | Escala, fiabilidad y SLOs | Cerrada — slice determinista de gates y workloads; carga live pendiente | 0 | `specs/010-scale-reliability-slos/tasks.md` |
-| 011–012 | Evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
+| 011 | Evaluación, observabilidad y quality loop | Cerrada — evaluadores deterministas, gate y metodología agregada | 0 | `specs/011-evaluation-quality-loop/tasks.md` |
+| 012 | Productización y prueba de portafolio | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
 | 013 | LangSmith y observabilidad | Cerrado en esta fase | 0 | `specs/013-observability/tasks.md` |
 | 014 | Corpus real y harness | En progreso | 1 | `specs/014-real-corpus/tasks.md` |
 | 015 | Noticia del día anterior | Cerrado funcionalmente | 0 | `specs/015-daily-news/tasks.md` |
