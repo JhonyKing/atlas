@@ -63,3 +63,7 @@ Mode: local deterministic/fixture validation
   **76,712 ms** with HTTP 200 and no failed SSE event. Offline citation precision remains **1.0**;
   live citation precision is intentionally unreported until real-source ground-truth IDs are
   manually reviewed (`evals/results/live-comparator-t040.json`).
+- Follow-up live run on 2026-08-07 completed the same 12 cells in **68,751 ms** with HTTP 200 and
+  no failed SSE event. Its cell-level evidence IDs are preserved in
+  `evals/results/live-comparator-t040-20260807.json`; citation precision remains pending manual
+  ground-truth review.

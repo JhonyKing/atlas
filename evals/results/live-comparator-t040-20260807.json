@@ -1,0 +1,30 @@
+{
+  "observed_at": "2026-08-07",
+  "run_id": "7b10f03e-fd20-47c6-9ec8-004ae7bbd09f",
+  "language": "es-MX",
+  "technologies": ["langgraph", "langchain", "openai", "anthropic"],
+  "criteria": ["capability", "tool_calling", "context"],
+  "status_code": 200,
+  "terminal_event": "comparison.completed",
+  "failed_events": 0,
+  "technology_cells": 12,
+  "elapsed_ms": 68751,
+  "snapshot_id": "660b0578-992f-43d2-9722-fa0c49568bbd",
+  "cells": [
+    {"technology_id":"langgraph","criterion_id":"capability","state":"partial","evidence_ids":["b744c1a8-f160-4aa4-94b9-059d2a9fe19c"]},
+    {"technology_id":"langgraph","criterion_id":"tool_calling","state":"partial","evidence_ids":["a2327062-ce0f-4bc0-96aa-7a485a90fa7c","de93d415-f10d-4baf-889c-256352dbd89a","e9c05c2d-44e3-44a7-9fc8-fc6dfe440a63"]},
+    {"technology_id":"langgraph","criterion_id":"context","state":"partial","evidence_ids":["0813c640-f7fd-4519-b31e-fef52334a8de","8e145d01-8785-424b-90f0-806bc6ff488c","6db34524-def9-4d88-ae87-e806bc50bf8e","f78a02b9-01e7-42e8-bcf4-4b1a3e69abf0"]},
+    {"technology_id":"langchain","criterion_id":"capability","state":"partial","evidence_ids":["e29508eb-52d9-4d86-b5a5-bf6f24d58890","f450f5a6-1445-41c7-9a90-076e584c0e2b"]},
+    {"technology_id":"langchain","criterion_id":"tool_calling","state":"partial","evidence_ids":["3744fd33-4c6b-445f-9ccc-60bf76311ed8","48fa7485-b21d-4855-b787-b8939e77e992","eb377e82-0e4f-454f-a337-06107049c779","32fd5e1e-255f-432c-8705-f660f9e38600"]},
+    {"technology_id":"langchain","criterion_id":"context","state":"partial","evidence_ids":["59030434-7692-42e7-8d6b-0508c991d0e6","61a3b480-8e12-4cd1-8729-c07030fb871c","c44c2d54-edfa-4854-9aad-edc1a7ec4b42","b543b3cf-8b08-469a-ad21-de147ff58a04"]},
+    {"technology_id":"openai","criterion_id":"capability","state":"partial","evidence_ids":["6370c478-0626-4d98-8eb6-3423e870551a"]},
+    {"technology_id":"openai","criterion_id":"tool_calling","state":"partial","evidence_ids":["09a0753f-5645-4625-9c86-27d1d50b43c0","0bc12e1d-d808-4134-863a-211b9113dfda","f21a2fde-68c1-4202-9d3d-ad50a2b30816"]},
+    {"technology_id":"openai","criterion_id":"context","state":"unsupported","evidence_ids":[]},
+    {"technology_id":"anthropic","criterion_id":"capability","state":"partial","evidence_ids":["43b1e9da-8f11-448b-9458-bc15a2618d1a"]},
+    {"technology_id":"anthropic","criterion_id":"tool_calling","state":"partial","evidence_ids":["7fe98dfc-4138-4f36-9006-03bd7795e68b","cef2504b-6c4c-42ae-bb31-10e01377e1c7","565d6e79-4067-4282-859e-855bd862a287","cc37831c-ec78-4614-8ee6-44fa0130b084"]},
+    {"technology_id":"anthropic","criterion_id":"context","state":"unsupported","evidence_ids":[]}
+  ],
+  "live_citation_precision": null,
+  "ground_truth_review": "pending_manual_review",
+  "note": "The artifact records runtime evidence only. A reviewer must inspect the referenced evidence records and set ground_truth_supported per cell before calculating live citation precision."
+}
