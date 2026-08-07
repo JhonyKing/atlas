@@ -13,5 +13,5 @@
 
 The repository controls workflow checks. GitHub branch protection (required checks, approvals and
 direct-push policy) must still be verified in repository settings; it cannot be proven by a local
-workflow parse. Feature 017 is therefore not fully closed until the mypy debt is resolved or a
-reviewed baseline policy is added without weakening type safety.
+workflow parse. The repository-controlled implementation and local verification are complete;
+branch-protection settings remain external evidence.
