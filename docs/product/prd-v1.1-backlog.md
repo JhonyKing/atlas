@@ -121,7 +121,7 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [X] MOD-006 Implement multilingual embedding provider selection without changing Evidence schema.
 - [X] MOD-007 Implement effective-dated price tables, token/cost telemetry, daily budget, and alerts.
 - [X] MOD-008 Add cache/evidence-pack policy for repeated questions and provider context caching where available.
-- [ ] MOD-009 Add batch path for ingestion, labelling, and offline evals.
+- [X] MOD-009 Add batch path for ingestion, labelling, and offline evals.
 - [X] MOD-010 Add model benchmark and A/B evaluation gate; never select a model by unverified marketing claims.
 
 ## 009 — security, privacy, and governance hardening

@@ -16,7 +16,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 005 | Corpus expandido e ingestión gobernada | Cerrada — slice determinista de portafolio | 0 | `specs/005-expanded-curated-corpus/tasks.md` |
 | 006 | Grafo de agentes, checkpoints y revisión humana | Cerrada — slice determinista de orquestación y review | 0 | `specs/006-agent-graph-human-review/tasks.md` |
 | 007 | Calidad de retrieval y evidencia multilingüe | Cerrada — baseline medido, filtros, diversidad y fallback | 0 | `specs/007-retrieval-quality-multilingual/tasks.md` |
-| 008–012 | Router, seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
+| 008 | Router de modelos, GPT-5.6 Luna y controles de coste | Cerrada — router medido, resiliencia, pricing, budgets, cache y batch eval | 0 | `specs/008-model-router-gpt56-luna/tasks.md` |
+| 009–012 | Seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
 | 013 | LangSmith y observabilidad | Cerrado en esta fase | 0 | `specs/013-observability/tasks.md` |
 | 014 | Corpus real y harness | En progreso | 1 | `specs/014-real-corpus/tasks.md` |
 | 015 | Noticia del día anterior | Cerrado funcionalmente | 0 | `specs/015-daily-news/tasks.md` |
