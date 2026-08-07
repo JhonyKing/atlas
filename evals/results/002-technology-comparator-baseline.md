@@ -23,10 +23,9 @@ Mode: local deterministic/fixture validation
   permissions; the approved bundled Node 24 runtime passes all 20 component tests.
 - The four-technology fixture and journey now use Anthropic. The verified corpus contains five
   ready collections and 20 official sources; Anthropic and Gemini were ingested after review.
-- The runtime comparison endpoint is now wired with quota, snapshot selection, persistence and a
-  fail-closed executor; the runtime now includes a development-only deterministic executor and a
-  verified-corpus OpenAI embedding/retrieval/structured-extraction executor. A live run against a
-  populated production snapshot remains a convergence check.
+- The runtime comparison endpoint is wired with quota, snapshot selection, persistence and a
+  fail-closed executor; a live Spanish four-technology run completed against the promoted snapshot
+  `660b0578-992f-43d2-9722-fa0c49568bbd`.
 
 ## Latest convergence check (2026-08-05)
 
