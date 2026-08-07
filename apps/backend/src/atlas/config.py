@@ -74,6 +74,9 @@ class Settings(BaseSettings):
     atlas_ingestion_ttl_hours: int = Field(default=168, ge=1)
     atlas_ingestion_max_retries: int = Field(default=3, ge=1, le=10)
     atlas_ingestion_max_bytes: int = Field(default=4_000_000, ge=1)
+    atlas_agent_node_timeout_seconds: float = Field(default=15.0, gt=0)
+    atlas_agent_checkpoint_ttl_hours: int = Field(default=24, ge=1)
+    atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)
 
     @field_validator(
         "openai_api_key",

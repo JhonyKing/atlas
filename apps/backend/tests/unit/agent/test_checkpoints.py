@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
@@ -25,3 +26,18 @@ def test_duplicate_replay_with_different_state_is_rejected() -> None:
         repository.save(
             AtlasState(thread_id=thread_id, request="second"), node="classify", replay_key="r1"
         )
+
+
+def test_resume_claim_is_single_use_and_expiry_is_enforced() -> None:
+    now = datetime(2026, 8, 6, tzinfo=UTC)
+    repository = InMemoryCheckpointRepository(ttl_hours=1, now=lambda: now)
+    state = AtlasState(thread_id=uuid4(), request="first")
+    repository.save(state, node="classify", replay_key="r1")
+    assert repository.claim_resume(state.thread_id, replay_key="r1") is True
+    assert repository.claim_resume(state.thread_id, replay_key="r1") is False
+    clock = [now]
+    expired = InMemoryCheckpointRepository(ttl_hours=1, now=lambda: clock[0])
+    expired.save(state, node="classify", replay_key="r1")
+    clock[0] = now + timedelta(hours=2)
+    with pytest.raises(Exception, match="expired"):
+        expired.resume(state.thread_id, replay_key="r1")

@@ -7,8 +7,8 @@
 ## Phase 1: Setup and contracts
 
 - [X] T001 Create agent unit, contract, integration, security, and browser test directories.
-- [ ] T002 Add deterministic fixtures for questions, route plans, checkpoints, reviews, and clock control.
-- [ ] T003 Add Feature 006 verification script/package command and bounded settings for node/checkpoint/review TTLs.
+- [X] T002 Add deterministic fixtures for questions, route plans, checkpoints, reviews, and clock control.
+- [X] T003 Add Feature 006 verification script/package command and bounded settings for node/checkpoint/review TTLs.
 - [ ] T004 Add failing `AtlasState`, `RoutePlan`, `Checkpoint`, `ReviewRequest`, and `NodeEvent` schema tests.
 - [ ] T005 Add failing graph route/node-order contract tests for factual, comparison, report, abstention, and cancellation paths.
 - [ ] T006 Add failing checkpoint/replay tests for crash recovery, duplicate resume, corruption, expiry, and concurrency.
@@ -26,9 +26,9 @@
 
 ## Phase 3: Durable checkpoints and replay (P1)
 
-- [ ] T015 Implement checkpoint repository protocol and deterministic in-memory adapter in `apps/backend/src/atlas/agent/checkpoints.py`.
-- [ ] T016 Implement content-safe state serialization, version checks, expiration, and corruption detection.
-- [ ] T017 Implement concurrency-safe resume keyed by `thread_id` and replay key with duplicate side-effect suppression.
+- [X] T015 Implement checkpoint repository protocol and deterministic in-memory adapter in `apps/backend/src/atlas/agent/checkpoints.py`.
+- [X] T016 Implement content-safe state serialization, version checks, expiration, and corruption detection.
+- [X] T017 Implement concurrency-safe resume keyed by `thread_id` and replay key with duplicate side-effect suppression.
 - [X] T018 Add PostgreSQL migration `database/migrations/versions/0024_agent_checkpoints_reviews.py` with checkpoint/review/node-event tables, constraints, indexes, and grants.
 - [X] T019 Add SQL contract `database/tests/014_agent_checkpoints_reviews.sql` for uniqueness, expiry, append-only decisions, and tenant isolation.
 - [ ] T020 Add crash/resume integration tests for answer, report, ingestion, and evaluation job categories.
@@ -36,8 +36,8 @@
 ## Phase 4: Human review boundary (P1)
 
 - [X] T021 Implement review request/decision state machine in `apps/backend/src/atlas/agent/review.py`.
-- [ ] T022 Enforce reviewer authorization, expiry, decision idempotency, evidence-preserving edits, and rejection terminal states.
-- [ ] T023 Add publication guard that accepts only approved/validated review outcomes and never publishes partial artifacts.
+- [X] T022 Enforce reviewer authorization, expiry, decision idempotency, evidence-preserving edits, and rejection terminal states.
+- [X] T023 Add publication guard that accepts only approved/validated review outcomes and never publishes partial artifacts.
 - [ ] T024 Add API routes for run status, review request, approve/edit/reject, resume, and safe error responses.
 - [ ] T025 Add Spanish/English review panel and pending/approved/edited/rejected states in `apps/web/src/features/agent/ReviewPanel.tsx`.
 - [ ] T026 Add Playwright review and resume journeys in `apps/web/tests/e2e/agent-review.spec.ts`.

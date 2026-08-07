@@ -91,3 +91,11 @@ class ReviewService:
         self._requests[request_id] = updated
         self._decisions[decision_key] = updated
         return updated
+
+    def can_publish(self, request_id: UUID) -> bool:
+        """Publication is allowed only after an approved or validated edit decision."""
+
+        return self._requests[request_id].status in {
+            ReviewStatus.APPROVED,
+            ReviewStatus.EDITED,
+        }
