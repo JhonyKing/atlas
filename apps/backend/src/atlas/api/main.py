@@ -11,9 +11,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
 from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
+from atlas.agent.orchestration import AgentOrchestrator
+from atlas.agent.review import ReviewService
 from atlas.api.answer_service import InMemoryAnswerRunService
 from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
+from atlas.api.routes.agent import router as agent_router
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.answers import router as answers_router
 from atlas.api.routes.auth import account_router as account_router
@@ -41,8 +44,8 @@ from atlas.comparison.executor import (
 from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusComparisonBranchRetriever
 from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
-from atlas.ingestion.service import OperatorIngestionService
 from atlas.ingestion.governance import InMemoryGovernanceRepository
+from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
@@ -136,6 +139,8 @@ def create_app(
         IdempotentDeletionService(private_resource_service) if private_resource_service else None
     )
     application.state.governance_service = governance_service
+    application.state.agent_orchestrator = AgentOrchestrator()
+    application.state.agent_review_service = ReviewService()
     application.state.account_deletion_service = (
         AccountDeletionService(
             private_resource_service,
@@ -150,6 +155,7 @@ def create_app(
     application.include_router(account_router)
     application.include_router(private_data_router)
     application.include_router(governance_router)
+    application.include_router(agent_router)
     application.include_router(answers_router)
     application.include_router(comparisons_router)
     application.include_router(feedback_router)
