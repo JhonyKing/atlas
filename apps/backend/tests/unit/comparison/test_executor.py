@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import UTC, datetime
+from typing import Any
 from uuid import uuid4
 
 import pytest
@@ -8,19 +10,23 @@ from pydantic import HttpUrl
 
 from atlas.comparison.executor import RetrievalComparisonExecutor
 from atlas.comparison.normalization import ComparisonObservation
-from atlas.comparison.retrieval import ComparisonRetrievalService
+from atlas.comparison.retrieval import ComparisonRetrievalBranch, ComparisonRetrievalService
 from atlas.comparison.schemas import ComparisonCriterion, ComparisonRequest
 from atlas.domain import CollectionSlug, Evidence, SourceType
 from atlas.retrieval.service import RetrievalRow
 
 
 class FakeEmbeddingProvider:
-    async def embed(self, texts):
+    dimensions = 1
+
+    async def embed(self, texts: Sequence[str]) -> list[list[float]]:
         return [[float(index + 1)] for index, _ in enumerate(texts)]
 
 
 class FakeRetriever:
-    async def retrieve_branch(self, *, technology, **kwargs):
+    async def retrieve_branch(
+        self, *, technology: CollectionSlug, **kwargs: Any
+    ) -> list[RetrievalRow]:
         del kwargs
         evidence = Evidence(
             id=uuid4(),
@@ -35,7 +41,7 @@ class FakeRetriever:
 
 
 class FakeExtractor:
-    async def extract(self, branch):
+    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
         return [
             ComparisonObservation(
                 value="documented",

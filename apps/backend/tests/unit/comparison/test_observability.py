@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from uuid import uuid4
+from collections.abc import Mapping, Sequence
+from typing import Any, Literal
+from uuid import UUID, uuid4
 
 from atlas.comparison.observability import ComparisonTraceTree
 from atlas.observability.langsmith import TraceHandle
@@ -12,14 +14,24 @@ class RecordingTraceSink:
         self.ended: list[dict[str, object]] = []
 
     def start(
-        self, name, *, request_id, run_id, run_type="chain", fields=None, tags=(), parent=None
-    ):
+        self,
+        name: str,
+        *,
+        request_id: UUID,
+        run_id: UUID,
+        run_type: Literal["chain", "llm", "retriever", "tool", "parser"] = "chain",
+        fields: Mapping[str, Any] | None = None,
+        tags: Sequence[str] = (),
+        parent: TraceHandle | None = None,
+    ) -> TraceHandle:
         self.started.append(
             {"name": name, "fields": dict(fields or {}), "tags": tuple(tags), "parent": parent}
         )
         return TraceHandle(run_id=uuid4(), active=True)
 
-    def end(self, handle, *, status, fields=None):
+    def end(
+        self, handle: TraceHandle, *, status: str, fields: Mapping[str, Any] | None = None
+    ) -> None:
         self.ended.append({"handle": handle, "status": status, "fields": dict(fields or {})})
 
 
@@ -41,6 +53,7 @@ def test_comparison_trace_tree_records_safe_metadata_and_stage_hierarchy() -> No
 
     assert sink.started[0]["name"] == "atlas.comparison"
     fields = sink.started[0]["fields"]
+    assert isinstance(fields, dict)
     assert fields["locale"] == "es-MX"
     assert fields["technology_count"] == 3
     assert fields["criterion_count"] == 2

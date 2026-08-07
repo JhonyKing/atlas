@@ -1,6 +1,7 @@
 import time
 from datetime import UTC, datetime, timedelta
-from uuid import uuid4
+from pathlib import Path
+from uuid import UUID, uuid4
 
 from fastapi.testclient import TestClient
 
@@ -21,12 +22,14 @@ class Source:
     def __init__(self, run: ComparisonRunResponse) -> None:
         self.run = run
 
-    async def get_status(self, run_id, *, visitor_key_hash):
+    async def get_status(
+        self, run_id: UUID, *, visitor_key_hash: str
+    ) -> ComparisonRunResponse | None:
         del visitor_key_hash
         return self.run if run_id == self.run.run_id else None
 
 
-def test_create_report_completes_and_downloads_pdf(tmp_path) -> None:
+def test_create_report_completes_and_downloads_pdf(tmp_path: Path) -> None:
     run_id = uuid4()
     evidence_id = uuid4()
     matrix = ComparisonMatrix(

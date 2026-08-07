@@ -102,3 +102,6 @@ def _deduplicate(candidates: Iterable[NewsCandidate]) -> list[NewsCandidate]:
     for candidate in candidates:
         unique[(str(candidate.canonical_url), candidate.content_sha256)] = candidate
     return list(unique.values())
+
+
+__all__ = ["FeedError", "FeedPolicy", "NewsFeedFetcher"]

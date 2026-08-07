@@ -16,7 +16,7 @@ def _app(provider: FakeAuthProvider) -> FastAPI:
     app.include_router(auth_router)
 
     @app.get("/subject")
-    def subject(subject_id=Depends(optional_subject_id)) -> dict[str, str | None]:  # noqa: B008
+    def subject(subject_id: UUID | None = Depends(optional_subject_id)) -> dict[str, str | None]:  # noqa: B008
         return {"subject": str(subject_id) if subject_id else None}
 
     return app

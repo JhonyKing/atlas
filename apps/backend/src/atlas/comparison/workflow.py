@@ -7,12 +7,28 @@ from typing import Protocol
 from uuid import UUID
 
 from atlas.comparison.normalization import ComparisonObservation, normalize_observations
-from atlas.comparison.retrieval import ComparisonRetrievalBranch, ComparisonRetrievalService
-from atlas.comparison.schemas import ComparisonCellState, ComparisonMatrix, ComparisonRequest
+from atlas.comparison.retrieval import ComparisonRetrievalBranch
+from atlas.comparison.schemas import (
+    ComparisonCellState,
+    ComparisonCriterion,
+    ComparisonMatrix,
+    ComparisonRequest,
+)
 
 
 class ComparisonWorkflowCancelled(RuntimeError):
     """The visitor cancelled before a verified matrix could be published."""
+
+
+class ComparisonRetrieval(Protocol):
+    async def retrieve(
+        self,
+        request: ComparisonRequest,
+        *,
+        snapshot_id: UUID,
+        embeddings: dict[ComparisonCriterion, Sequence[float]],
+        top_k: int = 8,
+    ) -> list[ComparisonRetrievalBranch]: ...
 
 
 class ComparisonObservationExtractor(Protocol):
@@ -26,7 +42,7 @@ class ComparisonWorkflow:
 
     def __init__(
         self,
-        retrieval: ComparisonRetrievalService,
+        retrieval: ComparisonRetrieval,
         extractor: ComparisonObservationExtractor,
     ) -> None:
         self._retrieval = retrieval
@@ -37,7 +53,7 @@ class ComparisonWorkflow:
         request: ComparisonRequest,
         *,
         snapshot_id: UUID,
-        embeddings: Mapping,
+        embeddings: Mapping[ComparisonCriterion, Sequence[float]],
         top_k: int = 8,
         is_cancelled: Callable[[], bool] | None = None,
     ) -> ComparisonMatrix:

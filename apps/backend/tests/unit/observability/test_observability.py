@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from opentelemetry.sdk.trace import TracerProvider
@@ -57,7 +58,9 @@ def test_invalid_request_id_is_replaced_with_a_uuid() -> None:
     assert generated.version == 4
 
 
-def test_structured_telemetry_redacts_question_and_evidence_content(caplog) -> None:
+def test_structured_telemetry_redacts_question_and_evidence_content(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     request_id = uuid4()
     with caplog.at_level(logging.INFO, logger="atlas"):
         log_event(

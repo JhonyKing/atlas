@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi.testclient import TestClient
+from pydantic import HttpUrl
 
 from atlas.api.main import create_app
 from atlas.domain import (
@@ -38,7 +39,7 @@ def corpus_payload() -> CorpusStatus:
                 status=CollectionState.READY,
                 last_success_at=datetime(2026, 8, 4, 10, 0, tzinfo=UTC),
                 last_attempt_at=datetime(2026, 8, 4, 10, 0, tzinfo=UTC),
-                canonical_root="https://langchain-ai.github.io/langgraph/",
+                canonical_root=HttpUrl("https://langchain-ai.github.io/langgraph/"),
             ),
             CollectionStatus(
                 slug=CollectionSlug.LANGCHAIN,
@@ -48,7 +49,7 @@ def corpus_payload() -> CorpusStatus:
                 status=CollectionState.STALE,
                 last_success_at=datetime(2026, 8, 1, 10, 0, tzinfo=UTC),
                 last_attempt_at=datetime(2026, 8, 4, 10, 0, tzinfo=UTC),
-                canonical_root="https://python.langchain.com/",
+                canonical_root=HttpUrl("https://python.langchain.com/"),
             ),
             CollectionStatus(
                 slug=CollectionSlug.OPENAI,
@@ -56,7 +57,7 @@ def corpus_payload() -> CorpusStatus:
                 publisher="OpenAI",
                 source_types=[SourceType.DOCUMENTATION],
                 status=CollectionState.UNAVAILABLE,
-                canonical_root="https://platform.openai.com/docs/",
+                canonical_root=HttpUrl("https://platform.openai.com/docs/"),
             ),
         ],
     )

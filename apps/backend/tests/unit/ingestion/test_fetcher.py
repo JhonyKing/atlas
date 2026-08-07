@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import UTC, datetime
 
 import httpx
@@ -9,10 +10,10 @@ NOW = datetime(2026, 8, 4, 12, 0, tzinfo=UTC)
 
 
 def make_fetcher(
-    handler,
+    handler: Callable[[httpx.Request], httpx.Response],
     *,
     hosts: frozenset[str] = frozenset({"docs.example"}),
-    resolver=lambda host: ["93.184.216.34"],
+    resolver: Callable[[str], list[str]] = lambda host: ["93.184.216.34"],
     max_bytes: int = 1024,
 ) -> SafeFetcher:
     client = httpx.AsyncClient(transport=httpx.MockTransport(handler))

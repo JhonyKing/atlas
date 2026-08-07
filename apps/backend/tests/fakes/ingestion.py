@@ -13,6 +13,7 @@ from atlas.ingestion.chunker import MarkdownChunk
 from atlas.ingestion.connectors import SourceCandidate
 from atlas.ingestion.normalizer import NormalizedDocument
 from atlas.ingestion.service import IngestionRun, RunStatus
+from atlas.providers.ports import FetchedSource
 
 
 @dataclass
@@ -109,7 +110,7 @@ class FakeFetcher:
     def __init__(self, content: bytes) -> None:
         self.content = content
 
-    async def fetch(self, url: str):
+    async def fetch(self, url: str) -> FetchedSource:
         from atlas.providers.ports import FetchedSource
 
         return FetchedSource(

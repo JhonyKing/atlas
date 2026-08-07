@@ -129,3 +129,6 @@ class FakeAuthProvider(AuthPort):
     @staticmethod
     def _hash(access_token: str) -> str:
         return hashlib.sha256(access_token.encode("utf-8")).hexdigest()
+
+
+__all__ = ["AuthError", "FakeAuthProvider"]

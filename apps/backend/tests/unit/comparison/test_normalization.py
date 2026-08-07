@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from atlas.comparison.normalization import ComparisonObservation, normalize_observations
 from atlas.comparison.schemas import ComparisonCellState, ComparisonCriterion
@@ -10,7 +10,7 @@ from atlas.domain import CollectionSlug
 
 def _observation(
     *,
-    evidence_id=None,
+    evidence_id: UUID | None = None,
     value: str | None = "120",
     unit: str | None = "ms",
     period: str | None = None,

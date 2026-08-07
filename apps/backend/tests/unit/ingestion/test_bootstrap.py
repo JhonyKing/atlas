@@ -11,7 +11,7 @@ EXPANSION_MANIFEST = (
 )
 
 
-def test_bootstrap_defaults_to_safe_dry_run(capsys) -> None:
+def test_bootstrap_defaults_to_safe_dry_run(capsys: pytest.CaptureFixture[str]) -> None:
     exit_code = main(["--manifest", str(MANIFEST)])
 
     assert exit_code == 0

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from typing import Protocol
 from uuid import UUID
 
@@ -15,6 +15,7 @@ from atlas.comparison.extraction import (
     build_comparison_extraction_input,
     validate_extraction,
 )
+from atlas.comparison.normalization import ComparisonObservation
 from atlas.comparison.retrieval import ComparisonRetrievalBranch, ComparisonRetrievalService
 from atlas.comparison.schemas import ComparisonMatrix, ComparisonRequest
 from atlas.comparison.workflow import ComparisonWorkflow
@@ -23,7 +24,9 @@ from atlas.providers.prompts.comparison import COMPARISON_EXTRACTION_INSTRUCTION
 
 
 class ComparisonExtractor(Protocol):
-    async def extract(self, branch: ComparisonRetrievalBranch): ...
+    async def extract(
+        self, branch: ComparisonRetrievalBranch
+    ) -> Sequence[ComparisonObservation]: ...
 
 
 class OpenAIComparisonObservationExtractor:
@@ -34,7 +37,7 @@ class OpenAIComparisonObservationExtractor:
         self._model = model
         self._timeout_seconds = timeout_seconds
 
-    async def extract(self, branch: ComparisonRetrievalBranch):
+    async def extract(self, branch: ComparisonRetrievalBranch) -> Sequence[ComparisonObservation]:
         response = await asyncio.wait_for(
             self._client.responses.parse(
                 model=self._model,

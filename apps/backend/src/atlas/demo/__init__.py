@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import UTC, datetime
+from typing import cast
 from uuid import UUID
 
 from pydantic import HttpUrl
@@ -19,6 +20,7 @@ from atlas.domain import (
     CollectionStatus,
     CorpusStatus,
     Evidence,
+    Question,
     SourceType,
 )
 from atlas.providers.ports import AnswerGenerator
@@ -104,7 +106,7 @@ class DemoAnswerGraph:
     """
 
     async def ainvoke(self, state: Mapping[str, object]) -> dict[str, object]:
-        question = state["question"]
+        question = cast(Question, state["question"])
         text = getattr(question, "normalized_text", "")
         language = getattr(question, "language", "en-US")
         collection = self._collection_for(text)
@@ -262,7 +264,7 @@ class OpenAIConnectedDemoGraph:
         self._generator = generator
 
     async def ainvoke(self, state: Mapping[str, object]) -> dict[str, object]:
-        question = state["question"]
+        question = cast(Question, state["question"])
         text = getattr(question, "normalized_text", "")
         collection = DemoAnswerGraph._collection_for(text)
         language = getattr(question, "language", "en-US")
@@ -285,7 +287,7 @@ class OpenAIConnectedDemoGraph:
             draft = await self._generator.generate(
                 question,
                 [evidence],
-                request_id=state.get("request_id"),
+                request_id=cast(UUID | None, state.get("request_id")),
             )
         except Exception:
             limitation = (
@@ -309,7 +311,7 @@ class OpenAIConnectedDemoGraph:
             draft,
             [evidence],
             question=question,
-            request_id=state.get("request_id"),
+            request_id=cast(UUID | None, state.get("request_id")),
         )
         if verification.error is not None or verification.draft is None:
             limitation = (

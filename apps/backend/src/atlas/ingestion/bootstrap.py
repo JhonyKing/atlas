@@ -17,6 +17,7 @@ from psycopg.types.json import Jsonb
 
 from atlas.config import Settings
 from atlas.domain import CollectionSlug
+from atlas.ingestion.connectors import SourceCandidate
 from atlas.ingestion.fetcher import FetchPolicy, SafeFetcher
 from atlas.ingestion.manifest import CorpusManifest, load_manifest
 from atlas.ingestion.service import IngestionService, PostgresIngestionRepository
@@ -28,7 +29,7 @@ class ManifestDiscoverer:
     def __init__(self, manifest: CorpusManifest) -> None:
         self._manifest = manifest
 
-    async def discover(self, collection: CollectionSlug):
+    async def discover(self, collection: CollectionSlug) -> Sequence[SourceCandidate]:
         return tuple(
             candidate
             for candidate in self._manifest.candidates

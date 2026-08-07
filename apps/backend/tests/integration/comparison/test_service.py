@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -11,6 +12,7 @@ from atlas.comparison.schemas import (
     ComparisonCellState,
     ComparisonCriterion,
     ComparisonMatrix,
+    ComparisonRequest,
 )
 from atlas.domain import CollectionSlug
 from atlas.persistence.comparison_quota import (
@@ -21,7 +23,9 @@ from atlas.persistence.comparison_repository import InMemoryComparisonRepository
 
 
 class FakeExecutor:
-    async def run(self, comparison, *, snapshot_id, is_cancelled):
+    async def run(
+        self, comparison: ComparisonRequest, *, snapshot_id: UUID, is_cancelled: Callable[[], bool]
+    ) -> ComparisonMatrix:
         return ComparisonMatrix(
             technology_ids=[CollectionSlug.LANGGRAPH, CollectionSlug.OPENAI],
             criterion_ids=[ComparisonCriterion.CAPABILITY],
@@ -38,7 +42,7 @@ class FakeExecutor:
         )
 
 
-def _service(executor=None) -> InMemoryComparisonRunService:
+def _service(executor: FakeExecutor | None = None) -> InMemoryComparisonRunService:
     return InMemoryComparisonRunService(
         quota=ComparisonQuotaService(
             InMemoryComparisonQuotaRepository(

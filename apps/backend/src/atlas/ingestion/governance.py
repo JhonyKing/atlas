@@ -26,16 +26,35 @@ class GovernanceError(RuntimeError):
 
 
 class CollectionDefinition(Protocol):
-    slug: str
-    display_name: str
-    kind: str
-    allowed_hosts: frozenset[str]
-    allowed_paths: tuple[str, ...]
-    ttl_hours: int
-    policy_state: PolicyState
-    robots_status: str
-    terms_status: str
-    license_status: str
+    @property
+    def slug(self) -> str: ...
+
+    @property
+    def display_name(self) -> str: ...
+
+    @property
+    def kind(self) -> str: ...
+
+    @property
+    def allowed_hosts(self) -> frozenset[str]: ...
+
+    @property
+    def allowed_paths(self) -> tuple[str, ...]: ...
+
+    @property
+    def ttl_hours(self) -> int: ...
+
+    @property
+    def policy_state(self) -> PolicyState: ...
+
+    @property
+    def robots_status(self) -> str: ...
+
+    @property
+    def terms_status(self) -> str: ...
+
+    @property
+    def license_status(self) -> str: ...
 
 
 @dataclass(frozen=True, slots=True)

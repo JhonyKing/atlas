@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Generator
 from datetime import UTC, datetime, timedelta
+from typing import Any
 from uuid import uuid4
 
 import psycopg
@@ -20,7 +22,7 @@ def _database_url() -> str:
 
 
 @pytest.fixture()
-def connection() -> psycopg.Connection[object]:
+def connection() -> Generator[psycopg.Connection[tuple[Any, ...]]]:
     try:
         connection = psycopg.connect(_database_url())
     except psycopg.OperationalError as exc:
@@ -34,7 +36,7 @@ def connection() -> psycopg.Connection[object]:
 
 @pytest.mark.database
 def test_purge_rolls_up_and_deletes_expired_content_in_idempotent_batches(
-    connection: psycopg.Connection[object],
+    connection: psycopg.Connection[tuple[Any, ...]],
 ) -> None:
     observed_at = datetime(2099, 8, 4, 12, 0, tzinfo=UTC)
     visitor_hash = "b" * 64
