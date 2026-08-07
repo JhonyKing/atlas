@@ -60,3 +60,27 @@ pnpm --filter @atlas/web test:e2e -- --project=chromium
 Apply the database migrations with Docker PostgreSQL running, then execute the four SQL contracts
 listed in the feature quickstart. The complete recorded evidence is in
 `docs/verification/004-auth-private-data.md`.
+
+## Feature 005: expanded curated corpus and ingestion governance
+
+Feature 005 adds a governed catalog of 16 approved collections (10 frameworks and 6 model
+providers), bounded HTTPS host/path validation, deterministic GitHub, scholarly, pricing and
+private-content connector seams, HTML/Markdown/PDF normalization, immutable source versions,
+staleness and seven-day coverage reporting, policy/takedown state transitions, retry/dead-letter
+tracking, and redacted run telemetry. Private records remain tenant-scoped and are never promoted
+to the public corpus.
+
+The source of truth and evidence are:
+
+- `specs/005-expanded-curated-corpus/spec.md`
+- `specs/005-expanded-curated-corpus/plan.md`
+- `specs/005-expanded-curated-corpus/tasks.md`
+- `docs/architecture/005-ingestion-governance.md`
+- `docs/adr/0004-curated-corpus-governance.md`
+- `docs/verification/005-expanded-curated-corpus.md`
+
+Run the deterministic verification from the repository root:
+
+```powershell
+pnpm test:ingestion
+```

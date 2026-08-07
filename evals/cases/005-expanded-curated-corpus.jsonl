@@ -1,0 +1,6 @@
+{"case_id":"ingestion-catalog-16","kind":"ingestion-governance","expected":"16_approved_catalog_entries","locale":"es-MX"}
+{"case_id":"ingestion-blocked-destination","kind":"ingestion-security","expected":"allowlist_rejection_before_fetch","locale":"es-MX"}
+{"case_id":"ingestion-version-change","kind":"ingestion-provenance","expected":"immutable_new_version_and_superseded_parent","locale":"es-MX"}
+{"case_id":"ingestion-stale-source","kind":"ingestion-freshness","expected":"stale_state_after_ttl","locale":"es-MX"}
+{"case_id":"ingestion-takedown","kind":"ingestion-policy","expected":"atomic_disabled_retrieval_state","locale":"es-MX"}
+{"case_id":"ingestion-private-isolation","kind":"ingestion-privacy","expected":"owner_scoped_and_never_public","locale":"es-MX"}

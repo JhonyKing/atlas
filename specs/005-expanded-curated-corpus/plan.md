@@ -74,6 +74,8 @@ apps/backend/src/atlas/ingestion/
 │   ├── github_releases.py         # bounded release/changelog adapter
 │   ├── scholarly.py               # OpenAlex/Semantic Scholar adapter
 │   └── pricing_snapshots.py       # effective-dated pricing/model snapshots
+│   ├── registry.py                 # explicit connector registry import boundary
+│   └── private_content.py          # owner-scoped private connector seam
 ├── normalizer.py                  # HTML/Markdown/PDF structure preservation
 └── fetcher.py                     # existing SSRF-safe bounded fetch
 apps/backend/src/atlas/api/routes/governance.py
@@ -82,6 +84,7 @@ apps/backend/tests/integration/ingestion/
 apps/backend/tests/security/test_ingestion_governance.py
 apps/web/src/features/corpus/GovernancePanel.tsx
 database/migrations/versions/0022_ingestion_governance.py
+database/migrations/versions/0023_ingestion_policy_review_status.py
 database/tests/013_ingestion_governance.sql
 docs/architecture/005-ingestion-governance.md
 docs/adr/0004-curated-corpus-governance.md

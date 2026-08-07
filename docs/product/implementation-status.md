@@ -13,7 +13,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 002 | Comparador tecnológico | En progreso/evidencia live | 4 | `specs/002-technology-comparator/tasks.md` |
 | 003 | Reportes y documentos DOCX/PDF | Cerrada — MVP vertical | 0 | `specs/003-reports/tasks.md` |
 | 004 | Auth, sesiones y datos privados | Cerrada — MVP auth y datos privados | 0 | `specs/004-optional-auth-private-data/tasks.md` |
-| 005–012 | Corpus expandido, agentes, retrieval, router, seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
+| 005 | Corpus expandido e ingestión gobernada | Cerrada — slice determinista de portafolio | 0 | `specs/005-expanded-curated-corpus/tasks.md` |
+| 006–012 | Agentes, retrieval, router, seguridad, SLOs, evals y productización | No iniciado | — | `docs/product/prd-v1.1-backlog.md` |
 | 013 | LangSmith y observabilidad | Cerrado en esta fase | 0 | `specs/013-observability/tasks.md` |
 | 014 | Corpus real y harness | En progreso | 1 | `specs/014-real-corpus/tasks.md` |
 | 015 | Noticia del día anterior | Cerrado funcionalmente | 0 | `specs/015-daily-news/tasks.md` |

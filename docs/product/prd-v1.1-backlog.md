@@ -70,21 +70,21 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 005 — expanded curated corpus and ingestion governance
 
-- [ ] ING-001 Run `/speckit.specify` for expanded sources while preserving the allowlist boundary.
-- [ ] ING-002 Add connector specs for 10–15 frameworks and 6–8 model providers.
-- [ ] ING-003 Add GitHub Releases/changelog connector with 6–24 hour schedule.
-- [ ] ING-004 Add OpenAlex/Semantic Scholar metadata connector and paper links.
-- [ ] ING-005 Add official pricing/model-list snapshots with change detection.
-- [ ] ING-006 Add authorized user-content connector with private tenant storage.
-- [ ] ING-007 Implement sitemap/API/versioned-page discovery and bounded fetch policies.
-- [ ] ING-008 Implement HTML/Markdown/PDF normalization that preserves headings, tables, and code blocks.
-- [ ] ING-009 Implement source panel coverage/freshness/disabled-state reporting.
-- [ ] ING-010 Implement metadata: canonical URL, title, author/org, published/captured dates, license, hash.
-- [ ] ING-011 Implement version relation, staleness/TTL, and historical-vs-current classification.
-- [ ] ING-012 Implement robots/ToS/license review gates and source enablement approval.
-- [ ] ING-013 Implement takedown/correction workflow and atomic source disablement.
-- [ ] ING-014 Add per-collection retry, dead-letter, preservation, and re-review trigger tests.
-- [ ] ING-015 Validate the full refresh and coverage dashboard against the seven-day operational target.
+- [X] ING-001 Run `/speckit.specify` for expanded sources while preserving the allowlist boundary.
+- [X] ING-002 Add connector specs for 10–15 frameworks and 6–8 model providers.
+- [X] ING-003 Add GitHub Releases/changelog connector with 6–24 hour schedule.
+- [X] ING-004 Add OpenAlex/Semantic Scholar metadata connector and paper links.
+- [X] ING-005 Add official pricing/model-list snapshots with change detection.
+- [X] ING-006 Add authorized user-content connector with private tenant storage.
+- [X] ING-007 Implement sitemap/API/versioned-page discovery and bounded fetch policies.
+- [X] ING-008 Implement HTML/Markdown/PDF normalization that preserves headings, tables, and code blocks.
+- [X] ING-009 Implement source panel coverage/freshness/disabled-state reporting.
+- [X] ING-010 Implement metadata: canonical URL, title, author/org, published/captured dates, license, hash.
+- [X] ING-011 Implement version relation, staleness/TTL, and historical-vs-current classification.
+- [X] ING-012 Implement robots/ToS/license review gates and source enablement approval.
+- [X] ING-013 Implement takedown/correction workflow and atomic source disablement.
+- [X] ING-014 Add per-collection retry, dead-letter, preservation, and re-review trigger tests.
+- [X] ING-015 Validate the full refresh and coverage dashboard against the seven-day operational target.
 
 ## 006 — agent graph, planning, checkpoints, and human review
 

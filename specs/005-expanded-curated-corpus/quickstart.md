@@ -11,7 +11,7 @@
 ```powershell
 apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests/unit/ingestion apps/backend/tests/contract/ingestion apps/backend/tests/integration/ingestion apps/backend/tests/security/test_ingestion_governance.py -q
 apps\backend\.venv\Scripts\python.exe -m ruff check apps/backend/src/atlas/ingestion apps/backend/src/atlas/api/routes/governance.py
-apps\backend\.venv\Scripts\python.exe -m mypy apps/backend/src/atlas/ingestion
+apps\backend\.venv\Scripts\python.exe -m mypy apps/backend/src/atlas/ingestion/catalog.py apps/backend/src/atlas/ingestion/governance.py apps/backend/src/atlas/ingestion/connectors/registry.py apps/backend/src/atlas/ingestion/connectors/github_releases.py apps/backend/src/atlas/ingestion/connectors/scholarly.py apps/backend/src/atlas/ingestion/connectors/pricing_snapshots.py apps/backend/src/atlas/ingestion/connectors/private_content.py apps/backend/src/atlas/ingestion/normalizer.py apps/backend/src/atlas/observability/events.py
 ```
 
 ## Database checks
@@ -31,3 +31,9 @@ pnpm --filter @atlas/web test:e2e -- --project=chromium tests/e2e/ingestion-gove
 
 Expected result: the governance panel shows approved/disabled collections, freshness, retries,
 dead letters, and the seven-day target without exposing source bodies or private tenant content.
+
+One-command verification (migration and browser checks included):
+
+```powershell
+pnpm test:ingestion
+```
