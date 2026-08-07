@@ -126,3 +126,22 @@ apps\backend\.venv\Scripts\python.exe -m atlas.evaluation.retrieval_quality `
   --dataset evals/cases/007-retrieval-quality-multilingual.jsonl `
   --output docs/verification/007-retrieval-quality-multilingual-metrics.json
 ```
+
+## Feature 008: model router, GPT-5.6 Luna, and cost controls
+
+The router defaults to `gpt-5.6-luna`, selects reasoning effort from typed task signals, and keeps
+provider SDK details behind an adapter port. Timeout/retry/circuit policies, effective-dated
+pricing, daily budgets, redacted cost records, versioned cache keys, embedding fallback and A/B
+promotion gates are covered by deterministic tests.
+
+Source and evidence:
+
+- `specs/008-model-router-gpt56-luna/tasks.md`
+- `docs/architecture/008-model-router-gpt56-luna.md`
+- `docs/adr/0007-model-router-luna-and-cost-gates.md`
+- `docs/verification/008-model-router-gpt56-luna.md`
+- `evals/cases/008-model-router-gpt56-luna.jsonl`
+
+```powershell
+pnpm test:model-router
+```

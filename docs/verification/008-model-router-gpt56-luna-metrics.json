@@ -1,0 +1,25 @@
+{
+  "cases": [
+    {
+      "id": "router-default",
+      "model": "gpt-5.6-luna",
+      "passed": true,
+      "reasoning_effort": "low"
+    },
+    {
+      "id": "router-contradiction",
+      "model": "gpt-5.6-luna",
+      "passed": true,
+      "reasoning_effort": "high"
+    },
+    {
+      "id": "router-report",
+      "model": "gpt-5.6-luna",
+      "passed": true,
+      "reasoning_effort": "high"
+    }
+  ],
+  "dataset": "..\\..\\evals\\cases\\008-model-router-gpt56-luna.jsonl",
+  "passed": 3,
+  "total": 3
+}

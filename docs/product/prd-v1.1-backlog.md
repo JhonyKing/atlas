@@ -113,16 +113,16 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 008 — model router, GPT-5.6 Luna, and cost controls
 
-- [ ] MOD-001 Run `/speckit.specify` for provider-independent model routing and fallback.
-- [ ] MOD-002 Make `gpt-5.6-luna` the configured primary model for the ATLAS answer path, with explicit model/version telemetry.
-- [ ] MOD-003 Define model selection by task complexity, freshness, contradiction, and report depth.
-- [ ] MOD-004 Implement adapters for the approved providers without importing SDK details into graph nodes.
-- [ ] MOD-005 Implement timeout, retry-with-jitter, circuit breaker, and provider fallback behavior.
-- [ ] MOD-006 Implement multilingual embedding provider selection without changing Evidence schema.
-- [ ] MOD-007 Implement effective-dated price tables, token/cost telemetry, daily budget, and alerts.
-- [ ] MOD-008 Add cache/evidence-pack policy for repeated questions and provider context caching where available.
+- [X] MOD-001 Run `/speckit.specify` for provider-independent model routing and fallback.
+- [X] MOD-002 Make `gpt-5.6-luna` the configured primary model for the ATLAS answer path, with explicit model/version telemetry.
+- [X] MOD-003 Define model selection by task complexity, freshness, contradiction, and report depth.
+- [X] MOD-004 Implement adapters for the approved providers without importing SDK details into graph nodes.
+- [X] MOD-005 Implement timeout, retry-with-jitter, circuit breaker, and provider fallback behavior.
+- [X] MOD-006 Implement multilingual embedding provider selection without changing Evidence schema.
+- [X] MOD-007 Implement effective-dated price tables, token/cost telemetry, daily budget, and alerts.
+- [X] MOD-008 Add cache/evidence-pack policy for repeated questions and provider context caching where available.
 - [ ] MOD-009 Add batch path for ingestion, labelling, and offline evals.
-- [ ] MOD-010 Add model benchmark and A/B evaluation gate; never select a model by unverified marketing claims.
+- [X] MOD-010 Add model benchmark and A/B evaluation gate; never select a model by unverified marketing claims.
 
 ## 009 — security, privacy, and governance hardening
 
