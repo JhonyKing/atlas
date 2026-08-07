@@ -132,3 +132,12 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   reaches the terminal budget under the launch scenario (Evidence: 37 comparison tests pass; Ruff and
   targeted mypy pass; the live Spanish four-technology run completed 12 cells with useful progress at
   0 ms and terminal latency 18,590 ms in `evals/results/live-comparator-t042-20260807.json`).
+
+## Phase 9: Convergence
+
+- [ ] T043 [US2] Preserve complementary qualitative observations instead of labeling them as
+  conflicting values: add an explicit observation relationship (`supports`, `complements`, or
+  `contradicts`) to structured extraction, keep a bounded combined value for complementary claims,
+  retain explicit contradiction handling, enforce that every `ComparisonCell.evidence_ids` belongs to
+  the cell's retrieved branch, and add regression tests plus a machine-generated live review artifact
+  that validates every cited ID against its source metadata (partial, HIGH).
