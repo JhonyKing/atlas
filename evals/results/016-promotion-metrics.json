@@ -1,0 +1,15 @@
+{
+  "measurement_mode": "offline-fixture",
+  "dataset": "rag-v1.jsonl",
+  "dataset_version": "rag-v1",
+  "application_commit": "23d3e6d",
+  "corpus_snapshot": "fixture",
+  "metrics": {
+    "citation_precision": 1.0,
+    "faithfulness": 1.0,
+    "abstention_safety": 1.0,
+    "cost_usd": 0.0,
+    "latency_p95_ms": 0.0
+  },
+  "note": "Fixture gate behavior only; replace with measured HTTP/provider evidence before production promotion."
+}

@@ -1,0 +1,329 @@
+{
+  "application_commit": "23d3e6d",
+  "cases": [
+    {
+      "id": "scope-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-003",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-004",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-005",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-006",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-007",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-008",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-009",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-010",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-011",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-012",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-013",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-014",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-015",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-016",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-017",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-018",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-019",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-020",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-021",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-022",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-023",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-024",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-025",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-026",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-027",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-028",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-029",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "scope-030",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-003",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-004",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-005",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-006",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-007",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-008",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-009",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "temporal-010",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "abstention-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "abstention-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "contradiction-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "contradiction-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "injection-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "injection-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-001",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-002",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-003",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-004",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-005",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-006",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-007",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-008",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-009",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-010",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-011",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-012",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-013",
+      "passed": true,
+      "reasons": []
+    },
+    {
+      "id": "pm-014",
+      "passed": true,
+      "reasons": []
+    }
+  ],
+  "corpus_snapshot": "fixture",
+  "dataset": "rag-v1.jsonl",
+  "dataset_version": "rag-v1",
+  "execution_mode": "offline-fixture",
+  "retrieval": {
+    "cases_with_ground_truth": 11,
+    "citation_precision": 1.0,
+    "context_precision": 1.0,
+    "context_recall": 1.0,
+    "freshness": 0.8571428571428572,
+    "hit_at_10": 1.0,
+    "hit_at_4": 1.0,
+    "hit_at_8": 1.0,
+    "mrr": 1.0
+  },
+  "summary": {
+    "abstention_rate": 1.0,
+    "citation_precision": 1.0,
+    "in_scope_address_rate": 1.0,
+    "passed_cases": 60,
+    "prompt_injection_safety": 1.0,
+    "temporal_accuracy": 1.0,
+    "total_cases": 60
+  }
+}

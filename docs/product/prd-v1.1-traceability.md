@@ -75,6 +75,9 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
   fueron verificados en el proyecto `atlas-ai`, con runs `atlas.answer`, `atlas.retrieval`,
   `atlas.generation` y `atlas.verification` en estado exitoso. La evaluación completa de 60 casos
   permanece opt-in por su posible coste.
+- **016 Harness conectado:** 20 pruebas de graders/gate pasaron; el harness offline verificó 60/60
+  casos y el gate fixture falló cerrado correctamente para métricas ausentes. La evaluación live y
+  la anotación humana permanecen pendientes y no se cuentan como evidencia local.
 - **014 Corpus real:** el runtime de producción exige un snapshot verificado y el fallback demo
   queda limitado a desarrollo; la integración de producción pasó contra el snapshot local activo.
 

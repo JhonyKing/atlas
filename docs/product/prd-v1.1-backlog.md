@@ -247,10 +247,10 @@ implementadas.
 ## 016 — Harness de evaluación conectado a LangSmith
 
 - [X] EVA-013 Crear el dataset inicial de ~60 ejemplos con inputs, referencia, chunk IDs, idioma, tipo de pregunta y versión de corpus.
-- [ ] EVA-014 Implementar graders deterministas para esquema, citas, enlaces, abstención, duplicados y estructura de reportes.
-- [ ] EVA-015 Implementar graders de código/modelo/humano con salida estructurada de fortalezas, debilidades, razonamiento y score.
+- [X] EVA-014 Implementar graders deterministas para esquema, citas, enlaces, abstención, duplicados y estructura de reportes.
+- [X] EVA-015 Implementar graders de código/modelo/humano con salida estructurada de fortalezas, debilidades, razonamiento y score.
 - [X] EVA-016 Ejecutar evaluaciones offline sin API externa y guardar JSON/CSV reproducible con commit y configuración.
 - [X] EVA-017 Ejecutar evaluación online opt-in en LangSmith enlazando dataset, experimento, traces y feedback.
-- [ ] EVA-018 Exportar casos negativos anotados a un dataset de regresión sin copiar secretos ni PII.
-- [ ] EVA-019 Añadir gate CI que bloquee regresiones de citas, faithfulness, abstención, coste o latencia según umbrales versionados.
-- [ ] EVA-020 Publicar tabla baseline/ablación/post-cambio con metodología y limitaciones, nunca sólo capturas de pantalla.
+- [X] EVA-018 Exportar casos negativos anotados a un dataset de regresión sin copiar secretos ni PII.
+- [X] EVA-019 Añadir gate CI que bloquee regresiones de citas, faithfulness, abstención, coste o latencia según umbrales versionados.
+- [X] EVA-020 Publicar tabla baseline/ablación/post-cambio con metodología y limitaciones, nunca sólo capturas de pantalla.
