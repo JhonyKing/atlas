@@ -9,6 +9,8 @@ from email.utils import parsedate_to_datetime
 from html import unescape
 from xml.etree import ElementTree
 
+from pydantic import HttpUrl
+
 from atlas.news.schemas import NewsCandidate
 
 
@@ -58,7 +60,7 @@ def parse_feed(
                 title=title,
                 summary=summary,
                 publisher=publisher,
-                canonical_url=link,
+                canonical_url=HttpUrl(link),
                 published_at=published,
                 captured_at=captured,
                 authority_score=authority_score,

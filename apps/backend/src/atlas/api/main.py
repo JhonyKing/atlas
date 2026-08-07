@@ -21,7 +21,7 @@ from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.planner import AgentPlanner
 from atlas.agent.review import ReviewService
 from atlas.agent.tools.registry import ToolCatalog
-from atlas.api.answer_service import InMemoryAnswerRunService
+from atlas.api.answer_service import AnswerGraph, InMemoryAnswerRunService
 from atlas.api.comparison_service import InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.agent import router as agent_router
@@ -249,7 +249,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         )
         client: AsyncOpenAI | None = None
         planner_provider: AgentPlanProvider | None = None
-        answer_graph: CitedAnswerGraph | DemoAnswerGraph = DemoAnswerGraph()
+        answer_graph: AnswerGraph = DemoAnswerGraph()
         if real_provider and settings.openai_api_key is not None:
             client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
             safety_secret = (

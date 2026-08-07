@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from atlas.news.fetch import FeedPolicy, NewsFeedFetcher
 from atlas.news.ranking import DailyNewsProvider, select_previous_day, unavailable_news
@@ -28,9 +28,11 @@ class LiveDailyNewsService(DailyNewsProvider):
             raise ValueError("news manifest must contain feeds")
         self._feeds = tuple(item for item in feeds if isinstance(item, dict))
         self._hosts = frozenset(
-            urlparse(str(item["url"])).hostname
+            host
             for item in self._feeds
             if item.get("url")
+            for host in [urlparse(str(item["url"])).hostname]
+            if isinstance(host, str)
         )
         self._manifest_path = manifest_path
         self._cache: dict[date, NewsSelection] = {}
