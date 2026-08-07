@@ -1,0 +1,23 @@
+{
+  "run_id": "7b10f03e-fd20-47c6-9ec8-004ae7bbd09f",
+  "reviewed_at": "2026-08-07",
+  "review_type": "provisional_manual_ground_truth",
+  "reviewer": "ATLAS assistant review of captured official excerpts",
+  "owner_confirmation_required": true,
+  "cells": [
+    {"technology_id":"langgraph","criterion_id":"capability","ground_truth_supported":true,"ground_truth_evidence_ids":["b744c1a8-f160-4aa4-94b9-059d2a9fe19c"]},
+    {"technology_id":"langgraph","criterion_id":"tool_calling","ground_truth_supported":true,"ground_truth_evidence_ids":["a2327062-ce0f-4bc0-96aa-7a485a90fa7c","de93d415-f10d-4baf-889c-256352dbd89a","e9c05c2d-44e3-44a7-9fc8-fc6dfe440a63"]},
+    {"technology_id":"langgraph","criterion_id":"context","ground_truth_supported":true,"ground_truth_evidence_ids":["0813c640-f7fd-4519-b31e-fef52334a8de","8e145d01-8785-424b-90f0-806bc6ff488c","6db34524-def9-4d88-ae87-e806bc50bf8e","f78a02b9-01e7-42e8-bcf4-4b1a3e69abf0"]},
+    {"technology_id":"langchain","criterion_id":"capability","ground_truth_supported":true,"ground_truth_evidence_ids":["e29508eb-52d9-4d86-b5a5-bf6f24d58890","f450f5a6-1445-41c7-9a90-076e584c0e2b"]},
+    {"technology_id":"langchain","criterion_id":"tool_calling","ground_truth_supported":true,"ground_truth_evidence_ids":["3744fd33-4c6b-445f-9ccc-60bf76311ed8","48fa7485-b21d-4855-b787-b8939e77e992","eb377e82-0e4f-454f-a337-06107049c779","32fd5e1e-255f-432c-8705-f660f9e38600"]},
+    {"technology_id":"langchain","criterion_id":"context","ground_truth_supported":true,"ground_truth_evidence_ids":["59030434-7692-42e7-8d6b-0508c991d0e6","61a3b480-8e12-4cd1-8729-c07030fb871c","c44c2d54-edfa-4854-9aad-edc1a7ec4b42","b543b3cf-8b08-469a-ad21-de147ff58a04"]},
+    {"technology_id":"openai","criterion_id":"capability","ground_truth_supported":true,"ground_truth_evidence_ids":["6370c478-0626-4d98-8eb6-3423e870551a"]},
+    {"technology_id":"openai","criterion_id":"tool_calling","ground_truth_supported":true,"ground_truth_evidence_ids":["09a0753f-5645-4625-9c86-27d1d50b43c0","0bc12e1d-d808-4134-863a-211b9113dfda","f21a2fde-68c1-4202-9d3d-ad50a2b30816"]},
+    {"technology_id":"openai","criterion_id":"context","ground_truth_supported":false,"ground_truth_evidence_ids":[]},
+    {"technology_id":"anthropic","criterion_id":"capability","ground_truth_supported":true,"ground_truth_evidence_ids":["43b1e9da-8f11-448b-9458-bc15a2618d1a"]},
+    {"technology_id":"anthropic","criterion_id":"tool_calling","ground_truth_supported":true,"ground_truth_evidence_ids":["7fe98dfc-4138-4f36-9006-03bd7795e68b","cef2504b-6c4c-42ae-bb31-10e01377e1c7","565d6e79-4067-4282-859e-855bd862a287","cc37831c-ec78-4614-8ee6-44fa0130b084"]},
+    {"technology_id":"anthropic","criterion_id":"context","ground_truth_supported":false,"ground_truth_evidence_ids":[]}
+  ],
+  "cited_evidence_precision": 1.0,
+  "note": "All cited excerpts were judged directly relevant to their cell. Empty-evidence unsupported cells are abstentions, not citation failures. Owner confirmation is still required before T040 is closed as external manual evidence."
+}
