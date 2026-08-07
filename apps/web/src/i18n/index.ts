@@ -11,6 +11,10 @@ type MessageCatalog = {
   eyebrow: string;
   title: string;
   lede: string;
+  supportedSources: string;
+  trustNote: string;
+  examplesTitle: string;
+  examples: string[];
   technicalQuestion: string;
   questionPlaceholder: string;
   corpus: string;
@@ -101,6 +105,10 @@ const catalogs: Record<Locale, MessageCatalog> = {
     eyebrow: "ATLAS AI · evidence-first research",
     title: "Answers you can verify.",
     lede: "Ask one technical question about the curated LangGraph, LangChain, or OpenAI corpus. Claims appear only after their evidence is checked.",
+    supportedSources: "Verified sources: LangGraph · LangChain · OpenAI · Anthropic · Gemini",
+    trustNote: "ATLAS shows a claim only when its source, capture date, and evidence state can be inspected.",
+    examplesTitle: "Try a focused question",
+    examples: ["How does LangGraph persist state?", "What can OpenAI tool calling do?", "How does LangChain manage context?"],
     technicalQuestion: "Technical question",
     questionPlaceholder: "How does LangGraph persist state across a workflow?",
     corpus: "Corpus (optional)",
@@ -212,6 +220,10 @@ const catalogs: Record<Locale, MessageCatalog> = {
     eyebrow: "ATLAS AI · investigación con evidencia",
     title: "Respuestas que puedes verificar.",
     lede: "Haz una pregunta técnica sobre el corpus curado de LangGraph, LangChain u OpenAI. Las afirmaciones aparecen sólo después de comprobar su evidencia.",
+    supportedSources: "Fuentes verificadas: LangGraph · LangChain · OpenAI · Anthropic · Gemini",
+    trustNote: "ATLAS muestra una afirmación sólo cuando puedes inspeccionar su fuente, fecha de captura y estado de evidencia.",
+    examplesTitle: "Prueba una pregunta concreta",
+    examples: ["¿Cómo conserva LangGraph el estado?", "¿Qué permite la llamada de herramientas de OpenAI?", "¿Cómo gestiona LangChain el contexto?"],
     technicalQuestion: "Pregunta técnica",
     questionPlaceholder: "¿Cómo conserva LangGraph el estado durante un flujo de trabajo?",
     corpus: "Corpus (opcional)",

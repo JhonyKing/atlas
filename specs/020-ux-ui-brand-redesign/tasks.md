@@ -39,10 +39,10 @@
 
 ## Phase 5: Ask ATLAS and evidence experience (P1)
 
-- [ ] T022 [US1] Redesign the home hero and question form around the ATLAS promise, source selector, supported-source explanation, examples/empty state, and one primary action in `apps/web/src/features/cited-answer/CitedAnswerForm.tsx` and focused components.
-- [ ] T023 [US3] Refactor answer progress, claims, citations, limitations, feedback, and abstention into readable research surfaces using shared evidence/citation components without changing SSE behavior.
-- [ ] T024 [US3] Add evidence state labels/icons/tooltips and citation inspection affordances with accessible semantics in `apps/web/src/features/evidence/`.
-- [ ] T025 [US1] Add Ask route responsive/accessibility tests and Playwright visual QA at 1440×900 and 390×844; save artifacts under `test-results/` and `docs/verification/`.
+- [X] T022 [US1] Redesign the home hero and question form around the ATLAS promise, source selector, supported-source explanation, examples/empty state, and one primary action in `apps/web/src/features/cited-answer/CitedAnswerForm.tsx` and focused components. Evidence: Ask hero, trust copy, source selector, example buttons, and primary action are covered by `docs/verification/020-ask-evidence.md`.
+- [X] T023 [US3] Refactor answer progress, claims, citations, limitations, feedback, and abstention into readable research surfaces using shared evidence/citation components without changing SSE behavior. Evidence: existing answer/abstention tests remain green; SSE stages feed `ResearchProgress` and citations use `CitationCard`.
+- [X] T024 [US3] Add evidence state labels/icons/tooltips and citation inspection affordances with accessible semantics in `apps/web/src/features/evidence/`. Evidence: `EvidenceStatus` exposes text/icon state and `CitationCard` preserves bounded excerpt, metadata, and canonical link.
+- [X] T025 [US1] Add Ask route responsive/accessibility tests and Playwright visual QA at 1440×900 and 390×844; save artifacts under `test-results/` and `docs/verification/`. Evidence: `apps/web/tests/e2e/ask.spec.ts` passed 2/2 and saved desktop/mobile screenshots.
 
 ## Phase 6: Comparator (P1)
 

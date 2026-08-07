@@ -4,6 +4,10 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { useLocale, type Locale } from "@/i18n";
 
+import { AtlasLogo } from "@/components/brand/AtlasLogo";
+import { Button, Field, Select, Textarea } from "@/components/forms";
+import { ResearchProgress, type ResearchStep } from "@/components/research/ResearchProgress";
+
 import { EvidencePanel } from "../evidence/EvidencePanel";
 import { putAnswerFeedback } from "../evidence/api";
 import type { FeedbackInput } from "../evidence/types";
@@ -34,6 +38,7 @@ export function CitedAnswerForm() {
   const [question, setQuestion] = useState("");
   const [product, setProduct] = useState<CollectionSlug | "">("");
   const [status, setStatus] = useState(messages.ready);
+  const [stageKey, setStageKey] = useState("accepted");
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CompletedAnswer | null>(null);
   const [abstention, setAbstention] = useState<AbstentionNotice | null>(null);
@@ -70,6 +75,7 @@ export function CitedAnswerForm() {
     setAbstention(null);
     setActive(true);
     setStatus(messages.accepted);
+    setStageKey("accepted");
     cancelRequestedRef.current = false;
     const nextController = new AbortController();
     controller.current = nextController;
@@ -108,6 +114,7 @@ export function CitedAnswerForm() {
 
   function handleEvent(event: AnswerEvent) {
     const stage = typeof event.data.stage === "string" ? event.data.stage : event.event;
+    setStageKey(event.event === "answer.completed" ? "completed" : event.event === "answer.abstained" ? "abstained" : stage);
     const answerStatus = event.data.answer_status === "partial" ? "partial" : "complete";
     setStatus(
       stage === "completed"
@@ -162,8 +169,9 @@ export function CitedAnswerForm() {
   }
 
   return (
-    <section ref={shellRef} className="answer-shell" aria-labelledby="page-title" data-hydrated="false">
-      <div className="locale-control">
+    <section ref={shellRef} className="answer-shell ask-experience" aria-labelledby="page-title" data-hydrated="false">
+      <div className="ask-branding"><AtlasLogo variant="stacked" alt="ATLAS" className="ask-branding-logo" /></div>
+      <div className="locale-control-legacy">
         <label htmlFor="locale">{messages.switchLabel}</label>
         <select id="locale" value={locale} onChange={(event) => setLocale(event.target.value as Locale)} aria-label={messages.switchTo}>
           <option value="en-US">English</option>
@@ -173,37 +181,57 @@ export function CitedAnswerForm() {
       <p className="eyebrow">{messages.eyebrow}</p>
       <h1 id="page-title">{messages.title}</h1>
       <p className="lede">{messages.lede}</p>
+      <p className="ask-trust-note">{messages.trustNote}</p>
       <form onSubmit={submit} noValidate>
-        <label htmlFor="question">{messages.technicalQuestion}</label>
-        <textarea
-          id="question"
-          value={question}
-          onChange={(event) => setQuestion(event.target.value)}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? "question-error" : undefined}
-          rows={5}
-          placeholder={messages.questionPlaceholder}
-        />
-        <label htmlFor="product">{messages.corpus}</label>
-        <select id="product" value={product} onChange={(event) => setProduct(event.target.value as CollectionSlug | "")}>
-          <option value="">{messages.allCollections}</option>
-          <option value="langgraph">LangGraph</option>
-          <option value="langchain">LangChain</option>
-          <option value="openai">OpenAI API</option>
-          <option value="anthropic">Anthropic Claude</option>
-          <option value="gemini">Google Gemini</option>
-        </select>
-        {error ? <p id="question-error" className="error" role="alert">{error}</p> : null}
+        <Field id="question" label={messages.technicalQuestion} helper={messages.trustNote} error={error ?? undefined}>
+          <Textarea
+            id="question"
+            value={question}
+            onChange={(event) => setQuestion(event.target.value)}
+            aria-invalid={Boolean(error)}
+            rows={5}
+            placeholder={messages.questionPlaceholder}
+          />
+        </Field>
+        <Field id="product" label={messages.corpus}>
+          <Select id="product" value={product} onChange={(event) => setProduct(event.target.value as CollectionSlug | "")}>
+            <option value="">{messages.allCollections}</option>
+            <option value="langgraph">LangGraph</option>
+            <option value="langchain">LangChain</option>
+            <option value="openai">OpenAI API</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="gemini">Google Gemini</option>
+          </Select>
+        </Field>
         <div className="actions">
-          <button type="submit" disabled={active}>{messages.ask}</button>
-          {active ? <button type="button" className="secondary" onClick={cancel}>{messages.cancel}</button> : null}
+          <Button type="submit" disabled={active} loading={active && stageKey === "accepted"}>{messages.ask}</Button>
+          {active ? <Button type="button" variant="secondary" onClick={cancel}>{messages.cancel}</Button> : null}
         </div>
       </form>
+      <section className="ask-examples" aria-labelledby="ask-examples-title">
+        <h2 id="ask-examples-title">{messages.examplesTitle}</h2>
+        <div className="ask-example-list">
+          {messages.examples.map((example) => <button key={example} type="button" className="ask-example" onClick={() => setQuestion(example)}>{example}</button>)}
+        </div>
+      </section>
+      <p className="ask-supported-sources">{messages.supportedSources}</p>
+      {active || answer || abstention ? <ResearchProgress steps={buildResearchSteps(stageKey, messages.stage)} label={messages.stage.verifying ?? "Research progress"} /> : null}
       <p className="progress" role="status" aria-live="polite">{status}</p>
       {answer ? <EvidencePanel answerStatus={answer.answerStatus} claims={answer.claims} citations={answer.citations} limitations={answer.limitations} onFeedback={handleFeedback} /> : null}
       {abstention ? <AbstentionResult notice={abstention} /> : null}
     </section>
   );
+}
+
+function buildResearchSteps(stage: string, labels: Record<string, string>): ResearchStep[] {
+  const stages = ["accepted", "retrieving", "composing", "verifying", "completed"];
+  const terminalFailure = stage === "abstained" || stage === "cancelled";
+  const currentIndex = terminalFailure ? stages.length - 1 : Math.max(0, stages.indexOf(stage));
+  return stages.map((id, index) => ({
+    id,
+    label: labels[id] ?? id,
+    status: index < currentIndex ? "complete" : index === currentIndex ? terminalFailure ? "error" : stage === "completed" ? "complete" : "active" : "pending",
+  }));
 }
 
 function AbstentionResult({ notice }: { notice: AbstentionNotice }) {

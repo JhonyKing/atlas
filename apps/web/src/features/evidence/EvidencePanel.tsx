@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { useLocale, formatDate } from "@/i18n";
 import type { CitedClaim, CitedEvidence } from "@/features/cited-answer/types";
+import { CitationCard } from "@/components/evidence/CitationCard";
+import { EvidenceStatus } from "@/components/evidence/EvidenceStatus";
 
 import type { EvidencePanelProps, FeedbackCategory, FeedbackInput, FeedbackLabel } from "./types";
 
@@ -30,7 +32,7 @@ export function EvidencePanel({ claims, citations, limitations = [], answerStatu
   return (
     <section className="evidence-panel" aria-labelledby="evidence-title">
       <h2 id="evidence-title">{messages.evidenceTitle}</h2>
-      <p className="answer-state">{answerStatus === "partial" ? messages.partialAnswer : messages.completeAnswer}</p>
+      <EvidenceStatus state={answerStatus === "partial" ? "partial" : "supported"} label={answerStatus === "partial" ? messages.partialAnswer : messages.completeAnswer} />
       <div className="claim-list">
         {claims.map((claim) => <ClaimWithEvidence key={claim.id} claim={claim} citations={citations} />)}
       </div>
@@ -79,22 +81,24 @@ function ClaimWithEvidence({ claim, citations }: { claim: CitedClaim; citations:
 function CitationDetails({ citation }: { citation: CitedEvidence }) {
   const { locale, messages } = useLocale();
   const sourceType = messages.sourceTypes[citation.source_type] ?? citation.source_type.replaceAll("_", " ");
+  const metadata = [
+    `${messages.captured}: ${formatDate(citation.captured_at, locale)}`,
+    citation.published_at ? `${messages.published}: ${formatDate(citation.published_at, locale)}` : null,
+    citation.version_label ? `${messages.version}: ${citation.version_label}` : null,
+  ].filter((value): value is string => Boolean(value)).join(" · ");
   return (
-    <article className="citation-card">
-      <h3>{citation.source_title}</h3>
-      <dl>
-        <div><dt>{messages.publisher}</dt><dd>{citation.publisher}</dd></div>
-        <div><dt>{messages.sourceType}</dt><dd>{sourceType}</dd></div>
-        <div><dt>{messages.captured}</dt><dd>{formatDate(citation.captured_at, locale)}</dd></div>
-        {citation.published_at ? <div><dt>{messages.published}</dt><dd>{formatDate(citation.published_at, locale)}</dd></div> : null}
-        {citation.version_label ? <div><dt>{messages.version}</dt><dd>{citation.version_label}</dd></div> : null}
-      </dl>
-      <p className="excerpt-label">{messages.originalSource}</p>
-      <blockquote>{citation.excerpt}</blockquote>
-      <p className="citation-links">
-        <a href={citation.canonical_url} target="_blank" rel="noreferrer noopener">{messages.openSource} {citation.source_title}</a>
-        {citation.source_revision_url ? <a href={citation.source_revision_url} target="_blank" rel="noreferrer noopener">{messages.openRevision}</a> : null}
-      </p>
-    </article>
+    <div className="citation-details">
+      <CitationCard
+        sourceTitle={citation.source_title}
+        publisher={citation.publisher}
+        sourceType={sourceType}
+        excerpt={citation.excerpt}
+        canonicalUrl={citation.canonical_url}
+        openLabel={messages.openSource}
+        metadata={metadata}
+      />
+      {citation.version_label ? <p className="citation-version">{citation.version_label}</p> : null}
+      {citation.source_revision_url ? <p className="citation-links"><a href={citation.source_revision_url} target="_blank" rel="noreferrer noopener">{messages.openRevision}</a></p> : null}
+    </div>
   );
 }

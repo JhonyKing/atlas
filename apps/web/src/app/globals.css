@@ -151,6 +151,22 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .research-step-indicator { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: var(--atlas-info-bg); font-size: .78rem; }
 .ask-page { display: grid; gap: 2rem; }
 .ask-page .agent-workspace { margin-bottom: 0; }
+.ask-experience { display: grid; gap: 1rem; }
+.ask-branding { display: flex; justify-content: center; min-height: 7rem; padding: .25rem 0 0; }
+.ask-branding-logo { width: 8rem; height: auto; }
+.locale-control-legacy { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ask-experience .eyebrow { margin: 0; }
+.ask-experience h1 { margin: .25rem 0 0; }
+.ask-trust-note { margin: -.25rem 0 .25rem; color: var(--atlas-text-muted); font-size: .88rem; line-height: 1.5; }
+.ask-experience form { margin-top: .75rem; }
+.ask-experience .atlas-field > div { display: block; }
+.ask-experience .actions { align-items: center; }
+.ask-examples { border-top: 1px solid var(--atlas-border); padding-top: 1rem; }
+.ask-examples h2 { margin: 0 0 .65rem; font-size: 1rem; }
+.ask-example-list { display: flex; flex-wrap: wrap; gap: .5rem; }
+.ask-example { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .55rem .7rem; color: var(--atlas-text-secondary); background: var(--atlas-surface); font-size: .85rem; font-weight: 650; text-align: left; }
+.ask-example:hover { border-color: var(--atlas-indigo); color: var(--atlas-indigo); background: var(--atlas-info-bg); }
+.ask-supported-sources { margin: 0; color: var(--atlas-text-secondary); font-size: .84rem; line-height: 1.5; }
 @keyframes atlas-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 720px) {

@@ -34,7 +34,7 @@ describe("ATLAS shared UX primitives", () => {
   test("renders citation metadata and a direct source link", () => {
     render(<CitationCard number={3} sourceTitle="Graph API" publisher="LangChain" sourceType="documentation" excerpt="Runtime context" canonicalUrl="https://example.com" />);
     expect(screen.getByRole("heading", { name: "Graph API" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open source" })).toHaveAttribute("href", "https://example.com");
+    expect(screen.getByRole("link", { name: "Open source Graph API" })).toHaveAttribute("href", "https://example.com");
   });
 
   test("renders research progress without inventing backend events", () => {
