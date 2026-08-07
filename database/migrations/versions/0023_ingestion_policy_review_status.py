@@ -4,7 +4,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0023_ingestion_policy_review_status"
+revision = "0023_policy_review_status"
 down_revision = "0022_ingestion_governance"
 branch_labels = None
 depends_on = None
