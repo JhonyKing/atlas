@@ -105,6 +105,24 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [ ] AGT-015 Emit redacted run/tool/evidence events and LangSmith/OpenTelemetry metadata for model, tool, locale, corpus, tokens, cost, latency, and outcome.
 - [ ] AGT-016 Evaluate tool selection, argument validity, evidence coverage, abstention, safety, replay, latency, cost, and artifact correctness with deterministic/live mode separation. Tracked by SpecKit Feature 019 (`specs/019-agent-tool-orchestration/`).
 
+## 020 - UX/UI, branding and frontend information architecture
+
+These tasks convert the frontend into a coherent technical research product. They do not change
+APIs, SSE, persistence, evidence semantics, or models. They run as vertical slices in
+`specs/020-ux-ui-brand-redesign/`.
+
+- [X] UX-001 Inspect `apps/web`, routes, features, API clients, locales, styles, and tests.
+- [X] UX-002 Inventory `imgs/` and record dimensions, format, transparency, and canonical composition.
+- [X] UX-003 Create UX audit, information architecture, design system, and brand guidelines before broad coding.
+- [ ] UX-004 Create stacked, horizontal, mark, favicon, and transparent PNG fallback assets without embedding PNG in SVG.
+- [ ] UX-005 Centralize brand, surface, text, evidence, spacing, typography, radius, shadow, focus, and motion tokens.
+- [ ] UX-006 Implement AppShell, responsive navigation, locale switch, and Ask/Compare/Reports/News/Sources/Account/Admin routes.
+- [ ] UX-007 Redesign Ask ATLAS, evidence, citations, states, progress, errors, and abstention without changing contracts.
+- [ ] UX-008 Redesign comparator, reports, news, sources, account, and administration in their own routes.
+- [ ] UX-009 Run Playwright visual QA at 375/390/768/1024/1280/1440/1920, including 1440x900 and 390x844 captures.
+- [ ] UX-010 Run accessibility, overflow, focus, contrast, reduced-motion, route, favicon, and SVG checks.
+- [ ] UX-011 Update README, ADR, visual evidence, and status matrix; close only after build/tests and visual review.
+
 ## 007 — retrieval quality and multilingual evidence
 
 - [X] RET-001 Run `/speckit.specify` for production retrieval quality beyond the exact hybrid baseline.

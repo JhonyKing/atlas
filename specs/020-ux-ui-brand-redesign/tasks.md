@@ -1,0 +1,96 @@
+# Tasks: ATLAS UX/UI and Brand Redesign
+
+**Input**: [spec.md](spec.md), [plan.md](plan.md), [research.md](research.md), [data-model.md](data-model.md), [contracts/](contracts/)
+
+**Prerequisites**: Feature 019 agent slice remains green; no task below changes backend/API/SSE/evidence contracts.
+
+## Phase 1: Inspection and design foundation (P1, no broad UI coding)
+
+- [X] T001 [US1] Inventory all `apps/web` routes, feature components, API clients, locale catalogs, styles, tests, and current user journeys in `docs/design/ux-audit.md`.
+- [X] T002 [US4] Inspect every file under `imgs/`, record filename, dimensions, format, alpha/transparency, visual role, and canonical composition in `docs/design/brand-guidelines.md`.
+- [X] T003 [US2] Define route ownership, public/admin separation, navigation hierarchy, locale behavior, and migration approach in `docs/design/information-architecture.md`.
+- [X] T004 [US4] Define the light-first token system, evidence semantic states, type/spacing/radius/shadow/motion rules, and component states in `docs/design/design-system.md`.
+- [X] T005 [US4] Document logo meaning, stacked/horizontal/mark usage, clear space, minimum size, backgrounds, palette, gradient, typography, favicon use, and incorrect usage in `docs/design/brand-guidelines.md`.
+- [X] T006 [US1] Record the planned files, backend-scope boundary, strengths, high-priority UX findings, and Definition-of-Ready review in `docs/design/ux-audit.md`.
+- [X] T007 [US1] Review Phase 1 artifacts against the brief and record owner approval or findings before broad frontend implementation in `docs/verification/020-ux-ui-phase-1-review.md`. Evidence: review approved the brand-assets slice and preserved the backend scope guard.
+
+## Phase 2: Brand assets (P1)
+
+- [X] T008 [P] [US4] Recreate the approved futuristic A mark as clean path/polygon/line/circle SVG without embedded PNG in `apps/web/public/brand/atlas-mark.svg`. Evidence: `docs/verification/020-brand-assets.md` and visual screenshots.
+- [X] T009 [P] [US4] Create stacked and horizontal SVG compositions from the approved mark/wordmark in `apps/web/public/brand/atlas-logo-stacked.svg` and `apps/web/public/brand/atlas-logo-horizontal.svg`. Evidence: `docs/verification/020-brand-assets.md`.
+- [ ] T010 [P] [US4] Generate transparent PNG fallbacks, favicon, and optional app icons from the approved SVG assets in `apps/web/public/brand/`.
+- [X] T011 [US4] Add asset rendering/transparent-background/minimum-size tests and document output dimensions in `apps/web/src/brand-assets.test.ts` and `docs/verification/020-brand-assets.md`. Evidence: 4 new Vitest checks passed; Playwright screenshots reviewed.
+
+## Phase 3: Tokens and shared components (P1)
+
+- [ ] T012 [US4] Replace repeated global color/surface/text/radius/spacing/shadow/focus values with centralized ATLAS tokens in `apps/web/src/app/globals.css` or `apps/web/src/styles/tokens.css`.
+- [ ] T013 [P] [US4] Add shared brand components for logo/wordmark/mark usage in `apps/web/src/components/brand/AtlasLogo.tsx`.
+- [ ] T014 [P] [US4] Add accessible Button, Input, Textarea, Select, Checkbox, Field, Label, HelperText, ErrorMessage, and FileUpload primitives in `apps/web/src/components/forms/`.
+- [ ] T015 [P] [US3] Add semantic evidence state/badge, citation card, source metadata, and research progress components in `apps/web/src/components/evidence/` and `apps/web/src/components/research/`.
+- [ ] T016 [US4] Add component unit tests for keyboard/focus/loading/error/success/disabled states and evidence labels in `apps/web/src/components/**/__tests__/`.
+
+## Phase 4: AppShell and information architecture (P1)
+
+- [ ] T017 [US2] Implement responsive AppShell with horizontal desktop logo, mobile mark, public navigation, locale switch, active state, and content frame in `apps/web/src/components/layout/AppShell.tsx` and `apps/web/src/components/layout/Navigation.tsx`.
+- [ ] T018 [US2] Integrate AppShell in `apps/web/src/app/layout.tsx` without changing locale provider/API behavior; add route-level metadata and skip-link semantics.
+- [ ] T019 [US2] Create locale-aware route pages for `/reports`, `/news`, `/sources`, `/account`, `/admin`, `/admin/sources`, `/admin/reviews`, and `/admin/governance` in `apps/web/src/app/[locale]/`.
+- [ ] T020 [US2] Add route/navigation smoke tests for public/admin separation, active state, locale paths, unauthorized admin behavior, and no unrelated home panels in `apps/web/tests/routes.spec.ts`.
+- [ ] T021 [US2] Move existing News, Corpus, Auth/private, Governance, Review, and Reports feature components behind their route owners while retaining backend clients and compatibility links.
+
+## Phase 5: Ask ATLAS and evidence experience (P1)
+
+- [ ] T022 [US1] Redesign the home hero and question form around the ATLAS promise, source selector, supported-source explanation, examples/empty state, and one primary action in `apps/web/src/features/cited-answer/CitedAnswerForm.tsx` and focused components.
+- [ ] T023 [US3] Refactor answer progress, claims, citations, limitations, feedback, and abstention into readable research surfaces using shared evidence/citation components without changing SSE behavior.
+- [ ] T024 [US3] Add evidence state labels/icons/tooltips and citation inspection affordances with accessible semantics in `apps/web/src/features/evidence/`.
+- [ ] T025 [US1] Add Ask route responsive/accessibility tests and Playwright visual QA at 1440×900 and 390×844; save artifacts under `test-results/` and `docs/verification/`.
+
+## Phase 6: Comparator (P1)
+
+- [ ] T026 [US3] Redesign technology/criteria controls as accessible chips/fields with clear selected/available states in `apps/web/src/features/comparison/ComparisonPage.tsx`.
+- [ ] T027 [US3] Redesign comparison progress and matrix readability, evidence links, supported/partial/unsupported/contradictory states, and responsive overflow strategy in `apps/web/src/features/comparison/`.
+- [ ] T028 [US3] Add comparator responsive/accessibility tests and visual QA at 1440×900 and 390×844 without changing comparison API/SSE contracts.
+
+## Phase 7: Reports, News, Sources, Account, Admin (P2)
+
+- [ ] T029 [US2] Redesign `/reports` around recent completed research/comparison cards, guided PDF/DOCX generation, artifact states, and secondary manual/advanced ID mode in `apps/web/src/features/reports/`.
+- [ ] T030 [US2] Redesign `/news` as an editorial Internet Signal surface with date, title, summary, publisher, source link, and unavailable/no-evidence explanation in `apps/web/src/features/news/`.
+- [ ] T031 [US2] Redesign `/sources` collection cards with counts, publisher, freshness, stale explanation, canonical root, and semantic status in `apps/web/src/features/corpus/CorpusStatus.tsx`.
+- [ ] T032 [US2] Redesign `/account` auth/private resource forms with labels, helper/error/loading/signed-in states and ownership-safe empty states in `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`.
+- [ ] T033 [US2] Redesign `/admin` and subroutes for governance/review/internal operations with denser utility layout and no public-home leakage in `apps/web/src/features/corpus/GovernancePanel.tsx` and `apps/web/src/features/agent/ReviewPanel.tsx`.
+- [ ] T034 [US2] Add route-level empty/error/retry and visual QA artifacts for reports, news, sources, account, and admin at desktop/mobile widths.
+
+## Phase 8: Responsive, accessibility, and final visual QA (P2)
+
+- [ ] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`.
+- [ ] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`.
+- [ ] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`.
+- [ ] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`.
+
+## Phase 9: Documentation, convergence, and closeout
+
+- [ ] T039 [P] Update `README.md` with route map, design system, brand asset usage, UX evidence, and visual QA links.
+- [ ] T040 [P] Add/update the UX/architecture ADR in `docs/adr/` for route separation, AppShell, tokens, and brand assets.
+- [ ] T041 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 020 and implementation/evidence status.
+- [ ] T042 Run Speckit analyze after task generation and resolve critical contradictions before implementation.
+- [ ] T043 Run full frontend lint/typecheck/unit/E2E plus existing backend regression checks to prove no backend behavior changed.
+- [ ] T044 Run Speckit converge after implementation; keep Feature 020 open while visual QA, accessibility, route, or documentation gates remain pending.
+- [ ] T045 Commit each vertical slice with README/ADR/evidence updates and task/route traceability.
+
+## Dependencies & Execution Order
+
+- T001-T006 are complete inspection/design artifacts; T007 is the review checkpoint and blocks broad UI coding.
+- T008-T011 brand assets block AppShell/logo integration.
+- T012-T016 tokens/components block AppShell and feature redesigns.
+- T017-T021 AppShell/routes block route-specific UX slices.
+- T022-T025 Ask/evidence is the first user-facing MVP slice; T026-T028 comparator follows.
+- T029-T034 cover remaining public/admin surfaces and depend on AppShell/tokens.
+- T035-T038 depend on all desired route slices and block closeout.
+- T039-T045 are required for Definition of Done.
+
+## Definition of Done
+
+Feature 020 is complete only when audit/design docs are current, approved assets are web-ready, tokens
+and shared components are used, route information architecture is implemented, all required workflows
+have clear responsive/accessibility states, screenshots and QA artifacts exist at required widths,
+existing backend behavior/tests remain green, and README/ADR/status documentation reflects the actual
+frontend. A CSS-only polish or a passing build alone does not close the feature.

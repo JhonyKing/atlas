@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="title desc">
+  <title id="title">ATLAS AI</title>
+  <desc id="desc">ATLAS futuristic A mark beside the ATLAS wordmark.</desc>
+  <defs>
+    <linearGradient id="atlas-horizontal-gradient" x1="16" y1="198" x2="238" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#168BFF"/>
+      <stop offset="0.52" stop-color="#3155D9"/>
+      <stop offset="1" stop-color="#081A4A"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(10 -2) scale(.86)" fill="none">
+    <path d="M128 16 238 232 184 211 128 95 72 211 18 232Z" fill="url(#atlas-horizontal-gradient)" stroke="#081A4A" stroke-width="3"/>
+    <path d="m128 95 28 57-28 24-28-24Z" fill="#081A4A"/>
+    <path d="M128 53v42m0 81v31" stroke="#20D9FF" stroke-width="7" stroke-linecap="round"/>
+    <path d="M52 169h56l20-20 31 31h30" stroke="#20D9FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M69 205h41l37-37 42 42" stroke="#14B8B8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M53 169H28m140 0 42-40" stroke="#168BFF" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="28" cy="169" r="12" fill="#168BFF" stroke="#081A4A" stroke-width="4"/>
+    <circle cx="210" cy="129" r="15" fill="#F5AF19" stroke="#081A4A" stroke-width="5"/>
+    <circle cx="189" cy="210" r="12" fill="#20D9FF" stroke="#081A4A" stroke-width="4"/>
+  </g>
+  <text x="480" y="145" text-anchor="middle" fill="#081A4A" font-family="Inter, Arial, sans-serif" font-size="86" font-weight="700" letter-spacing="10">ATLAS</text>
+</svg>
