@@ -12,8 +12,32 @@ from atlas.agent.checkpoints import InMemoryCheckpointRepository
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.review import ReviewService
 from atlas.agent.state import AtlasState
+from atlas.agent.tools.registry import Locale, ToolCatalog
 
 router = APIRouter(prefix="/v1/agent", tags=["Agent orchestration"])
+
+
+def _tool_catalog(request: Request) -> ToolCatalog:
+    return cast(ToolCatalog, request.app.state.agent_tool_catalog)
+
+
+@router.get("/tools")
+def list_tools(request: Request, locale: Locale = "en-US") -> dict[str, object]:
+    """Return the safe, localized allowlist used by the planner and agent workspace."""
+
+    catalog = _tool_catalog(request)
+    tools = []
+    for tool in catalog.list_for_locale(locale):
+        item = tool.model_dump(mode="json")
+        localized = item["localization"][locale]
+        item["name"] = localized["name"]
+        item["description"] = localized["description"]
+        tools.append(item)
+    return {
+        "version": catalog.version,
+        "locale": locale,
+        "tools": tools,
+    }
 
 
 class PrepareRequest(BaseModel):

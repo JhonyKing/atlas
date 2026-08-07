@@ -7,9 +7,10 @@ import { SessionPanel } from "@/features/auth/SessionPanel";
 import { PrivateResourcesPanel } from "@/features/private-data/PrivateResourcesPanel";
 import { PrivateUploadPanel } from "@/features/private-data/PrivateUploadPanel";
 import { ReviewPanel } from "@/features/agent/ReviewPanel";
+import { AgentWorkspace } from "@/features/agent/AgentWorkspace";
 
 export function HomePage() {
-  return <main><CorpusStatus /><GovernancePanel /><ReviewPanel /><DailyNews /><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /><CitedAnswerForm /><ReportRequest /></main>;
+  return <main><AgentWorkspace /><CorpusStatus /><GovernancePanel /><ReviewPanel /><DailyNews /><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /><CitedAnswerForm /><ReportRequest /></main>;
 }
 
 export default HomePage;
