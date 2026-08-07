@@ -20,7 +20,7 @@
 - [X] T009 Implement typed state and version metadata in `apps/backend/src/atlas/agent/state.py`.
 - [X] T010 Implement deterministic intent/depth/language/risk/freshness classification with safe fallback.
 - [X] T011 Implement bounded question decomposition, source/date criteria, evidence budget, and report path planning.
-- [ ] T012 Implement explicit graph orchestration and conditional routes in `apps/backend/src/atlas/agent/orchestration.py`.
+- [X] T012 Implement explicit graph orchestration and conditional routes in `apps/backend/src/atlas/agent/orchestration.py`.
 - [ ] T013 Add node-level timeout, cancellation, state-isolation, safe-error, and redacted event handling.
 - [ ] T014 Integrate existing cited-answer verification and report-spec validation without bypassing their contracts.
 

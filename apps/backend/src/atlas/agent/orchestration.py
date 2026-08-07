@@ -69,3 +69,17 @@ class AgentOrchestrator:
         return state.model_copy(
             update={"language": classification.language, "route": plan, "node_history": history}
         )
+
+    def run(self, state: AtlasState, *, cancelled: bool = False) -> AtlasState:
+        """Execute deterministic routing nodes; provider work remains behind ports."""
+
+        prepared = self.prepare(state)
+        if cancelled:
+            return prepared.model_copy(
+                update={
+                    "node_history": [*prepared.node_history, "abstain"],
+                    "errors": ["cancelled"],
+                }
+            )
+        terminal = prepared.route.route
+        return prepared.model_copy(update={"node_history": [*prepared.node_history, terminal]})
