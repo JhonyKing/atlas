@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Mapping
 from datetime import UTC, datetime
-from typing import Annotated, Literal, Protocol
+from typing import Annotated, Literal, Protocol, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Request, status
@@ -70,7 +70,7 @@ def _service(request: Request) -> ComparisonRunControl:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Comparison service is unavailable",
         )
-    return service
+    return cast(ComparisonRunControl, service)
 
 
 def _visitor_hash(request: Request) -> str:
@@ -81,8 +81,16 @@ def _request_id(request: Request) -> UUID:
     return current_request_id() or UUID(int=0)
 
 
-def _problem(request: Request, *, status_code: int, detail: str, error_code: str) -> JSONResponse:
+def _problem(
+    request: Request,
+    *,
+    status_code: int,
+    detail: str,
+    error_code: str,
+    headers: Mapping[str, str] | None = None,
+) -> JSONResponse:
     request_id = _request_id(request)
+    response_headers = {"X-Request-ID": str(request_id), **(headers or {})}
     return JSONResponse(
         status_code=status_code,
         content={
@@ -94,7 +102,7 @@ def _problem(request: Request, *, status_code: int, detail: str, error_code: str
             "error_code": error_code,
         },
         media_type="application/problem+json",
-        headers={"X-Request-ID": str(request_id)},
+        headers=response_headers,
     )
 
 
@@ -114,12 +122,14 @@ async def create_comparison(
 ) -> StreamingResponse | JSONResponse:
     try:
         payload = dict(raw_body)
-        payload["technologies"] = [CollectionSlug(value) for value in payload["technologies"]]
-        payload["criteria"] = [ComparisonCriterion(value) for value in payload["criteria"]]
+        technologies = cast(list[str], payload["technologies"])
+        criteria = cast(list[str], payload["criteria"])
+        payload["technologies"] = [CollectionSlug(value) for value in technologies]
+        payload["criteria"] = [ComparisonCriterion(value) for value in criteria]
         if payload.get("product") is not None:
-            payload["product"] = CollectionSlug(payload["product"])
+            payload["product"] = CollectionSlug(cast(str, payload["product"]))
         if payload.get("source_type") is not None:
-            payload["source_type"] = SourceType(payload["source_type"])
+            payload["source_type"] = SourceType(cast(str, payload["source_type"]))
         comparison = ComparisonRequest.model_validate(payload)
     except (ValidationError, ValueError):
         return _problem(

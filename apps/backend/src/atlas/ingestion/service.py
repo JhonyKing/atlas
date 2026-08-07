@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Protocol, cast
 from uuid import UUID
 
 import psycopg
@@ -107,7 +107,7 @@ class IngestionService:
         getter = getattr(self._repository, "get_status", None)
         if getter is None:
             return None
-        return getter(run_id)
+        return cast(dict[str, object] | None, getter(run_id))
 
 
 class PostgresIngestionRepository:
@@ -139,7 +139,7 @@ class PostgresIngestionRepository:
             if existing[1] != collection.value:
                 raise IdempotencyConflict("idempotency key belongs to another collection")
             self._connection.commit()
-            return existing[0]
+            return cast(UUID, existing[0])
         row = self._connection.execute(
             "SELECT atlas.enqueue_ingestion(%s, %s, %s, %s)",
             (
@@ -152,7 +152,7 @@ class PostgresIngestionRepository:
         self._connection.commit()
         if row is None:
             raise RuntimeError("ingestion enqueue did not return a run id")
-        return row[0]
+        return cast(UUID, row[0])
 
     def get_status(self, run_id: UUID) -> dict[str, object] | None:
         row = self._connection.execute(
@@ -405,7 +405,7 @@ class PostgresIngestionRepository:
         ).fetchone()
         if row is None:
             raise KeyError(f"collection {collection.value} is not seeded")
-        return row[0]
+        return cast(UUID, row[0])
 
     def _source_id(self, candidate: SourceCandidate) -> UUID:
         row = self._connection.execute(
@@ -419,7 +419,7 @@ class PostgresIngestionRepository:
         ).fetchone()
         if row is None:
             raise KeyError("source is not staged")
-        return row[0]
+        return cast(UUID, row[0])
 
     def _release_lease(self, run: IngestionRun) -> None:
         slug = self._leases.pop(run.id, None)

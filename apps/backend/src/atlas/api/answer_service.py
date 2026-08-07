@@ -6,12 +6,19 @@ import asyncio
 from collections.abc import AsyncIterator, Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
-from typing import Protocol
+from typing import Protocol, cast
 from uuid import UUID, uuid4
 
 from atlas.api.answer_events import SSEEventWriter
 from atlas.api.routes.answers import AnswerRunConflict, AnswerRunStatus
-from atlas.domain import AnswerStatus, CollectionSlug, Question, assemble_citations
+from atlas.domain import (
+    AnswerDraft,
+    AnswerStatus,
+    CollectionSlug,
+    Evidence,
+    Question,
+    assemble_citations,
+)
 from atlas.observability.langsmith import NullTraceSink, TraceSink
 from atlas.persistence.quota import QuotaService
 
@@ -222,7 +229,8 @@ class InMemoryAnswerRunService:
         self._trace_sink.end(retrieval_trace, status="completed")
         self._trace_sink.end(generation_trace, status="completed")
 
-        answer = result.get("answer")
+        answer = cast(AnswerDraft | None, result.get("answer"))
+        evidence = cast(tuple[Evidence, ...] | list[Evidence], result.get("evidence", []))
         if answer is None or answer.answer_status is AnswerStatus.ABSTAINED:
             self._trace_sink.end(verification_trace, status="abstained")
             limitations = answer.limitations if answer is not None else []
@@ -251,7 +259,7 @@ class InMemoryAnswerRunService:
             citations = [
                 citation.model_dump(mode="json")
                 for citation in assemble_citations(
-                    result.get("evidence", []), evidence_ids=answer.evidence_ids
+                    evidence, evidence_ids=answer.evidence_ids
                 )
             ]
             claims = [claim.model_dump(mode="json") for claim in answer.claims]

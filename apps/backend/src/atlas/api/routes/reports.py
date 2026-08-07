@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Request, status
@@ -19,7 +19,7 @@ def _service(request: Request) -> InMemoryReportService:
     service = request.app.state.report_service
     if service is None:
         raise HTTPException(status_code=503, detail="Report service is unavailable")
-    return service
+    return cast(InMemoryReportService, service)
 
 
 def _owner(request: Request) -> str:

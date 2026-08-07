@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 from urllib.parse import urlparse
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from atlas.domain import CollectionSlug, SourceType
 from atlas.ingestion.connectors import SourceCandidate
@@ -60,6 +61,7 @@ def load_manifest(path: Path) -> CorpusManifest:
         sources = raw_data.get("sources")
         if not isinstance(publisher, str) or not isinstance(allowed_host, str):
             raise ManifestError(f"collection {collection} needs publisher and allowed_host")
+        allowed_host_text = allowed_host
         if not isinstance(sources, list) or not sources:
             raise ManifestError(f"collection {collection} needs sources")
         for item in sources:
@@ -70,25 +72,28 @@ def load_manifest(path: Path) -> CorpusManifest:
                 isinstance(value, str) and value.strip() for value in (title, url, source_type)
             ):
                 raise ManifestError(f"source in {collection} needs title, url and type")
-            parsed = urlparse(url)
+            title_text = cast(str, title)
+            url_text = cast(str, url)
+            source_type_text = cast(str, source_type)
+            parsed = urlparse(url_text)
             if parsed.scheme != "https" or parsed.username or parsed.password:
                 raise ManifestError("manifest sources must be HTTPS URLs without credentials")
-            if (parsed.hostname or "").casefold().rstrip(".") != allowed_host.casefold().rstrip(
-                "."
+            if (parsed.hostname or "").casefold().rstrip(".") != (
+                allowed_host_text.casefold().rstrip(".")
             ):
                 raise ManifestError("source host does not match the collection allowlist")
-            if url in seen:
+            if url_text in seen:
                 raise ManifestError("manifest contains a duplicate URL")
             try:
-                normalized_type = SourceType(source_type)
+                normalized_type = SourceType(source_type_text)
             except ValueError as exc:
-                raise ManifestError(f"unsupported source type: {source_type}") from exc
-            seen.add(url)
+                raise ManifestError(f"unsupported source type: {source_type_text}") from exc
+            seen.add(url_text)
             candidates.append(
                 SourceCandidate(
                     collection=collection,
-                    canonical_url=url,
-                    title=title,
+                    canonical_url=url_text,
+                    title=title_text,
                     source_type=normalized_type,
                 )
             )

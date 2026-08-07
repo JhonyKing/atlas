@@ -51,7 +51,7 @@ class PostgresCorpusRepository:
         ).fetchone()
         if row is None:
             raise CorpusUnavailableError("no corpus snapshot is available")
-        return row[0]
+        return cast(UUID, row[0])
 
     async def search(
         self,

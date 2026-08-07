@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hmac
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, cast
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
@@ -64,7 +64,7 @@ def _service(request: Request) -> OperatorIngestionService:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Operator ingestion is unavailable",
         )
-    return service
+    return cast(OperatorIngestionService, service)
 
 
 def _response(payload: IngestionRunStatus, *, status_code: int) -> JSONResponse:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request, status
@@ -34,7 +34,7 @@ def _service(request: Request) -> ReviewCaseListing:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Review-case service is unavailable",
         )
-    return service
+    return cast(ReviewCaseListing, service)
 
 
 def _response(record: ReviewCaseRecord) -> ReviewCaseResponse:
