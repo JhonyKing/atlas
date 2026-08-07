@@ -7,12 +7,14 @@ from atlas.models.contracts import ModelRequest, ModelSelection, TaskSignals
 from atlas.models.pricing import PriceVersion, estimate_cost, select_price
 from atlas.models.resilience import CircuitBreaker, ProviderUnavailable, retry_async
 from atlas.models.router import ModelRouter
+from atlas.models.telemetry import CostRecord
 
 __all__ = [
     "BenchmarkResult",
     "BudgetLedger",
     "CacheKey",
     "CircuitBreaker",
+    "CostRecord",
     "ModelRequest",
     "ModelRouter",
     "ModelSelection",

@@ -13,13 +13,13 @@
 
 - [X] T007 Implement typed model contracts and Luna server setting.
 - [X] T008 Implement complexity/freshness/contradiction/report-depth router policy.
-- [ ] T009 Implement provider adapters and common response normalization.
+- [X] T009 Implement provider adapters and common response normalization.
 - [X] T010 Implement bounded timeout/retry/circuit/fallback policy.
 
 ## Phase 3: Cost, cache and evaluation
 
 - [X] T011 Implement effective-dated pricing and token/cost records.
-- [ ] T012 Implement daily budget enforcement and redacted telemetry.
+- [X] T012 Implement daily budget enforcement and redacted telemetry.
 - [X] T013 Implement tenant-safe versioned cache/evidence-pack keys.
 - [X] T014 Implement batch benchmark and A/B promotion decision.
 - [ ] T015 Add multilingual embedding profile selection without changing Evidence.
