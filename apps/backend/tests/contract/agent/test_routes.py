@@ -21,3 +21,10 @@ def test_comparison_report_and_cancellation_routes_are_explicit() -> None:
     cancelled = orchestrator.run(AtlasState(request="What is LangGraph?"), cancelled=True)
     assert cancelled.node_history[-1] == "abstain"
     assert cancelled.errors == ["cancelled"]
+
+
+def test_route_timeout_fails_closed() -> None:
+    orchestrator = AgentOrchestrator(timeout_seconds=0.0000001)
+    result = orchestrator.run(AtlasState(request="What is LangGraph?"))
+    assert result.errors == ["node_timeout"]
+    assert result.node_history[-1] == "abstain"

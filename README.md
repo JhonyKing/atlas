@@ -84,3 +84,22 @@ Run the deterministic verification from the repository root:
 ```powershell
 pnpm test:ingestion
 ```
+
+## Feature 006: agent graph, checkpoints, and human review
+
+Feature 006 adds a deterministic typed orchestration boundary for classification and planning,
+explicit answer/comparison/report/abstention routes, content-safe thread checkpoints with
+single-use replay, and a bilingual human-review gate before publication. The API exposes planning,
+review decisions, checkpoint status, and resume without returning request bodies or private state.
+
+Source and evidence:
+
+- `specs/006-agent-graph-human-review/spec.md`
+- `specs/006-agent-graph-human-review/tasks.md`
+- `docs/architecture/006-agent-graph-human-review.md`
+- `docs/adr/0005-explicit-agent-orchestration.md`
+- `docs/verification/006-agent-graph-human-review.md`
+
+```powershell
+pnpm test:agent
+```

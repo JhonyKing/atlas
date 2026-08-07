@@ -1,0 +1,6 @@
+{"case_id":"agent-route-factual","kind":"agent-orchestration","expected":"classify_plan_answer","locale":"en-US"}
+{"case_id":"agent-route-abstention","kind":"agent-safety","expected":"classify_plan_abstain","locale":"es-MX"}
+{"case_id":"agent-route-cancel","kind":"agent-cancellation","expected":"safe_abstention_without_publication","locale":"en-US"}
+{"case_id":"agent-replay-idempotent","kind":"agent-checkpoint","expected":"single_side_effect_per_thread_replay_key","locale":"en-US"}
+{"case_id":"agent-review-gate","kind":"agent-review","expected":"publish_only_after_authorized_decision","locale":"es-MX"}
+{"case_id":"agent-no-secrets","kind":"agent-security","expected":"redacted_checkpoint_and_node_events","locale":"en-US"}

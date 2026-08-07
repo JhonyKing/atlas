@@ -11,9 +11,9 @@
 - [X] T003 Add Feature 006 verification script/package command and bounded settings for node/checkpoint/review TTLs.
 - [X] T004 Add failing `AtlasState`, `RoutePlan`, `Checkpoint`, `ReviewRequest`, and `NodeEvent` schema tests.
 - [X] T005 Add failing graph route/node-order contract tests for factual, comparison, report, abstention, and cancellation paths.
-- [ ] T006 Add failing checkpoint/replay tests for crash recovery, duplicate resume, corruption, expiry, and concurrency.
+- [X] T006 Add failing checkpoint/replay tests for crash recovery, duplicate resume, corruption, expiry, and concurrency.
 - [X] T007 Add failing review contract/security tests for approve, validated edit, reject, unauthorized, expiry, duplicate decision, and citation removal.
-- [ ] T008 Add failing API and SQL contract tests for status, checkpoint, review, and publication boundaries.
+- [X] T008 Add failing API and SQL contract tests for status, checkpoint, review, and publication boundaries.
 
 ## Phase 2: State, classification, planning, and graph (P1)
 
@@ -21,7 +21,7 @@
 - [X] T010 Implement deterministic intent/depth/language/risk/freshness classification with safe fallback.
 - [X] T011 Implement bounded question decomposition, source/date criteria, evidence budget, and report path planning.
 - [X] T012 Implement explicit graph orchestration and conditional routes in `apps/backend/src/atlas/agent/orchestration.py`.
-- [ ] T013 Add node-level timeout, cancellation, state-isolation, safe-error, and redacted event handling.
+- [X] T013 Add node-level timeout, cancellation, state-isolation, safe-error, and redacted event handling.
 - [ ] T014 Integrate existing cited-answer verification and report-spec validation without bypassing their contracts.
 
 ## Phase 3: Durable checkpoints and replay (P1)
@@ -31,7 +31,7 @@
 - [X] T017 Implement concurrency-safe resume keyed by `thread_id` and replay key with duplicate side-effect suppression.
 - [X] T018 Add PostgreSQL migration `database/migrations/versions/0024_agent_checkpoints_reviews.py` with checkpoint/review/node-event tables, constraints, indexes, and grants.
 - [X] T019 Add SQL contract `database/tests/014_agent_checkpoints_reviews.sql` for uniqueness, expiry, append-only decisions, and tenant isolation.
-- [ ] T020 Add crash/resume integration tests for answer, report, ingestion, and evaluation job categories.
+- [X] T020 Add crash/resume integration tests for answer, report, ingestion, and evaluation job categories.
 
 ## Phase 4: Human review boundary (P1)
 
@@ -45,11 +45,11 @@
 ## Phase 5: Observability, evaluation, and documentation
 
 - [X] T027 Add route/node/checkpoint/review telemetry with request/run/thread IDs, latency, outcome, versions, and safe error code.
-- [ ] T028 Add deterministic evaluation cases for node order, abstention, replay, review gating, and no-secret state.
-- [ ] T029 Run targeted/full backend tests, migration/SQL contract, lint, mypy, and browser suite; record `docs/verification/006-agent-graph-human-review.md`.
-- [ ] T030 Update README with Feature 006 scope, review workflow, checkpoint guarantees, and verification command.
-- [ ] T031 Create `docs/architecture/006-agent-graph-human-review.md` and `docs/adr/0005-explicit-agent-orchestration.md`.
-- [ ] T032 Update PRD backlog/status matrix and add documentation task evidence.
+- [X] T028 Add deterministic evaluation cases for node order, abstention, replay, review gating, and no-secret state.
+- [X] T029 Run targeted/full backend tests, migration/SQL contract, lint, mypy, and browser suite; record `docs/verification/006-agent-graph-human-review.md`.
+- [X] T030 Update README with Feature 006 scope, review workflow, checkpoint guarantees, and verification command.
+- [X] T031 Create `docs/architecture/006-agent-graph-human-review.md` and `docs/adr/0005-explicit-agent-orchestration.md`.
+- [X] T032 Update PRD backlog/status matrix and add documentation task evidence.
 - [ ] T033 Run SpecKit Analyze and Converge; append and implement any remaining traceable tasks before closure.
 
 ## Dependencies and Execution Order
