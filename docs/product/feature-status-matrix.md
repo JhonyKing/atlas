@@ -26,6 +26,8 @@ task remains open.
 
 | 018 - Production deployment | Planning artifacts define Vercel web, Supabase managed data/auth/storage, managed API/worker, release gates, evidence, observability, backups, and rollback. | Specification and contract artifacts reviewed; no real Vercel/Supabase/container deployment has been claimed. | All implementation tasks and operator-owned environment evidence are pending, including URLs, migration head, bilingual smoke, traces, backup/restore, and rollback. | **Not started** - planning artifacts exist; implementation and external evidence remain open. |
 
+| 019 - Agent tool orchestration | Planning artifacts define a versioned tool registry, bounded planner/executor, approval/idempotency policy, durable run events, localized workspace, evidence mapping, and LangSmith/evaluation gates. | Specification and contract artifacts reviewed; no new agent workspace or production trace has been claimed. | All implementation tasks and live provider/evaluation evidence remain pending. | **Not started** - planning artifacts exist; implementation and evidence remain open. |
+
 ## Branch mapping
 
 - Stable Feature 003 branch: `codex/release-feature-003`, based on `a2cfed8` plus the artifact-evidence commit.

@@ -98,6 +98,12 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 - [ ] AGT-008 Implement persistent checkpoints keyed by `thread_id` for long-running report/ingestion/eval jobs.
 - [ ] AGT-009 Implement resume-after-worker-failure and idempotent replay tests.
 - [ ] AGT-010 Implement human review approve/edit/reject boundary for publication or consequential actions.
+- [ ] AGT-011 Create a versioned allowlisted tool catalog for answer, comparison, reports, news, corpus, private data, and review capabilities.
+- [ ] AGT-012 Add typed plan validation, bounded tool execution, dependency/budget/timeout controls, cancellation, checkpoint/replay, and safe partial failures.
+- [ ] AGT-013 Require identity, ownership, consent, explicit approval, and idempotency for private, mutation, publication, ingestion, and deletion tools.
+- [ ] AGT-014 Expose localized tool selection, schema-driven inputs, approval cards, run timeline, evidence/artifact links, and resume controls.
+- [ ] AGT-015 Emit redacted run/tool/evidence events and LangSmith/OpenTelemetry metadata for model, tool, locale, corpus, tokens, cost, latency, and outcome.
+- [ ] AGT-016 Evaluate tool selection, argument validity, evidence coverage, abstention, safety, replay, latency, cost, and artifact correctness with deterministic/live mode separation. Tracked by SpecKit Feature 019 (`specs/019-agent-tool-orchestration/`).
 
 ## 007 — retrieval quality and multilingual evidence
 
