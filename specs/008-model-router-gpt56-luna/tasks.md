@@ -7,7 +7,7 @@
 - [X] T003 Add `scripts/verify-model-router.ps1` and `pnpm test:model-router`.
 - [X] T004 Add contract tests for Luna default, complexity routing, unknown-model rejection and safe telemetry.
 - [X] T005 Add resilience tests for timeout, retry jitter, circuit open/close and fallback.
-- [ ] T006 Add pricing, budget, cache invalidation and A/B promotion-gate tests.
+- [X] T006 Add pricing, budget, cache invalidation and A/B promotion-gate tests.
 
 ## Phase 2: Routing and provider boundary
 
@@ -18,10 +18,10 @@
 
 ## Phase 3: Cost, cache and evaluation
 
-- [ ] T011 Implement effective-dated pricing and token/cost records.
+- [X] T011 Implement effective-dated pricing and token/cost records.
 - [ ] T012 Implement daily budget enforcement and redacted telemetry.
-- [ ] T013 Implement tenant-safe versioned cache/evidence-pack keys.
-- [ ] T014 Implement batch benchmark and A/B promotion decision.
+- [X] T013 Implement tenant-safe versioned cache/evidence-pack keys.
+- [X] T014 Implement batch benchmark and A/B promotion decision.
 - [ ] T015 Add multilingual embedding profile selection without changing Evidence.
 
 ## Phase 4: Verification and closure
