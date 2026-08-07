@@ -152,3 +152,39 @@ async def test_retrieval_records_bounded_rewrite_and_applies_available_filters()
     assert [row.evidence.id for row in results] == [first_id, second_id]
     assert repository.search_calls[0]["query_text"] == "what is langgraph? StateGraph"
     assert service.last_metadata["rewritten_terms"] == ("StateGraph",)
+
+
+@pytest.mark.asyncio
+async def test_retrieval_enforces_all_filter_dimensions_before_ranking() -> None:
+    matching_id = UUID("00000000-0000-0000-0000-000000000021")
+    rejected_id = UUID("00000000-0000-0000-0000-000000000022")
+    matching = evidence(evidence_id=matching_id, title="LangGraph OpenAI")
+    rejected = evidence(evidence_id=rejected_id, title="LangGraph OpenAI")
+    rejected = rejected.model_copy(
+        update={"version_label": "0.9", "source_type": SourceType.CHANGELOG}
+    )
+    repository = FakeRetrievalRepository(
+        [
+            RetrievalRow(evidence=rejected, fused_rank=1),
+            RetrievalRow(evidence=matching, fused_rank=2),
+        ]
+    )
+    service = RetrievalService(repository)
+    question = Question(text="OpenAI LangGraph version", product=CollectionSlug.OPENAI)
+
+    results = await service.retrieve(
+        question,
+        [0.0],
+        filters=RetrievalFilters(
+            provider="openai",
+            framework="langgraph",
+            version="1.0",
+            date_from=date(2026, 8, 1),
+            date_to=date(2026, 8, 5),
+            language="en-US",
+            source_type=SourceType.DOCUMENTATION,
+            collection=CollectionSlug.OPENAI,
+        ),
+    )
+
+    assert [row.evidence.id for row in results] == [matching_id]

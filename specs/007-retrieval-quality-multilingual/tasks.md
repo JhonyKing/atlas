@@ -34,7 +34,14 @@
 - [X] T018 Add `evals/cases/007-retrieval-quality-multilingual.jsonl` and metric summary output.
 - [X] T019 Update README with retrieval quality commands and baseline/reranker policy.
 - [X] T020 Create `docs/architecture/007-retrieval-quality-multilingual.md` and `docs/adr/0006-measured-retrieval-quality.md`.
-- [ ] T021 Update PRD backlog/status matrix and run SpecKit Analyze/Converge before closure.
+- [X] T021 Update PRD backlog/status matrix and run SpecKit Analyze/Converge before closure.
+
+## Phase 5: Convergence
+
+- [X] T022 Add a deterministic multilingual embedding-profile benchmark and record fallback versus
+  language-specific profile metrics per FR-RET-005/SC-RET-006 (partial).
+- [X] T023 Add integration coverage proving provider, framework, date, version, language and
+  source-type filters are all enforced before ranking per FR-RET-002/SC-RET-002 (partial).
 
 ## Requirements Traceability
 

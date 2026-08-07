@@ -1,6 +1,10 @@
 """Deterministic retrieval services and repository ports."""
 
 from atlas.retrieval.context import ContextItem, EvidenceBudget, assemble_context
+from atlas.retrieval.embedding_benchmark import (
+    EmbeddingProfileResult,
+    benchmark_embedding_profiles,
+)
 from atlas.retrieval.metrics import (
     RetrievalMetrics,
     calculate_metrics,
@@ -18,6 +22,7 @@ from atlas.retrieval.service import RetrievalRow, RetrievalService
 
 __all__ = [
     "ContextItem",
+    "EmbeddingProfileResult",
     "EvidenceBudget",
     "QueryRewrite",
     "RerankMetrics",
@@ -27,6 +32,7 @@ __all__ = [
     "RetrievalRow",
     "RetrievalService",
     "assemble_context",
+    "benchmark_embedding_profiles",
     "build_query_rewrite",
     "calculate_metrics",
     "decide_reranker",

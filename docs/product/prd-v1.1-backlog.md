@@ -101,15 +101,15 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 007 — retrieval quality and multilingual evidence
 
-- [ ] RET-001 Run `/speckit.specify` for production retrieval quality beyond the exact hybrid baseline.
-- [ ] RET-002 Implement query rewriting for terms, versions, aliases, and synonyms.
-- [ ] RET-003 Implement filters for provider, framework, date, version, language, and source type.
-- [ ] RET-004 Implement MMR/deduplication diversity and parent-child context windows.
-- [ ] RET-005 Implement measured reranking/cross-encoder behind an adapter, only after baseline comparison.
-- [ ] RET-006 Benchmark multilingual embeddings and language-aware retrieval.
-- [ ] RET-007 Implement evidence-budget token limits and authority/freshness prioritization.
-- [ ] RET-008 Add Hit@5, MRR, context precision/recall, citation precision, and freshness accuracy evals.
-- [ ] RET-009 Add temporal, cross-language, contradiction, and source-version regression cases.
+- [X] RET-001 Run `/speckit.specify` for production retrieval quality beyond the exact hybrid baseline.
+- [X] RET-002 Implement query rewriting for terms, versions, aliases, and synonyms.
+- [X] RET-003 Implement filters for provider, framework, date, version, language, and source type.
+- [X] RET-004 Implement MMR/deduplication diversity and parent-child context windows.
+- [X] RET-005 Implement measured reranking/cross-encoder behind an adapter, only after baseline comparison.
+- [X] RET-006 Benchmark multilingual embeddings and language-aware retrieval.
+- [X] RET-007 Implement evidence-budget token limits and authority/freshness prioritization.
+- [X] RET-008 Add Hit@5, MRR, context precision/recall, citation precision, and freshness accuracy evals.
+- [X] RET-009 Add temporal, cross-language, contradiction, and source-version regression cases.
 
 ## 008 — model router, GPT-5.6 Luna, and cost controls
 

@@ -10,8 +10,8 @@ reranker decision gate. The baseline remains the default unless paired metrics a
 
 | Check | Result |
 |---|---:|
-| Targeted retrieval/security tests | 10 passed |
-| Full backend regression | 275 passed, 4 skipped |
+| Targeted retrieval/security tests | 13 passed |
+| Full backend regression | 278 passed, 4 skipped |
 | Ruff (retrieval package and tests) | passed |
 | mypy (retrieval package) | passed |
 | Retrieval JSONL cases | 4 cases |
@@ -21,6 +21,7 @@ reranker decision gate. The baseline remains the default unless paired metrics a
 | Baseline/candidate context recall | 1.0 / 1.0 |
 | Baseline/candidate citation precision | 0.5 / 0.5 |
 | Freshness accuracy | 1.0 |
+| Embedding profile fixture benchmark | baseline-multilingual and language-aware-v1: Hit@5/MRR 1.0/1.0 |
 
 Commands from repository root:
 
