@@ -145,3 +145,21 @@ Source and evidence:
 ```powershell
 pnpm test:model-router
 ```
+
+## Feature 009: security, privacy, and governance hardening
+
+Feature 009 adds source/redirect SSRF checks, inert-source and action allowlists, redacted audit and
+trace boundaries, consent/no-training policy, tenant-safe private data behavior, rate-limit
+challenge handling, frontend secret scanning and a CI security regression job.
+
+Evidence and design:
+
+- `specs/009-security-privacy-governance/tasks.md`
+- `docs/architecture/009-security-privacy-governance.md`
+- `docs/adr/0008-security-boundaries-and-private-data.md`
+- `docs/verification/009-security-privacy-governance.md`
+- `docs/security/external-review.md`
+
+```powershell
+pnpm test:security
+```

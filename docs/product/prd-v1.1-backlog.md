@@ -126,17 +126,17 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 009 — security, privacy, and governance hardening
 
-- [ ] SEC-001 Run `/speckit.specify` for private data and production security controls.
-- [ ] SEC-002 Write threat-model tests for SSRF, redirects, source injection, unauthorized tools, and generated-code execution.
-- [ ] SEC-003 Implement secrets-only-in-secret-manager deployment checks and frontend secret scanning.
-- [ ] SEC-004 Implement RLS and least-privilege roles for all private entities.
-- [ ] SEC-005 Implement upload malware/type/size scanning and scheduled deletion.
-- [ ] SEC-006 Implement IP/user/API-key rate limiting and abuse challenge boundary.
-- [ ] SEC-007 Implement audit log for source, report, admin, and sensitive-action changes.
-- [ ] SEC-008 Implement clear privacy notice and account/data deletion mechanism.
-- [ ] SEC-009 Implement no-training-on-private-documents policy and consent records.
-- [ ] SEC-010 Implement redacted traces, PII checks, retention/tombstones, and irreversible aggregates.
-- [ ] SEC-011 Add security regression gate to CI.
+- [X] SEC-001 Run `/speckit.specify` for private data and production security controls.
+- [X] SEC-002 Write threat-model tests for SSRF, redirects, source injection, unauthorized tools, and generated-code execution.
+- [X] SEC-003 Implement secrets-only-in-secret-manager deployment checks and frontend secret scanning.
+- [X] SEC-004 Implement RLS and least-privilege roles for all private entities.
+- [X] SEC-005 Implement upload malware/type/size scanning and scheduled deletion.
+- [X] SEC-006 Implement IP/user/API-key rate limiting and abuse challenge boundary.
+- [X] SEC-007 Implement audit log for source, report, admin, and sensitive-action changes.
+- [X] SEC-008 Implement clear privacy notice and account/data deletion mechanism.
+- [X] SEC-009 Implement no-training-on-private-documents policy and consent records.
+- [X] SEC-010 Implement redacted traces, PII checks, retention/tombstones, and irreversible aggregates.
+- [X] SEC-011 Add security regression gate to CI.
 - [ ] SEC-012 Run pre-launch external security review and resolve critical findings.
 
 ## 010 — scale, reliability, and launch SLOs

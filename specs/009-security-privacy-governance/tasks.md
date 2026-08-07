@@ -7,7 +7,7 @@
 - [X] T003 Add `scripts/verify-security.ps1`, `pnpm test:security` and CI security gate.
 - [X] T004 Add failing tests for URL validation, redirects, source/tool injection and generated code.
 - [X] T005 Add failing tests for secrets, redaction, PII, ownership, RLS, retention and deletion.
-- [ ] T006 Add failing tests for limits, challenge boundary, audit events and consent.
+- [X] T006 Add failing tests for limits, challenge boundary, audit events and consent.
 
 ## Phase 2: Security boundaries (P1)
 
@@ -15,19 +15,19 @@
 - [X] T008 Implement inert-source/tool/code-execution guardrails.
 - [X] T009 Implement centralized redaction, PII-safe traces and audit event contracts.
 - [X] T010 Integrate ownership/RLS, upload quarantine, retention/tombstones and deletion checks.
-- [ ] T011 Implement consent/no-training policy and bilingual privacy/deletion responses.
+- [X] T011 Implement consent/no-training policy and bilingual privacy/deletion responses.
 
 ## Phase 3: Abuse and governance (P2)
 
 - [X] T012 Implement provider-independent IP/visitor/user rate-limit and challenge policy.
 - [X] T013 Add frontend secret scan and CI security regression workflow.
-- [ ] T014 Add security finding/external-review tracking artifact without claiming review completion.
+- [X] T014 Add security finding/external-review tracking artifact without claiming review completion.
 
 ## Phase 4: Verification and closure
 
-- [ ] T015 Run targeted/full backend, frontend, SQL, Ruff/mypy and security gate; record evidence.
-- [ ] T016 Update README, architecture, ADR, PRD/status matrix and privacy docs.
-- [ ] T017 Run SpecKit Analyze/Converge; close only with zero mandatory tasks.
+- [X] T015 Run targeted/full backend, frontend, SQL, Ruff/mypy and security gate; record evidence.
+- [X] T016 Update README, architecture, ADR, PRD/status matrix and privacy docs.
+- [X] T017 Run SpecKit Analyze/Converge; close only with zero mandatory tasks.
 
 ## Requirements Traceability
 
