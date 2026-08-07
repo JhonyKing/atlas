@@ -100,8 +100,9 @@ Mode: local deterministic/fixture validation
   technology/criterion branch.
 - A new live Spanish four-technology run completed with HTTP 200 in **24,565 ms**:
   `ed9e093f-74ed-4d47-a5c6-8a05ace0e505`.
-- The machine-generated review artifact contains all 12 cell values, explanations, states and IDs:
-  `evals/results/live-comparator-t043-20260807-fixed.json`.
+- The machine-generated review artifacts contain all 12 cell values, explanations, states and IDs:
+  human-readable review at `evals/results/live-comparator-t043-20260807-fixed-review.md` and the
+  machine-readable record at `evals/results/live-comparator-t043-20260807-fixed.json`.
 - Its database join resolved **40/40 unique evidence IDs**, with **0 missing IDs** and **0 collection
   mismatches**. The artifact deliberately remains `pending_owner_review`; T040 is not closed.
 - Comparison regression tests: **42 passed**. Ruff and targeted mypy checks passed for the modified

@@ -142,5 +142,6 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   the cell's retrieved branch, and add regression tests plus a machine-generated live review artifact
   that validates every cited ID against its source metadata (partial, HIGH). (Evidence: full backend
   suite 311 passed/4 skipped; comparison suite 42 passed; new run `ed9e093f-74ed-4d47-a5c6-8a05ace0e505`
-  completed in 24,565 ms; `evals/results/live-comparator-t043-20260807-fixed.json` reports 40/40
-  evidence IDs resolved with zero collection mismatches. T040 remains open for owner review.)
+  completed in 24,565 ms; `evals/results/live-comparator-t043-20260807-fixed-review.md` and its
+  machine-readable JSON record report 40/40 evidence IDs resolved with zero collection mismatches.
+  T040 remains open for owner review.)
