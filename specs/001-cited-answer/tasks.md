@@ -184,7 +184,7 @@ abstention.
 - [ ] T074 Execute a moderated five-person external usability study for SC-007 using `docs/research/001-cited-answer-usability-protocol.md`, record only consented non-identifying observations and the four-of-five result in `evals/results/001-cited-answer-usability.md`, and create follow-up defects for any failed critical flow
 - [ ] T075 Run the seven-day scheduled-refresh validation for SC-009, calculate per-collection and aggregate success rates from ingestion records, verify failed-run preservation, and record timestamps, failures, and the 95% result in `evals/results/001-cited-answer-refresh-7d.md`
 - [ ] T076 Execute every scenario in `specs/001-cited-answer/quickstart.md`, record the consolidated results in `evals/results/001-cited-answer-baseline.md`, and fix any divergence before completion
-- [ ] T077 Update `README.md` with problem, scoped demo, setup, architecture, evaluation table, cost/latency results, usability and refresh-validation results, security limits, known limitations, and links to the feature artifacts
+- [X] T077 Update `README.md` with problem, scoped demo, setup, architecture, evaluation table, cost/latency results, usability and refresh-validation results, security limits, known limitations, and links to the feature artifacts
 
 ---
 

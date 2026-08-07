@@ -212,3 +212,11 @@ from work that requires participants, live load, a video or an external review.
 ```powershell
 pnpm test:portfolio
 ```
+
+## Feature 001: cited-answer quickstart evidence
+
+The local quickstart baseline is recorded in `evals/results/001-cited-answer-baseline.md` and the
+machine-readable evaluator output in `evals/results/001-cited-answer-baseline.json`. It covers
+Docker/PostgreSQL migration, API contract checks, frontend lint/typecheck and deterministic
+46-case evaluation. The five-person usability study and seven-day refresh period are external
+acceptance evidence and remain visibly pending.

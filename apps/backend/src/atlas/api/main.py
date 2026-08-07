@@ -123,7 +123,9 @@ def create_app(
     application.state.feedback_service = feedback_service
     application.state.corpus_service = corpus_service
     application.state.news_service = news_service
-    application.state.news_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(settings)
+    application.state.news_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
+        settings
+    )
     application.state.review_case_service = review_case_service
     application.state.report_service = report_service
     application.state.operator_token = operator_token or (

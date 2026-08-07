@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from evals.evaluators.deterministic import EvaluationCase
 from evals.evaluators.graders import export_negative_cases, grade_human, grade_model
 from evals.promotion_gate import evaluate_promotion
@@ -22,8 +21,14 @@ def _case() -> EvaluationCase:
 
 
 def test_structured_model_and_human_graders_validate_scores() -> None:
-    assert grade_model(score=0.8, strengths=["clear"], weaknesses=[], rationale="ok").grader == "model"
-    assert grade_human(score=1.0, strengths=["safe"], weaknesses=[], rationale="approved").score == 1.0
+    assert (
+        grade_model(score=0.8, strengths=["clear"], weaknesses=[], rationale="ok").grader
+        == "model"
+    )
+    assert (
+        grade_human(score=1.0, strengths=["safe"], weaknesses=[], rationale="approved").score
+        == 1.0
+    )
     with pytest.raises(ValueError):
         grade_model(score=1.1, strengths=[], weaknesses=[], rationale="bad")
 

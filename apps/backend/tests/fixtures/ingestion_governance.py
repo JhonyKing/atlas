@@ -3,7 +3,6 @@ from datetime import UTC, datetime, timedelta
 from atlas.ingestion.catalog import build_default_catalog
 from atlas.ingestion.governance import InMemoryGovernanceRepository
 
-
 FIXTURE_NOW = datetime(2026, 8, 6, 12, 0, tzinfo=UTC)
 
 
