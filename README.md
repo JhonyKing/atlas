@@ -163,3 +163,18 @@ Evidence and design:
 ```powershell
 pnpm test:security
 ```
+
+## Feature 010: scale, reliability, and SLOs
+
+Feature 010 adds fail-closed SLO gates for availability, errors, latency, TTFT, report duration,
+citation precision and cost. The workload fixture covers read, answer, report, ingestion and launch
+spike scenarios; it does not claim live load capacity.
+
+- `specs/010-scale-reliability-slos/tasks.md`
+- `docs/architecture/010-scale-reliability-slos.md`
+- `docs/adr/0009-evidence-driven-scale-gates.md`
+- `docs/verification/010-scale-reliability-slos.md`
+
+```powershell
+pnpm test:slo
+```
