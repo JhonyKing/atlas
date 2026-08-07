@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from contextlib import suppress
-from typing import Annotated, Literal, Protocol
+from typing import Annotated, Literal, Protocol, cast
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Request, status
@@ -67,7 +67,7 @@ def _service(request: Request) -> FeedbackControl:
     service = request.app.state.feedback_service
     if service is None:
         raise FeedbackServiceUnavailable
-    return service
+    return cast(FeedbackControl, service)
 
 
 def _visitor_hash(request: Request) -> str:

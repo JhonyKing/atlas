@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Mapping
 from datetime import UTC, date, datetime
-from typing import Annotated, Literal, Protocol
+from typing import Annotated, Literal, Protocol, cast
 from uuid import UUID
 
 from fastapi import APIRouter, Header, HTTPException, Request, status
@@ -89,7 +89,7 @@ def _service(request: Request) -> AnswerRunControl:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Answer service is unavailable",
         )
-    return service
+    return cast(AnswerRunControl, service)
 
 
 def _visitor_hash(request: Request) -> str:
