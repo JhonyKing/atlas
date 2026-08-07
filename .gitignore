@@ -41,5 +41,11 @@ Thumbs.db
 models/
 evals/results/local/
 
+# The backend's provider-independent model router is source code, not a model artifact.
+!apps/backend/src/atlas/models/
+!apps/backend/src/atlas/models/*.py
+!apps/backend/tests/unit/models/
+!apps/backend/tests/unit/models/*.py
+
 # Source PRD is retained outside version control
 /Proyecto_ATLAS_AI_PRD_Arquitectura_v1.1.pdf
