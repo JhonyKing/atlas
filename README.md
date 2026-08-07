@@ -103,3 +103,26 @@ Source and evidence:
 ```powershell
 pnpm test:agent
 ```
+
+## Feature 007: retrieval quality and multilingual evidence
+
+Feature 007 keeps the original question intact while adding bounded aliases, version/date/language
+filters, deterministic source diversity, parent context windows and a hard evidence budget. An
+optional reranker is evaluated beside the baseline and is not enabled after a quality, latency or
+cost regression.
+
+Source and evidence:
+
+- `specs/007-retrieval-quality-multilingual/spec.md`
+- `specs/007-retrieval-quality-multilingual/tasks.md`
+- `docs/architecture/007-retrieval-quality-multilingual.md`
+- `docs/adr/0006-measured-retrieval-quality.md`
+- `docs/verification/007-retrieval-quality-multilingual.md`
+- `evals/cases/007-retrieval-quality-multilingual.jsonl`
+
+```powershell
+pnpm test:retrieval
+apps\backend\.venv\Scripts\python.exe -m atlas.evaluation.retrieval_quality `
+  --dataset evals/cases/007-retrieval-quality-multilingual.jsonl `
+  --output docs/verification/007-retrieval-quality-multilingual-metrics.json
+```

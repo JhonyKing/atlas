@@ -7,6 +7,7 @@ import pytest
 from pydantic import HttpUrl
 
 from atlas.domain import CollectionSlug, Evidence, Question, SourceType
+from atlas.retrieval.query import RetrievalFilters
 from atlas.retrieval.service import RetrievalRow, RetrievalService
 
 
@@ -124,3 +125,30 @@ async def test_retrieval_uses_explicit_snapshot_without_reselecting_latest() -> 
     assert repository.snapshot_calls == []
     assert repository.search_calls[0]["collection"] is None
     assert repository.search_calls[0]["snapshot_id"] == snapshot_id
+
+
+@pytest.mark.asyncio
+async def test_retrieval_records_bounded_rewrite_and_applies_available_filters() -> None:
+    first_id = UUID("00000000-0000-0000-0000-000000000011")
+    second_id = UUID("00000000-0000-0000-0000-000000000012")
+    repository = FakeRetrievalRepository(
+        [
+            RetrievalRow(evidence=evidence(evidence_id=first_id, title="StateGraph"), fused_rank=1),
+            RetrievalRow(evidence=evidence(evidence_id=second_id, title="Other"), fused_rank=2),
+        ]
+    )
+    service = RetrievalService(repository, aliases={"langgraph": ("StateGraph",)})
+    question = Question(text="What is LangGraph?", product=CollectionSlug.LANGGRAPH)
+
+    results = await service.retrieve(
+        question,
+        [0.0],
+        filters=RetrievalFilters(
+            collection=CollectionSlug.LANGGRAPH,
+            source_type=SourceType.DOCUMENTATION,
+        ),
+    )
+
+    assert [row.evidence.id for row in results] == [first_id, second_id]
+    assert repository.search_calls[0]["query_text"] == "what is langgraph? StateGraph"
+    assert service.last_metadata["rewritten_terms"] == ("StateGraph",)
