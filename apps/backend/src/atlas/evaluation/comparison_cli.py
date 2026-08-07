@@ -63,7 +63,7 @@ def _load_results(path: Path | None) -> dict[str, dict[str, Any]]:
 
 
 def _rate(values: object) -> float:
-    sequence = list(values)  # type: ignore[arg-type]
+    sequence = list(values) if isinstance(values, (list, tuple)) else []
     return round(sum(bool(value) for value in sequence) / len(sequence), 4) if sequence else 1.0
 
 

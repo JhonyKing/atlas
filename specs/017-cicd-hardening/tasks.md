@@ -21,7 +21,7 @@
 
 ## Phase 4: Verification
 
-- [ ] T009 Run backend Ruff, mypy, and pytest locally; current exact CI command fails with 146 mypy diagnostics and remains open.
+- [ ] T009 Run backend Ruff, mypy, and pytest locally; current exact CI command fails with 140 mypy diagnostics and remains open.
 - [X] T010 Run the deterministic evaluator locally and inspect thresholds and execution mode.
 - [X] T011 Validate workflow YAML and review the final diff for secrets or deployment side effects.
 - [X] T012 Update implementation status and record commit evidence.

@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  PYTHONPATH: .
+  PYTHONPATH: ${{ github.workspace }}
 
 jobs:
   cited-answer-v1:
