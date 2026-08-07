@@ -20,6 +20,7 @@
     "test:agent": "powershell -NoProfile -File scripts/verify-agent.ps1",
     "test:retrieval": "powershell -NoProfile -File scripts/verify-retrieval.ps1",
     "test:model-router": "powershell -NoProfile -File scripts/verify-model-router.ps1",
-    "test:security": "powershell -NoProfile -File scripts/verify-security.ps1"
+    "test:security": "powershell -NoProfile -File scripts/verify-security.ps1",
+    "test:slo": "powershell -NoProfile -File scripts/verify-slo.ps1"
   }
 }

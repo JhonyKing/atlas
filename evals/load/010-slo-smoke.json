@@ -1,0 +1,11 @@
+{
+  "workload_version": "010-v1",
+  "environment": "local-deterministic",
+  "cases": [
+    {"kind":"read", "requests":10, "concurrency":1},
+    {"kind":"answer", "requests":10, "concurrency":1},
+    {"kind":"report", "requests":3, "concurrency":1},
+    {"kind":"ingestion", "requests":3, "concurrency":1},
+    {"kind":"launch-spike", "requests":20, "concurrency":2}
+  ]
+}

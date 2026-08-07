@@ -2,17 +2,17 @@
 
 ## Phase 1: Measurement contracts
 
-- [ ] T001 Create SLO unit, integration and load-definition directories.
-- [ ] T002 Add deterministic read/answer/report/ingestion/spike workload fixtures.
-- [ ] T003 Add `scripts/verify-slo.ps1` and `pnpm test:slo`.
-- [ ] T004 Add failing tests for SLO metrics, missing measurements, cache invalidation and separate limits.
+- [X] T001 Create SLO unit, integration and load-definition directories.
+- [X] T002 Add deterministic read/answer/report/ingestion/spike workload fixtures.
+- [X] T003 Add `scripts/verify-slo.ps1` and `pnpm test:slo`.
+- [X] T004 Add failing tests for SLO metrics, missing measurements, cache invalidation and separate limits.
 
 ## Phase 2: Reliability boundaries (P1)
 
 - [ ] T005 Add measured pooling/index observation contracts without claiming unmeasured capacity.
 - [ ] T006 Add resilience load cases for timeout, retry, circuit and fallback.
-- [ ] T007 Add cache/source-version invalidation regression cases.
-- [ ] T008 Add anonymous/authenticated limit measurement cases.
+- [X] T007 Add cache/source-version invalidation regression cases.
+- [X] T008 Add anonymous/authenticated limit measurement cases.
 
 ## Phase 3: Load and launch evidence
 
