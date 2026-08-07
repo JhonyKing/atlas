@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -32,7 +32,7 @@ def _run(visitor: str) -> ComparisonRun:
     )
 
 
-def _matrix(evidence_id) -> ComparisonMatrix:
+def _matrix(evidence_id: UUID) -> ComparisonMatrix:
     return ComparisonMatrix(
         technology_ids=[CollectionSlug.OPENAI, CollectionSlug.LANGGRAPH],
         criterion_ids=[ComparisonCriterion.CAPABILITY],

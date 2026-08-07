@@ -21,7 +21,7 @@
 
 ## Phase 4: Verification
 
-- [ ] T009 Run backend Ruff, mypy, and pytest locally; current exact CI command fails with 106 mypy diagnostics and remains open.
+- [X] T009 Run backend Ruff, mypy, and pytest locally; exact CI command `mypy src tests` passes with 314 files, Ruff passes, and pytest reports 304 passed / 4 skipped.
 - [X] T010 Run the deterministic evaluator locally and inspect thresholds and execution mode.
 - [X] T011 Validate workflow YAML and review the final diff for secrets or deployment side effects.
 - [X] T012 Update implementation status and record commit evidence.
@@ -31,3 +31,7 @@
 - T001 blocks T002 and T003.
 - T004 blocks T005 and T006.
 - T001–T008 precede T009–T012.
+
+## Phase 5: Convergence
+
+- [X] T013 Complete strict mypy cleanup for production and tests without blanket module exclusions; exact command `mypy src tests` exits successfully (FR-007, SC-003).

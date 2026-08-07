@@ -5,7 +5,7 @@
 | Workflow YAML parse | **passed** for `ci.yml` and `evals.yml` |
 | Docker Compose config | **passed** (`docker compose config --quiet`) |
 | Evaluation unit gate | **20 passed** |
-| Exact CI mypy gate (`mypy src tests`) | **failed: 106 diagnostics**; strict annotations and existing protocol/type mismatches remain |
+| Exact CI mypy gate (`mypy src tests`) | **passed: 314 files checked with zero diagnostics** |
 | Backend pytest from CI working directory | **304 passed, 4 skipped** |
 | Fresh database job | workflow runs Alembic to head, then all SQL contracts with `ON_ERROR_STOP` |
 | Browser job | workflow installs Chromium and runs Playwright; report uploads only on failure |

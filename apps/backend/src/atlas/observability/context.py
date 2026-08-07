@@ -5,7 +5,7 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from uuid import UUID, uuid4
 
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -43,7 +43,7 @@ def reset_request_id(token: Token[UUID | None]) -> None:
 class RequestContextMiddleware(BaseHTTPMiddleware):
     """Propagate one opaque UUID through a request and return it in the response."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         request_id = _resolve_request_id(request.headers.get(REQUEST_ID_HEADER))
         token = set_request_id(request_id)
         try:

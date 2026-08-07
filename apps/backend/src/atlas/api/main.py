@@ -22,7 +22,7 @@ from atlas.agent.planner import AgentPlanner
 from atlas.agent.review import ReviewService
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.api.answer_service import AnswerGraph, InMemoryAnswerRunService
-from atlas.api.comparison_service import InMemoryComparisonRunService
+from atlas.api.comparison_service import ComparisonExecutor, InMemoryComparisonRunService
 from atlas.api.middleware.anonymous_identity import AnonymousIdentityMiddleware
 from atlas.api.routes.agent import router as agent_router
 from atlas.api.routes.answers import AnswerRunControl
@@ -85,6 +85,7 @@ from atlas.providers.openai_agent_planner import OpenAIAgentPlannerAdapter
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 from atlas.providers.ports import AgentPlanProvider
+from atlas.reports.planner import ComparisonSource
 from atlas.reports.service import InMemoryReportService
 from atlas.retrieval.service import RetrievalService
 from atlas.uploads.deletion import UploadDeletionService
@@ -393,13 +394,15 @@ def _comparison_service(
     settings: Settings,
     corpus_service: CorpusStatusProvider,
     *,
-    executor=None,
+    executor: ComparisonExecutor | None = None,
 ) -> InMemoryComparisonRunService:
     """Wire a fail-closed comparison coordinator into every runtime environment."""
 
     def snapshot_id() -> UUID:
         status = corpus_service.get_status()
-        return status.snapshot_id if status is not None else UUID(int=0)
+        if status is None:
+            raise RuntimeError("no verified corpus snapshot is available")
+        return status.snapshot_id
 
     return InMemoryComparisonRunService(
         quota=ComparisonQuotaService(
@@ -416,7 +419,9 @@ def _comparison_service(
     )
 
 
-def _report_service(settings: Settings, *, comparison_service) -> InMemoryReportService:
+def _report_service(
+    settings: Settings, *, comparison_service: ComparisonSource | None
+) -> InMemoryReportService:
     """Wire reports to the same comparison source; local storage is intentionally bounded."""
 
     del settings
@@ -424,7 +429,9 @@ def _report_service(settings: Settings, *, comparison_service) -> InMemoryReport
     if source is None:
         # Runtime wiring is completed after app construction in ``create_runtime_app``.
         class _Unavailable:
-            async def get_status(self, run_id, *, visitor_key_hash):
+            async def get_status(
+                self, run_id: UUID, *, visitor_key_hash: str
+            ) -> None:
                 del run_id, visitor_key_hash
                 return None
 
@@ -438,7 +445,7 @@ def _comparison_executor(
     *,
     client: AsyncOpenAI | None = None,
     allow_real: bool = True,
-):
+) -> ComparisonExecutor | None:
     """Select a safe executor: local fixture in development, real graph only for verified data."""
 
     if isinstance(corpus_service, DemoCorpusStatusProvider) or (

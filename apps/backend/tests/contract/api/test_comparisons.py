@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from datetime import UTC, datetime
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from fastapi.testclient import TestClient
 
@@ -14,10 +15,12 @@ class FakeComparisonService:
     def __init__(self) -> None:
         self.run_id = uuid4()
 
-    async def start(self, **kwargs: Any):
+    async def start(self, **kwargs: Any) -> UUID:
         return self.run_id
 
-    async def get_status(self, run_id, *, visitor_key_hash: str):
+    async def get_status(
+        self, run_id: UUID, *, visitor_key_hash: str
+    ) -> ComparisonRunResponse | None:
         if run_id != self.run_id:
             return None
         return ComparisonRunResponse(
@@ -26,7 +29,7 @@ class FakeComparisonService:
             created_at=datetime(2026, 8, 5, tzinfo=UTC),
         )
 
-    async def cancel(self, run_id, *, visitor_key_hash: str):
+    async def cancel(self, run_id: UUID, *, visitor_key_hash: str) -> ComparisonRunResponse:
         return ComparisonRunResponse(
             run_id=run_id,
             status="cancelled",
@@ -34,7 +37,7 @@ class FakeComparisonService:
             completed_at=datetime(2026, 8, 5, 0, 1, tzinfo=UTC),
         )
 
-    async def stream(self, run_id, *, visitor_key_hash: str):
+    async def stream(self, run_id: UUID, *, visitor_key_hash: str) -> AsyncIterator[str]:
         yield f'id: 1\nevent: comparison.accepted\ndata: {{"run_id":"{run_id}"}}\n\n'
 
 

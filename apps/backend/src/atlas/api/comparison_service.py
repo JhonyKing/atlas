@@ -6,7 +6,7 @@ import asyncio
 import time
 from collections.abc import AsyncIterator, Callable, Mapping
 from datetime import UTC, date, datetime, timedelta
-from typing import Protocol
+from typing import Protocol, cast
 from uuid import UUID, uuid4
 
 from atlas.api.routes.comparisons import ComparisonRunResponse
@@ -246,13 +246,19 @@ class InMemoryComparisonRunService:
 
 def _parse_request(raw: Mapping[str, object]) -> ComparisonRequest:
     payload = dict(raw)
-    payload["technologies"] = [str(value) for value in payload.get("technologies", [])]
-    payload["criteria"] = [str(value) for value in payload.get("criteria", [])]
+    technologies = cast(list[object], payload.get("technologies", []))
+    criteria = cast(list[object], payload.get("criteria", []))
+    payload["technologies"] = [str(value) for value in technologies]
+    payload["criteria"] = [str(value) for value in criteria]
     from atlas.comparison.schemas import ComparisonCriterion
     from atlas.domain import CollectionSlug, SourceType
 
-    payload["technologies"] = [CollectionSlug(value) for value in payload["technologies"]]
-    payload["criteria"] = [ComparisonCriterion(value) for value in payload["criteria"]]
+    payload["technologies"] = [
+        CollectionSlug(value) for value in cast(list[str], payload["technologies"])
+    ]
+    payload["criteria"] = [
+        ComparisonCriterion(value) for value in cast(list[str], payload["criteria"])
+    ]
     if payload.get("source_type") is not None:
         payload["source_type"] = SourceType(str(payload["source_type"]))
     if payload.get("product") is not None:

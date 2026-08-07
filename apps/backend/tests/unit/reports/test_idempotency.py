@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -7,7 +7,7 @@ from atlas.reports.service import InMemoryReportService
 
 
 class Source:
-    async def get_status(self, run_id, *, visitor_key_hash):
+    async def get_status(self, run_id: UUID, *, visitor_key_hash: str) -> None:
         del run_id, visitor_key_hash
         return None
 

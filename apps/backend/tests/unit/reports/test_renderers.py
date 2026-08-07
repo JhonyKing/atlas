@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from atlas.reports.planner import plan_report
@@ -10,7 +12,9 @@ from .test_planner import Source, _completed
 
 
 @pytest.mark.asyncio
-async def test_docx_and_pdf_are_non_empty_and_citation_complete(tmp_path) -> None:
+async def test_docx_and_pdf_are_non_empty_and_citation_complete(
+    tmp_path: Path,
+) -> None:
     source = _completed()
     report = await plan_report(
         ReportSpec(source_run_id=source.run_id, audience="engineer", scope="comparison"),

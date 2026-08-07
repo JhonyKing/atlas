@@ -1,5 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -19,7 +19,9 @@ class Source:
     def __init__(self, response: ComparisonRunResponse | None) -> None:
         self.response = response
 
-    async def get_status(self, run_id, *, visitor_key_hash):
+    async def get_status(
+        self, run_id: UUID, *, visitor_key_hash: str
+    ) -> ComparisonRunResponse | None:
         del run_id, visitor_key_hash
         return self.response
 
@@ -68,6 +70,7 @@ async def test_planner_preserves_evidence_identity_and_localizes_headings() -> N
         locale=ReportLocale.ES_MX,
     )
     report = await plan_report(spec, owner_key_hash="visitor", source=Source(source))
+    assert source.matrix is not None
     assert report.locale is ReportLocale.ES_MX
     assert report.citations[0].evidence_id in {cell.evidence_ids[0] for cell in source.matrix.cells}
     assert report.sections[0].title == "Resumen ejecutivo"
@@ -83,6 +86,7 @@ async def test_planner_fails_closed_for_missing_source() -> None:
 @pytest.mark.asyncio
 async def test_planner_fails_closed_for_completed_run_without_evidence() -> None:
     source = Source(_completed())
+    assert source.response is not None
     matrix = source.response.matrix
     assert matrix is not None
     cells = [
@@ -96,6 +100,7 @@ async def test_planner_fails_closed_for_completed_run_without_evidence() -> None
         )
         for cell in matrix.cells
     ]
+    assert source.response is not None
     source.response = source.response.model_copy(
         update={"matrix": matrix.model_copy(update={"cells": cells})}
     )

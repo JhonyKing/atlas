@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from uuid import uuid4
+from typing import cast
+from uuid import UUID, uuid4
 
 from atlas.observability.langsmith import LangSmithTraceSink, NullTraceSink
 
@@ -13,7 +14,7 @@ class FakeLangSmithClient:
     def create_run(self, **payload: object) -> None:
         self.created.append(payload)
 
-    def update_run(self, run_id, **payload: object) -> None:
+    def update_run(self, run_id: UUID, **payload: object) -> None:
         self.updated.append({"run_id": run_id, **payload})
 
 
@@ -51,7 +52,7 @@ def test_langsmith_sink_sends_only_safe_metadata() -> None:
     assert "private excerpt" not in str(created)
     assert "es-MX" in str(created)
     assert "gpt-5.6-luna" in str(created)
-    metadata = created["extra"]["metadata"]
+    metadata = cast(dict[str, object], cast(dict[str, object], created["extra"])["metadata"])
     assert metadata["locale"] == "es-MX"
     assert metadata["model"] == "gpt-5.6-luna"
     assert metadata["prompt_version"] == "cited-answer-v1"

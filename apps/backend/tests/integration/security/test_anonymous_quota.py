@@ -18,6 +18,7 @@ from atlas.persistence.quota import (
     GlobalDailyBudget,
     InMemoryQuotaRepository,
     QuotaExceeded,
+    QuotaReservation,
     QuotaService,
 )
 
@@ -91,7 +92,7 @@ def test_concurrent_reservations_never_exceed_the_rolling_limit() -> None:
     visitor = "b" * 64
     now = datetime.now(UTC)
 
-    def reserve(index: int):
+    def reserve(index: int) -> QuotaReservation | None:
         try:
             return quota.reserve(visitor, f"concurrent-{index}", uuid4(), now=now)
         except QuotaExceeded:

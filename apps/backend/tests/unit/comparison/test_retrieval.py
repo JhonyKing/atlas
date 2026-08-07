@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime
 from uuid import uuid4
 
 import pytest
+from pydantic import HttpUrl
 
 from atlas.comparison.retrieval import ComparisonRetrievalService
 from atlas.comparison.schemas import ComparisonCriterion, ComparisonRequest
@@ -16,7 +17,7 @@ def _evidence(title: str) -> Evidence:
         id=uuid4(),
         source_title=title,
         publisher="ATLAS test",
-        canonical_url="https://example.com/" + title.casefold(),
+        canonical_url=HttpUrl("https://example.com/" + title.casefold()),
         excerpt="Evidence excerpt",
         captured_at=datetime(2026, 8, 5, 12, tzinfo=UTC),
         source_type=SourceType.DOCUMENTATION,

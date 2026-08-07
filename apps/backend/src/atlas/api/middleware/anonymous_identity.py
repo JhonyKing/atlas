@@ -6,9 +6,10 @@ import hashlib
 import hmac
 import secrets
 
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
+from starlette.types import ASGIApp
 
 VISITOR_COOKIE_NAME = "atlas_visitor"
 VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
@@ -33,7 +34,13 @@ def visitor_key_hash(secret: str, raw_cookie: str) -> str:
 class AnonymousIdentityMiddleware(BaseHTTPMiddleware):
     """Issue an opaque cookie and expose only its HMAC digest on request state."""
 
-    def __init__(self, app, *, secret: str, cookie_max_age: int = VISITOR_COOKIE_MAX_AGE) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        secret: str,
+        cookie_max_age: int = VISITOR_COOKIE_MAX_AGE,
+    ) -> None:
         super().__init__(app)
         if not secret.strip():
             raise ValueError("visitor HMAC secret must not be empty")
@@ -42,7 +49,7 @@ class AnonymousIdentityMiddleware(BaseHTTPMiddleware):
         self._secret = secret
         self._cookie_max_age = cookie_max_age
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         raw_cookie = request.cookies.get(VISITOR_COOKIE_NAME)
         issue_cookie = raw_cookie is None or not self._is_valid_cookie(raw_cookie)
         if issue_cookie:

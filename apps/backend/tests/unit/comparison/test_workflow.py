@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Sequence
 from datetime import UTC, datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
+from pydantic import HttpUrl
 
 from atlas.comparison.normalization import ComparisonObservation
 from atlas.comparison.retrieval import ComparisonRetrievalBranch
@@ -20,7 +22,7 @@ def _row(title: str) -> RetrievalRow:
             id=uuid4(),
             source_title=title,
             publisher="ATLAS test",
-            canonical_url=f"https://example.com/{title}",
+            canonical_url=HttpUrl(f"https://example.com/{title}"),
             excerpt="120 ms",
             captured_at=datetime(2026, 8, 5, tzinfo=UTC),
             source_type=SourceType.DOCUMENTATION,
@@ -30,7 +32,15 @@ def _row(title: str) -> RetrievalRow:
 
 
 class FakeRetrieval:
-    async def retrieve(self, request, *, snapshot_id, embeddings, top_k=8):
+    async def retrieve(
+        self,
+        request: ComparisonRequest,
+        *,
+        snapshot_id: UUID,
+        embeddings: dict[ComparisonCriterion, Sequence[float]],
+        top_k: int = 8,
+    ) -> list[ComparisonRetrievalBranch]:
+        del embeddings, top_k
         return [
             ComparisonRetrievalBranch(
                 technology=technology,

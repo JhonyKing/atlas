@@ -22,6 +22,17 @@ class ComparisonWorkflowCancelled(RuntimeError):
     """The visitor cancelled before a verified matrix could be published."""
 
 
+class ComparisonRetrieval(Protocol):
+    async def retrieve(
+        self,
+        request: ComparisonRequest,
+        *,
+        snapshot_id: UUID,
+        embeddings: dict[ComparisonCriterion, Sequence[float]],
+        top_k: int = 8,
+    ) -> list[ComparisonRetrievalBranch]: ...
+
+
 class ComparisonObservationExtractor(Protocol):
     async def extract(
         self, branch: ComparisonRetrievalBranch
@@ -33,7 +44,7 @@ class ComparisonWorkflow:
 
     def __init__(
         self,
-        retrieval: ComparisonRetrievalService,
+        retrieval: ComparisonRetrieval,
         extractor: ComparisonObservationExtractor,
         *,
         max_extraction_concurrency: int = 4,

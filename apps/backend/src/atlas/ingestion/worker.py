@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from atlas.domain import CollectionSlug
 from atlas.ingestion.chunker import chunk_markdown
 from atlas.ingestion.connectors import SourceCandidate
 from atlas.ingestion.normalizer import normalize_document
@@ -76,7 +77,7 @@ class IngestionWorker:
             processed += 1
         return processed
 
-    async def _discover(self, collection) -> Sequence[SourceCandidate]:
+    async def _discover(self, collection: CollectionSlug) -> Sequence[SourceCandidate]:
         return await self._discoverer.discover(collection)
 
 
