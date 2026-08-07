@@ -3,7 +3,11 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from atlas.comparison.normalization import ComparisonObservation, normalize_observations
+from atlas.comparison.normalization import (
+    ComparisonObservation,
+    ComparisonObservationRelation,
+    normalize_observations,
+)
 from atlas.comparison.schemas import ComparisonCellState, ComparisonCriterion
 from atlas.domain import CollectionSlug
 
@@ -15,6 +19,7 @@ def _observation(
     unit: str | None = "ms",
     period: str | None = None,
     version: str | None = "1.0",
+    relation: ComparisonObservationRelation = ComparisonObservationRelation.UNKNOWN,
 ) -> ComparisonObservation:
     return ComparisonObservation(
         value=value,
@@ -23,6 +28,7 @@ def _observation(
         version=version,
         observed_at=datetime(2026, 8, 5, tzinfo=UTC),
         evidence_ids=(evidence_id or uuid4(),),
+        relation=relation,
     )
 
 
@@ -80,3 +86,59 @@ def test_normalization_marks_same_unit_different_values_partial() -> None:
     assert cell.state is ComparisonCellState.PARTIAL
     assert cell.value is None
     assert "different" in (cell.explanation or "").lower()
+
+
+def test_normalization_preserves_complementary_qualitative_observations() -> None:
+    cell = normalize_observations(
+        technology_id=CollectionSlug.LANGGRAPH,
+        criterion_id=ComparisonCriterion.CAPABILITY,
+        observations=[
+            _observation(
+                value="supports persistence",
+                unit=None,
+                relation=ComparisonObservationRelation.SUPPORTS,
+            ),
+            _observation(
+                value="supports streaming",
+                unit=None,
+                relation=ComparisonObservationRelation.COMPLEMENTS,
+            ),
+        ],
+    )
+
+    assert cell.state is ComparisonCellState.PARTIAL
+    assert cell.value == "supports persistence; supports streaming"
+    assert "qualitative" in (cell.explanation or "").lower()
+    assert "different values" not in (cell.explanation or "").lower()
+
+
+def test_normalization_merges_qualitative_claims_without_relation_metadata() -> None:
+    cell = normalize_observations(
+        technology_id=CollectionSlug.OPENAI,
+        criterion_id=ComparisonCriterion.CAPABILITY,
+        observations=[
+            _observation(value="browser", unit=None),
+            _observation(value="web search", unit=None),
+        ],
+    )
+
+    assert cell.state is ComparisonCellState.PARTIAL
+    assert cell.value == "browser; web search"
+    assert "qualitative" in (cell.explanation or "").lower()
+
+
+def test_normalization_marks_explicitly_contradictory_observations() -> None:
+    cell = normalize_observations(
+        technology_id=CollectionSlug.OPENAI,
+        criterion_id=ComparisonCriterion.CAPABILITY,
+        observations=[
+            _observation(value="available", relation=ComparisonObservationRelation.SUPPORTS),
+            _observation(
+                value="unavailable", relation=ComparisonObservationRelation.CONTRADICTS
+            ),
+        ],
+    )
+
+    assert cell.state is ComparisonCellState.CONTRADICTORY
+    assert cell.value is None
+    assert "contradict" in (cell.explanation or "").lower()

@@ -54,3 +54,31 @@ level citation parity across locales.
 
 **Alternatives considered**: Returning only a generated recommendation was rejected because it would
 hide unsupported criteria and make audit difficult.
+
+## Decision 6: Distinguish complementary observations from contradictions
+
+**Decision**: Structured extraction MUST label each observation as `supports`, `complements`,
+`contradicts`, or `unknown`. Multiple qualitative observations without an explicit direct
+disagreement remain `partial` and retain a bounded combined value. Only an explicit contradiction
+or an incompatible normalized unit produces a contradictory cell.
+
+**Rationale**: Documentation often describes one capability from several complementary angles.
+Treating every different sentence as a conflicting scalar value erased useful facts and produced
+`value=null` for cells that had valid evidence.
+
+**Alternatives considered**: Inferring contradiction from unequal strings was rejected because
+semantic difference is not evidence of disagreement. The evidence relationship is explicit so the
+normalizer remains deterministic and reviewable.
+
+## Decision 7: Enforce branch-scoped evidence identity
+
+**Decision**: Before a comparison matrix is published, every populated cell's `evidence_ids` MUST
+resolve to an evidence record retrieved for that exact technology/criterion branch. The live review
+artifact also joins each cited ID to its source metadata and records missing IDs or collection
+mismatches as validation failures.
+
+**Rationale**: A UUID alone is not enough to prove provenance. Branch-scoped validation prevents a
+model or worksheet transcription from attaching a real but unrelated source to a cell.
+
+**Alternatives considered**: Validating only that the UUID exists was rejected because it would not
+detect a cross-technology citation such as an Anthropic cell pointing at a LangGraph chunk.

@@ -82,6 +82,20 @@ class CancellingExtractor(FakeExtractor):
         return await super().extract(branch)
 
 
+class ForeignEvidenceExtractor(FakeExtractor):
+    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+        return [
+            ComparisonObservation(
+                value="not from this branch",
+                unit=None,
+                period=None,
+                version=None,
+                observed_at=None,
+                evidence_ids=(uuid4(),),
+            )
+        ]
+
+
 @pytest.mark.asyncio
 async def test_workflow_fanout_builds_matrix_and_applies_evidence_gate() -> None:
     workflow = ComparisonWorkflow(FakeRetrieval(), FakeExtractor())
@@ -162,4 +176,20 @@ async def test_workflow_propagates_cancellation_from_parallel_branch() -> None:
                 ComparisonCriterion.CONTEXT: [0.2],
             },
             is_cancelled=lambda: state["cancelled"],
+        )
+
+
+@pytest.mark.asyncio
+async def test_workflow_rejects_evidence_outside_the_retrieved_branch() -> None:
+    workflow = ComparisonWorkflow(FakeRetrieval(), ForeignEvidenceExtractor())
+    request = ComparisonRequest(
+        technologies=[CollectionSlug.LANGGRAPH, CollectionSlug.OPENAI],
+        criteria=[ComparisonCriterion.CAPABILITY],
+    )
+
+    with pytest.raises(ValueError, match="outside its retrieval branch"):
+        await workflow.run(
+            request,
+            snapshot_id=uuid4(),
+            embeddings={ComparisonCriterion.CAPABILITY: [0.1]},
         )

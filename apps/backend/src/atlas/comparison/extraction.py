@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from atlas.comparison.normalization import ComparisonObservation
+from atlas.comparison.normalization import ComparisonObservation, ComparisonObservationRelation
 from atlas.comparison.retrieval import ComparisonRetrievalBranch
 
 
@@ -23,6 +23,7 @@ class ComparisonObservationItem(BaseModel):
     version: str | None = Field(default=None, min_length=1, max_length=64)
     observed_at: datetime | None = None
     evidence_ids: list[UUID] = Field(default_factory=list)
+    relation: ComparisonObservationRelation = Field(...)
 
 
 class ComparisonExtraction(BaseModel):
@@ -81,6 +82,7 @@ def validate_extraction(
                 version=item.version,
                 observed_at=item.observed_at,
                 evidence_ids=tuple(dict.fromkeys(item.evidence_ids)),
+                relation=item.relation,
             )
         )
     return observations

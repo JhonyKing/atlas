@@ -135,9 +135,12 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 
 ## Phase 9: Convergence
 
-- [ ] T043 [US2] Preserve complementary qualitative observations instead of labeling them as
+- [X] T043 [US2] Preserve complementary qualitative observations instead of labeling them as
   conflicting values: add an explicit observation relationship (`supports`, `complements`, or
   `contradicts`) to structured extraction, keep a bounded combined value for complementary claims,
   retain explicit contradiction handling, enforce that every `ComparisonCell.evidence_ids` belongs to
   the cell's retrieved branch, and add regression tests plus a machine-generated live review artifact
-  that validates every cited ID against its source metadata (partial, HIGH).
+  that validates every cited ID against its source metadata (partial, HIGH). (Evidence: full backend
+  suite 311 passed/4 skipped; comparison suite 42 passed; new run `ed9e093f-74ed-4d47-a5c6-8a05ace0e505`
+  completed in 24,565 ms; `evals/results/live-comparator-t043-20260807-fixed.json` reports 40/40
+  evidence IDs resolved with zero collection mismatches. T040 remains open for owner review.)

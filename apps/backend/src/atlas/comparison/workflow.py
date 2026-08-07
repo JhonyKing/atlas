@@ -87,6 +87,7 @@ class ComparisonWorkflow:
             criterion_ids=request.criteria,
             cells=cells,
         )
+        _check_evidence_links(matrix, branches)
         _check_evidence_gate(matrix)
         _check_cancelled(is_cancelled)
         return matrix
@@ -107,3 +108,22 @@ def _check_evidence_gate(matrix: ComparisonMatrix) -> None:
             continue
         if not cell.evidence_ids:
             raise ValueError("populated comparison cells require evidence")
+
+
+def _check_evidence_links(
+    matrix: ComparisonMatrix, branches: Sequence[ComparisonRetrievalBranch]
+) -> None:
+    """Ensure each published citation came from the exact branch that built the cell."""
+
+    allowed_by_coordinate = {
+        (branch.technology, branch.criterion): {row.evidence.id for row in branch.rows}
+        for branch in branches
+    }
+    for cell in matrix.cells:
+        allowed = allowed_by_coordinate.get((cell.technology_id, cell.criterion_id), set())
+        unexpected = set(cell.evidence_ids).difference(allowed)
+        if unexpected:
+            raise ValueError(
+                "comparison cell cited evidence outside its retrieval branch: "
+                + ", ".join(sorted(str(evidence_id) for evidence_id in unexpected))
+            )

@@ -87,3 +87,22 @@ Mode: local deterministic/fixture validation
   SC-CMP-004 goals of under two seconds and under 30 seconds for this launch scenario.
 - The comparison regression suite now passes **37 tests**, including bounded-concurrency and
   cancellation propagation checks. Evidence: `evals/results/live-comparator-t042-20260807.json`.
+
+## T043 evidence-normalization and mapping validation (2026-08-07)
+
+- The pre-fix human-reviewed run `aae76ef0-931b-49bc-9b42-6686f773fcbb` remains preserved in
+  `evals/results/live-comparator-t040-20260807-complete-review.md` as a regression/failure record;
+  it was not overwritten.
+- Extraction now records an explicit relationship for every observation: `supports`,
+  `complements`, `contradicts`, or `unknown`. Complementary qualitative evidence retains a bounded
+  combined value; direct contradiction and incompatible units retain the contradictory state.
+- The workflow rejects a populated cell when any cited evidence ID is outside that cell's retrieved
+  technology/criterion branch.
+- A new live Spanish four-technology run completed with HTTP 200 in **24,565 ms**:
+  `ed9e093f-74ed-4d47-a5c6-8a05ace0e505`.
+- The machine-generated review artifact contains all 12 cell values, explanations, states and IDs:
+  `evals/results/live-comparator-t043-20260807-fixed.json`.
+- Its database join resolved **40/40 unique evidence IDs**, with **0 missing IDs** and **0 collection
+  mismatches**. The artifact deliberately remains `pending_owner_review`; T040 is not closed.
+- Comparison regression tests: **42 passed**. Ruff and targeted mypy checks passed for the modified
+  comparison modules.
