@@ -29,8 +29,8 @@
 - [ ] T015 Implement checkpoint repository protocol and deterministic in-memory adapter in `apps/backend/src/atlas/agent/checkpoints.py`.
 - [ ] T016 Implement content-safe state serialization, version checks, expiration, and corruption detection.
 - [ ] T017 Implement concurrency-safe resume keyed by `thread_id` and replay key with duplicate side-effect suppression.
-- [ ] T018 Add PostgreSQL migration `database/migrations/versions/0024_agent_checkpoints_reviews.py` with checkpoint/review/node-event tables, constraints, indexes, and grants.
-- [ ] T019 Add SQL contract `database/tests/014_agent_checkpoints_reviews.sql` for uniqueness, expiry, append-only decisions, and tenant isolation.
+- [X] T018 Add PostgreSQL migration `database/migrations/versions/0024_agent_checkpoints_reviews.py` with checkpoint/review/node-event tables, constraints, indexes, and grants.
+- [X] T019 Add SQL contract `database/tests/014_agent_checkpoints_reviews.sql` for uniqueness, expiry, append-only decisions, and tenant isolation.
 - [ ] T020 Add crash/resume integration tests for answer, report, ingestion, and evaluation job categories.
 
 ## Phase 4: Human review boundary (P1)
