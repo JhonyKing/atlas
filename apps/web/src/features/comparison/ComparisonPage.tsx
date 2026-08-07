@@ -4,6 +4,8 @@ import { FormEvent, useMemo, useRef, useState } from "react";
 
 import { useLocale } from "@/i18n";
 
+import { Button, Checkbox } from "@/components/forms";
+
 import { ComparisonMatrix } from "./ComparisonMatrix";
 import { streamComparison } from "./api";
 import type {
@@ -128,44 +130,36 @@ export function ComparisonPage() {
   }
 
   return (
-    <main>
-      <section aria-labelledby="comparison-title">
-        <p>{messages.comparison.eyebrow}</p>
+    <main className="comparison-page">
+      <section className="comparison-experience" aria-labelledby="comparison-title">
+        <p className="eyebrow">{messages.comparison.eyebrow}</p>
         <h1 id="comparison-title">{messages.comparison.title}</h1>
+        <p className="lede">{spanish ? "Selecciona un conjunto acotado de tecnologías y criterios; ATLAS conserva los estados sin evidencia." : "Select a bounded set of technologies and criteria; ATLAS preserves unsupported states."}</p>
         <form onSubmit={submit}>
-          <fieldset>
+          <div className="comparison-control-grid">
+          <fieldset className="comparison-control-group">
             <legend>{messages.comparison.technologies}</legend>
-            {technologies.map((technology) => (
-              <label key={technology}>
-                <input
-                  type="checkbox"
-                  checked={selectedTechnologies.includes(technology)}
-                  onChange={() => toggleTechnology(technology)}
-                />
-                {labels[technology][spanish ? "es" : "en"]}
-              </label>
-            ))}
+            <div className="comparison-chip-list">
+              {technologies.map((technology) => <Checkbox key={technology} checked={selectedTechnologies.includes(technology)} onChange={() => toggleTechnology(technology)} label={labels[technology][spanish ? "es" : "en"]} />)}
+            </div>
           </fieldset>
-          <fieldset>
+          <fieldset className="comparison-control-group">
             <legend>{messages.comparison.criteria}</legend>
-            {criteria.map((criterion) => (
-              <label key={criterion}>
-                <input
-                  type="checkbox"
-                  checked={selectedCriteria.includes(criterion)}
-                  onChange={() => toggleCriterion(criterion)}
-                />
-                {labels[criterion][spanish ? "es" : "en"]}
-              </label>
-            ))}
+            <div className="comparison-chip-list">
+              {criteria.map((criterion) => <Checkbox key={criterion} checked={selectedCriteria.includes(criterion)} onChange={() => toggleCriterion(criterion)} label={labels[criterion][spanish ? "es" : "en"]} />)}
+            </div>
           </fieldset>
-          <button type="submit" disabled={active}>
-            {messages.comparison.compare}
-          </button>
-          {active ? <button type="button" onClick={cancel}>{messages.comparison.cancel}</button> : null}
+          </div>
+          <div className="comparison-selection" aria-live="polite">
+            <span>{selectedTechnologies.length} {spanish ? "tecnologías" : "technologies"} · {selectedCriteria.length} {spanish ? "criterios" : "criteria"}</span>
+          </div>
+          <div className="actions">
+            <Button type="submit" disabled={active} loading={active}>{messages.comparison.compare}</Button>
+            {active ? <Button type="button" variant="secondary" onClick={cancel}>{messages.comparison.cancel}</Button> : null}
+          </div>
         </form>
-        <p role="status">{status}</p>
-        {error ? <p role="alert">{error}</p> : null}
+        <p className="progress" role="status" aria-live="polite">{status}</p>
+        {error ? <p className="error" role="alert">{error}</p> : null}
       </section>
       {matrix ? <ComparisonMatrix matrix={matrix} spanish={spanish} /> : null}
     </main>

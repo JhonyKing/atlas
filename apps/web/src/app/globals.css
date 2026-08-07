@@ -167,6 +167,36 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .ask-example { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .55rem .7rem; color: var(--atlas-text-secondary); background: var(--atlas-surface); font-size: .85rem; font-weight: 650; text-align: left; }
 .ask-example:hover { border-color: var(--atlas-indigo); color: var(--atlas-indigo); background: var(--atlas-info-bg); }
 .ask-supported-sources { margin: 0; color: var(--atlas-text-secondary); font-size: .84rem; line-height: 1.5; }
+.comparison-page { display: grid; gap: 2rem; }
+.comparison-experience { display: grid; gap: 1rem; }
+.comparison-experience h1 { margin: .25rem 0 0; }
+.comparison-experience form { margin-top: .75rem; }
+.comparison-control-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.comparison-control-group { min-width: 0; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); padding: 1rem; background: var(--atlas-surface); }
+.comparison-control-group legend { padding: 0 .35rem; color: var(--atlas-navy); font-weight: 800; }
+.comparison-chip-list { display: flex; flex-wrap: wrap; gap: .55rem; }
+.comparison-chip-list .atlas-checkbox { border: 1px solid var(--atlas-border); border-radius: 999px; padding: .55rem .7rem; background: var(--atlas-surface-elevated); font-size: .86rem; }
+.comparison-chip-list .atlas-checkbox:has(input:checked) { border-color: var(--atlas-indigo); color: var(--atlas-indigo); background: var(--atlas-info-bg); }
+.comparison-selection { color: var(--atlas-text-secondary); font-size: .88rem; }
+.comparison-results { display: grid; gap: 1rem; }
+.comparison-results-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+.comparison-results-heading h2 { margin: .25rem 0 0; }
+.comparison-results-heading > p { max-width: 32rem; margin: 0; color: var(--atlas-text-secondary); }
+.comparison-table-wrap { overflow-x: auto; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); background: var(--atlas-surface); }
+.comparison-table-wrap:focus-visible { outline: var(--atlas-focus); outline-offset: 2px; }
+.comparison-table-wrap table { width: 100%; min-width: 52rem; border-collapse: collapse; }
+.comparison-table-wrap caption { padding: 1rem; color: var(--atlas-text-secondary); text-align: left; font-weight: 700; }
+.comparison-table-wrap th, .comparison-table-wrap td { border-top: 1px solid var(--atlas-border); padding: .85rem; vertical-align: top; text-align: left; }
+.comparison-table-wrap thead th { position: sticky; top: 0; z-index: 1; border-top: 0; color: var(--atlas-navy); background: var(--atlas-surface-soft); font-size: .85rem; }
+.comparison-table-wrap tbody th { position: sticky; left: 0; z-index: 1; min-width: 8rem; color: var(--atlas-navy); background: var(--atlas-surface-elevated); }
+.comparison-cell { display: grid; gap: .5rem; min-width: 10rem; color: var(--atlas-text-secondary); font-size: .86rem; line-height: 1.45; }
+.comparison-cell > span:not(.evidence-status) { color: var(--atlas-text); font-weight: 700; }
+.comparison-cell p { margin: 0; }
+.comparison-evidence-details { color: var(--atlas-indigo); font-size: .78rem; }
+.comparison-evidence-details summary { cursor: pointer; font-weight: 750; }
+.comparison-evidence-details ul { margin: .45rem 0 0; padding-left: 1rem; }
+.comparison-evidence-details code { overflow-wrap: anywhere; color: var(--atlas-text-muted); font-size: .7rem; }
+.comparison-empty-cell { color: var(--atlas-text-subtle); }
 @keyframes atlas-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 720px) {
@@ -180,6 +210,9 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .atlas-locale-switch { padding: .45rem .65rem; }
   main { width: min(100% - 1.5rem, 68rem); padding: 2.5rem 0; }
   .corpus-list { grid-template-columns: 1fr; }
+  .comparison-control-grid { grid-template-columns: 1fr; }
+  .comparison-results-heading { display: grid; align-items: start; }
+  .comparison-table-wrap table { min-width: 46rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
