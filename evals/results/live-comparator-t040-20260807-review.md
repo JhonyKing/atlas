@@ -57,3 +57,9 @@ failure.
 | `cef2504b` | Anthropic tool use | https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview | Client and server tools return structured tool-use blocks and results. |
 | `565d6e79` | Anthropic tool use | https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview | Tool Runner handles result formatting and error signaling. |
 | `cc37831c` | Anthropic tool use | https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview | `tool_choice` can require a tool call. |
+
+## Expanded review
+
+This compact worksheet is retained for traceability. It does not include the complete cell values
+and metadata needed for manual review. Use the expanded document instead:
+[complete T040 review](live-comparator-t040-20260807-complete-review.md).
