@@ -195,3 +195,20 @@ gates. Public methodology contains aggregates only.
 pnpm test:evals
 pnpm test:eval-regression
 ```
+
+## Feature 012: portfolio productization and proof
+
+The portfolio layer indexes setup, architecture, ADRs, measured baselines, KPIs, interview
+narrative and external-evidence limitations. It deliberately separates verified local artifacts
+from work that requires participants, live load, a video or an external review.
+
+- `docs/portfolio/architecture-map.md`
+- `docs/portfolio/baseline-comparison.md`
+- `docs/portfolio/kpis.json`
+- `docs/portfolio/evidence-ledger.json`
+- `docs/portfolio/interview-narrative.md`
+- `docs/portfolio/external-evidence.md`
+
+```powershell
+pnpm test:portfolio
+```

@@ -1,0 +1,12 @@
+{
+  "version": "012-v1",
+  "definitions": [
+    {"category":"adoption","name":"demo_completion_rate","formula":"completed demo journeys / started journeys","cadence":"per release"},
+    {"category":"value","name":"verified_answer_rate","formula":"answers passing citation verification / answers","cadence":"per eval"},
+    {"category":"quality","name":"citation_precision","formula":"supported citations / cited IDs","cadence":"per eval"},
+    {"category":"performance","name":"normal_p95_seconds","formula":"95th percentile normal answer latency","cadence":"per load run"},
+    {"category":"economy","name":"estimated_cost_usd","formula":"versioned token price estimate","cadence":"per run"},
+    {"category":"knowledge","name":"corpus_freshness","formula":"fresh evidence cases / temporal cases","cadence":"per refresh"},
+    {"category":"operations","name":"uncontrolled_error_rate","formula":"uncontrolled errors / requests","cadence":"per load run"}
+  ]
+}

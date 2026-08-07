@@ -1,0 +1,13 @@
+{
+  "version": "012-v1",
+  "entries": [
+    {"claim":"Feature 007 retrieval quality local slice","artifact":"docs/verification/007-retrieval-quality-multilingual.md","status":"verified-local","limitation":"live provider benchmark pending"},
+    {"claim":"Feature 008 Luna router local slice","artifact":"docs/verification/008-model-router-gpt56-luna.md","status":"verified-local","limitation":"live provider latency/cost pending"},
+    {"claim":"Feature 009 security local slice","artifact":"docs/verification/009-security-privacy-governance.md","status":"verified-local","limitation":"external security review pending"},
+    {"claim":"Feature 010 SLO local slice","artifact":"docs/verification/010-scale-reliability-slos.md","status":"verified-local","limitation":"live load/capacity pending"},
+    {"claim":"Feature 011 evaluation local slice","artifact":"docs/verification/011-evaluation-quality-loop.md","status":"verified-local","limitation":"full golden dataset and human annotation pending"},
+    {"claim":"Feature 012 portfolio proof","artifact":"docs/verification/012-portfolio-productization-proof.md","status":"verified-local","limitation":"external deliverables remain pending"},
+    {"claim":"Demo video","artifact":"docs/portfolio/external-evidence.md","status":"pending","limitation":"must be recorded manually"},
+    {"claim":"Usability study","artifact":"docs/portfolio/external-evidence.md","status":"pending","limitation":"requires external participants"}
+  ]
+}

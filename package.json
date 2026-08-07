@@ -23,6 +23,7 @@
     "test:security": "powershell -NoProfile -File scripts/verify-security.ps1",
     "test:slo": "powershell -NoProfile -File scripts/verify-slo.ps1",
     "test:evals": "powershell -NoProfile -File scripts/verify-evals.ps1",
-    "test:eval-regression": "powershell -NoProfile -File scripts/run-eval-regression.ps1"
+    "test:eval-regression": "powershell -NoProfile -File scripts/run-eval-regression.ps1",
+    "test:portfolio": "powershell -NoProfile -File scripts/verify-portfolio.ps1"
   }
 }

@@ -2,26 +2,26 @@
 
 ## Phase 1: Portfolio contracts
 
-- [ ] T001 Create portfolio verification and artifact directories.
-- [ ] T002 Add KPI definitions and evidence-ledger fixtures.
-- [ ] T003 Add `scripts/verify-portfolio.ps1` and `pnpm test:portfolio`.
-- [ ] T004 Add tests for evidence links, metric provenance and pending external status.
+- [X] T001 Create portfolio verification and artifact directories.
+- [X] T002 Add KPI definitions and evidence-ledger fixtures.
+- [X] T003 Add `scripts/verify-portfolio.ps1` and `pnpm test:portfolio`.
+- [X] T004 Add tests for evidence links, metric provenance and pending external status.
 
 ## Phase 2: Product proof
 
-- [ ] T005 Update README with setup, architecture, limitations, evaluation, cost, latency and security index.
-- [ ] T006 Publish portfolio architecture/trade-off map and technical narrative.
-- [ ] T007 Publish baseline/post-change comparison with dataset/commit/environment provenance.
-- [ ] T008 Publish KPI definitions and interview narrative.
+- [X] T005 Update README with setup, architecture, limitations, evaluation, cost, latency and security index.
+- [X] T006 Publish portfolio architecture/trade-off map and technical narrative.
+- [X] T007 Publish baseline/post-change comparison with dataset/commit/environment provenance.
+- [X] T008 Publish KPI definitions and interview narrative.
 
 ## Phase 3: External evidence ledger
 
-- [ ] T009 Record video, usability, refresh, load and external security-review status without overclaiming.
+- [X] T009 Record video, usability, refresh, load and external security-review status without overclaiming.
 
 ## Phase 4: Closure
 
-- [ ] T010 Run portfolio verification, backend/frontend checks and SpecKit Analyze/Converge.
-- [ ] T011 Update PRD/status matrix and close only with zero mandatory tasks.
+- [X] T010 Run portfolio verification, backend/frontend checks and SpecKit Analyze/Converge.
+- [X] T011 Update PRD/status matrix and close only with zero mandatory tasks.
 
 ## Requirements Traceability
 

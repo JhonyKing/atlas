@@ -171,15 +171,15 @@ cada épica crea esa especificación y las tareas detalladas de implementación 
 
 ## 012 — portfolio productization and proof
 
-- [ ] PRT-001 Run `/speckit.specify` for portfolio narrative and public launch proof.
-- [ ] PRT-002 Publish README with problem, scope, setup, architecture, limitations, evaluation, cost, latency, and security.
+- [X] PRT-001 Run `/speckit.specify` for portfolio narrative and public launch proof.
+- [X] PRT-002 Publish README with problem, scope, setup, architecture, limitations, evaluation, cost, latency, and security.
 - [ ] PRT-003 Record demo video showing question, evidence, comparison, report, Spanish/English switch, and safe abstention.
-- [ ] PRT-004 Publish architecture diagrams and ADRs with trade-offs.
-- [ ] PRT-005 Publish technical post explaining retrieval, graph, evidence gate, report pipeline, and failures corrected.
-- [ ] PRT-006 Instrument adoption, value, quality, performance, economy, knowledge, and operations KPIs.
-- [ ] PRT-007 Publish measurable baseline and post-change comparison; do not use screenshots as sole evidence.
+- [X] PRT-004 Publish architecture diagrams and ADRs with trade-offs.
+- [X] PRT-005 Publish technical post explaining retrieval, graph, evidence gate, report pipeline, and failures corrected.
+- [X] PRT-006 Instrument adoption, value, quality, performance, economy, knowledge, and operations KPIs.
+- [X] PRT-007 Publish measurable baseline and post-change comparison; do not use screenshots as sole evidence.
 - [ ] PRT-008 Complete external usability, refresh validation, load tests, and security review.
-- [ ] PRT-009 Prepare interview narrative showing decisions, failures, metrics, cost controls, and why the architecture is agentic.
+- [X] PRT-009 Prepare interview narrative showing decisions, failures, metrics, cost controls, and why the architecture is agentic.
 
 ## 013 — Plan Maestro: LangSmith y observabilidad de calidad
 
