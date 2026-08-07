@@ -241,8 +241,8 @@ implementadas.
 - [X] NEWS-008 Añadir endpoint y contrato OpenAPI para obtener la noticia diaria con estado, fecha, fuente y citas.
 - [X] NEWS-009 Añadir componente bilingüe `/en` y `/es` que traduzca la interfaz pero conserve título/extracto original etiquetado y URL de la fuente.
 - [X] NEWS-010 Añadir tests de ventana temporal, timezone, duplicados, feed caído, contenido malicioso y ausencia de evidencia.
-- [ ] NEWS-011 Añadir tracing y métricas de freshness, cobertura de feeds, latencia, errores y ranking sin PII.
-- [ ] NEWS-012 Documentar límites editoriales, derechos de autor, correcciones/takedown y evidencia de una ejecución real.
+- [X] NEWS-011 Añadir tracing y métricas de freshness, cobertura de feeds, latencia, errores y ranking sin PII.
+- [X] NEWS-012 Documentar límites editoriales, derechos de autor, correcciones/takedown y evidencia de una ejecución real.
 
 ## 016 — Harness de evaluación conectado a LangSmith
 

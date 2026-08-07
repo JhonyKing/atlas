@@ -50,7 +50,7 @@ from atlas.ingestion.service import OperatorIngestionService
 from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
-from atlas.observability.langsmith import LangSmithTraceSink
+from atlas.observability.langsmith import LangSmithTraceSink, TraceSink
 from atlas.persistence.comparison_quota import (
     ComparisonQuotaService,
     InMemoryComparisonQuotaRepository,
@@ -79,6 +79,7 @@ def create_app(
     feedback_service: FeedbackControl | None = None,
     corpus_service: CorpusStatusProvider | None = None,
     news_service: DailyNewsProvider | None = None,
+    news_trace_sink: TraceSink | None = None,
     review_case_service: ReviewCaseListing | None = None,
     report_service: InMemoryReportService | None = None,
     visitor_hmac_secret: str | None = None,
@@ -122,6 +123,7 @@ def create_app(
     application.state.feedback_service = feedback_service
     application.state.corpus_service = corpus_service
     application.state.news_service = news_service
+    application.state.news_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(settings)
     application.state.review_case_service = review_case_service
     application.state.report_service = report_service
     application.state.operator_token = operator_token or (
@@ -247,6 +249,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             report_service=_report_service(settings, comparison_service=comparison_service),
             review_case_service=InMemoryReviewCaseService(),
             news_service=news_service,
+            news_trace_sink=LangSmithTraceSink.from_settings(settings),
         )
     corpus_service = _verified_corpus_or_demo(settings)
     comparison_service = _comparison_service(
@@ -257,6 +260,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         comparison_service=comparison_service,
         report_service=_report_service(settings, comparison_service=comparison_service),
         news_service=news_service,
+        news_trace_sink=LangSmithTraceSink.from_settings(settings),
     )
 
 
