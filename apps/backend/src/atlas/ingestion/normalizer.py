@@ -7,6 +7,9 @@ import re
 import unicodedata
 from dataclasses import dataclass
 from html.parser import HTMLParser
+from io import BytesIO
+
+from pypdf import PdfReader
 
 
 class NormalizationError(ValueError):
@@ -66,12 +69,22 @@ class _HtmlToText(HTMLParser):
 
 
 def normalize_document(content: bytes, *, content_type: str) -> NormalizedDocument:
-    try:
-        text = content.decode("utf-8")
-    except UnicodeDecodeError as exc:
-        raise NormalizationError("source must be valid UTF-8") from exc
+    normalized_type = content_type.casefold().split(";", 1)[0].strip()
+    page_count = 1
+    if normalized_type == "application/pdf":
+        try:
+            reader = PdfReader(BytesIO(content))
+            page_count = max(1, len(reader.pages))
+            text = "\n\n".join(page.extract_text() or "" for page in reader.pages)
+        except Exception as exc:
+            raise NormalizationError("PDF could not be normalized") from exc
+    else:
+        try:
+            text = content.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise NormalizationError("source must be valid UTF-8") from exc
 
-    if content_type.casefold() in {"text/html", "application/xhtml+xml"}:
+    if normalized_type in {"text/html", "application/xhtml+xml"}:
         parser = _HtmlToText()
         parser.feed(text)
         parser.close()
@@ -90,7 +103,7 @@ def normalize_document(content: bytes, *, content_type: str) -> NormalizedDocume
         content_sha256=sha256_hex(encoded),
         byte_size=len(encoded),
         language=detect_language(text),
-        page_count=max(1, text.count("\f") + 1),
+        page_count=max(page_count, text.count("\f") + 1),
     )
 
 

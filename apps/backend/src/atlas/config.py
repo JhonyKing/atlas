@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     atlas_auth_enabled: bool = True
     atlas_private_upload_max_bytes: int = Field(default=10_485_760, ge=1)
     atlas_private_retention_days: int = Field(default=30, ge=1)
+    atlas_ingestion_refresh_min_hours: int = Field(default=6, ge=6, le=24)
+    atlas_ingestion_refresh_max_hours: int = Field(default=24, ge=6, le=24)
+    atlas_ingestion_ttl_hours: int = Field(default=168, ge=1)
+    atlas_ingestion_max_retries: int = Field(default=3, ge=1, le=10)
+    atlas_ingestion_max_bytes: int = Field(default=4_000_000, ge=1)
 
     @field_validator(
         "openai_api_key",

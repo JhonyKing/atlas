@@ -12,6 +12,27 @@ from atlas.observability.context import current_request_id
 from atlas.privacy.redaction import redact_mapping
 
 
+def ingestion_event(
+    *,
+    run_id: UUID,
+    collection: str,
+    outcome: str,
+    latency_ms: float,
+    error_code: str | None = None,
+) -> dict[str, Any]:
+    """Build content-free ingestion telemetry safe for logs and LangSmith tags."""
+
+    event: dict[str, Any] = {
+        "run_id": str(run_id),
+        "collection": collection,
+        "outcome": outcome,
+        "latency_ms": round(max(latency_ms, 0.0), 2),
+    }
+    if error_code:
+        event["error_code"] = error_code
+    return event
+
+
 def security_event(
     *,
     request_id: UUID,

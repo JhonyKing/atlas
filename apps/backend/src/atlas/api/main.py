@@ -23,6 +23,7 @@ from atlas.api.routes.comparisons import router as comparisons_router
 from atlas.api.routes.corpus import router as corpus_router
 from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
+from atlas.api.routes.governance import router as governance_router
 from atlas.api.routes.health import DatabaseProbe, probe_database
 from atlas.api.routes.health import router as health_router
 from atlas.api.routes.news import router as news_router
@@ -41,6 +42,7 @@ from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusCompari
 from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
 from atlas.ingestion.service import OperatorIngestionService
+from atlas.ingestion.governance import InMemoryGovernanceRepository
 from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
@@ -79,6 +81,7 @@ def create_app(
     auth_provider: AuthPort | None = None,
     private_resource_service: InMemoryOwnershipService | None = None,
     private_upload_pipeline: PrivateUploadPipeline | None = None,
+    governance_service: InMemoryGovernanceRepository | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -132,6 +135,7 @@ def create_app(
     application.state.private_deletion_service = (
         IdempotentDeletionService(private_resource_service) if private_resource_service else None
     )
+    application.state.governance_service = governance_service
     application.state.account_deletion_service = (
         AccountDeletionService(
             private_resource_service,
@@ -145,6 +149,7 @@ def create_app(
     application.include_router(auth_router)
     application.include_router(account_router)
     application.include_router(private_data_router)
+    application.include_router(governance_router)
     application.include_router(answers_router)
     application.include_router(comparisons_router)
     application.include_router(feedback_router)

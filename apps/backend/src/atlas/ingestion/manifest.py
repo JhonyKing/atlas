@@ -67,8 +67,7 @@ def load_manifest(path: Path) -> CorpusManifest:
                 raise ManifestError(f"source in {collection} must be an object")
             title, url, source_type = item.get("title"), item.get("url"), item.get("type")
             if not all(
-                isinstance(value, str) and value.strip()
-                for value in (title, url, source_type)
+                isinstance(value, str) and value.strip() for value in (title, url, source_type)
             ):
                 raise ManifestError(f"source in {collection} needs title, url and type")
             parsed = urlparse(url)
