@@ -1,0 +1,17 @@
+{
+  "workload_version": "010-v1",
+  "environment": "local-deterministic",
+  "measured": false,
+  "note": "Fixture gate output only; not a live capacity measurement.",
+  "gate": {
+    "availability": 0.999,
+    "uncontrolled_error_rate": 0.001,
+    "normal_p95_seconds": 8.0,
+    "ttft_p50_seconds": 1.0,
+    "report_p95_seconds": 120.0,
+    "citation_precision": 0.97,
+    "estimated_cost": 1.0,
+    "cost_budget": 2.0,
+    "passed": true
+  }
+}

@@ -9,23 +9,23 @@
 
 ## Phase 2: Reliability boundaries (P1)
 
-- [ ] T005 Add measured pooling/index observation contracts without claiming unmeasured capacity.
-- [ ] T006 Add resilience load cases for timeout, retry, circuit and fallback.
+- [X] T005 Add measured pooling/index observation contracts without claiming unmeasured capacity.
+- [X] T006 Add resilience load cases for timeout, retry, circuit and fallback.
 - [X] T007 Add cache/source-version invalidation regression cases.
 - [X] T008 Add anonymous/authenticated limit measurement cases.
 
 ## Phase 3: Load and launch evidence
 
-- [ ] T009 Implement deterministic workload runner and SLO gate metrics.
-- [ ] T010 Record local smoke evidence; keep live load results explicitly pending.
-- [ ] T011 Add citation/cost launch gates and failure explanations.
-- [ ] T012 Add deployment, backup, alert, rollback and incident runbook.
-- [ ] T013 Add 10k/100k MAU scale decision record with assumptions and limitations.
+- [X] T009 Implement deterministic workload runner and SLO gate metrics.
+- [X] T010 Record local smoke evidence; keep live load results explicitly pending.
+- [X] T011 Add citation/cost launch gates and failure explanations.
+- [X] T012 Add deployment, backup, alert, rollback and incident runbook.
+- [X] T013 Add 10k/100k MAU scale decision record with assumptions and limitations.
 
 ## Phase 4: Closure
 
-- [ ] T014 Run backend/frontend tests, Ruff/mypy, SLO suite and SpecKit Analyze/Converge.
-- [ ] T015 Update README, architecture, ADR, PRD/status matrix and verification evidence.
+- [X] T014 Run backend/frontend tests, Ruff/mypy, SLO suite and SpecKit Analyze/Converge.
+- [X] T015 Update README, architecture, ADR, PRD/status matrix and verification evidence.
 
 ## Requirements Traceability
 
