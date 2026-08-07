@@ -4,7 +4,7 @@ Branch: `codex/006-agent-graph-human-review`
 
 | Check | Result |
 |---|---:|
-| Agent unit/contract/integration/security suite | **32 passed** |
+| Agent unit/contract/integration/security suite | **35 passed** |
 | Full backend regression | **265 passed, 4 skipped** |
 | Agent Ruff | **passed** |
 | Agent/API mypy | **passed (8 files)** |
