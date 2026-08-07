@@ -18,6 +18,7 @@
     ,"test:auth": "powershell -NoProfile -File scripts/verify-auth.ps1",
     "test:ingestion": "powershell -NoProfile -File scripts/verify-ingestion.ps1",
     "test:agent": "powershell -NoProfile -File scripts/verify-agent.ps1",
-    "test:retrieval": "powershell -NoProfile -File scripts/verify-retrieval.ps1"
+    "test:retrieval": "powershell -NoProfile -File scripts/verify-retrieval.ps1",
+    "test:model-router": "powershell -NoProfile -File scripts/verify-model-router.ps1"
   }
 }
