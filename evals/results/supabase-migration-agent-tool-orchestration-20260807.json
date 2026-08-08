@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "migration_count": 28,
+  "head": "0028_agent_tool_orchestration",
+  "new_tables": [
+    "atlas.agent_plans",
+    "atlas.agent_runs",
+    "atlas.agent_tool_calls",
+    "atlas.agent_run_events",
+    "atlas.agent_approvals"
+  ],
+  "public_access": "revoked",
+  "applied_via": "supabase_apply_migration",
+  "captured_at": "2026-08-07T03:31:20Z"
+}

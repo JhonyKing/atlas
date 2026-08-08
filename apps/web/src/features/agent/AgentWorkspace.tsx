@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 
 import { useLocale } from "@/i18n";
 
-import { getAgentToolCatalog } from "./api";
-import type { AgentTool, AgentToolCatalog } from "./types";
+import { approveAgentTool, cancelAgentRun, createAgentPlan, getAgentEvents, getAgentToolCatalog, rejectAgentTool, resumeAgentRun, startAgentRun } from "./api";
+import { ApprovalCard } from "./ApprovalCard";
+import { RunTimeline } from "./RunTimeline";
+import { ToolInputForm } from "./ToolInputForm";
+import type { AgentPlan, AgentRunEvent, AgentTool, AgentToolCatalog } from "./types";
 
 const labels = {
   "en-US": {
@@ -46,6 +49,12 @@ export function AgentWorkspace() {
   const [catalog, setCatalog] = useState<AgentToolCatalog | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [selectedTool, setSelectedTool] = useState<AgentTool | null>(null);
+  const [plan, setPlan] = useState<AgentPlan | null>(null);
+  const [events, setEvents] = useState<AgentRunEvent[]>([]);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [runStatus, setRunStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [working, setWorking] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -62,12 +71,75 @@ export function AgentWorkspace() {
 
   const catalogIsCurrent = catalog?.locale === locale;
 
+  async function buildPlan(input: Record<string, unknown>) {
+    if (!selectedTool) return;
+    setWorking(true);
+    setError(null);
+    try {
+      const request = selectedTool.tool_id === "cited_answer"
+        ? String(input.question ?? "")
+        : selectedTool.name;
+      const next = await createAgentPlan(locale, request, selectedTool.tool_id, input);
+      setPlan(next);
+      setEvents([]);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to create a plan");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function runPlan() {
+    if (!plan) return;
+    setWorking(true);
+    setError(null);
+    try {
+      const approvalIds = plan.required_approval_ids ?? [];
+      for (const approvalId of approvalIds) {
+        const decisionKey = plan.approval_decision_keys?.[approvalId];
+        if (!decisionKey) throw new Error("Approval token unavailable");
+        await approveAgentTool(approvalId, decisionKey);
+      }
+      const result = await startAgentRun(plan.plan_hash, "anonymous", approvalIds);
+      setRunId(result.run_id);
+      setRunStatus(result.status);
+      setEvents(result.events);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to start the run");
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function rejectPlan() {
+    if (!plan) return;
+    const approvalId = plan.required_approval_ids?.[0];
+    const decisionKey = approvalId ? plan.approval_decision_keys?.[approvalId] : undefined;
+    if (!approvalId || !decisionKey) return;
+    await rejectAgentTool(approvalId, decisionKey);
+    setError(locale === "es-MX" ? "Plan rechazado." : "Plan rejected.");
+  }
+
+  async function cancelRun() {
+    if (!runId) return;
+    await cancelAgentRun(runId);
+    setRunStatus("cancelled");
+    setEvents(await getAgentEvents(runId));
+  }
+
+  async function resumeRun() {
+    if (!runId) return;
+    await resumeAgentRun(runId);
+    setRunStatus("accepted");
+    setEvents(await getAgentEvents(runId));
+  }
+
   return (
     <section className="agent-workspace" aria-labelledby="agent-workspace-title">
       <p className="eyebrow">{copy.eyebrow}</p>
       <h2 id="agent-workspace-title">{copy.title}</h2>
       <p className="lede">{copy.lede}</p>
-      {(!catalogIsCurrent && !unavailable) && <p aria-live="polite">{copy.loading}</p>}
+      {!catalogIsCurrent && !unavailable && <p aria-live="polite">{copy.loading}</p>}
       {unavailable && catalogIsCurrent !== false && <p className="error" aria-live="polite">{copy.unavailable}</p>}
       {catalog && catalogIsCurrent && (
         <>
@@ -78,7 +150,6 @@ export function AgentWorkspace() {
                 key={`${tool.tool_id}-${tool.version}`}
                 type="button"
                 onClick={() => setSelectedTool(tool)}
-                role="listitem"
                 disabled={tool.availability !== "enabled"}
               >
                 <span className="agent-tool-name">{tool.name}</span>
@@ -91,10 +162,20 @@ export function AgentWorkspace() {
             ))}
           </div>
           {selectedTool && (
-            <p className="agent-selected" aria-live="polite">
-              {selectedTool.name} · {selectedTool.tool_id} v{selectedTool.version}
-            </p>
+            <div className="agent-tool-detail">
+              <p className="agent-selected" aria-live="polite">
+                {selectedTool.name} · {selectedTool.tool_id} v{selectedTool.version}
+              </p>
+              <ToolInputForm tool={selectedTool} onSubmit={(input) => void buildPlan(input)} disabled={working} />
+            </div>
           )}
+          {plan && <section className="agent-plan-preview" aria-label="Plan preview">
+            <p><strong>{locale === "es-MX" ? "Plan listo" : "Plan ready"}</strong> · {plan.steps.map((step) => step.tool_id).join(" → ")}</p>
+            <ApprovalCard plan={plan} onApprove={() => void runPlan()} onReject={() => void rejectPlan()} />
+            {!plan.required_approval_ids?.length && <button type="button" onClick={() => void runPlan()} disabled={working}>Run plan</button>}
+          </section>}
+          {error && <p className="error" role="alert">{error}</p>}
+          <RunTimeline events={events} runStatus={runStatus} onCancel={() => void cancelRun()} onResume={() => void resumeRun()} />
         </>
       )}
     </section>

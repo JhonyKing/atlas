@@ -3,11 +3,11 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const RUN_ID = "00000000-0000-0000-0000-000000000006";
-
 export function ReviewPanel() {
   const spanish = usePathname()?.startsWith("/es") ?? true;
   const [reviewer, setReviewer] = useState("operator@example.test");
+  const [runId, setRunId] = useState("");
+  const [evidenceIds, setEvidenceIds] = useState("");
   const [proposal, setProposal] = useState("");
   const [reviewId, setReviewId] = useState<string | null>(null);
   const [status, setStatus] = useState("not_required");
@@ -18,8 +18,8 @@ export function ReviewPanel() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        run_id: RUN_ID,
-        evidence_ids: ["fixture-evidence-1"],
+        run_id: runId,
+        evidence_ids: evidenceIds.split(",").map((value) => value.trim()).filter(Boolean),
         proposed_text: proposal,
         reviewer_id: reviewer,
       }),
@@ -54,12 +54,8 @@ export function ReviewPanel() {
     setStatus(body.status);
     setMessage(
       body.status === "rejected"
-        ? spanish
-          ? "La publicación fue rechazada."
-          : "Publication rejected."
-        : spanish
-          ? "Decisión registrada; publicación autorizada."
-          : "Decision recorded; publication authorized.",
+        ? spanish ? "La publicación fue rechazada." : "Publication rejected."
+        : spanish ? "Decisión registrada; publicación autorizada." : "Decision recorded; publication authorized.",
     );
   }
 
@@ -68,19 +64,27 @@ export function ReviewPanel() {
       <h2 id="review-title">{spanish ? "Revisión humana" : "Human review"}</h2>
       <p>{spanish ? "Aprueba, edita o rechaza antes de publicar." : "Approve, edit, or reject before publication."}</p>
       <div className="review-form-grid">
-      <label className="account-field">
-        {spanish ? "Revisor" : "Reviewer"}
-        <input value={reviewer} onChange={(event) => setReviewer(event.target.value)} />
-      </label>
-      <label className="account-field review-proposal">
-        {spanish ? "Propuesta" : "Proposal"}
-        <textarea value={proposal} onChange={(event) => setProposal(event.target.value)} />
-      </label>
+        <label className="account-field">
+          {spanish ? "ID de ejecución" : "Run ID"}
+          <input value={runId} onChange={(event) => setRunId(event.target.value)} placeholder="UUID" />
+        </label>
+        <label className="account-field">
+          {spanish ? "IDs de evidencia" : "Evidence IDs"}
+          <input value={evidenceIds} onChange={(event) => setEvidenceIds(event.target.value)} placeholder="ev-1, ev-2" />
+        </label>
+        <label className="account-field">
+          {spanish ? "Revisor" : "Reviewer"}
+          <input value={reviewer} onChange={(event) => setReviewer(event.target.value)} />
+        </label>
+        <label className="account-field review-proposal">
+          {spanish ? "Propuesta" : "Proposal"}
+          <textarea value={proposal} onChange={(event) => setProposal(event.target.value)} />
+        </label>
       </div>
       <div className="actions">
-      <button type="button" onClick={createReview} disabled={!proposal.trim()}>
-        {spanish ? "Solicitar revisión" : "Request review"}
-      </button>
+        <button type="button" onClick={() => void createReview()} disabled={!proposal.trim() || !runId.trim() || !evidenceIds.trim()}>
+          {spanish ? "Solicitar revisión" : "Request review"}
+        </button>
       </div>
       <p aria-live="polite">{spanish ? "Estado" : "Status"}: {status}</p>
       {reviewId && (

@@ -83,6 +83,22 @@ main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
 .agent-tool-name { font-weight: 800; }
 .agent-tool-description, .agent-tool-meta { color: var(--atlas-text-secondary); font-size: .9rem; font-weight: 400; }
 .agent-selected { margin: 1rem 0 0; color: var(--atlas-indigo); font-weight: 700; }
+.agent-tool-detail { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--atlas-border); }
+.agent-tool-form { max-width: 42rem; margin-top: 1rem; }
+.agent-tool-form .account-field { display: grid; gap: .35rem; }
+.agent-tool-form textarea { min-height: 7rem; resize: vertical; }
+.agent-plan-preview { display: grid; gap: .75rem; margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); background: var(--atlas-surface-soft); }
+.agent-plan-preview p { margin: 0; color: var(--atlas-text-secondary); }
+.agent-approval-card { display: grid; gap: .6rem; padding: .9rem; border-left: .25rem solid var(--atlas-partial); border-radius: var(--atlas-radius-md); background: var(--atlas-partial-bg); }
+.agent-approval-card p { margin: 0; color: var(--atlas-text-secondary); }
+.agent-approval-card code { overflow-wrap: anywhere; font-size: .85rem; }
+.agent-approval-card details { padding: .55rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-sm); background: var(--atlas-surface); }
+.agent-approval-card pre { max-width: 100%; margin: .5rem 0 0; overflow-x: auto; font-size: .78rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.agent-run-timeline { display: grid; gap: .55rem; margin: 1.25rem 0 0; padding: 0; list-style: none; }
+.agent-run-timeline li { display: flex; gap: .7rem; align-items: flex-start; padding: .7rem .8rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-sm); background: var(--atlas-surface); }
+.agent-run-timeline strong, .agent-run-timeline small { display: block; }
+.agent-run-timeline small { margin-top: .15rem; color: var(--atlas-text-secondary); }
+.agent-event-sequence { display: grid; place-items: center; min-width: 1.5rem; height: 1.5rem; border-radius: 50%; color: var(--atlas-surface); background: var(--atlas-indigo); font-size: .8rem; font-weight: 800; }
 .eyebrow { color: var(--atlas-indigo); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 h1 { font-size: clamp(2.5rem, 8vw, 5rem); line-height: .95; max-width: 10ch; margin: 1rem 0; }
 .lede { font-size: 1.1rem; line-height: 1.6; color: var(--atlas-text-secondary); }
@@ -267,6 +283,8 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .comparison-control-grid { grid-template-columns: 1fr; }
   .comparison-results-heading { display: grid; align-items: start; }
   .comparison-table-wrap table { min-width: 46rem; }
+  .agent-tool-grid { grid-template-columns: 1fr; }
+  .agent-workspace { padding: 1rem; }
   .account-page, .report-page, .news-page, .sources-page, .admin-page { padding-top: 2.5rem; padding-bottom: 3rem; }
   .account-grid { grid-template-columns: 1fr; }
   .daily-news-heading { display: grid; gap: .35rem; }

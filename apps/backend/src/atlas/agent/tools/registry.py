@@ -2,43 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, Field
 
-Locale = Literal["en-US", "es-MX"]
-SideEffectLevel = Literal["read", "private_read", "mutate", "publish", "delete"]
-ApprovalMode = Literal["none", "explicit_user", "human_reviewer"]
-Availability = Literal["enabled", "disabled", "provider_unavailable", "quota_exhausted"]
-
-
-class ToolLocalization(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(min_length=1, max_length=500)
-
-
-class ToolDefinition(BaseModel):
-    """Public metadata and policy for one callable ATLAS capability.
-
-    The model is intentionally provider-neutral. A model-generated tool name or argument object
-    must be validated against this record before an executor is allowed to call a domain service.
-    """
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    tool_id: str = Field(pattern=r"^[a-z][a-z0-9_]{2,63}$")
-    version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
-    input_schema: dict[str, object]
-    output_schema: dict[str, object]
-    scopes: tuple[str, ...] = ()
-    side_effect_level: SideEffectLevel
-    approval: ApprovalMode
-    timeout_ms: int = Field(gt=0, le=120_000)
-    budget: dict[str, int]
-    localization: dict[Locale, ToolLocalization]
-    availability: Availability = "enabled"
+from atlas.agent.tools.schemas import (
+    ApprovalMode,
+    Locale,
+    SideEffectLevel,
+    ToolDefinition,
+    ToolLocalization,
+)
 
 
 class ToolCatalog(BaseModel):
@@ -50,8 +22,6 @@ class ToolCatalog(BaseModel):
     tools: tuple[ToolDefinition, ...]
 
     def list_for_locale(self, locale: Locale) -> tuple[ToolDefinition, ...]:
-        """Return only definitions with copy for the requested locale."""
-
         return tuple(tool for tool in self.tools if locale in tool.localization)
 
     def get(self, tool_id: str) -> ToolDefinition | None:
@@ -59,8 +29,6 @@ class ToolCatalog(BaseModel):
 
     @classmethod
     def default(cls) -> ToolCatalog:
-        """Build the initial catalog from domain capabilities already present in ATLAS."""
-
         return cls(
             version="1.0.0",
             tools=(
@@ -151,10 +119,32 @@ def _read_tool(
     *,
     deep: bool = False,
 ) -> ToolDefinition:
+    input_schema: dict[str, object] = {"type": "object", "additionalProperties": False}
+    if tool_id == "cited_answer":
+        input_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["question"],
+            "properties": {"question": {"type": "string", "minLength": 3}},
+        }
+    elif tool_id == "comparison":
+        input_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["technologies"],
+            "properties": {"technologies": {"type": "array"}, "criteria": {"type": "array"}},
+        }
+    elif tool_id == "report":
+        input_schema = {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["source_run_id"],
+            "properties": {"source_run_id": {"type": "string"}, "format": {"type": "string"}},
+        }
     return ToolDefinition(
         tool_id=tool_id,
         version="1.0.0",
-        input_schema={"type": "object", "additionalProperties": False},
+        input_schema=input_schema,
         output_schema={"type": "object", "additionalProperties": False},
         side_effect_level="read",
         approval="none",
@@ -177,10 +167,15 @@ def _private_tool(
     side_effect_level: SideEffectLevel,
     approval: ApprovalMode,
 ) -> ToolDefinition:
+    input_schema: dict[str, object] = {"type": "object", "additionalProperties": False}
+    if tool_id in {"private_resources", "private_upload", "private_delete"}:
+        input_schema["properties"] = {"resource_id": {"type": "string"}}
+        if tool_id == "private_delete":
+            input_schema["required"] = ["resource_id"]
     return ToolDefinition(
         tool_id=tool_id,
         version="1.0.0",
-        input_schema={"type": "object", "additionalProperties": False},
+        input_schema=input_schema,
         output_schema={"type": "object", "additionalProperties": False},
         scopes=("authenticated",),
         side_effect_level=side_effect_level,

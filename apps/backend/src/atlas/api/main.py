@@ -13,6 +13,7 @@ from openai import AsyncOpenAI
 from atlas.agent.checkpoints import InMemoryCheckpointRepository
 from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
 from atlas.agent.orchestration import AgentOrchestrator
+from atlas.agent.planner import AgentPlanner
 from atlas.agent.review import ReviewService
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.api.answer_service import InMemoryAnswerRunService
@@ -52,6 +53,7 @@ from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink, TraceSink
+from atlas.persistence.agent_runs import InMemoryAgentRunRepository
 from atlas.persistence.comparison_quota import (
     ComparisonQuotaService,
     InMemoryComparisonQuotaRepository,
@@ -147,6 +149,12 @@ def create_app(
     application.state.governance_service = governance_service
     application.state.agent_orchestrator = AgentOrchestrator()
     application.state.agent_tool_catalog = ToolCatalog.default()
+    application.state.agent_planner = AgentPlanner(application.state.agent_tool_catalog)
+    application.state.agent_run_repository = InMemoryAgentRunRepository()
+    application.state.agent_approvals = {}
+    application.state.agent_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
+        settings
+    )
     application.state.agent_review_service = ReviewService()
     application.state.agent_checkpoint_service = InMemoryCheckpointRepository()
     application.state.account_deletion_service = (

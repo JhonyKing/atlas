@@ -8,7 +8,7 @@ each feature is its SpecKit directory under `specs/`.
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
-current remote head is `0027_revoke_public_rls_helper`.
+current remote head is `0028_agent_tool_orchestration`.
 
 The repeatable verification workflow lives in `scripts/supabase/` and is enforced by
 `.github/workflows/supabase-migration.yml`. Pull requests run manifest, evidence-contract, and
@@ -22,6 +22,24 @@ Source, operations, and verification:
 - `docs/runbooks/supabase-migration.md`
 - `docs/adr/0013-supabase-development-migration.md`
 - `docs/verification/021-supabase-migration.md`
+
+## Feature 019: agent tool orchestration
+
+ATLAS exposes its capabilities as a versioned, typed tool catalog. The agent can propose a bounded
+plan, preview the selected tool and arguments, request explicit approval for private or consequential
+actions, execute read-only domain adapters, and display ordered run events with evidence/artifact
+counts. GPT-5.6 Luna is the default planner label through the existing provider boundary; provider
+output never authorizes a tool.
+
+Run the deterministic verification from the repository root:
+
+```powershell
+.\scripts\verify-agent-tools.ps1
+```
+
+The source of truth and evidence are `specs/019-agent-tool-orchestration/`,
+`docs/architecture/019-agent-tool-orchestration.md`, `docs/adr/0014-agent-tool-orchestration.md`,
+and `docs/verification/019-agent-tool-orchestration.md`.
 
 ## Feature 003: reports
 

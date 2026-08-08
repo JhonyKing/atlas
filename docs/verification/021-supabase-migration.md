@@ -2,16 +2,16 @@
 
 ## Result
 
-The project-scoped Supabase development database `fcbclsaytbjpywlaplbh` contains the exact 27
+The project-scoped Supabase development database `fcbclsaytbjpywlaplbh` contains the exact 28
 repository migration revisions, from `0001_foundation` through
-`0027_revoke_public_rls_helper`.
+`0028_agent_tool_orchestration`.
 
 ## Checks executed
 
 - Local quality gate: database unit tests **12 passed**, Ruff passed, mypy passed for the database
   package, and the repository manifest command reported 27 revisions.
 - Remote project: `AtlasAI`, active/healthy, PostgreSQL 17.6.
-- Migration comparison: local 27 / remote 27, exact ordered match, no missing or unexpected
+- Migration comparison: local 28 / remote 28, exact ordered match, no missing or unexpected
   revisions.
 - Schema inventory: 47 ATLAS tables, 6 RLS-enabled tables, 8 RLS policies.
 - Required functions: retrieval, quota, retention, answer-result, and provenance helpers present.

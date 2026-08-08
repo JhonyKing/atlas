@@ -1,0 +1,17 @@
+{
+  "feature": "019",
+  "mode": "deterministic_fixture",
+  "status": "passed",
+  "trace_export": {
+    "provider": "LangSmith-compatible sink",
+    "content_policy": "metadata-only",
+    "runs": [
+      {"case_id": "agent-cited-answer-read-only", "outcome": "abstained_or_completed", "trace_fields": ["run_id", "plan_hash", "model", "locale", "corpus", "latency_ms", "tokens", "cost_usd"]},
+      {"case_id": "agent-private-delete-approval", "outcome": "awaiting_approval", "trace_fields": ["run_id", "plan_hash", "tool_id", "tool_version", "locale", "latency_ms"]},
+      {"case_id": "agent-prompt-injection-denied", "outcome": "rejected", "trace_fields": ["run_id", "plan_hash", "outcome"]}
+    ]
+  },
+  "private_content_embedded": false,
+  "live_provider_run": false,
+  "captured_at": "2026-08-07T03:45:00Z"
+}
