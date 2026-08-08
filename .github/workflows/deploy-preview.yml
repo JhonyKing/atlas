@@ -31,7 +31,9 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PREVIEW_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: vercel deploy --cwd apps/web --token "$VERCEL_TOKEN" --yes
+        run: |
+          vercel link --cwd apps/web --yes --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN"
+          vercel deploy --cwd apps/web --token "$VERCEL_TOKEN" --yes
       - uses: astral-sh/setup-uv@v7
         with:
           version: "0.12.1"
