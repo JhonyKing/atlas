@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atlas.example/contracts/supabase-migration-evidence.schema.json",
+  "title": "ATLAS Supabase migration evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "project_ref", "environment", "mode", "started_at", "finished_at", "status", "checks", "drift"],
+  "properties": {
+    "run_id": { "type": "string", "minLength": 1 },
+    "project_ref": { "const": "fcbclsaytbjpywlaplbh" },
+    "environment": { "enum": ["development", "staging", "production", "unknown"] },
+    "mode": { "enum": ["inspect", "apply", "verify"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "repository_head": { "type": "string" },
+    "repository_revisions": { "type": "array", "items": { "type": "string" } },
+    "remote_revisions": { "type": "array", "items": { "type": "string" } },
+    "applied_revisions": { "type": "array", "items": { "type": "string" } },
+    "schema_inventory": { "type": "object", "additionalProperties": true },
+    "checks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+    "drift": { "type": "array", "items": { "$ref": "#/$defs/driftFinding" } },
+    "status": { "enum": ["passed", "failed", "blocked", "drift_detected"] }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "type": "string" },
+        "status": { "enum": ["passed", "failed", "blocked", "skipped"] },
+        "elapsed_ms": { "type": "number", "minimum": 0 },
+        "detail": { "type": "string", "maxLength": 1000 }
+      }
+    },
+    "driftFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "object_name", "expected", "actual", "severity"],
+      "properties": {
+        "kind": { "enum": ["revision", "table", "function", "index", "policy", "extension", "seed"] },
+        "object_name": { "type": "string" },
+        "expected": { "type": "string" },
+        "actual": { "type": "string" },
+        "severity": { "enum": ["blocking", "warning", "informational"] },
+        "resolution": { "type": "string", "maxLength": 1000 }
+      }
+    }
+  }
+}
