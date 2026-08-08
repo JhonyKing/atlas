@@ -15,10 +15,10 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 **Purpose**: Establish the exact repository state that will be compared with Supabase.
 
-- [ ] T001 [P] Create a deterministic ordered revision manifest from `database/migrations/versions/` in `scripts/supabase/migration_manifest.py`, including revision IDs, down-revision links, and SHA-256 file hashes.
-- [ ] T002 [P] Add unit coverage for revision ordering, duplicate IDs, missing links, and the expected 24-revision count in `apps/backend/tests/unit/database/test_migration_manifest.py`.
-- [ ] T003 [P] Document the project-scoped OAuth MCP setup, environment gate, no-secret policy, and operator ownership checks in `docs/runbooks/supabase-migration.md`.
-- [ ] T004 [P] Add a non-secret example configuration and prohibited-secret checklist to `docs/runbooks/supabase-migration.md`; do not add tokens, passwords, service-role keys, or database URLs.
+- [x] T001 [P] Create a deterministic ordered revision manifest from `database/migrations/versions/` in `scripts/supabase/migration_manifest.py`, including revision IDs, down-revision links, and SHA-256 file hashes.
+- [x] T002 [P] Add unit coverage for revision ordering, duplicate IDs, missing links, and the expected 24-revision count in `apps/backend/tests/unit/database/test_migration_manifest.py`.
+- [x] T003 [P] Document the project-scoped OAuth MCP setup, environment gate, no-secret policy, and operator ownership checks in `docs/runbooks/supabase-migration.md`.
+- [x] T004 [P] Add a non-secret example configuration and prohibited-secret checklist to `docs/runbooks/supabase-migration.md`; do not add tokens, passwords, service-role keys, or database URLs.
 
 **Checkpoint**: Repository migration inventory is reproducible and the operator runbook is reviewable without contacting Supabase.
 
@@ -26,13 +26,13 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 **Purpose**: Build the validation and evidence boundaries before any remote write.
 
-- [ ] T005 Implement typed `MigrationEvidence` and `DriftFinding` validation against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` in `apps/backend/src/atlas/database/migration_evidence.py`.
-- [ ] T006 [P] Add unit tests for evidence validation, secret redaction, bounded detail, allowed statuses, and project-reference enforcement in `apps/backend/tests/unit/database/test_migration_evidence.py`.
-- [ ] T007 Implement a read-only evidence writer that emits `inspect`, `apply`, and `verify` artifacts under `evals/results/supabase-migration-<timestamp>.json` without row payloads in `scripts/supabase/evidence_writer.py`.
+- [x] T005 Implement typed `MigrationEvidence` and `DriftFinding` validation against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` in `apps/backend/src/atlas/database/migration_evidence.py`.
+- [x] T006 [P] Add unit tests for evidence validation, secret redaction, bounded detail, allowed statuses, and project-reference enforcement in `apps/backend/tests/unit/database/test_migration_evidence.py`.
+- [x] T007 Implement a read-only evidence writer that emits `inspect`, `apply`, and `verify` artifacts under `evals/results/supabase-migration-<timestamp>.json` without row payloads in `scripts/supabase/evidence_writer.py`.
 - [ ] T008 [P] Add JSON Schema validation tests for the evidence contract in `apps/backend/tests/unit/database/test_migration_evidence_contract.py`.
-- [ ] T009 [P] Add a repository-side migration checksum/manifest verification command in `scripts/supabase/verify_repository_migrations.py` that fails closed on duplicate or out-of-order revisions.
-- [ ] T010 Define the remote safety gate in `scripts/supabase/environment_gate.py`: require the expected project reference, classify development/staging/production, detect unexplained existing data, and block writes for production or unknown environments.
-- [ ] T011 [P] Add unit tests for the environment gate and private-data boundary in `apps/backend/tests/unit/database/test_supabase_environment_gate.py`.
+- [x] T009 [P] Add a repository-side migration checksum/manifest verification command in `scripts/supabase/verify_repository_migrations.py` that fails closed on duplicate or out-of-order revisions.
+- [x] T010 Define the remote safety gate in `scripts/supabase/environment_gate.py`: require the expected project reference, classify development/staging/production, detect unexplained existing data, and block writes for production or unknown environments.
+- [x] T011 [P] Add unit tests for the environment gate and private-data boundary in `apps/backend/tests/unit/database/test_supabase_environment_gate.py`.
 
 **Checkpoint**: Local contracts, redaction, repository state, and environment gating pass before MCP access is used.
 
