@@ -77,7 +77,7 @@ class PostgresCorpusRepository:
                            excerpt, capture_date, version_label, keyword_rank, vector_rank,
                            fused_rank
                     FROM atlas.search_evidence(
-                        %s::text, %s::text, %s::vector, %s::integer, %s::uuid
+                        %s::text, %s::text, %s::extensions.vector, %s::integer, %s::uuid
                     )
                     """,
                     (slug.value, query_text, embedding, top_k, snapshot_id),

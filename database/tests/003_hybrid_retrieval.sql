@@ -3,7 +3,7 @@
 
 DO $$
 BEGIN
-  IF to_regprocedure('atlas.search_evidence(text,text,vector,integer,uuid)') IS NULL THEN
+  IF to_regprocedure('atlas.search_evidence(text,text,extensions.vector,integer,uuid)') IS NULL THEN
     RAISE EXCEPTION 'atlas.search_evidence function is missing';
   END IF;
 END
@@ -23,7 +23,7 @@ DECLARE
   snapshot_id uuid;
   result_ids uuid[];
   repeated_ids uuid[];
-  query_embedding vector(1536) := array_fill(0::real, ARRAY[1536])::vector;
+  query_embedding extensions.vector(1536) := array_fill(0::real, ARRAY[1536])::extensions.vector;
 BEGIN
   INSERT INTO atlas.collections(slug, display_name, publisher, base_url, allowed_hosts)
   VALUES ('langgraph', 'T037 LangGraph', 'LangChain', 'https://docs.langchain.com/', ARRAY['docs.langchain.com'])
@@ -66,7 +66,7 @@ BEGIN
   INSERT INTO atlas.chunk_embeddings(chunk_id, embedding_profile_id, embedding)
   VALUES
     (keyword_chunk_id, profile_id, query_embedding),
-    (vector_chunk_id, profile_id, ('[1,' || repeat('0,', 1534) || '0]')::vector);
+    (vector_chunk_id, profile_id, ('[1,' || repeat('0,', 1534) || '0]')::extensions.vector);
 
   INSERT INTO atlas.corpus_snapshots(revision, manifest, manifest_sha256)
   VALUES (

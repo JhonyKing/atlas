@@ -3,6 +3,21 @@
 ATLAS is an evidence-first technical research application. The executable source of truth for
 each feature is its SpecKit directory under `specs/`.
 
+## Feature 021: Supabase database migration
+
+The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project
+`fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
+schema source of truth; local fixtures and private/user rows are not copied by default. The
+current remote head is `0027_revoke_public_rls_helper`.
+
+Source, operations, and verification:
+
+- `specs/021-supabase-database-migration/spec.md`
+- `specs/021-supabase-database-migration/tasks.md`
+- `docs/runbooks/supabase-migration.md`
+- `docs/adr/0013-supabase-development-migration.md`
+- `docs/verification/021-supabase-migration.md`
+
 ## Feature 003: reports
 
 The current vertical slice accepts a completed technology-comparison run and plans a citation-

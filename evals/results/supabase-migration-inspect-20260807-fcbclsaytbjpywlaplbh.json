@@ -1,0 +1,78 @@
+{
+  "run_id": "inspect-20260807-fcbclsaytbjpywlaplbh",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "development",
+  "mode": "inspect",
+  "started_at": "2026-08-08T01:23:10.155662Z",
+  "finished_at": "2026-08-08T01:23:10.155662Z",
+  "repository_head": "a9af518e4552f89d19edffc3fe7f884bcd1fd8d8",
+  "repository_revisions": [
+    "0001_foundation",
+    "0002_corpus_ingestion",
+    "0003_anonymous_quota",
+    "0004_hybrid_retrieval",
+    "0005_answer_runs",
+    "0006_evidence_integrity",
+    "0007_feedback",
+    "0008_retention",
+    "0009_provenance",
+    "0010_daily_news",
+    "0011_seed_collections",
+    "0012_comparisons",
+    "0013_comparison_quota",
+    "0014_comparison_cell_context",
+    "0015_expand_corpus_collections",
+    "0016_reports",
+    "0017_report_metadata",
+    "0018_identity",
+    "0019_private_data",
+    "0020_private_data_rls",
+    "0021_private_upload_provenance",
+    "0022_ingestion_governance",
+    "0023_policy_review_status",
+    "0024_agent_checkpoints_reviews"
+  ],
+  "remote_revisions": [],
+  "applied_revisions": [],
+  "schema_inventory": {
+    "project_status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6",
+    "tables": [],
+    "rls_tables": [],
+    "installed_extensions": [
+      "pgcrypto",
+      "vector",
+      "pg_stat_statements",
+      "uuid-ossp"
+    ],
+    "data_presence": "empty"
+  },
+  "checks": [
+    {
+      "name": "project_scope",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "Project ref matches configured ATLAS Supabase project."
+    },
+    {
+      "name": "migration_history",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "Remote migration history is empty."
+    },
+    {
+      "name": "schema_inventory",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "No ATLAS tables or private rows were found."
+    },
+    {
+      "name": "vector_extension",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "vector 0.8.2 is installed."
+    }
+  ],
+  "drift": [],
+  "status": "passed"
+}

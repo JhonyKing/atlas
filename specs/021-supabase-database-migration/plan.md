@@ -4,7 +4,7 @@
 
 ## Summary
 
-Migrate the ATLAS PostgreSQL schema and approved seed state from the repository's 24 ordered Alembic revisions into the project-scoped Supabase development project `fcbclsaytbjpywlaplbh`. The workflow will inspect the remote state first, apply only reviewed versioned changes through the authenticated Supabase MCP, verify extensions/functions/RLS/retrieval behavior, and produce a non-secret evidence artifact. Bulk private or user data is explicitly separated from schema migration.
+Migrate the ATLAS PostgreSQL schema and approved seed state from the repository's 27 ordered Alembic revisions into the project-scoped Supabase development project `fcbclsaytbjpywlaplbh`. The workflow will inspect the remote state first, apply only reviewed versioned changes through the authenticated Supabase MCP, verify extensions/functions/RLS/retrieval behavior, and produce a non-secret evidence artifact. Bulk private or user data is explicitly separated from schema migration.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Migrate the ATLAS PostgreSQL schema and approved seed state from the repository'
 
 **Constraints**: Project-scoped OAuth only; no PAT/service-role/password in source control or commands; stop on first failed migration; preserve RLS and evidence provenance; reruns must be idempotent
 
-**Scale/Scope**: 24 repository revisions, all current ATLAS schema objects/functions/policies/extensions, approved public seed records only
+**Scale/Scope**: 27 repository revisions, all current ATLAS schema objects/functions/policies/extensions, approved public seed records only
 
 ## Constitution Check
 
@@ -54,7 +54,7 @@ See [research.md](./research.md). Key decisions are to use the official hosted S
 
 ```text
 database/
-├── migrations/versions/       # 24 ordered Alembic revisions (source of truth)
+├── migrations/versions/       # 27 ordered Alembic revisions (source of truth)
 ├── functions/                 # SQL function definitions
 └── tests/                     # SQL security, retrieval, and integrity checks
 apps/backend/

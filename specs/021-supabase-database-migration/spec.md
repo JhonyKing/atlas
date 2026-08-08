@@ -20,7 +20,7 @@ As the project owner, I want the complete ATLAS database schema available in the
 
 **Acceptance Scenarios**:
 
-1. **Given** a project-scoped Supabase connection, **When** the migration is applied, **Then** all 24 repository migration revisions are represented in the remote migration history in order.
+1. **Given** a project-scoped Supabase connection, **When** the migration is applied, **Then** all 27 repository migration revisions are represented in the remote migration history in order.
 2. **Given** the migrated schema, **When** the schema inventory is queried, **Then** all ATLAS tables, constraints, indexes, SQL functions, and required extensions are present.
 3. **Given** an already migrated project, **When** the same migration verification is repeated, **Then** no duplicate objects or destructive changes are produced.
 
@@ -65,7 +65,7 @@ As a contributor, I want future schema changes to be authored in the repository,
 ### Functional Requirements
 
 - **FR-001**: The project MUST use the Supabase project identified by `fcbclsaytbjpywlaplbh` and no other project for this feature.
-- **FR-002**: The migration MUST represent all 24 versioned revisions currently present under `database/migrations/versions/` in dependency order.
+- **FR-002**: The migration MUST represent all 27 versioned revisions currently present under `database/migrations/versions/` in dependency order.
 - **FR-003**: The migration MUST preserve all tables, primary keys, foreign keys, unique constraints, check constraints, indexes, SQL functions, and seed records required by the current ATLAS application.
 - **FR-004**: The migration MUST enable and verify the vector-search capability required by the current retrieval function and embedding columns.
 - **FR-005**: The migration MUST preserve row-level security policies and private-data ownership rules for identities, uploads, reports, comparisons, and agent checkpoints.
@@ -89,7 +89,7 @@ As a contributor, I want future schema changes to be authored in the repository,
 
 ### Measurable Outcomes
 
-- **SC-001**: 100% of the 24 repository migration revisions are applied or explicitly recorded as already present in the selected Supabase project.
+- **SC-001**: 100% of the 27 repository migration revisions are applied or explicitly recorded as already present in the selected Supabase project.
 - **SC-002**: The remote schema inventory has zero unexplained differences from the repository's expected schema after migration.
 - **SC-003**: 100% of applicable database security and retrieval checks pass against the remote development project.
 - **SC-004**: A second verification run completes without creating duplicate objects, changing row counts, or applying a new revision.
@@ -99,7 +99,7 @@ As a contributor, I want future schema changes to be authored in the repository,
 ## Assumptions
 
 - The supplied project reference is a development Supabase project; if verification shows production or real user data, the first write pauses for owner confirmation.
-- The repository's 24 Alembic revisions are the intended schema source of truth; no untracked remote schema is accepted without an explicit drift decision.
+- The repository's 27 Alembic revisions are the intended schema source of truth; no untracked remote schema is accepted without an explicit drift decision.
 - The first pass migrates schema, functions, extensions, policies, and approved seed data. Bulk user/private data transfer is a separate follow-up operation.
 - Supabase MCP OAuth access is available to the project owner and is scoped only to the supplied project reference.
 - The application will continue to use PostgreSQL-compatible database access after the migration; provider-specific client code is out of scope for this feature.

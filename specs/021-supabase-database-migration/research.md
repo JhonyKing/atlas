@@ -9,7 +9,7 @@
 
 ## Decision 2: Treat repository migrations as intended state
 
-- **Decision**: Use the 24 files under `database/migrations/versions/` and the SQL functions/tests under `database/` as the expected schema contract.
+- **Decision**: Use the 27 files under `database/migrations/versions/` and the SQL functions/tests under `database/` as the expected schema contract.
 - **Rationale**: They are already versioned, reviewed, and used by CI. The remote project is compared against them before a write.
 - **Alternatives considered**: Starting from an ad-hoc dashboard export was rejected because it would hide provenance and make drift difficult to review.
 

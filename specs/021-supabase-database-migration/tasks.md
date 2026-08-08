@@ -16,7 +16,7 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 **Purpose**: Establish the exact repository state that will be compared with Supabase.
 
 - [x] T001 [P] Create a deterministic ordered revision manifest from `database/migrations/versions/` in `scripts/supabase/migration_manifest.py`, including revision IDs, down-revision links, and SHA-256 file hashes.
-- [x] T002 [P] Add unit coverage for revision ordering, duplicate IDs, missing links, and the expected 24-revision count in `apps/backend/tests/unit/database/test_migration_manifest.py`.
+- [x] T002 [P] Add unit coverage for revision ordering, duplicate IDs, missing links, and the expected 27-revision count in `apps/backend/tests/unit/database/test_migration_manifest.py`.
 - [x] T003 [P] Document the project-scoped OAuth MCP setup, environment gate, no-secret policy, and operator ownership checks in `docs/runbooks/supabase-migration.md`.
 - [x] T004 [P] Add a non-secret example configuration and prohibited-secret checklist to `docs/runbooks/supabase-migration.md`; do not add tokens, passwords, service-role keys, or database URLs.
 
@@ -40,11 +40,11 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 **Goal**: Apply all reviewed repository migrations to the project-scoped Supabase development project and verify the complete schema without copying private data.
 
-**Independent Test**: A fresh read-first run identifies the project and remote revision state; an approved apply run records all 24 revisions in order; a follow-up verify run finds no missing objects or duplicate changes.
+**Independent Test**: A fresh read-first run identifies the project and remote revision state; an approved apply run records all 27 revisions in order; a follow-up verify run finds no missing objects or duplicate changes.
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Add a migration-history comparison test that compares the 24 repository revisions with the MCP-reported remote history in `apps/backend/tests/integration/database/test_supabase_migration_history.py`.
+- [ ] T012 [P] [US1] Add a migration-history comparison test that compares the 27 repository revisions with the MCP-reported remote history in `apps/backend/tests/integration/database/test_supabase_migration_history.py`.
 - [ ] T013 [P] [US1] Add schema-inventory assertions for tables, constraints, indexes, and migration markers in `apps/backend/tests/integration/database/test_supabase_schema_inventory.py`.
 - [ ] T014 [P] [US1] Add an idempotent rerun test that proves a second verification/apply attempt produces no duplicate objects or destructive changes in `apps/backend/tests/integration/database/test_supabase_idempotency.py`.
 
@@ -54,9 +54,9 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 - [ ] T016 [US1] Implement repository-to-remote drift classification in `scripts/supabase/compare_state.py`, producing `DriftFinding` records for revisions, tables, functions, indexes, policies, extensions, and seeds.
 - [ ] T017 [US1] Implement the reviewed migration apply procedure in `scripts/supabase/apply_migrations.py`, applying only missing ordered revisions through the authenticated project-scoped MCP and stopping on the first failure.
 - [ ] T018 [US1] Add explicit confirmation and dry-run output to `scripts/supabase/apply_migrations.py` so no remote write can occur before the environment gate and owner approval are recorded.
-- [ ] T019 [US1] Run the read-first inspection against project `fcbclsaytbjpywlaplbh` and export the initial non-secret artifact under `evals/results/`.
-- [ ] T020 [US1] After approval and a development/staging classification, apply the 24 repository revisions and export the apply artifact under `evals/results/`.
-- [ ] T021 [US1] Verify the post-apply schema inventory and migration history, then export the no-drift verification artifact under `evals/results/`.
+- [x] T019 [US1] Run the read-first inspection against project `fcbclsaytbjpywlaplbh` and export the initial non-secret artifact under `evals/results/`.
+- [x] T020 [US1] After approval and a development/staging classification, apply the 27 repository revisions and export the apply artifact under `evals/results/`.
+- [x] T021 [US1] Verify the post-apply schema inventory and migration history, then export the no-drift verification artifact under `evals/results/`.
 
 **Checkpoint**: User Story 1 is complete only when the remote history, schema inventory, idempotent rerun, and evidence artifacts all pass.
 
@@ -75,9 +75,9 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 ### Implementation for User Story 2
 
 - [ ] T025 [US2] Implement bounded extension, function, index, provenance, and RLS inspection in `scripts/supabase/verify_security_retrieval.py`.
-- [ ] T026 [US2] Run the repository SQL security and retrieval checks against the remote development project using non-production identities and synthetic records only.
-- [ ] T027 [US2] Record extension status, retrieval status, provenance checks, RLS results, elapsed time, and any drift in the `verify` evidence artifact without storing row contents.
-- [ ] T028 [US2] Prove that schema migration excludes local fixtures and private/user data by reviewing the migration input manifest and recording the exclusion check in `docs/runbooks/supabase-migration.md`.
+- [x] T026 [US2] Run the repository SQL security and retrieval checks against the remote development project using non-production identities and synthetic records only.
+- [x] T027 [US2] Record extension status, retrieval status, provenance checks, RLS results, elapsed time, and any drift in the `verify` evidence artifact without storing row contents.
+- [x] T028 [US2] Prove that schema migration excludes local fixtures and private/user data by reviewing the migration input manifest and recording the exclusion check in `docs/runbooks/supabase-migration.md`.
 
 **Checkpoint**: User Story 2 is complete only when all relevant security/retrieval checks pass and their evidence is attached to the migration run.
 
@@ -131,6 +131,9 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 - [ ] T040 Run `$speckit-analyze` for `specs/021-supabase-database-migration/` and resolve all CRITICAL/HIGH coverage or consistency findings before implementation is marked complete.
 - [ ] T041 Run `$speckit-converge` for `specs/021-supabase-database-migration/`, append any genuinely remaining work to this file, and do not mark the feature complete while required tasks remain unchecked.
 - [ ] T042 Update `README.md` with the Supabase migration status, operator prerequisites, evidence locations, and the explicit statement that no production/private data migration is implied.
+- [x] T043 [US2] Add the reviewed `0025_supabase_security_hardening` migration and advisor regression check so ATLAS functions use an explicit search path on hosted Supabase.
+- [x] T044 [US2] Add the reviewed `0026_supabase_extension_security` migration and regression checks for extension schema placement and public helper RPC privileges.
+- [x] T045 [US2] Add the reviewed `0027_revoke_public_rls_helper` migration and verify the hosted helper is no longer executable through the public RPC surface.
 
 ## Dependencies and Execution Order
 

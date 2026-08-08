@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION atlas.search_evidence(
   p_collection_slug text,
   p_query text,
-  p_embedding vector(1536),
+  p_embedding extensions.vector(1536),
   p_limit integer DEFAULT 8,
   p_snapshot_id uuid DEFAULT NULL
 ) RETURNS TABLE(

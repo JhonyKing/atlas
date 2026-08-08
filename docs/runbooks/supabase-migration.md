@@ -23,8 +23,8 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected chain currently contains 24 revisions and ends at
-`0024_agent_checkpoints_reviews`.
+The expected chain currently contains 27 revisions and ends at
+`0027_revoke_public_rls_helper`.
 
 ## Safe lifecycle
 
@@ -51,7 +51,7 @@ Rerun inspection before attempting recovery.
 
 ## Definition of done
 
-- All 24 revisions are applied or explicitly recorded as already present.
+- All 27 revisions are applied or explicitly recorded as already present.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.
