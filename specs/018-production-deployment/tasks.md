@@ -67,7 +67,7 @@ Vercel, Supabase, or managed-container account already exists.
 - [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (No critical inconsistencies remain; T005/T006 and T030-T036 stay explicitly open.)
 - [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Converged to existing open tasks; no extra phase appended.)
 - [ ] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results.
-- [ ] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs.
+- [X] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs. (Implementation commit: `e8de6b9`.)
 
 ## Dependencies & Execution Order
 
