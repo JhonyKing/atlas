@@ -29,7 +29,7 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 - [x] T005 Implement typed `MigrationEvidence` and `DriftFinding` validation against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` in `apps/backend/src/atlas/database/migration_evidence.py`.
 - [x] T006 [P] Add unit tests for evidence validation, secret redaction, bounded detail, allowed statuses, and project-reference enforcement in `apps/backend/tests/unit/database/test_migration_evidence.py`.
 - [x] T007 Implement a read-only evidence writer that emits `inspect`, `apply`, and `verify` artifacts under `evals/results/supabase-migration-<timestamp>.json` without row payloads in `scripts/supabase/evidence_writer.py`.
-- [ ] T008 [P] Add JSON Schema validation tests for the evidence contract in `apps/backend/tests/unit/database/test_migration_evidence_contract.py`.
+- [x] T008 [P] Add JSON Schema validation tests for the evidence contract in `apps/backend/tests/unit/database/test_migration_evidence_contract.py`.
 - [x] T009 [P] Add a repository-side migration checksum/manifest verification command in `scripts/supabase/verify_repository_migrations.py` that fails closed on duplicate or out-of-order revisions.
 - [x] T010 Define the remote safety gate in `scripts/supabase/environment_gate.py`: require the expected project reference, classify development/staging/production, detect unexplained existing data, and block writes for production or unknown environments.
 - [x] T011 [P] Add unit tests for the environment gate and private-data boundary in `apps/backend/tests/unit/database/test_supabase_environment_gate.py`.
@@ -44,16 +44,16 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Add a migration-history comparison test that compares the 27 repository revisions with the MCP-reported remote history in `apps/backend/tests/integration/database/test_supabase_migration_history.py`.
-- [ ] T013 [P] [US1] Add schema-inventory assertions for tables, constraints, indexes, and migration markers in `apps/backend/tests/integration/database/test_supabase_schema_inventory.py`.
-- [ ] T014 [P] [US1] Add an idempotent rerun test that proves a second verification/apply attempt produces no duplicate objects or destructive changes in `apps/backend/tests/integration/database/test_supabase_idempotency.py`.
+- [x] T012 [P] [US1] Add a migration-history comparison test that compares the 27 repository revisions with the MCP-reported remote history in `apps/backend/tests/integration/database/test_supabase_migration_history.py`.
+- [x] T013 [P] [US1] Add schema-inventory assertions for tables, constraints, indexes, and migration markers in `apps/backend/tests/integration/database/test_supabase_schema_inventory.py`.
+- [x] T014 [P] [US1] Add an idempotent rerun test that proves a second verification/apply attempt produces no duplicate objects or destructive changes in `apps/backend/tests/integration/database/test_supabase_idempotency.py`.
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implement the read-first Supabase MCP inspection procedure in `scripts/supabase/inspect_remote.py`, recording project metadata, remote migrations, object inventory, and bounded seed identifiers.
-- [ ] T016 [US1] Implement repository-to-remote drift classification in `scripts/supabase/compare_state.py`, producing `DriftFinding` records for revisions, tables, functions, indexes, policies, extensions, and seeds.
-- [ ] T017 [US1] Implement the reviewed migration apply procedure in `scripts/supabase/apply_migrations.py`, applying only missing ordered revisions through the authenticated project-scoped MCP and stopping on the first failure.
-- [ ] T018 [US1] Add explicit confirmation and dry-run output to `scripts/supabase/apply_migrations.py` so no remote write can occur before the environment gate and owner approval are recorded.
+- [x] T015 [US1] Implement the read-first Supabase MCP inspection procedure in `scripts/supabase/inspect_remote.py`, recording project metadata, remote migrations, object inventory, and bounded seed identifiers.
+- [x] T016 [US1] Implement repository-to-remote drift classification in `scripts/supabase/compare_state.py`, producing `DriftFinding` records for revisions, tables, functions, indexes, policies, extensions, and seeds.
+- [x] T017 [US1] Implement the reviewed migration apply procedure in `scripts/supabase/apply_migrations.py`, applying only missing ordered revisions through the authenticated project-scoped MCP and stopping on the first failure.
+- [x] T018 [US1] Add explicit confirmation and dry-run output to `scripts/supabase/apply_migrations.py` so no remote write can occur before the environment gate and owner approval are recorded.
 - [x] T019 [US1] Run the read-first inspection against project `fcbclsaytbjpywlaplbh` and export the initial non-secret artifact under `evals/results/`.
 - [x] T020 [US1] After approval and a development/staging classification, apply the 27 repository revisions and export the apply artifact under `evals/results/`.
 - [x] T021 [US1] Verify the post-apply schema inventory and migration history, then export the no-drift verification artifact under `evals/results/`.
@@ -68,13 +68,13 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Add a remote integration test harness for the SQL checks in `database/tests/001_foundation.sql`, `database/tests/003_hybrid_retrieval.sql`, and `database/tests/006_provenance.sql` in `apps/backend/tests/integration/database/test_supabase_retrieval_provenance.py`.
-- [ ] T023 [P] [US2] Add RLS isolation checks covering identities, uploads, reports, comparisons, and agent checkpoints in `apps/backend/tests/integration/database/test_supabase_rls.py`.
-- [ ] T024 [P] [US2] Add a vector extension/type/function availability check and verify any repository-defined retrieval indexes for `database/functions/search_evidence.sql` in `apps/backend/tests/integration/database/test_supabase_pgvector.py`.
+- [x] T022 [P] [US2] Add a remote integration test harness for the SQL checks in `database/tests/001_foundation.sql`, `database/tests/003_hybrid_retrieval.sql`, and `database/tests/006_provenance.sql` in `apps/backend/tests/integration/database/test_supabase_retrieval_provenance.py`.
+- [x] T023 [P] [US2] Add RLS isolation checks covering identities, uploads, reports, comparisons, and agent checkpoints in `apps/backend/tests/integration/database/test_supabase_rls.py`.
+- [x] T024 [P] [US2] Add a vector extension/type/function availability check and verify any repository-defined retrieval indexes for `database/functions/search_evidence.sql` in `apps/backend/tests/integration/database/test_supabase_pgvector.py`.
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Implement bounded extension, function, index, provenance, and RLS inspection in `scripts/supabase/verify_security_retrieval.py`.
+- [x] T025 [US2] Implement bounded extension, function, index, provenance, and RLS inspection in `scripts/supabase/verify_security_retrieval.py`.
 - [x] T026 [US2] Run the repository SQL security and retrieval checks against the remote development project using non-production identities and synthetic records only.
 - [x] T027 [US2] Record extension status, retrieval status, provenance checks, RLS results, elapsed time, and any drift in the `verify` evidence artifact without storing row contents.
 - [x] T028 [US2] Prove that schema migration excludes local fixtures and private/user data by reviewing the migration input manifest and recording the exclusion check in `docs/runbooks/supabase-migration.md`.
@@ -89,14 +89,14 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Add a contract test for evidence artifact validation and required provenance fields in `apps/backend/tests/integration/database/test_supabase_evidence_artifact.py`.
-- [ ] T030 [P] [US3] Add failure-path tests proving later revisions are not applied after a failed revision in `apps/backend/tests/integration/database/test_supabase_stop_on_failure.py`.
-- [ ] T031 [P] [US3] Add a no-op drift verification test and bounded latency assertion in `apps/backend/tests/integration/database/test_supabase_noop_verify.py`.
+- [x] T029 [P] [US3] Add a contract test for evidence artifact validation and required provenance fields in `apps/backend/tests/integration/database/test_supabase_evidence_artifact.py`.
+- [x] T030 [P] [US3] Add failure-path tests proving later revisions are not applied after a failed revision in `apps/backend/tests/integration/database/test_supabase_stop_on_failure.py`.
+- [x] T031 [P] [US3] Add a no-op drift verification test and bounded latency assertion in `apps/backend/tests/integration/database/test_supabase_noop_verify.py`.
 
 ### Implementation for User Story 3
 
-- [ ] T032 [US3] Add a CI-invokable verification wrapper in `scripts/verify-supabase-migration.ps1` that runs manifest checks, evidence-schema validation, and read-only drift inspection without exposing credentials.
-- [ ] T033 [US3] Add CI job wiring for read-only Supabase migration verification in `.github/workflows/supabase-migration.yml`, gated so apply operations cannot run from untrusted pull requests.
+- [x] T032 [US3] Add a CI-invokable verification wrapper in `scripts/verify-supabase-migration.ps1` that runs manifest checks, evidence-schema validation, and read-only drift inspection without exposing credentials.
+- [x] T033 [US3] Add CI job wiring for read-only Supabase migration verification in `.github/workflows/supabase-migration.yml`, gated so apply operations cannot run from untrusted pull requests.
 - [x] T034 [US3] Document the inspect/apply/verify lifecycle, rollback or recovery behavior, failure semantics, and evidence locations in `docs/runbooks/supabase-migration.md`.
 - [x] T035 [US3] Add an ADR documenting Supabase as the selected development database operations channel while PostgreSQL contracts remain provider-independent in `docs/adr/0013-supabase-development-migration.md`.
 - [x] T036 [US3] Update `docs/product/feature-status-matrix.md` and `docs/product/implementation-status.md` with Feature 021 status and explicit remote-verification evidence links.
@@ -128,8 +128,8 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 - [x] T037 [P] Run Python type checks, linting, unit tests, and the database migration manifest tests; record commands and outcomes in `docs/verification/021-supabase-migration.md`.
 - [x] T038 [P] Validate every generated evidence artifact against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` and redact any accidental secret or private-row content before commit.
 - [x] T039 Run the complete `specs/021-supabase-database-migration/quickstart.md` procedure twice and attach the final inspect/apply/verify artifact paths to `docs/verification/021-supabase-migration.md`.
-- [ ] T040 Run `$speckit-analyze` for `specs/021-supabase-database-migration/` and resolve all CRITICAL/HIGH coverage or consistency findings before implementation is marked complete.
-- [ ] T041 Run `$speckit-converge` for `specs/021-supabase-database-migration/`, append any genuinely remaining work to this file, and do not mark the feature complete while required tasks remain unchecked.
+- [x] T040 Run `$speckit-analyze` for `specs/021-supabase-database-migration/` and resolve all CRITICAL/HIGH coverage or consistency findings before implementation is marked complete.
+- [x] T041 Run `$speckit-converge` for `specs/021-supabase-database-migration/`, append any genuinely remaining work to this file, and do not mark the feature complete while required tasks remain unchecked.
 - [x] T042 Update `README.md` with the Supabase migration status, operator prerequisites, evidence locations, and the explicit statement that no production/private data migration is implied.
 - [x] T043 [US2] Add the reviewed `0025_supabase_security_hardening` migration and advisor regression check so ATLAS functions use an explicit search path on hosted Supabase.
 - [x] T044 [US2] Add the reviewed `0026_supabase_extension_security` migration and regression checks for extension schema placement and public helper RPC privileges.

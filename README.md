@@ -10,6 +10,11 @@ The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase de
 schema source of truth; local fixtures and private/user rows are not copied by default. The
 current remote head is `0027_revoke_public_rls_helper`.
 
+The repeatable verification workflow lives in `scripts/supabase/` and is enforced by
+`.github/workflows/supabase-migration.yml`. Pull requests run manifest, evidence-contract, and
+provider-neutral workflow tests. Remote comparison is read-only and requires an owner-provided
+MCP snapshot; no GitHub Action applies migrations or receives a service-role key.
+
 Source, operations, and verification:
 
 - `specs/021-supabase-database-migration/spec.md`

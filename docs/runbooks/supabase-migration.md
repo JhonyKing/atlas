@@ -26,6 +26,22 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 The expected chain currently contains 27 revisions and ends at
 `0027_revoke_public_rls_helper`.
 
+For a repeatable read-only check, export the bounded project state from the authenticated MCP as
+JSON and run:
+
+```powershell
+$env:PYTHONPATH = "$PWD/apps/backend/src"
+& "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/inspect_remote.py" `
+  --snapshot .\evals\fixtures\supabase-remote-snapshot.example.json `
+  --run-id local-inspect
+& "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/compare_state.py" `
+  --snapshot .\evals\fixtures\supabase-remote-snapshot.example.json
+```
+
+`apply_migrations.py` is dry-run by default. `--apply` requires both `--confirm` and
+`--owner-confirmed`, and prints the ordered revisions for the authenticated MCP operator; the
+script itself has no database credential or write transport.
+
 ## Safe lifecycle
 
 1. **Inspect**: read the remote project metadata, migration history, extensions, functions,

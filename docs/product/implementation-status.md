@@ -27,7 +27,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 016 | Harness conectado a LangSmith | Pendiente de especificar | — | `docs/product/prd-v1.1-backlog.md` |
 
 | 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
-| 021 | Migración de base de datos a Supabase | En progreso — migración de desarrollo verificada 27/27 | 19 | `specs/021-supabase-database-migration/tasks.md` |
+| 021 | Migración de base de datos a Supabase | Completa para el workflow de desarrollo — migración 27/27, workflow repetible y SpecKit cerrado | 0 | `specs/021-supabase-database-migration/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 

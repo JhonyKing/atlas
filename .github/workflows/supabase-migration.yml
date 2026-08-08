@@ -1,0 +1,56 @@
+name: Supabase migration verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-contracts:
+    name: Repository and evidence contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.1"
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: uv sync --project apps/backend --frozen
+      - name: Run migration workflow wrapper (read-only)
+        shell: pwsh
+        run: ./scripts/verify-supabase-migration.ps1
+      - name: Run migration contract tests
+        run: uv run --project apps/backend pytest tests/unit/database tests/integration/database -q
+
+  remote-read-only:
+    name: Optional project-scoped remote comparison
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    env:
+      ATLAS_SUPABASE_SNAPSHOT_JSON: ${{ secrets.ATLAS_SUPABASE_SNAPSHOT_JSON }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.1"
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: uv sync --project apps/backend --frozen
+      - name: Skip when no owner-provided MCP snapshot exists
+        if: ${{ env.ATLAS_SUPABASE_SNAPSHOT_JSON == '' }}
+        run: echo "No snapshot supplied; no remote read was attempted."
+      - name: Compare owner-provided MCP snapshot (read-only)
+        if: ${{ env.ATLAS_SUPABASE_SNAPSHOT_JSON != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          snapshot="${RUNNER_TEMP}/atlas-supabase-snapshot.json"
+          printf '%s' "$ATLAS_SUPABASE_SNAPSHOT_JSON" > "$snapshot"
+          pwsh ./scripts/verify-supabase-migration.ps1 -SnapshotPath "$snapshot" -RequireRemoteSnapshot

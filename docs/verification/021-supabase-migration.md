@@ -37,3 +37,26 @@ repository migration revisions, from `0001_foundation` through
 The JSON artifacts conform to
 `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` and contain no
 credentials or private row payloads.
+
+## Repeatable workflow evidence
+
+The repository includes deterministic, read-only helpers that accept a bounded snapshot exported
+by the project-scoped Supabase MCP:
+
+- `scripts/supabase/inspect_remote.py` creates an inspect artifact without performing writes.
+- `scripts/supabase/compare_state.py` reports exact revision/object drift and exits non-zero on it.
+- `scripts/supabase/apply_migrations.py` plans only the missing ordered suffix and requires explicit
+  confirmation flags before handing the plan to the MCP operator.
+- `scripts/supabase/verify_security_retrieval.py` validates vector, retrieval, provenance, and RLS
+  results without accepting row payloads.
+- `scripts/verify-supabase-migration.ps1` is the CI wrapper. The GitHub Action in
+  `.github/workflows/supabase-migration.yml` runs repository/evidence checks on pull requests;
+  its optional dispatch job accepts an owner-provided snapshot for read-only comparison. No CI
+  job applies migrations.
+
+The contract and failure-path tests cover 25 checks locally, including no-op reruns, stop-on-first-
+failure behavior, and a bounded verification latency assertion.
+
+SpecKit closure: Analyze covered all 13 functional requirements and 6 buildable success criteria
+without CRITICAL/HIGH findings. Converge found no remaining unbuilt work, so no convergence phase
+was appended to `tasks.md`.
