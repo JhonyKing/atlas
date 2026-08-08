@@ -70,7 +70,7 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 - [ ] T022 [P] [US2] Add a remote integration test harness for the SQL checks in `database/tests/001_foundation.sql`, `database/tests/003_hybrid_retrieval.sql`, and `database/tests/006_provenance.sql` in `apps/backend/tests/integration/database/test_supabase_retrieval_provenance.py`.
 - [ ] T023 [P] [US2] Add RLS isolation checks covering identities, uploads, reports, comparisons, and agent checkpoints in `apps/backend/tests/integration/database/test_supabase_rls.py`.
-- [ ] T024 [P] [US2] Add a vector extension/index/function availability check for `database/functions/search_evidence.sql` in `apps/backend/tests/integration/database/test_supabase_pgvector.py`.
+- [ ] T024 [P] [US2] Add a vector extension/type/function availability check and verify any repository-defined retrieval indexes for `database/functions/search_evidence.sql` in `apps/backend/tests/integration/database/test_supabase_pgvector.py`.
 
 ### Implementation for User Story 2
 
