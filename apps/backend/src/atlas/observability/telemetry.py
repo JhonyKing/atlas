@@ -18,6 +18,10 @@ _SENSITIVE_FIELD_PARTS = (
     "cookie",
     "authorization",
     "secret",
+    "api_key",
+    "token",
+    "password",
+    "private",
     "raw",
 )
 _SAFE_METADATA_FIELDS = frozenset({"prompt_version"})

@@ -1,0 +1,43 @@
+{
+  "release_id": "local",
+  "source_revision": "local",
+  "web_build_id": null,
+  "api_image_digest": null,
+  "migration_revision": "unknown",
+  "checks": [
+    {
+      "name": "repository-release-gates",
+      "status": "passed",
+      "observed_at": "2026-08-08T05:21:31.381685Z",
+      "evidence_url": null,
+      "summary": "Recorded by CI."
+    },
+    {
+      "name": "corpus-version",
+      "status": "passed",
+      "observed_at": "2026-08-08T05:21:31.381685Z",
+      "evidence_url": null,
+      "summary": "unknown"
+    },
+    {
+      "name": "model-version",
+      "status": "passed",
+      "observed_at": "2026-08-08T05:21:31.381685Z",
+      "evidence_url": null,
+      "summary": "gpt-5.6-luna"
+    },
+    {
+      "name": "locale-version",
+      "status": "passed",
+      "observed_at": "2026-08-08T05:21:31.381685Z",
+      "evidence_url": null,
+      "summary": "en-US,es-MX"
+    }
+  ],
+  "smoke_results": [],
+  "health": {
+    "environment": "unknown",
+    "status": "pending"
+  },
+  "created_at": "2026-08-08T05:21:31.381685Z"
+}

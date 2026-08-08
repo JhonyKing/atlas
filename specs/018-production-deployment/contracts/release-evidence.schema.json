@@ -12,7 +12,15 @@
     "migration_revision": {"type": "string", "minLength": 1},
     "checks": {"type": "array", "items": {"$ref": "#/$defs/check"}},
     "smoke_results": {"type": "array", "items": {"$ref": "#/$defs/check"}},
-    "health": {"type": "object", "additionalProperties": {"type": "string"}},
+  "health": {
+    "type": "object",
+    "required": ["environment", "status"],
+    "properties": {
+      "environment": {"enum": ["preview", "staging", "production", "unknown"]},
+      "status": {"enum": ["ready", "degraded", "unavailable", "pending"]}
+    },
+    "additionalProperties": false
+  },
     "created_at": {"type": "string", "format": "date-time"}
   },
   "$defs": {

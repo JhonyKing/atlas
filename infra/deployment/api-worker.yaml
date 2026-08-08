@@ -1,0 +1,34 @@
+apiVersion: atlas.ai/v1
+kind: ManagedRuntime
+metadata:
+  name: atlas-api-worker
+spec:
+  image: registry.example.invalid/atlas/api@sha256:REPLACE_WITH_RELEASE_DIGEST
+  web:
+    provider: vercel
+    publicHttps: true
+    apiOrigin: https://api.example.invalid
+  api:
+    replicas: 2
+    command: ["/entrypoint.sh"]
+    port: 8000
+    readinessPath: /readyz
+    livenessPath: /healthz
+    resources:
+      cpu: "1"
+      memory: 1Gi
+  worker:
+    replicas: 1
+    command: ["atlas-worker"]
+    resources:
+      cpu: "1"
+      memory: 1Gi
+  migration:
+    command: ["alembic", "-c", "database/alembic.ini", "upgrade", "head"]
+    policy: forward-only-before-readiness
+  secrets:
+    - ATLAS_DATABASE_URL
+    - OPENAI_API_KEY
+    - ATLAS_VISITOR_HMAC_SECRET
+    - ATLAS_OPERATOR_TOKEN
+    - LANGSMITH_API_KEY

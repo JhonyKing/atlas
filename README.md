@@ -3,6 +3,27 @@
 ATLAS is an evidence-first technical research application. The executable source of truth for
 each feature is its SpecKit directory under `specs/`.
 
+## Feature 018: production deployment foundation
+
+The repository now contains the production deployment contract: Vercel web configuration,
+provider-neutral API/worker container and manifest, Supabase migration preflight, `/healthz`
+liveness, `/readyz` dependency readiness, deployment smoke checks, CI release gates, redacted
+release evidence, and deploy/backup/rollback runbooks. This is a deployable foundation, not a
+claim that a real Vercel or managed-container environment is already live.
+
+Local checks:
+
+```powershell
+$env:PYTHONPATH='apps/backend/src'
+apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -q
+apps\backend\.venv\Scripts\python.exe scripts\deployment-smoke.py --help
+```
+
+Operator-owned tasks still required before production: create isolated Vercel/API/Supabase
+environments, configure secrets and domains, apply the migration, run bilingual smoke tests,
+verify LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence
+bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
+
 ## Feature 021: Supabase database migration
 
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project

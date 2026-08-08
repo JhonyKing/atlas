@@ -1,0 +1,19 @@
+apiVersion: atlas.ai/v1
+kind: ObservabilityBundle
+metadata:
+  name: atlas-beta
+spec:
+  dashboards: [availability, readiness, errors, latency, tokens-cost, citation-quality, worker, database, provider]
+  alerts:
+    - name: api-unavailable
+      signal: readiness.failed
+      runbook: docs/runbooks/incident-response.md
+    - name: citation-quality-regression
+      signal: citation_rate_below_threshold
+      runbook: docs/operations/evaluation-gates.md
+    - name: worker-backlog
+      signal: queue_depth_above_threshold
+      runbook: docs/runbooks/incident-response.md
+    - name: provider-failure-rate
+      signal: provider_error_rate_above_threshold
+      runbook: docs/runbooks/incident-response.md
