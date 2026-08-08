@@ -97,9 +97,9 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 - [ ] T032 [US3] Add a CI-invokable verification wrapper in `scripts/verify-supabase-migration.ps1` that runs manifest checks, evidence-schema validation, and read-only drift inspection without exposing credentials.
 - [ ] T033 [US3] Add CI job wiring for read-only Supabase migration verification in `.github/workflows/supabase-migration.yml`, gated so apply operations cannot run from untrusted pull requests.
-- [ ] T034 [US3] Document the inspect/apply/verify lifecycle, rollback or recovery behavior, failure semantics, and evidence locations in `docs/runbooks/supabase-migration.md`.
-- [ ] T035 [US3] Add an ADR documenting Supabase as the selected development database operations channel while PostgreSQL contracts remain provider-independent in `docs/adr/0013-supabase-development-migration.md`.
-- [ ] T036 [US3] Update `docs/product/feature-status-matrix.md` and `docs/product/implementation-status.md` with Feature 021 status and explicit remote-verification evidence links.
+- [x] T034 [US3] Document the inspect/apply/verify lifecycle, rollback or recovery behavior, failure semantics, and evidence locations in `docs/runbooks/supabase-migration.md`.
+- [x] T035 [US3] Add an ADR documenting Supabase as the selected development database operations channel while PostgreSQL contracts remain provider-independent in `docs/adr/0013-supabase-development-migration.md`.
+- [x] T036 [US3] Update `docs/product/feature-status-matrix.md` and `docs/product/implementation-status.md` with Feature 021 status and explicit remote-verification evidence links.
 
 **Checkpoint**: User Story 3 is complete only when a future migration can be inspected, reviewed, applied, verified, and audited from repository artifacts and CI controls.
 
@@ -125,12 +125,12 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 
 **Purpose**: Reconcile implementation with SpecKit artifacts and preserve portfolio-grade evidence.
 
-- [ ] T037 [P] Run Python type checks, linting, unit tests, and the database migration manifest tests; record commands and outcomes in `docs/verification/021-supabase-migration.md`.
-- [ ] T038 [P] Validate every generated evidence artifact against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` and redact any accidental secret or private-row content before commit.
-- [ ] T039 Run the complete `specs/021-supabase-database-migration/quickstart.md` procedure twice and attach the final inspect/apply/verify artifact paths to `docs/verification/021-supabase-migration.md`.
+- [x] T037 [P] Run Python type checks, linting, unit tests, and the database migration manifest tests; record commands and outcomes in `docs/verification/021-supabase-migration.md`.
+- [x] T038 [P] Validate every generated evidence artifact against `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` and redact any accidental secret or private-row content before commit.
+- [x] T039 Run the complete `specs/021-supabase-database-migration/quickstart.md` procedure twice and attach the final inspect/apply/verify artifact paths to `docs/verification/021-supabase-migration.md`.
 - [ ] T040 Run `$speckit-analyze` for `specs/021-supabase-database-migration/` and resolve all CRITICAL/HIGH coverage or consistency findings before implementation is marked complete.
 - [ ] T041 Run `$speckit-converge` for `specs/021-supabase-database-migration/`, append any genuinely remaining work to this file, and do not mark the feature complete while required tasks remain unchecked.
-- [ ] T042 Update `README.md` with the Supabase migration status, operator prerequisites, evidence locations, and the explicit statement that no production/private data migration is implied.
+- [x] T042 Update `README.md` with the Supabase migration status, operator prerequisites, evidence locations, and the explicit statement that no production/private data migration is implied.
 - [x] T043 [US2] Add the reviewed `0025_supabase_security_hardening` migration and advisor regression check so ATLAS functions use an explicit search path on hosted Supabase.
 - [x] T044 [US2] Add the reviewed `0026_supabase_extension_security` migration and regression checks for extension schema placement and public helper RPC privileges.
 - [x] T045 [US2] Add the reviewed `0027_revoke_public_rls_helper` migration and verify the hosted helper is no longer executable through the public RPC surface.

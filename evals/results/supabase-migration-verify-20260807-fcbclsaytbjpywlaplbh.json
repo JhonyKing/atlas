@@ -1,0 +1,179 @@
+{
+  "run_id": "verify-20260807-fcbclsaytbjpywlaplbh",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "development",
+  "mode": "verify",
+  "started_at": "2026-08-08T01:41:41.788952Z",
+  "finished_at": "2026-08-08T01:42:26.788952Z",
+  "repository_head": "a7bd745",
+  "repository_revisions": [
+    "0001_foundation",
+    "0002_corpus_ingestion",
+    "0003_anonymous_quota",
+    "0004_hybrid_retrieval",
+    "0005_answer_runs",
+    "0006_evidence_integrity",
+    "0007_feedback",
+    "0008_retention",
+    "0009_provenance",
+    "0010_daily_news",
+    "0011_seed_collections",
+    "0012_comparisons",
+    "0013_comparison_quota",
+    "0014_comparison_cell_context",
+    "0015_expand_corpus_collections",
+    "0016_reports",
+    "0017_report_metadata",
+    "0018_identity",
+    "0019_private_data",
+    "0020_private_data_rls",
+    "0021_private_upload_provenance",
+    "0022_ingestion_governance",
+    "0023_policy_review_status",
+    "0024_agent_checkpoints_reviews",
+    "0025_supabase_security_hardening",
+    "0026_supabase_extension_security",
+    "0027_revoke_public_rls_helper"
+  ],
+  "remote_revisions": [
+    "0001_foundation",
+    "0002_corpus_ingestion",
+    "0003_anonymous_quota",
+    "0004_hybrid_retrieval",
+    "0005_answer_runs",
+    "0006_evidence_integrity",
+    "0007_feedback",
+    "0008_retention",
+    "0009_provenance",
+    "0010_daily_news",
+    "0011_seed_collections",
+    "0012_comparisons",
+    "0013_comparison_quota",
+    "0014_comparison_cell_context",
+    "0015_expand_corpus_collections",
+    "0016_reports",
+    "0017_report_metadata",
+    "0018_identity",
+    "0019_private_data",
+    "0020_private_data_rls",
+    "0021_private_upload_provenance",
+    "0022_ingestion_governance",
+    "0023_policy_review_status",
+    "0024_agent_checkpoints_reviews",
+    "0025_supabase_security_hardening",
+    "0026_supabase_extension_security",
+    "0027_revoke_public_rls_helper"
+  ],
+  "applied_revisions": [],
+  "schema_inventory": {
+    "project_status": "ACTIVE_HEALTHY",
+    "postgres_version": "17.6",
+    "table_count": 47,
+    "rls_table_count": 6,
+    "policy_count": 8,
+    "required_function_count": 5,
+    "seed_counts": {
+      "collections": 5,
+      "news_refresh_jobs": 1,
+      "retention_jobs": 1
+    },
+    "vector_extension_schema": "extensions",
+    "vector_columns": [
+      "atlas.chunk_embeddings.embedding"
+    ],
+    "private_data_copied": false
+  },
+  "checks": [
+    {
+      "name": "migration_history_exact_match",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "Local and remote histories match exactly: 27 of 27 revisions."
+    },
+    {
+      "name": "schema_inventory",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "47 ATLAS tables are present; no unexplained schema drift was found."
+    },
+    {
+      "name": "vector_capability",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "pgvector is installed in extensions and the embedding column is present."
+    },
+    {
+      "name": "required_functions",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "Five required retrieval/quota/retention/result functions are present."
+    },
+    {
+      "name": "rls_policies",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "Six RLS-enabled ATLAS tables and eight policies are present."
+    },
+    {
+      "name": "security_advisors",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "No remaining ATLAS function or public-helper security WARN findings."
+    },
+    {
+      "name": "foundation_contract",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "database/tests/001_foundation.sql passed remotely."
+    },
+    {
+      "name": "hybrid_retrieval_contract",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "database/tests/003_hybrid_retrieval.sql passed remotely with extensions.vector."
+    },
+    {
+      "name": "provenance_contract",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "database/tests/006_provenance.sql passed remotely."
+    },
+    {
+      "name": "private_data_contract",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "database/tests/010_private_data_rls.sql passed remotely; no private rows were copied."
+    },
+    {
+      "name": "reports_contract",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "database/tests/008_reports.sql passed remotely."
+    },
+    {
+      "name": "performance_advisors",
+      "status": "passed",
+      "elapsed_ms": null,
+      "detail": "44 fresh-database INFO findings are recorded as informational; workload tuning is deferred."
+    }
+  ],
+  "drift": [
+    {
+      "kind": "table",
+      "object_name": "public.alembic_version",
+      "expected": "private migration marker",
+      "actual": "RLS enabled without policy",
+      "severity": "informational",
+      "resolution": "No policy preserves the closed marker table; monitor but do not expose it."
+    },
+    {
+      "kind": "index",
+      "object_name": "supabase_performance_advisors",
+      "expected": "workload-measured indexes",
+      "actual": "44 informational fresh-database findings",
+      "severity": "informational",
+      "resolution": "Tune only after representative production workload measurements."
+    }
+  ],
+  "status": "passed"
+}

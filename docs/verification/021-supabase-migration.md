@@ -8,6 +8,8 @@ repository migration revisions, from `0001_foundation` through
 
 ## Checks executed
 
+- Local quality gate: database unit tests **12 passed**, Ruff passed, mypy passed for the database
+  package, and the repository manifest command reported 27 revisions.
 - Remote project: `AtlasAI`, active/healthy, PostgreSQL 17.6.
 - Migration comparison: local 27 / remote 27, exact ordered match, no missing or unexpected
   revisions.
