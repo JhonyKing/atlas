@@ -197,6 +197,60 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .comparison-evidence-details ul { margin: .45rem 0 0; padding-left: 1rem; }
 .comparison-evidence-details code { overflow-wrap: anywhere; color: var(--atlas-text-muted); font-size: .7rem; }
 .comparison-empty-cell { color: var(--atlas-text-subtle); }
+.account-page, .report-page, .news-page, .sources-page, .admin-page { padding-top: 3.5rem; padding-bottom: 4rem; }
+.account-page { max-width: 62rem; }
+.account-page-intro { max-width: 42rem; margin-bottom: 2rem; }
+.account-page-intro h1 { max-width: none; margin: .35rem 0 .75rem; font-size: clamp(2.5rem, 6vw, 4rem); }
+.account-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.account-panel, .admin-panel, .report-page > section, .daily-news { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); padding: 1.35rem; background: var(--atlas-surface); box-shadow: 0 10px 30px rgb(16 33 62 / 4%); }
+.account-panel h2, .admin-panel h2, .report-page h2 { margin: 0 0 .6rem; font-size: clamp(1.2rem, 2vw, 1.6rem); }
+.account-form { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.account-field { display: grid; gap: .45rem; color: var(--atlas-text); }
+.account-field input, .account-field textarea { width: 100%; }
+.account-form button { justify-self: start; min-width: 9rem; }
+.account-status { margin: 1rem 0 0; color: var(--atlas-text-secondary); font-size: .9rem; }
+.account-resource-list, .governance-list { display: grid; gap: .55rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.account-resource-list li, .governance-list li { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .7rem .8rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); }
+.empty-state { display: grid; gap: .3rem; margin-top: 1rem; border: 1px dashed var(--atlas-border-strong); border-radius: var(--atlas-radius-md); padding: 1rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); }
+.empty-state strong { color: var(--atlas-text); }
+.report-page { max-width: 62rem; }
+.report-page > section { max-width: 48rem; }
+.report-page > section > p:first-child { margin: 0 0 .65rem; color: var(--atlas-indigo); font-size: .85rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.report-page form { max-width: 34rem; margin-top: 1.25rem; }
+.report-page form button { justify-self: start; }
+.report-page [role="alert"], .report-page [role="status"] { margin-top: 1rem; padding: .8rem 1rem; border-radius: var(--atlas-radius-md); color: var(--atlas-text-secondary); background: var(--atlas-surface-soft); }
+.news-page { max-width: 62rem; }
+.daily-news { max-width: 54rem; }
+.daily-news-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.daily-news-heading h2 { margin: .25rem 0 0; font-size: clamp(1.6rem, 3vw, 2.3rem); }
+.daily-news-heading time { color: var(--atlas-text-muted); font-size: .9rem; white-space: nowrap; }
+.daily-news-card { margin-top: 1.5rem; border-top: 1px solid var(--atlas-border); padding-top: 1.25rem; }
+.daily-news-card h3 { margin: .3rem 0 .6rem; font-size: clamp(1.25rem, 2.5vw, 1.8rem); }
+.daily-news-card a { color: var(--atlas-indigo); font-weight: 750; }
+.news-status-message, .corpus-status-message { max-width: 48rem; margin: 0; border: 1px dashed var(--atlas-border-strong); border-radius: var(--atlas-radius-lg); padding: 1.1rem 1.25rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); line-height: 1.5; }
+.sources-page { max-width: 68rem; }
+.sources-page .corpus-status-message { margin: 0; }
+.admin-page { display: grid; gap: 1.25rem; max-width: 68rem; }
+.admin-panel > p { color: var(--atlas-text-secondary); }
+.review-panel { max-width: 60rem; }
+.review-form-grid { display: grid; grid-template-columns: minmax(12rem, .75fr) minmax(18rem, 1.5fr); gap: 1rem; align-items: end; margin-top: 1.25rem; }
+.review-proposal textarea { min-height: 7rem; resize: vertical; }
+.review-panel > .actions { margin-top: 1rem; }
+.review-decision-actions { flex-wrap: wrap; }
+.governance-panel { max-width: 68rem; }
+.governance-panel > p[aria-live] { margin: .5rem 0 0; }
+.atlas-file-upload { margin-top: 1rem; }
+.atlas-file-upload input { border: 0; padding: 0; background: transparent; }
+.atlas-file-upload-title { color: var(--atlas-text); font-weight: 700; }
+.atlas-file-upload-control { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; color: var(--atlas-text-secondary); font-size: .9rem; }
+.atlas-file-upload-button { display: inline-flex; align-items: center; min-height: 2rem; border: 1px solid var(--atlas-border-strong); border-radius: var(--atlas-radius-sm); padding: .35rem .6rem; color: var(--atlas-text); background: var(--atlas-surface); font-weight: 700; }
+.atlas-file-upload-name { overflow-wrap: anywhere; }
+.atlas-file-input-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; clip-path: inset(50%); }
+.ask-branding { min-height: 3rem; justify-content: flex-start; padding: 0; }
+.ask-branding-logo { width: 4.25rem; }
+.agent-workspace { padding: 1.1rem 1.25rem; margin-bottom: 2rem; }
+.agent-tool-grid { gap: .6rem; margin-top: 1rem; }
+.agent-tool-card { padding: .85rem; }
 @keyframes atlas-spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 720px) {
@@ -213,6 +267,12 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .comparison-control-grid { grid-template-columns: 1fr; }
   .comparison-results-heading { display: grid; align-items: start; }
   .comparison-table-wrap table { min-width: 46rem; }
+  .account-page, .report-page, .news-page, .sources-page, .admin-page { padding-top: 2.5rem; padding-bottom: 3rem; }
+  .account-grid { grid-template-columns: 1fr; }
+  .daily-news-heading { display: grid; gap: .35rem; }
+  .daily-news-heading time { white-space: normal; }
+  .review-form-grid { grid-template-columns: 1fr; align-items: stretch; }
+  .review-panel > .actions { margin-top: .75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -21,10 +21,12 @@ const copy = {
 
 export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale }) {
   const labels = copy[locale];
-  const [message, setMessage] = useState(labels.select);
+  const [message, setMessage] = useState<string | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   async function upload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    setSelectedFileName(file.name);
     const bytes = await file.arrayBuffer();
     const contentBase64 = btoa(String.fromCharCode(...new Uint8Array(bytes)));
     const response = await fetch("/v1/private/uploads", {
@@ -35,5 +37,18 @@ export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale
     });
     setMessage(response.ok ? labels.accepted : labels.rejected);
   }
-  return <section aria-label="Private upload"><h2>{labels.title}</h2><input type="file" onChange={upload} /><p aria-live="polite">{message}</p></section>;
+  return (
+    <section className="account-panel" aria-label={locale === "es-MX" ? "Carga privada" : "Private upload"}>
+      <h2>{labels.title}</h2>
+      <label className="atlas-file-upload">
+        <span className="atlas-file-upload-title">{selectedFileName ?? labels.select}</span>
+        <span className="atlas-file-upload-control">
+          <span className="atlas-file-upload-button">{locale === "es-MX" ? "Elegir archivo" : "Choose file"}</span>
+          <span className="atlas-file-upload-name">{selectedFileName ?? (locale === "es-MX" ? "Ningún archivo seleccionado" : "No file selected")}</span>
+        </span>
+        <input className="atlas-file-input-hidden" type="file" onChange={upload} />
+      </label>
+      <p className="account-status" aria-live="polite">{message ?? labels.select}</p>
+    </section>
+  );
 }

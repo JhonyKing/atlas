@@ -1,5 +1,5 @@
 import { ReportRequest } from "@/features/reports/ReportRequest";
 
 export default function ReportsPage() {
-  return <main><ReportRequest /></main>;
+  return <main className="report-page"><ReportRequest /></main>;
 }

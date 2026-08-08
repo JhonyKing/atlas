@@ -37,10 +37,10 @@ export function GovernancePanel() {
       );
   }, [spanish]);
   return (
-    <section aria-labelledby="governance-title">
+    <section className="admin-panel governance-panel" aria-labelledby="governance-title">
       <h2 id="governance-title">{spanish ? "Gobierno del corpus" : "Corpus governance"}</h2>
       <p aria-live="polite">{message}</p>
-      <ul>
+      {collections.length ? <ul className="governance-list">
         {collections.slice(0, 16).map((collection) => (
           <li key={collection.slug}>
             <strong>{collection.display_name}</strong>: {collection.policy_state}; {collection.source_count}{" "}
@@ -48,7 +48,7 @@ export function GovernancePanel() {
             {spanish ? "obsoletas" : "stale"}; {collection.dead_letter_count} dead letter.
           </li>
         ))}
-      </ul>
+      </ul> : <div className="empty-state"><strong>{spanish ? "Sin colecciones para mostrar" : "No collections to show"}</strong><span>{spanish ? "El estado aparecerá cuando el corpus esté disponible." : "Status will appear when the corpus is available."}</span></div>}
     </section>
   );
 }

@@ -64,23 +64,27 @@ export function ReviewPanel() {
   }
 
   return (
-    <section aria-labelledby="review-title">
+    <section className="admin-panel review-panel" aria-labelledby="review-title">
       <h2 id="review-title">{spanish ? "Revisión humana" : "Human review"}</h2>
       <p>{spanish ? "Aprueba, edita o rechaza antes de publicar." : "Approve, edit, or reject before publication."}</p>
-      <label>
+      <div className="review-form-grid">
+      <label className="account-field">
         {spanish ? "Revisor" : "Reviewer"}
         <input value={reviewer} onChange={(event) => setReviewer(event.target.value)} />
       </label>
-      <label>
+      <label className="account-field review-proposal">
         {spanish ? "Propuesta" : "Proposal"}
         <textarea value={proposal} onChange={(event) => setProposal(event.target.value)} />
       </label>
+      </div>
+      <div className="actions">
       <button type="button" onClick={createReview} disabled={!proposal.trim()}>
         {spanish ? "Solicitar revisión" : "Request review"}
       </button>
+      </div>
       <p aria-live="polite">{spanish ? "Estado" : "Status"}: {status}</p>
       {reviewId && (
-        <div>
+        <div className="actions review-decision-actions">
           <button type="button" onClick={() => void decide("approve")}>{spanish ? "Aprobar" : "Approve"}</button>
           <button type="button" onClick={() => void decide("edit")}>{spanish ? "Editar y aprobar" : "Edit and approve"}</button>
           <button type="button" onClick={() => void decide("reject")}>{spanish ? "Rechazar" : "Reject"}</button>

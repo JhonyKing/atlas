@@ -37,7 +37,7 @@ export function CitedAnswerForm() {
   const { locale, setLocale, messages } = useLocale();
   const [question, setQuestion] = useState("");
   const [product, setProduct] = useState<CollectionSlug | "">("");
-  const [status, setStatus] = useState(messages.ready);
+  const [status, setStatus] = useState<string | null>(null);
   const [stageKey, setStageKey] = useState("accepted");
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<CompletedAnswer | null>(null);
@@ -216,7 +216,7 @@ export function CitedAnswerForm() {
       </section>
       <p className="ask-supported-sources">{messages.supportedSources}</p>
       {active || answer || abstention ? <ResearchProgress steps={buildResearchSteps(stageKey, messages.stage)} label={messages.stage.verifying ?? "Research progress"} /> : null}
-      <p className="progress" role="status" aria-live="polite">{status}</p>
+      <p className="progress" role="status" aria-live="polite">{status ?? messages.ready}</p>
       {answer ? <EvidencePanel answerStatus={answer.answerStatus} claims={answer.claims} citations={answer.citations} limitations={answer.limitations} onFeedback={handleFeedback} /> : null}
       {abstention ? <AbstentionResult notice={abstention} /> : null}
     </section>

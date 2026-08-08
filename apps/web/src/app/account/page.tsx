@@ -1,7 +1,5 @@
-import { SessionPanel } from "@/features/auth/SessionPanel";
-import { PrivateResourcesPanel } from "@/features/private-data/PrivateResourcesPanel";
-import { PrivateUploadPanel } from "@/features/private-data/PrivateUploadPanel";
+import { AccountPageContent } from "@/features/account/AccountPageContent";
 
 export default function AccountPage() {
-  return <main><SessionPanel /><PrivateResourcesPanel /><PrivateUploadPanel /></main>;
+  return <AccountPageContent />;
 }
