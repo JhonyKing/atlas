@@ -109,7 +109,7 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
 
 ## Estado actualizado del comparador (2026-08-05)
 
-- T033 estÃ¡ cerrado: el journey de cuatro filas pasa en inglÃ©s y espaÃ±ol con navegaciÃ³n de teclado.
+- T033 está cerrado: el journey de cuatro filas pasa en inglés y español con navegación de teclado.
 - T032 tiene 20 solicitudes y 17 matrices offline, incluida una matriz de cuatro filas con Anthropic;
   falta validarla contra un corpus real promovido.
 - Las puertas actuales son 177 pruebas backend, 12 journeys Playwright y 20 pruebas Vitest.

@@ -16,6 +16,10 @@ link and deployment state remain an open operator task until the project is link
 `JhonyKing/atlas` and a managed API origin exists.
 
 An MCP file-upload preview was verified on 2026-08-10 at
-`https://atlasai-re1bz6669-jhonykings-projects.vercel.app`. It is recorded in
+[`https://atlasai-hu543gtvg-jhonykings-projects.vercel.app`](https://atlasai-hu543gtvg-jhonykings-projects.vercel.app).
+The UTF-8-preserving deployment evidence is recorded in
+[`evals/results/vercel-preview-20260810-fixed-utf8.json`](../../evals/results/vercel-preview-20260810-fixed-utf8.json).
+The earlier deployment remains historical evidence in
 [`evals/results/vercel-preview-20260810.json`](../../evals/results/vercel-preview-20260810.json)
-and is not a replacement for the Git-connected preview/production workflow.
+and is not overwritten. Neither direct preview is a replacement for the Git-connected
+preview/production workflow.

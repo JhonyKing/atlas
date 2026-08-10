@@ -27,3 +27,12 @@ No Vercel project, public API URL, managed container, hosted migration, producti
 target, live LangSmith trace, backup restore, rollback rehearsal, or hosted bilingual smoke has
 been claimed. Those require operator-owned credentials and are tracked as T030-T036. The
 Playwright deployment file is a contract skeleton until `ATLAS_DEPLOYMENT_WEB_ORIGIN` is supplied.
+
+## Follow-up verification (2026-08-10)
+
+An MCP file-upload preview was verified as `READY` at
+[`https://atlasai-hu543gtvg-jhonykings-projects.vercel.app`](https://atlasai-hu543gtvg-jhonykings-projects.vercel.app).
+The build passed TypeScript and generated 12 static pages. This is a frontend-only preview;
+it does not claim a managed API origin, hosted migrations, production Supabase, or a Git-connected
+deployment. The UTF-8-preserving evidence is in
+[`evals/results/vercel-preview-20260810-fixed-utf8.json`](../../evals/results/vercel-preview-20260810-fixed-utf8.json).
