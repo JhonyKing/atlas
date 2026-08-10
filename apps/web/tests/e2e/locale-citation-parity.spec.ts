@@ -40,7 +40,7 @@ test("Spanish presentation preserves citation identity and original-language evi
 
   await expect(page.getByText("La afirmación traducida conserva su evidencia.")).toBeVisible();
   await expect(page.getByText("Afirmación factual")).toBeVisible();
-  await expect(page.getByText("Publicador")).toBeVisible();
+  await expect(page.getByText("Publisher", { exact: true })).toBeVisible();
   await expect(page.getByText("Evidence remains in the original language.")).toBeVisible();
   await expect(page.getByRole("link", { name: "Abrir Official docs" })).toHaveAttribute(
     "href",

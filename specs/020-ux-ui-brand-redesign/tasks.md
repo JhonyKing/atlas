@@ -63,18 +63,18 @@
 
 - [X] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`. Evidence: `apps/web/tests/visual/viewport-matrix.spec.ts`.
 - [X] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`. Evidence: the viewport matrix asserts all listed checks for representative public/admin routes.
-- [ ] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`.
-- [ ] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`.
+- [X] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`. Evidence: 60/60 bilingual route screenshots and documented harness/layout fixes.
+- [X] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`. Evidence: `docs/verification/020-production-build.md`, production build and 49/49 viewport matrix.
 
 ## Phase 9: Documentation, convergence, and closeout
 
-- [ ] T039 [P] Update `README.md` with route map, design system, brand asset usage, UX evidence, and visual QA links.
-- [ ] T040 [P] Add/update the UX/architecture ADR in `docs/adr/` for route separation, AppShell, tokens, and brand assets.
-- [ ] T041 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 020 and implementation/evidence status.
-- [ ] T042 Run Speckit analyze after task generation and resolve critical contradictions before implementation.
-- [ ] T043 Run full frontend lint/typecheck/unit/E2E plus existing backend regression checks to prove no backend behavior changed.
-- [ ] T044 Run Speckit converge after implementation; keep Feature 020 open while visual QA, accessibility, route, or documentation gates remain pending.
-- [ ] T045 Commit each vertical slice with README/ADR/evidence updates and task/route traceability.
+- [X] T039 [P] Update `README.md` with route map, design system, brand asset usage, UX evidence, and visual QA links. Evidence: Feature 020 section in `README.md`.
+- [X] T040 [P] Add/update the UX/architecture ADR in `docs/adr/` for route separation, AppShell, tokens, and brand assets. Evidence: `docs/adr/0016-ux-ui-brand-redesign.md` and `docs/architecture/020-ux-ui-brand-redesign.md`.
+- [X] T041 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 020 and implementation/evidence status. Evidence: Feature 020 status row and UX/UI traceability addendum.
+- [X] T042 Run Speckit analyze after task generation and resolve critical contradictions before implementation. Evidence: `docs/verification/020-speckit-analysis.md`; no critical findings remain.
+- [X] T043 Run full frontend lint/typecheck/unit/E2E plus existing backend regression checks to prove no backend behavior changed. Evidence: `docs/verification/020-production-build.md`; frontend unit 35/35, Playwright 149 passed/4 skipped, backend 379 passed/4 skipped, and build/lint/typecheck passed.
+- [X] T044 Run Speckit converge after implementation; keep Feature 020 open while visual QA, accessibility, route, or documentation gates remain pending. Evidence: convergence checked the 16 FRs, 9 buildable SCs, plan decisions, constitution, code scope, and all 45 tasks; no actionable findings and no convergence tasks appended.
+- [X] T045 Commit each vertical slice with README/ADR/evidence updates and task/route traceability. Evidence: vertical commits were pushed on `codex/018-production-deployment`; this closeout commit includes the final regression, convergence, documentation, and task traceability updates.
 
 ## Dependencies & Execution Order
 

@@ -14,7 +14,7 @@ test("operator can inspect governed collection coverage", async ({ page }) => {
       }),
     });
   });
-  await page.goto("/es");
+  await page.goto("/es/admin/governance");
   await expect(page.getByRole("heading", { name: "Gobierno del corpus" })).toBeVisible();
   await expect(page.locator("li").filter({ hasText: "LangGraph" })).toBeVisible();
   await expect(page.getByText("Estado de fuentes actualizado.")).toBeVisible();

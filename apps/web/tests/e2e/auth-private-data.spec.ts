@@ -16,7 +16,7 @@ test("anonymous visitor can optionally sign in and keep private history visible"
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ items: [{ resource_id: "r1", resource_type: "report" }] }) });
   });
 
-  await page.goto("/en");
+  await page.goto("/es/account");
   await page.getByLabel("Correo").fill("ana@example.test");
   await page.getByLabel("Contraseña").fill("secret");
   await page.getByRole("button", { name: "Iniciar sesión" }).click();
@@ -32,7 +32,7 @@ test("private upload reports a safety rejection", async ({ page }) => {
   await page.route("**/v1/private/uploads", async (route) => {
     await route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ detail: "upload failed malware scan", indexable: false }) });
   });
-  await page.goto("/en");
+  await page.goto("/es/account");
   await page.locator('input[type="file"]').setInputFiles({ name: "bad.txt", mimeType: "text/plain", buffer: Buffer.from("EICAR-STANDARD-ANTIVIRUS-TEST-FILE") });
   await expect(page.getByText("Archivo rechazado por seguridad.", { exact: true })).toBeVisible();
 });
@@ -44,7 +44,7 @@ test("private upload accepts a safe file and another user sees no resources", as
   await page.route("**/v1/private/uploads", async (route) => {
     await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ upload_id: "u1", indexable: true }) });
   });
-  await page.goto("/en");
+  await page.goto("/es/account");
   await page.locator('input[type="file"]').setInputFiles({ name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("safe notes") });
   await expect(page.getByText("Archivo validado y puesto a disposición privada.", { exact: true })).toBeVisible();
   await expect(page.getByText("Mis recursos privados").locator("..").getByText("report", { exact: true })).toHaveCount(0);

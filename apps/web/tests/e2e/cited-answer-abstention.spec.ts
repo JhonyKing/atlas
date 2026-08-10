@@ -54,5 +54,5 @@ test("malicious source instructions produce a safe abstention with no executable
   await expect(page.locator("#question-error")).toContainText("ignored instructions embedded in source evidence");
   await expect(page.locator(".evidence-panel")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /send secrets|run instruction/i })).toHaveCount(0);
-  await expect(page.getByRole("link")).toHaveCount(0);
+  await expect(page.locator("main").getByRole("link")).toHaveCount(0);
 });

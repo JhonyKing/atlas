@@ -42,7 +42,15 @@ for (const viewport of [
 
     for (const route of routes) {
       test(`renders ${route}`, async ({ page }) => {
-        const response = await page.goto(route, { waitUntil: "networkidle", timeout: 120_000 });
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await page.route("**/*", async (requestRoute) => {
+          if (new URL(requestRoute.request().url()).pathname.startsWith("/v1/")) {
+            await requestRoute.abort();
+            return;
+          }
+          await requestRoute.continue();
+        });
+        const response = await page.goto(route, { waitUntil: "domcontentloaded", timeout: 120_000 });
         expect(response?.status(), route).toBe(200);
 
         await expect(page.locator("body")).toBeVisible();

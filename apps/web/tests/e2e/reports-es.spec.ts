@@ -7,7 +7,7 @@ test("Spanish report journey keeps original-evidence wording", async ({ page }) 
   await page.route("**/v1/reports/report-es", async (route) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ report_id: "report-es", status: "completed" }) });
   });
-  await page.goto("/es");
+  await page.goto("/es/reports");
   await page.getByLabel("ID de comparación completada").fill("comparison-es");
   await page.getByRole("button", { name: "Generar informe" }).click();
   await expect(page.getByText("Informe listo.", { exact: true })).toBeVisible();
