@@ -1,0 +1,116 @@
+{
+  "run_id": "supabase-verify-agent-idempotency-20260810",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "production",
+  "mode": "verify",
+  "started_at": "2026-08-10T23:10:00Z",
+  "finished_at": "2026-08-10T23:10:39Z",
+  "repository_head": "agent_idempotency",
+  "repository_revisions": [
+    "0001_foundation",
+    "0002_corpus_ingestion",
+    "0003_anonymous_quota",
+    "0004_hybrid_retrieval",
+    "0005_answer_runs",
+    "0006_evidence_integrity",
+    "0007_feedback",
+    "0008_retention",
+    "0009_provenance",
+    "0010_daily_news",
+    "0011_seed_collections",
+    "0012_comparisons",
+    "0013_comparison_quota",
+    "0014_comparison_cell_context",
+    "0015_expand_corpus_collections",
+    "0016_reports",
+    "0017_report_metadata",
+    "0018_identity",
+    "0019_private_data",
+    "0020_private_data_rls",
+    "0021_private_upload_provenance",
+    "0022_ingestion_governance",
+    "0023_policy_review_status",
+    "0024_agent_checkpoints_reviews",
+    "0025_supabase_security_hardening",
+    "0026_supabase_extension_security",
+    "0027_revoke_public_rls_helper",
+    "0028_agent_tool_orchestration",
+    "agent_idempotency"
+  ],
+  "remote_revisions": [
+    "0001_foundation",
+    "0002_corpus_ingestion",
+    "0003_anonymous_quota",
+    "0004_hybrid_retrieval",
+    "0005_answer_runs",
+    "0006_evidence_integrity",
+    "0007_feedback",
+    "0008_retention",
+    "0009_provenance",
+    "0010_daily_news",
+    "0011_seed_collections",
+    "0012_comparisons",
+    "0013_comparison_quota",
+    "0014_comparison_cell_context",
+    "0015_expand_corpus_collections",
+    "0016_reports",
+    "0017_report_metadata",
+    "0018_identity",
+    "0019_private_data",
+    "0020_private_data_rls",
+    "0021_private_upload_provenance",
+    "0022_ingestion_governance",
+    "0023_policy_review_status",
+    "0024_agent_checkpoints_reviews",
+    "0025_supabase_security_hardening",
+    "0026_supabase_extension_security",
+    "0027_revoke_public_rls_helper",
+    "0028_agent_tool_orchestration",
+    "agent_idempotency"
+  ],
+  "applied_revisions": ["agent_idempotency"],
+  "schema_inventory": {
+    "table": "atlas.agent_idempotency_records",
+    "table_exists": true,
+    "remote_revision_count": 29,
+    "worker_can_select": true,
+    "rls_disabled_table_count": 47
+  },
+  "checks": [
+    {
+      "name": "repository_remote_revision_chain",
+      "status": "passed",
+      "elapsed_ms": 35.0,
+      "detail": "29 repository revisions match the 29 remote migration names."
+    },
+    {
+      "name": "agent_idempotency_table_exists",
+      "status": "passed",
+      "elapsed_ms": 120.0,
+      "detail": "atlas.agent_idempotency_records exists with the expected bounded columns."
+    },
+    {
+      "name": "atlas_worker_privilege",
+      "status": "passed",
+      "elapsed_ms": 90.0,
+      "detail": "atlas_worker can SELECT the durable replay table."
+    },
+    {
+      "name": "rls_security_advisor",
+      "status": "blocked",
+      "elapsed_ms": 140.0,
+      "detail": "Supabase reports RLS disabled on 47 atlas tables; policy design is required before enabling it."
+    }
+  ],
+  "drift": [
+    {
+      "kind": "policy",
+      "object_name": "atlas schema RLS posture",
+      "expected": "Private atlas tables have reviewed RLS policies.",
+      "actual": "47 atlas tables have RLS disabled according to the Supabase security advisor.",
+      "severity": "blocking",
+      "resolution": "Design and review worker/authenticated policies, then enable RLS in a separate migration."
+    }
+  ],
+  "status": "blocked"
+}

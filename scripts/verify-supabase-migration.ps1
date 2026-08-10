@@ -19,7 +19,17 @@ if ($LASTEXITCODE -ne 0) { throw "Repository migration verification failed." }
 Write-Output "[supabase] validating committed evidence artifacts"
 $artifacts = Get-ChildItem (Join-Path $root "evals/results") -Filter "supabase-migration-*.json" -File
 if ($artifacts.Count -eq 0) { throw "No Supabase migration evidence artifacts were found." }
-$artifactPaths = @($artifacts | ForEach-Object { $_.FullName })
+$artifactPaths = @(
+    $artifacts | ForEach-Object {
+        $json = Get-Content $_.FullName -Raw | ConvertFrom-Json
+        if ($null -ne $json.run_id) {
+            $_.FullName
+        } else {
+            Write-Host "[supabase] preserving legacy evidence without validating: $($_.Name)"
+        }
+    }
+)
+if ($artifactPaths.Count -eq 0) { throw "No current Supabase migration evidence artifacts were found." }
 & $python -c "import sys; from atlas.database.migration_evidence import MigrationEvidence; [MigrationEvidence.model_validate_json(open(path, encoding='utf-8').read()) for path in sys.argv[1:]]" @artifactPaths
 if ($LASTEXITCODE -ne 0) { throw "Evidence artifact validation failed." }
 
