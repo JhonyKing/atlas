@@ -32,6 +32,37 @@ async def test_read_only_adapter_normalizes_evidence_and_artifacts() -> None:
 
 
 @pytest.mark.asyncio
+async def test_read_only_adapter_preserves_bounded_provenance_and_drops_unknown_fields() -> None:
+    async def handler(_arguments: dict[str, object]) -> dict[str, object]:
+        return {
+            "status": "completed",
+            "evidence_ids": ["ev-1"],
+            "source_versions": ["v1"],
+            "provenance": {"publisher": "LangChain", "captured_at": "2026-08-10"},
+            "excerpts": [
+                {
+                    "evidence_id": "ev-1",
+                    "excerpt": "A bounded excerpt",
+                    "canonical_url": "https://example.com/docs",
+                    "source_version": "v1",
+                }
+            ],
+            "evidence_relations": [
+                {"from_evidence_id": "ev-1", "to_evidence_id": "ev-2", "relation": "supports"}
+            ],
+            "secret": "must not cross the adapter",
+        }
+
+    result = await ReadOnlyToolAdapters({"cited_answer": handler}).execute("cited_answer", {})
+
+    assert result["source_versions"] == ("v1",)
+    assert result["provenance"] == {"publisher": "LangChain", "captured_at": "2026-08-10"}
+    assert result["excerpts"][0]["evidence_id"] == "ev-1"
+    assert result["evidence_relations"][0]["relation"] == "supports"
+    assert "secret" not in result
+
+
+@pytest.mark.asyncio
 async def test_missing_read_only_adapter_abstains_without_invoking_provider() -> None:
     adapters = ReadOnlyToolAdapters({})
 

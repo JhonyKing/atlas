@@ -36,7 +36,9 @@ cancelled event without replaying the completed calls.
 
 Read-only API runs pass through `ReadOnlyToolAdapters` before invoking answer, comparison, report,
 news, or corpus services. The adapter copies arguments, bounds evidence/artifact references, and
-redacts provider/handler exceptions to a stable result envelope.
+preserves only known scalar metadata plus bounded provenance, source-version IDs, excerpts, and
+typed evidence relations. Unknown handler fields and provider/handler exceptions are redacted from
+the stable result envelope.
 
 Side-effect adapters are separate. `SideEffectToolAdapters` requires a matching, unexpired
 approval bound to the plan, actor, tool version, and normalized arguments, then checks authenticated

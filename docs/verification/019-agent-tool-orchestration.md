@@ -15,8 +15,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Bounded executor tests: **4 passed** for per-tool timeout, evidence budget overflow, cancellation
   before the next step, and partial failure without invoking later steps.
 - Agent/contract/security regression after executor changes: **28 passed**.
-- Read-only adapter/API integration tests: **13 passed**; read-only calls are delegated through the
-  adapter boundary and private/unknown tools cannot be registered there.
+- Read-only adapter/API integration tests: **14 passed**; read-only calls are delegated through the
+  adapter boundary, bounded provenance/excerpt/relation fields are preserved, and private/unknown
+  tools cannot be registered there.
 - Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating.
