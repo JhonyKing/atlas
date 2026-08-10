@@ -22,9 +22,10 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating. The API contract now records rejected side-effect calls as failed tool
   events instead of treating them as successful completions.
-- PostgreSQL persistence contract tests: **5 passed** for plan round-trip, ordered event reconnect,
-  checkpoint integrity/replay conflict, and approval/tool-call round-trips. The non-development
-  runtime selects these adapters, and API execution records each tool call after the run exists.
+- PostgreSQL persistence contract tests: **6 passed** for plan round-trip, ordered event reconnect,
+  checkpoint integrity/replay conflict, cross-repository checkpoint claim, and approval/tool-call
+  round-trips. The non-development runtime selects these adapters, and API execution records each
+  tool call after the run exists.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; the new
   migration still needs to be applied to the hosted project before production activation.
@@ -37,9 +38,10 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 ## Supabase evidence
 
 Migration `0028_agent_tool_orchestration` was applied to project `fcbclsaytbjpywlaplbh` through the
-Supabase MCP migration tool. The repository file `0029_agent_idempotency.py` is applied remotely
-under the migration name `agent_idempotency`; the remote list reports 29 revisions and the `atlas`
-schema contains `agent_idempotency_records`.
+Supabase MCP migration tool. The repository files `0029_agent_idempotency.py` and
+`0030_agent_checkpoint_claims.py` are applied remotely under the migration names
+`agent_idempotency` and `agent_checkpoint_claims`; the remote list reports 30 revisions and the
+`atlas` schema contains `agent_idempotency_records` and `agent_checkpoint_claims`.
 The SQL grants revoke public access and grant only the existing `atlas_worker`/`atlas_readonly`
 roles. No user or private document data was seeded.
 

@@ -23,8 +23,8 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected chain currently contains 29 revisions and ends at the repository file
-`0029_agent_idempotency.py` (revision name `agent_idempotency`).
+The expected chain currently contains 30 revisions and ends at the repository file
+`0030_agent_checkpoint_claims.py` (revision name `agent_checkpoint_claims`).
 
 For a repeatable read-only check, export the bounded project state from the authenticated MCP as
 JSON and run:
@@ -67,7 +67,7 @@ Rerun inspection before attempting recovery.
 
 ## Definition of done
 
-- All 29 revisions are applied or explicitly recorded as already present.
+- All 30 revisions are applied or explicitly recorded as already present.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

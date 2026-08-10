@@ -231,6 +231,19 @@ class PostgresCheckpointRepository:
         with self._lock:
             if key in self._claimed:
                 return False
-            self.resume(thread_id, replay_key=replay_key)
+            checkpoint = self.resume(thread_id, replay_key=replay_key)
+            claimed = self._connection.execute(
+                """
+                INSERT INTO atlas.agent_checkpoint_claims(
+                  thread_id, replay_key, checkpoint_id
+                ) VALUES (%s, %s, %s)
+                ON CONFLICT (thread_id, replay_key) DO NOTHING
+                RETURNING claim_token
+                """,
+                (thread_id, replay_key, checkpoint.checkpoint_id),
+            ).fetchone()
+            self._connection.commit()
+            if claimed is None:
+                return False
             self._claimed.add(key)
             return True

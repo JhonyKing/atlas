@@ -77,7 +77,7 @@ class Settings(BaseSettings):
     atlas_agent_node_timeout_seconds: float = Field(default=15.0, gt=0)
     atlas_agent_checkpoint_ttl_hours: int = Field(default=24, ge=1)
     atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)
-    atlas_migration_head: str = "agent_idempotency"
+    atlas_migration_head: str = "agent_checkpoint_claims"
 
     @field_validator(
         "openai_api_key",

@@ -59,9 +59,11 @@ endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 ## Persistence and observability
 
 Migration `0028_agent_tool_orchestration` adds private-schema tables for plans, runs, tool calls,
-ordered events, and approvals. Migration `agent_idempotency` adds the scoped replay table.
+ordered events, and approvals. Migration `agent_idempotency` adds the scoped replay table and
+`agent_checkpoint_claims` adds a durable one-shot resume claim.
 The local repository is an in-memory adapter with the same contract; non-development runtimes use
-PostgreSQL for plans, runs, ordered events, tool-call records, approvals, and idempotency responses.
+PostgreSQL for plans, runs, ordered events, tool-call records, approvals, idempotency responses,
+and cross-process checkpoint claims.
 Approval rows are written after the run exists so the foreign-key boundary remains valid. LangSmith
 receives only bounded tags and scalar metadata (plan hash, run ID, locale, tool count, budgets, and
 outcome), never question text or tool arguments.

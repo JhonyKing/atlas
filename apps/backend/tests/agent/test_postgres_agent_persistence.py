@@ -41,6 +41,7 @@ class FakeConnection:
         self.plan_row: tuple[Any, ...] | None = None
         self.run_row: tuple[Any, ...] | None = None
         self.checkpoint_row: tuple[Any, ...] | None = None
+        self.checkpoint_claim_row: tuple[Any, ...] | None = None
         self.approval_row: tuple[Any, ...] | None = None
         self.tool_call_row: tuple[Any, ...] | None = None
         self.idempotency_row: tuple[Any, ...] | None = None
@@ -117,6 +118,11 @@ class FakeConnection:
         if "INSERT INTO atlas.agent_idempotency_records" in sql:
             self.idempotency_row = (params[2], params[3].obj)
             return Result()
+        if "INSERT INTO atlas.agent_checkpoint_claims" in sql:
+            if self.checkpoint_claim_row is not None:
+                return Result()
+            self.checkpoint_claim_row = (uuid4(), params[0], params[1], params[2])
+            return Result(self.checkpoint_claim_row[:1])
         if "FROM atlas.agent_checkpoints" in sql:
             return Result(self.checkpoint_row)
         if "INSERT INTO atlas.agent_checkpoints" in sql:
@@ -203,6 +209,17 @@ def test_postgres_checkpoint_round_trip_rejects_changed_replay_state() -> None:
         assert "replay key" in str(exc)
     else:
         raise AssertionError("changed replay state must be rejected")
+
+
+def test_postgres_checkpoint_claim_is_cross_repository_idempotent() -> None:
+    connection = FakeConnection()
+    first = PostgresCheckpointRepository(connection)  # type: ignore[arg-type]
+    second = PostgresCheckpointRepository(connection)  # type: ignore[arg-type]
+    state = AtlasState(thread_id=uuid4(), request="first")
+    first.save(state, node="plan", replay_key="r1")
+
+    assert first.claim_resume(state.thread_id, replay_key="r1") is True
+    assert second.claim_resume(state.thread_id, replay_key="r1") is False
 
 
 def test_postgres_repository_persists_approval_and_tool_call_records() -> None:
