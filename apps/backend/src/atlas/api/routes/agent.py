@@ -31,9 +31,9 @@ from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
 from atlas.observability.context import current_request_id
 from atlas.observability.langsmith import TraceHandle, TraceSink
 from atlas.persistence.agent_runs import (
+    AgentIdempotencyStore,
     AgentRunRepository,
     IdempotencyConflict,
-    InMemoryIdempotencyStore,
 )
 from atlas.reports.schemas import ReportFormat, ReportLocale, ReportSpec
 
@@ -52,8 +52,15 @@ def _runs(request: Request) -> AgentRunRepository:
     return cast(AgentRunRepository, request.app.state.agent_run_repository)
 
 
-def _idempotency_store(request: Request) -> InMemoryIdempotencyStore:
-    return cast(InMemoryIdempotencyStore, request.app.state.agent_idempotency)
+def _idempotency_store(request: Request) -> AgentIdempotencyStore:
+    return cast(AgentIdempotencyStore, request.app.state.agent_idempotency)
+
+
+def _idempotency_scope(request: Request, operation: str) -> str:
+    if not getattr(request.app.state.agent_idempotency, "owner_scoped", False):
+        return operation
+    owner = hashlib.sha256(_visitor_hash(request).encode()).hexdigest()[:16]
+    return f"{operation}:{owner}"
 
 
 def _normalize_idempotency_key(key: str | None) -> str | None:
@@ -135,7 +142,9 @@ async def create_plan(
     fingerprint = _fingerprint(payload.model_dump(mode="json"))
     if key is not None:
         try:
-            cached = _idempotency_store(request).get("agent.plan", key, fingerprint)
+            cached = _idempotency_store(request).get(
+                _idempotency_scope(request, "agent.plan"), key, fingerprint
+            )
         except IdempotencyConflict as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         if cached is not None:
@@ -187,7 +196,9 @@ async def create_plan(
         "approval_decision_keys": approval_keys,
     }
     if key is not None:
-        _idempotency_store(request).save("agent.plan", key, fingerprint, response)
+        _idempotency_store(request).save(
+            _idempotency_scope(request, "agent.plan"), key, fingerprint, response
+        )
     return response
 
 
@@ -287,7 +298,9 @@ async def create_agent_run(
     fingerprint = _fingerprint(payload.model_dump(mode="json"))
     if key is not None:
         try:
-            cached = _idempotency_store(request).get("agent.run", key, fingerprint)
+            cached = _idempotency_store(request).get(
+                _idempotency_scope(request, "agent.run"), key, fingerprint
+            )
         except IdempotencyConflict as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         if cached is not None:
@@ -365,7 +378,7 @@ async def create_agent_run(
                 }
                 if key is not None:
                     _idempotency_store(request).save(
-                        "agent.run", key, fingerprint, pending_response
+                        _idempotency_scope(request, "agent.run"), key, fingerprint, pending_response
                     )
                 return pending_response
             try:
@@ -459,7 +472,9 @@ async def create_agent_run(
         "events": [event.model_dump(mode="json") for event in repository.list_events(plan.run_id)],
     }
     if key is not None:
-        _idempotency_store(request).save("agent.run", key, fingerprint, completed_response)
+        _idempotency_store(request).save(
+            _idempotency_scope(request, "agent.run"), key, fingerprint, completed_response
+        )
     return completed_response
 
 
@@ -530,7 +545,9 @@ def decide_agent_approval(
     fingerprint = _fingerprint({"approval_id": str(approval_id), **payload.model_dump(mode="json")})
     if key is not None:
         try:
-            cached = _idempotency_store(request).get("agent.approval", key, fingerprint)
+            cached = _idempotency_store(request).get(
+                _idempotency_scope(request, "agent.approval"), key, fingerprint
+            )
         except IdempotencyConflict as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
         if cached is not None:
@@ -560,7 +577,9 @@ def decide_agent_approval(
     if _runs(request).get(updated_approval.run_id) is not None:
         _runs(request).save_approval(updated_approval)
     if key is not None:
-        _idempotency_store(request).save("agent.approval", key, fingerprint, response)
+        _idempotency_store(request).save(
+            _idempotency_scope(request, "agent.approval"), key, fingerprint, response
+        )
     return response
 
 

@@ -45,9 +45,10 @@ approval bound to the plan, actor, tool version, and normalized arguments, then 
 ownership for private tools before invoking a handler. Missing approval, ownership denial, or
 handler failure produces a safe non-mutating result.
 
-Plan, run, and approval endpoints accept an `Idempotency-Key`. The current local replay store
-returns the original response for the same fingerprint and rejects a conflicting reuse with 409;
-durable cross-instance idempotency and quota/consent convergence remain open.
+Plan, run, and approval endpoints accept an `Idempotency-Key`. The local replay store returns the
+original response for the same fingerprint and rejects a conflicting reuse with 409. Non-development
+runtimes use the PostgreSQL replay store from migration `0029_agent_idempotency`, scoped by an
+opaque visitor hash; quota/consent convergence and production activation remain open.
 
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
@@ -55,12 +56,12 @@ endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 ## Persistence and observability
 
 Migration `0028_agent_tool_orchestration` adds private-schema tables for plans, runs, tool calls,
-ordered events, and approvals. The local repository is an in-memory adapter with the same
-contract; the PostgreSQL adapter persists plans, runs, ordered events, tool-call records, and
-approval records for non-development runtimes. Approval rows are written after the run exists so
-the foreign-key boundary remains valid. LangSmith receives only bounded tags and scalar metadata
-(plan hash, run ID, locale, tool count, budgets, and outcome), never question text or tool
-arguments.
+ordered events, and approvals. Migration `0029_agent_idempotency` adds the scoped replay table.
+The local repository is an in-memory adapter with the same contract; non-development runtimes use
+PostgreSQL for plans, runs, ordered events, tool-call records, approvals, and idempotency responses.
+Approval rows are written after the run exists so the foreign-key boundary remains valid. LangSmith
+receives only bounded tags and scalar metadata (plan hash, run ID, locale, tool count, budgets, and
+outcome), never question text or tool arguments.
 
 ## Evidence
 

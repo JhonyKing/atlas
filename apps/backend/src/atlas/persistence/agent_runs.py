@@ -73,8 +73,18 @@ class IdempotencyConflict(ValueError):
     """A key was reused with a different request fingerprint."""
 
 
+class AgentIdempotencyStore(Protocol):
+    def get(self, scope: str, key: str, fingerprint: str) -> dict[str, object] | None: ...
+
+    def save(
+        self, scope: str, key: str, fingerprint: str, response: Mapping[str, object]
+    ) -> None: ...
+
+
 class InMemoryIdempotencyStore:
     """Small process-local replay store used until the durable idempotency tables are wired."""
+
+    owner_scoped = False
 
     def __init__(self) -> None:
         self._items: dict[tuple[str, str], tuple[str, dict[str, object]]] = {}
@@ -97,6 +107,54 @@ class InMemoryIdempotencyStore:
             if existing is not None and existing[0] != fingerprint:
                 raise IdempotencyConflict("idempotency key conflicts with another request")
             self._items[(scope, key)] = (fingerprint, dict(response))
+
+
+class PostgresIdempotencyStore:
+    """Durable replay store for non-development runtimes."""
+
+    owner_scoped = True
+
+    def __init__(self, connection: Connection) -> None:
+        self._connection = connection
+
+    def get(self, scope: str, key: str, fingerprint: str) -> dict[str, object] | None:
+        row = self._connection.execute(
+            """
+            SELECT fingerprint, response
+            FROM atlas.agent_idempotency_records
+            WHERE scope = %s AND idempotency_key = %s
+            """,
+            (scope, key),
+        ).fetchone()
+        if row is None:
+            return None
+        if str(row[0]).strip() != fingerprint:
+            raise IdempotencyConflict("idempotency key conflicts with another request")
+        return dict(row[1] or {})
+
+    def save(
+        self, scope: str, key: str, fingerprint: str, response: Mapping[str, object]
+    ) -> None:
+        existing = self._connection.execute(
+            """
+            SELECT fingerprint
+            FROM atlas.agent_idempotency_records
+            WHERE scope = %s AND idempotency_key = %s
+            """,
+            (scope, key),
+        ).fetchone()
+        if existing is not None and str(existing[0]).strip() != fingerprint:
+            raise IdempotencyConflict("idempotency key conflicts with another request")
+        if existing is None:
+            self._connection.execute(
+                """
+                INSERT INTO atlas.agent_idempotency_records(
+                  scope, idempotency_key, fingerprint, response
+                ) VALUES (%s, %s, %s, %s)
+                """,
+                (scope, key, fingerprint, Jsonb(dict(response))),
+            )
+            self._connection.commit()
 
 
 class InMemoryAgentRunRepository:

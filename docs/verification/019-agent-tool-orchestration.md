@@ -25,7 +25,8 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   checkpoint integrity/replay conflict, and approval/tool-call round-trips. The non-development
   runtime selects these adapters, and API execution records each tool call after the run exists.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
-  local store is intentionally process-local until the durable idempotency convergence task lands.
+  non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; the new
+  migration still needs to be applied to the hosted project before production activation.
 - Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **35 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
@@ -35,8 +36,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 ## Supabase evidence
 
 Migration `0028_agent_tool_orchestration` was applied to project `fcbclsaytbjpywlaplbh` through the
-Supabase MCP migration tool. The remote migration list reports 28 revisions and the `atlas` schema
-contains `agent_plans`, `agent_runs`, `agent_tool_calls`, `agent_run_events`, and `agent_approvals`.
+Supabase MCP migration tool. The repository now includes `0029_agent_idempotency`; it is not yet
+reported by the remote migration list. Once applied, the `atlas` schema will also contain
+`agent_idempotency_records`.
 The SQL grants revoke public access and grant only the existing `atlas_worker`/`atlas_readonly`
 roles. No user or private document data was seeded.
 

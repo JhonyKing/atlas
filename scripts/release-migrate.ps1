@@ -1,7 +1,7 @@
 param(
     [string]$DatabaseUrl = $env:ATLAS_DATABASE_URL,
     [switch]$DryRun,
-    [string]$ExpectedHead = "0028_agent_tool_orchestration"
+    [string]$ExpectedHead = "0029_agent_idempotency"
 )
 
 $ErrorActionPreference = "Stop"

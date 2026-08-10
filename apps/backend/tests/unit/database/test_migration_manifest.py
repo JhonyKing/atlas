@@ -8,13 +8,13 @@ import pytest
 from atlas.database.migration_manifest import load_migration_manifest
 
 
-def test_repository_contains_one_ordered_28_revision_chain() -> None:
+def test_repository_contains_one_ordered_29_revision_chain() -> None:
     root = Path(__file__).resolve().parents[5]
     manifest = load_migration_manifest(root / "database" / "migrations" / "versions")
 
-    assert len(manifest) == 28
+    assert len(manifest) == 29
     assert manifest[0].revision_id == "0001_foundation"
-    assert manifest[-1].revision_id == "0028_agent_tool_orchestration"
+    assert manifest[-1].revision_id == "0029_agent_idempotency"
     assert all(item.sha256 for item in manifest)
     assert all(
         current.down_revision == previous.revision_id
@@ -27,5 +27,5 @@ def test_manifest_rejects_an_unexpected_revision_count(tmp_path: Path) -> None:
     for path in source.glob("*.py"):
         (tmp_path / path.name).write_bytes(path.read_bytes())
 
-    with pytest.raises(ValueError, match="Expected 29 migrations"):
-        load_migration_manifest(tmp_path, expected_count=29)
+    with pytest.raises(ValueError, match="Expected 30 migrations"):
+        load_migration_manifest(tmp_path, expected_count=30)

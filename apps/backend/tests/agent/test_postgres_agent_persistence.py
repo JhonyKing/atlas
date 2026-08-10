@@ -12,9 +12,11 @@ from atlas.agent.state import AtlasState
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
 from atlas.persistence.agent_runs import (
+    IdempotencyConflict,
     InMemoryAgentRunRepository,
     PostgresAgentEventStore,
     PostgresAgentRunRepository,
+    PostgresIdempotencyStore,
 )
 
 
@@ -41,6 +43,7 @@ class FakeConnection:
         self.checkpoint_row: tuple[Any, ...] | None = None
         self.approval_row: tuple[Any, ...] | None = None
         self.tool_call_row: tuple[Any, ...] | None = None
+        self.idempotency_row: tuple[Any, ...] | None = None
         self.events: list[AgentRunEvent] = []
         self.commits = 0
 
@@ -56,6 +59,10 @@ class FakeConnection:
             return Result(self.approval_row)
         if "FROM atlas.agent_tool_calls" in sql:
             return Result(self.tool_call_row)
+        if "FROM atlas.agent_idempotency_records" in sql:
+            if "response" in sql:
+                return Result(self.idempotency_row)
+            return Result((self.idempotency_row[0],) if self.idempotency_row else None)
         if "SELECT id FROM atlas.agent_plans" in sql:
             return Result((uuid4(),))
         if "FROM atlas.agent_run_events" in sql and "max(sequence)" in sql:
@@ -106,6 +113,9 @@ class FakeConnection:
             return Result()
         if "INSERT INTO atlas.agent_tool_calls" in sql:
             self.tool_call_row = params
+            return Result()
+        if "INSERT INTO atlas.agent_idempotency_records" in sql:
+            self.idempotency_row = (params[2], params[3].obj)
             return Result()
         if "FROM atlas.agent_checkpoints" in sql:
             return Result(self.checkpoint_row)
@@ -250,6 +260,23 @@ def test_postgres_repository_persists_approval_and_tool_call_records() -> None:
     assert record is not None
     assert record["status"] == "completed"
     assert record["evidence_ids"] == ("ev-1",)
+
+
+def test_postgres_idempotency_store_replays_and_rejects_conflicts() -> None:
+    connection = FakeConnection()
+    store = PostgresIdempotencyStore(connection)  # type: ignore[arg-type]
+    response = {"run_id": "run-1", "status": "completed"}
+    fingerprint = "a" * 64
+
+    store.save("agent.run:owner-1", "request-key-1", fingerprint, response)
+    connection.idempotency_row = (fingerprint, response)
+    assert store.get("agent.run:owner-1", "request-key-1", fingerprint) == response
+    try:
+        store.get("agent.run:owner-1", "request-key-1", "b" * 64)
+    except IdempotencyConflict:
+        pass
+    else:
+        raise AssertionError("conflicting fingerprints must be rejected")
 
 
 def test_inmemory_repository_keeps_tool_call_and_approval_records() -> None:
