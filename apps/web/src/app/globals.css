@@ -240,6 +240,9 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .account-field input, .account-field textarea { width: 100%; }
 .account-form button { justify-self: start; min-width: 9rem; }
 .account-status { margin: 1rem 0 0; color: var(--atlas-text-secondary); font-size: .9rem; }
+.account-authenticated-state { display: grid; gap: .75rem; margin-top: 1rem; }
+.account-state-label { margin: 0; color: var(--atlas-supported); font-weight: 750; }
+.account-error { margin: 1rem 0 0; border-radius: var(--atlas-radius-md); padding: .7rem .8rem; color: var(--atlas-unsupported); background: var(--atlas-unsupported-bg); font-size: .88rem; }
 .account-resource-list, .governance-list { display: grid; gap: .55rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .account-resource-list li, .governance-list li { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .7rem .8rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); }
 .empty-state { display: grid; gap: .3rem; margin-top: 1rem; border: 1px dashed var(--atlas-border-strong); border-radius: var(--atlas-radius-md); padding: 1rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); }
