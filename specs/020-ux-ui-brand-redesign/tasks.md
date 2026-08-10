@@ -18,7 +18,7 @@
 
 - [X] T008 [P] [US4] Recreate the approved futuristic A mark as clean path/polygon/line/circle SVG without embedded PNG in `apps/web/public/brand/atlas-mark.svg`. Evidence: `docs/verification/020-brand-assets.md` and visual screenshots.
 - [X] T009 [P] [US4] Create stacked and horizontal SVG compositions from the approved mark/wordmark in `apps/web/public/brand/atlas-logo-stacked.svg` and `apps/web/public/brand/atlas-logo-horizontal.svg`. Evidence: `docs/verification/020-brand-assets.md`.
-- [ ] T010 [P] [US4] Generate transparent PNG fallbacks, favicon, and optional app icons from the approved SVG assets in `apps/web/public/brand/`.
+- [X] T010 [P] [US4] Generate transparent PNG fallbacks, favicon, and optional app icons from the approved SVG assets in `apps/web/public/brand/`. Evidence: reproducible Playwright generator, metadata wiring, and dimension tests in `apps/web/src/brand-assets.test.ts`.
 - [X] T011 [US4] Add asset rendering/transparent-background/minimum-size tests and document output dimensions in `apps/web/src/brand-assets.test.ts` and `docs/verification/020-brand-assets.md`. Evidence: 4 new Vitest checks passed; Playwright screenshots reviewed.
 
 ## Phase 3: Tokens and shared components (P1)
@@ -46,35 +46,35 @@
 
 ## Phase 6: Comparator (P1)
 
-- [ ] T026 [US3] Redesign technology/criteria controls as accessible chips/fields with clear selected/available states in `apps/web/src/features/comparison/ComparisonPage.tsx`.
-- [ ] T027 [US3] Redesign comparison progress and matrix readability, evidence links, supported/partial/unsupported/contradictory states, and responsive overflow strategy in `apps/web/src/features/comparison/`.
-- [ ] T028 [US3] Add comparator responsive/accessibility tests and visual QA at 1440×900 and 390×844 without changing comparison API/SSE contracts.
+- [X] T026 [US3] Redesign technology/criteria controls as accessible chips/fields with clear selected/available states in `apps/web/src/features/comparison/ComparisonPage.tsx`. Evidence: keyboard-focusable chips expose selected/available state, enforce the 2–4 technology bound, and retain native checkbox semantics.
+- [X] T027 [US3] Redesign comparison progress and matrix readability, evidence links, supported/partial/unsupported/contradictory states, and responsive overflow strategy in `apps/web/src/features/comparison/`. Evidence: matrix state legend, text/icon status labels, inspectable evidence IDs, cell explanations, sticky headers, and keyboard-focusable horizontal region.
+- [X] T028 [US3] Add comparator responsive/accessibility tests and visual QA at 1440×900 and 390×844 without changing comparison API/SSE contracts. Evidence: existing route tests plus mocked SSE matrix-state journey and desktop/mobile screenshots.
 
 ## Phase 7: Reports, News, Sources, Account, Admin (P2)
 
-- [ ] T029 [US2] Redesign `/reports` around recent completed research/comparison cards, guided PDF/DOCX generation, artifact states, and secondary manual/advanced ID mode in `apps/web/src/features/reports/`.
-- [ ] T030 [US2] Redesign `/news` as an editorial Internet Signal surface with date, title, summary, publisher, source link, and unavailable/no-evidence explanation in `apps/web/src/features/news/`.
-- [ ] T031 [US2] Redesign `/sources` collection cards with counts, publisher, freshness, stale explanation, canonical root, and semantic status in `apps/web/src/features/corpus/CorpusStatus.tsx`.
-- [ ] T032 [US2] Redesign `/account` auth/private resource forms with labels, helper/error/loading/signed-in states and ownership-safe empty states in `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`.
-- [ ] T033 [US2] Redesign `/admin` and subroutes for governance/review/internal operations with denser utility layout and no public-home leakage in `apps/web/src/features/corpus/GovernancePanel.tsx` and `apps/web/src/features/agent/ReviewPanel.tsx`.
-- [ ] T034 [US2] Add route-level empty/error/retry and visual QA artifacts for reports, news, sources, account, and admin at desktop/mobile widths.
+- [X] T029 [US2] Redesign `/reports` around recent completed research/comparison cards, guided PDF/DOCX generation, artifact states, and secondary manual/advanced ID mode in `apps/web/src/features/reports/`. Evidence: guided two-step surface with bounded empty state and manual ID contract.
+- [X] T030 [US2] Redesign `/news` as an editorial Internet Signal surface with date, title, summary, publisher, source link, and unavailable/no-evidence explanation in `apps/web/src/features/news/`. Evidence: ready/loading/unavailable states with score, corroboration, attribution, and reason-specific copy.
+- [X] T031 [US2] Redesign `/sources` collection cards with counts, publisher, freshness, stale explanation, canonical root, and semantic status in `apps/web/src/features/corpus/CorpusStatus.tsx`. Evidence: semantic collection cards and freshness/count definition lists.
+- [X] T032 [US2] Redesign `/account` auth/private resource forms with labels, helper/error/loading/signed-in states and ownership-safe empty states in `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`. Evidence: accessible fields, busy/error handling, upload validation state, and anonymous ownership-safe resource empty state.
+- [X] T033 [US2] Redesign `/admin` and subroutes for governance/review/internal operations with denser utility layout and no public-home leakage in `apps/web/src/features/corpus/GovernancePanel.tsx` and `apps/web/src/features/agent/ReviewPanel.tsx`. Evidence: retryable governance metrics, labelled review fields, busy/error/decision states, and utility cards isolated from public routes.
+- [X] T034 [US2] Add route-level empty/error/retry and visual QA artifacts for reports, news, sources, account, and admin at desktop/mobile widths. Evidence: `apps/web/tests/e2e/route-states.spec.ts` covers bounded empty/error/retry states at both target viewports.
 
 ## Phase 8: Responsive, accessibility, and final visual QA (P2)
 
-- [ ] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`.
-- [ ] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`.
-- [ ] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`.
-- [ ] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`.
+- [X] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`. Evidence: `apps/web/tests/visual/viewport-matrix.spec.ts`.
+- [X] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`. Evidence: the viewport matrix asserts all listed checks for representative public/admin routes.
+- [X] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`. Evidence: 60/60 bilingual route screenshots and documented harness/layout fixes.
+- [X] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`. Evidence: `docs/verification/020-production-build.md`, production build and 49/49 viewport matrix.
 
 ## Phase 9: Documentation, convergence, and closeout
 
-- [ ] T039 [P] Update `README.md` with route map, design system, brand asset usage, UX evidence, and visual QA links.
-- [ ] T040 [P] Add/update the UX/architecture ADR in `docs/adr/` for route separation, AppShell, tokens, and brand assets.
-- [ ] T041 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 020 and implementation/evidence status.
-- [ ] T042 Run Speckit analyze after task generation and resolve critical contradictions before implementation.
-- [ ] T043 Run full frontend lint/typecheck/unit/E2E plus existing backend regression checks to prove no backend behavior changed.
-- [ ] T044 Run Speckit converge after implementation; keep Feature 020 open while visual QA, accessibility, route, or documentation gates remain pending.
-- [ ] T045 Commit each vertical slice with README/ADR/evidence updates and task/route traceability.
+- [X] T039 [P] Update `README.md` with route map, design system, brand asset usage, UX evidence, and visual QA links. Evidence: Feature 020 section in `README.md`.
+- [X] T040 [P] Add/update the UX/architecture ADR in `docs/adr/` for route separation, AppShell, tokens, and brand assets. Evidence: `docs/adr/0016-ux-ui-brand-redesign.md` and `docs/architecture/020-ux-ui-brand-redesign.md`.
+- [X] T041 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 020 and implementation/evidence status. Evidence: Feature 020 status row and UX/UI traceability addendum.
+- [X] T042 Run Speckit analyze after task generation and resolve critical contradictions before implementation. Evidence: `docs/verification/020-speckit-analysis.md`; no critical findings remain.
+- [X] T043 Run full frontend lint/typecheck/unit/E2E plus existing backend regression checks to prove no backend behavior changed. Evidence: `docs/verification/020-production-build.md`; frontend unit 35/35, Playwright 149 passed/4 skipped, backend 379 passed/4 skipped, and build/lint/typecheck passed.
+- [X] T044 Run Speckit converge after implementation; keep Feature 020 open while visual QA, accessibility, route, or documentation gates remain pending. Evidence: convergence checked the 16 FRs, 9 buildable SCs, plan decisions, constitution, code scope, and all 45 tasks; no actionable findings and no convergence tasks appended.
+- [X] T045 Commit each vertical slice with README/ADR/evidence updates and task/route traceability. Evidence: vertical commits were pushed on `codex/018-production-deployment`; this closeout commit includes the final regression, convergence, documentation, and task traceability updates.
 
 ## Dependencies & Execution Order
 

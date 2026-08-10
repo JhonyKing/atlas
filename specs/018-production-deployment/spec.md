@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-07
 
-**Status**: Draft
+**Status**: Implementation foundation in progress; hosted beta evidence pending
 
 **Input**: Product requirements for taking ATLAS from local development to a verifiable beta deployment using Vercel for the web application, Supabase for managed data/auth/storage, and a managed container runtime for the API and worker.
 

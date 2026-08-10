@@ -135,3 +135,27 @@ jobs:
         with:
           name: cited-answer-v1-evaluation
           path: evals/results/cited-answer-v1-ci.json
+
+  deployment-contracts:
+    name: Deployment contracts and secret boundary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.1"
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: uv sync --project apps/backend --frozen
+      - name: Validate deployment contract tests
+        run: uv run --project apps/backend pytest tests/contract/test_deployment_config.py tests/contract/test_readiness.py tests/contract/test_release_evidence_schema.py tests/security/test_deployment_secret_boundary.py -q
+      - name: Validate release evidence generator
+        shell: bash
+        run: |
+          python scripts/generate-release-evidence.py --output "$RUNNER_TEMP/release-evidence.json" --source-revision "$GITHUB_SHA"
+          python -m json.tool "$RUNNER_TEMP/release-evidence.json" >/dev/null
+      - name: Scan deployment surface
+        shell: pwsh
+        run: ./scripts/verify-deployment-secrets.ps1

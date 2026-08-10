@@ -1,0 +1,29 @@
+{
+  "deployment_id": "dpl_FnjgWs4KgXiT7P7yCG4VegVgYNNa",
+  "project_id": "prj_uk5h2ryyeHSYfi2AgL78cUM5TNis",
+  "team_id": "team_HfMKSnr2rzzh4iRNmTrR6bgv",
+  "target": "preview",
+  "url": "https://atlasai-hu543gtvg-jhonykings-projects.vercel.app",
+  "alias": "https://atlasai-jhonyking-jhonykings-projects.vercel.app",
+  "state": "READY",
+  "deployment_mode": "mcp_file_upload",
+  "source_repository": "JhonyKing/atlas",
+  "encoding_strategy": "read_file_bytes_then_decode_utf8_before_mcp_upload",
+  "build": {
+    "framework": "Next.js 16.2.12",
+    "result": "passed",
+    "typescript": "passed",
+    "static_pages": 12,
+    "turbopack_root_warning": false,
+    "runtime": "Node.js"
+  },
+  "api_origin": null,
+  "credentials_included": false,
+  "notes": [
+    "This deployment was created after the previous upload path was found to corrupt UTF-8 text before it reached Vercel.",
+    "The old preview remains historical evidence and was not overwritten.",
+    "The deployment is frontend-only; API-backed journeys still require a managed API origin and environment variables.",
+    "The Vercel project is still linked to the wrong GitHub repository until the owner changes the Git integration to JhonyKing/atlas."
+  ],
+  "captured_at": "2026-08-10"
+}

@@ -1,0 +1,56 @@
+name: Deploy preview
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-preview:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'deploy-preview'
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @atlas/web build
+      - name: Install Vercel CLI
+        run: pnpm add --global vercel@latest
+      - name: Deploy web preview
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PREVIEW_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel link --cwd apps/web --yes --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" --token "$VERCEL_TOKEN"
+          vercel deploy --cwd apps/web --token "$VERCEL_TOKEN" --yes
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.1"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: uv sync --project apps/backend --frozen
+      - name: Migration preflight
+        shell: pwsh
+        env:
+          ATLAS_DATABASE_URL: ${{ secrets.ATLAS_PREVIEW_DATABASE_URL }}
+        run: ./scripts/release-migrate.ps1 -DryRun
+      - name: Upload redacted release evidence
+        if: always()
+        run: python scripts/generate-release-evidence.py --output "${{ runner.temp }}/release-evidence.json" --source-revision "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-preview-release-evidence
+          path: ${{ runner.temp }}/release-evidence.json

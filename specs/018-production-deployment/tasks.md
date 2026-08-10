@@ -7,47 +7,47 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 1: Contracts and failing validation (P1)
 
-- [ ] T001 [US3] Add contract tests for environment-scoped origins, secret names, and preview/production separation in `apps/backend/tests/contract/test_deployment_config.py` and `apps/web/src/lib/env.test.ts`.
-- [ ] T002 [US3] Add readiness contract tests for `/healthz` and `/readyz`, including truthful database/migration/provider failure categories, in `apps/backend/tests/contract/test_readiness.py`.
-- [ ] T003 [US3] Add JSON-schema validation tests for `specs/018-production-deployment/contracts/release-evidence.schema.json` in `apps/backend/tests/contract/test_release_evidence_schema.py`.
-- [ ] T004 [US3] Add a failing secret-boundary test that scans browser bundles, logs, traces, and evidence artifacts for prohibited keys in `scripts/verify-deployment-secrets.ps1` and `apps/backend/tests/security/test_deployment_secret_boundary.py`.
-- [ ] T005 [US1] Add Playwright smoke journeys for deployed root/locale, API origin, Spanish labels, cited-answer/abstention, comparison, report, news, and corpus status in `apps/web/tests/e2e/deployment.spec.ts`.
-- [ ] T006 [US2] Add backend smoke contract fixtures for Supabase-like migration head, RLS ownership, private deletion, connection failure, and no-localhost fallback in `apps/backend/tests/integration/deployment/test_managed_environment.py`.
+- [X] T001 [US3] Add contract tests for environment-scoped origins, secret names, and preview/production separation in `apps/backend/tests/contract/test_deployment_config.py` and `apps/web/src/lib/env.test.ts`.
+- [X] T002 [US3] Add readiness contract tests for `/healthz` and `/readyz`, including truthful database/migration/provider failure categories, in `apps/backend/tests/contract/test_readiness.py`.
+- [X] T003 [US3] Add JSON-schema validation tests for `specs/018-production-deployment/contracts/release-evidence.schema.json` in `apps/backend/tests/contract/test_release_evidence_schema.py`.
+- [X] T004 [US3] Add a failing secret-boundary test that scans browser bundles, logs, traces, and evidence artifacts for prohibited keys in `scripts/verify-deployment-secrets.ps1` and `apps/backend/tests/security/test_deployment_secret_boundary.py`.
+- [ ] T005 [US1] Add Playwright smoke journeys for deployed root/locale, API origin, Spanish labels, cited-answer/abstention, comparison, report, news, and corpus status in `apps/web/tests/e2e/deployment.spec.ts` (current file is a hosted-locale contract skeleton; full journey remains operator-gated).
+- [X] T006 [US2] Add backend smoke contract fixtures for Supabase-like migration head, RLS ownership, private deletion, connection failure, and no-localhost fallback in `apps/backend/tests/integration/deployment/test_managed_environment.py`. Local contract fixtures pass; live managed-data execution remains T031/T034.
 
 ## Phase 2: Environment and runtime foundation (P1)
 
-- [ ] T007 [US3] Define typed environment schemas and fail-closed validation for preview/staging/production in `apps/backend/src/atlas/config.py` and `apps/web/src/lib/env.ts`.
-- [ ] T008 [P] [US1] Configure Vercel project build, preview/production variables, Node/pnpm versions, security headers, and exact API origin in `apps/web/vercel.json` and `apps/web/README.md`.
-- [ ] T009 [P] [US2] Add a production-ready API/worker container definition with non-root user, pinned dependencies, startup command, and healthcheck in `infra/containers/backend/Dockerfile` and `infra/containers/backend/entrypoint.sh`.
-- [ ] T010 [P] [US2] Add provider-neutral managed-container deployment manifest with web/API/worker roles, resource bounds, HTTPS, health checks, and immutable image references in `infra/deployment/api-worker.yaml`.
-- [ ] T011 [US2] Add environment templates with placeholders only and document required operator secrets in `.env.example`, `infra/env/preview.example`, and `infra/env/production.example`.
-- [ ] T012 [US3] Add CORS, auth callback, storage, model-provider, and LangSmith environment contract documentation in `docs/architecture/018-production-deployment.md`.
+- [X] T007 [US3] Define typed environment schemas and fail-closed validation for preview/staging/production in `apps/backend/src/atlas/config.py` and `apps/web/src/lib/env.ts`.
+- [X] T008 [P] [US1] Configure Vercel project build, preview/production variables, Node/pnpm versions, security headers, and exact API origin in `apps/web/vercel.json` and `apps/web/README.md`.
+- [X] T009 [P] [US2] Add a production-ready API/worker container definition with non-root user, pinned dependencies, startup command, and healthcheck in `infra/containers/backend/Dockerfile` and `infra/containers/backend/entrypoint.sh`.
+- [X] T010 [P] [US2] Add provider-neutral managed-container deployment manifest with web/API/worker roles, resource bounds, HTTPS, health checks, and immutable image references in `infra/deployment/api-worker.yaml`.
+- [X] T011 [US2] Add environment templates with placeholders only and document required operator secrets in `.env.example`, `infra/env/preview.example`, and `infra/env/production.example`.
+- [X] T012 [US3] Add CORS, auth callback, storage, model-provider, and LangSmith environment contract documentation in `docs/architecture/018-production-deployment.md`.
 
 ## Phase 3: Supabase data/auth/storage integration (P1)
 
-- [ ] T013 [US2] Add a Supabase connection/pooling adapter behind existing persistence ports in `apps/backend/src/atlas/persistence/` without leaking provider SDK types into domain contracts.
-- [ ] T014 [US2] Add migration preflight and forward-only release command that verifies the expected Alembic head and refuses unsafe drift in `scripts/release-migrate.ps1` and `apps/backend/tests/integration/deployment/test_migration_release.py`.
-- [ ] T015 [US2] Add Supabase-compatible RLS, storage, auth, and private-resource policy checks to the existing database contract suite in `database/tests/`.
-- [ ] T016 [US2] Add isolated test-tenant setup/teardown and ownership/deletion smoke checks in `scripts/deployment-test-tenant.ps1`.
-- [ ] T017 [US2] Add backup/restore verification procedure and evidence capture for a non-production Supabase target in `scripts/verify-backup-restore.ps1` and `docs/runbooks/backup-restore.md`.
+- [X] T013 [US2] Add a Supabase connection/pooling adapter behind existing persistence ports in `apps/backend/src/atlas/persistence/` without leaking provider SDK types into domain contracts.
+- [X] T014 [US2] Add migration preflight and forward-only release command that verifies the expected Alembic head and refuses unsafe drift in `scripts/release-migrate.ps1` and `apps/backend/tests/integration/deployment/test_migration_release.py`.
+- [X] T015 [US2] Add Supabase-compatible RLS, storage, auth, and private-resource policy checks to the existing database contract suite in `database/tests/`.
+- [X] T016 [US2] Add isolated test-tenant setup/teardown and ownership/deletion smoke checks in `scripts/deployment-test-tenant.ps1`.
+- [X] T017 [US2] Add backup/restore verification procedure and evidence capture for a non-production Supabase target in `scripts/verify-backup-restore.ps1` and `docs/runbooks/backup-restore.md`.
 
 ## Phase 4: Release pipeline and evidence (P1)
 
-- [ ] T018 [US3] Extend `.github/workflows/ci.yml` with deployment configuration validation, secret scanning, release-evidence schema validation, and required artifact upload.
-- [ ] T019 [US3] Add `.github/workflows/deploy-preview.yml` with Vercel preview deployment, isolated API target, migration dry-run, readiness check, smoke suite, and redacted evidence artifact.
-- [ ] T020 [US3] Add `.github/workflows/deploy-production.yml` with explicit approval, immutable web/API versions, forward migration step, health/readiness gates, smoke suite, and promotion/rollback behavior.
-- [ ] T021 [US3] Implement release evidence generation and redaction in `scripts/generate-release-evidence.py` with source revision, web build, image digest, migration head, corpus/model/locale versions, checks, and timestamps.
-- [ ] T022 [US3] Add deterministic deployment smoke runner in `scripts/deployment-smoke.py` that validates the contract in `specs/018-production-deployment/contracts/deployment-readiness.md`.
-- [ ] T023 [US3] Add failure-injection tests proving a broken migration, secret scan, build, readiness check, smoke check, or evaluation threshold blocks promotion in `apps/backend/tests/integration/deployment/test_release_gates.py`.
-- [ ] T024 [US3] Add explicit documentation that deterministic RAG evals are a release gate but live provider/LangSmith evals remain separate evidence in `docs/operations/evaluation-gates.md`.
+- [X] T018 [US3] Extend `.github/workflows/ci.yml` with deployment configuration validation, secret scanning, release-evidence schema validation, and required artifact upload.
+- [X] T019 [US3] Add `.github/workflows/deploy-preview.yml` with Vercel preview deployment, isolated API target, migration dry-run, readiness check, smoke suite, and redacted evidence artifact.
+- [X] T020 [US3] Add `.github/workflows/deploy-production.yml` with explicit approval, immutable web/API versions, forward migration step, health/readiness gates, smoke suite, and promotion/rollback behavior.
+- [X] T021 [US3] Implement release evidence generation and redaction in `scripts/generate-release-evidence.py` with source revision, web build, image digest, migration head, corpus/model/locale versions, checks, and timestamps.
+- [X] T022 [US3] Add deterministic deployment smoke runner in `scripts/deployment-smoke.py` that validates the contract in `specs/018-production-deployment/contracts/deployment-readiness.md`.
+- [X] T023 [US3] Add failure-injection tests proving a broken migration, secret scan, build, readiness check, smoke check, or evaluation threshold blocks promotion in `apps/backend/tests/integration/deployment/test_release_gates.py`.
+- [X] T024 [US3] Add explicit documentation that deterministic RAG evals are a release gate but live provider/LangSmith evals remain separate evidence in `docs/operations/evaluation-gates.md`.
 
 ## Phase 5: Observability, operations, and rollback (P2)
 
-- [ ] T025 [US4] Add environment/release/request fields to structured logs and LangSmith/OpenTelemetry traces with redaction tests in `apps/backend/src/atlas/observability/` and `apps/backend/tests/security/test_observability_redaction.py`.
-- [ ] T026 [US4] Add deployment dashboards/alerts for availability, readiness, errors, latency, tokens/cost, citation quality, queue/worker health, database, and provider failures in `infra/observability/`.
-- [ ] T027 [US4] Write deploy, incident, rollback, and migration compatibility runbooks in `docs/runbooks/deploy.md`, `docs/runbooks/incident-response.md`, and `docs/runbooks/rollback.md`.
-- [ ] T028 [US4] Add controlled rollback rehearsal and evidence retention in `scripts/verify-rollback.ps1` and `apps/backend/tests/integration/deployment/test_rollback.py`.
-- [ ] T029 [US4] Add beta domain, analytics, backup, alert, and runbook checklist linked to PRD item `SCL-011` in `docs/operations/beta-readiness.md`.
+- [X] T025 [US4] Add environment/release/request fields to structured logs and LangSmith/OpenTelemetry traces with redaction tests in `apps/backend/src/atlas/observability/` and `apps/backend/tests/security/test_observability_redaction.py`.
+- [X] T026 [US4] Add deployment dashboards/alerts for availability, readiness, errors, latency, tokens/cost, citation quality, queue/worker health, database, and provider failures in `infra/observability/`.
+- [X] T027 [US4] Write deploy, incident, rollback, and migration compatibility runbooks in `docs/runbooks/deploy.md`, `docs/runbooks/incident-response.md`, and `docs/runbooks/rollback.md`.
+- [X] T028 [US4] Add controlled rollback rehearsal and evidence retention in `scripts/verify-rollback.ps1` and `apps/backend/tests/integration/deployment/test_rollback.py`.
+- [X] T029 [US4] Add beta domain, analytics, backup, alert, and runbook checklist linked to PRD item `SCL-011` in `docs/operations/beta-readiness.md`.
 
 ## Phase 6: Real environment activation (operator-assisted P1)
 
@@ -61,13 +61,13 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 7: Documentation and convergence
 
-- [ ] T037 [P] Update `README.md` with local versus deployed URLs, architecture, setup, environment boundaries, and evidence links.
-- [ ] T038 [P] Add/update the deployment ADR in `docs/adr/` explaining Vercel web, Supabase data, managed API/worker, migrations, and rollback decisions.
-- [ ] T039 [P] Update `docs/product/prd-v1.1-backlog.md`, `docs/product/feature-status-matrix.md`, and `docs/operations/` with Feature 018 traceability and SCL-011 status.
-- [ ] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs.
-- [ ] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending.
+- [X] T037 [P] Update `README.md` with local versus deployed URLs, architecture, setup, environment boundaries, and evidence links.
+- [X] T038 [P] Add/update the deployment ADR in `docs/adr/` explaining Vercel web, Supabase data, managed API/worker, migrations, and rollback decisions.
+- [X] T039 [P] Update `docs/product/prd-v1.1-backlog.md`, `docs/product/feature-status-matrix.md`, and `docs/operations/` with Feature 018 traceability and SCL-011 status.
+- [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (No critical inconsistencies remain; T005/T006 and T030-T036 stay explicitly open.)
+- [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Converged to existing open tasks; no extra phase appended.)
 - [ ] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results.
-- [ ] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs.
+- [X] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs. (Implementation commit: `e8de6b9`.)
 
 ## Dependencies & Execution Order
 

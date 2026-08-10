@@ -30,7 +30,12 @@ from atlas.api.routes.corpus import router as corpus_router
 from atlas.api.routes.feedback import FeedbackControl
 from atlas.api.routes.feedback import router as feedback_router
 from atlas.api.routes.governance import router as governance_router
-from atlas.api.routes.health import DatabaseProbe, probe_database
+from atlas.api.routes.health import (
+    DatabaseProbe,
+    MigrationProbe,
+    probe_database,
+    probe_migration_head,
+)
 from atlas.api.routes.health import router as health_router
 from atlas.api.routes.news import router as news_router
 from atlas.api.routes.operator_ingestion import router as operator_ingestion_router
@@ -75,6 +80,7 @@ from atlas.uploads.pipeline import PrivateUploadPipeline
 def create_app(
     *,
     database_probe: DatabaseProbe | None = None,
+    migration_probe: MigrationProbe | None = None,
     operator_service: OperatorIngestionService | None = None,
     operator_token: str | None = None,
     answer_service: AnswerRunControl | None = None,
@@ -120,6 +126,14 @@ def create_app(
         secret=resolved_visitor_secret or "atlas-development-only-visitor-secret",
     )
     application.state.database_probe = resolved_database_probe
+    application.state.migration_probe = migration_probe
+    application.state.settings = settings
+    application.state.release_id = "local"
+    application.state.source_revision = "local"
+    application.state.migration_revision = "unknown"
+    application.state.migration_status = "unknown"
+    application.state.model_provider_status = "disabled"
+    application.state.observability_status = "ready"
     application.state.operator_service = operator_service
     application.state.answer_service = answer_service
     application.state.comparison_service = comparison_service
@@ -257,6 +271,11 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 },
             ),
             corpus_service=corpus_service,
+            migration_probe=partial(
+                probe_migration_head,
+                settings.database_url,
+                settings.atlas_migration_head,
+            ),
             comparison_service=comparison_service,
             report_service=_report_service(settings, comparison_service=comparison_service),
             review_case_service=InMemoryReviewCaseService(),
@@ -269,6 +288,11 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
     )
     return create_app(
         corpus_service=corpus_service,
+        migration_probe=partial(
+            probe_migration_head,
+            settings.database_url,
+            settings.atlas_migration_head,
+        ),
         comparison_service=comparison_service,
         report_service=_report_service(settings, comparison_service=comparison_service),
         news_service=news_service,

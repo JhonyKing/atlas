@@ -40,7 +40,7 @@ class Settings(BaseSettings):
         frozen=True,
     )
 
-    atlas_env: Literal["development", "test", "production"] = "development"
+    atlas_env: Literal["development", "test", "preview", "staging", "production"] = "development"
     atlas_log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     database_url: SecretStr = SecretStr(
         "postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
@@ -77,6 +77,7 @@ class Settings(BaseSettings):
     atlas_agent_node_timeout_seconds: float = Field(default=15.0, gt=0)
     atlas_agent_checkpoint_ttl_hours: int = Field(default=24, ge=1)
     atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)
+    atlas_migration_head: str = "0028_agent_tool_orchestration"
 
     @field_validator(
         "openai_api_key",
@@ -115,6 +116,14 @@ class Settings(BaseSettings):
         if missing:
             names = ", ".join(sorted(missing))
             raise ValueError(f"Production configuration requires non-empty values for: {names}")
+
+        if self.atlas_env in {"preview", "staging", "production"}:
+            for name, origin in (("WEB_ORIGIN", self.web_origin), ("API_ORIGIN", self.api_origin)):
+                if origin.scheme != "https":
+                    raise ValueError(f"{name} must use HTTPS in {self.atlas_env}")
+                host = origin.host or ""
+                if "localhost" in host or host in {"127.0.0.1", "0.0.0.0"}:
+                    raise ValueError(f"{name} cannot point to a local host in {self.atlas_env}")
 
         return self
 

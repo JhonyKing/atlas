@@ -27,7 +27,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 016 | Harness conectado a LangSmith | Pendiente de especificar | — | `docs/product/prd-v1.1-backlog.md` |
 
 | 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
-| 018 | Production deployment | Planificación completa; implementación de Vercel/managed API y evidencia operativa pendiente | Pendientes | `specs/018-production-deployment/tasks.md` |
+| 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; entorno real aún pendiente | T030-T036 operator-owned | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Slice determinista implementado: catálogo, plan, aprobación, ejecución bounded, eventos, UI y eval gate | Pendientes live/production | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Completa para el workflow de desarrollo — migración 28/28, workflow repetible y SpecKit cerrado | 0 | `specs/021-supabase-database-migration/tasks.md` |
 

@@ -52,6 +52,20 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-026 | KPIs de adopción, valor, calidad, rendimiento, economía, conocimiento y operación | apéndice KPI | 012 | No iniciado | PRT-006–PRT-008 |
 | PRD-027 | SDD con Spec Kit: specify → clarify → plan → tasks → analyze → tests → implement → converge | 22; tabla de gates | Todas | En uso | Esta matriz y los feature folders |
 
+## Addendum: Feature 020 UX/UI and brand redesign
+
+Feature 020 is an owner-approved product-design expansion that operationalizes the PRD's
+public bilingual product, evidence inspection, optional private workspace, and internal review
+surfaces. It does not replace a PRD behavior requirement or change backend contracts.
+
+| Design concern | PRD relationship | SpecKit traceability | Evidence |
+|---|---|---|---|
+| Bilingual public navigation and locale parity | PRD-002, PRD-025 | `specs/020-ux-ui-brand-redesign/spec.md` FR-UX-001, T017-T021 | AppShell route tests and 60/60 English/Spanish visual routes |
+| Inspectable citations and honest unavailable states | PRD-004, PRD-010, PRD-022 | FR-UX-002/FR-UX-003, T022-T034 | Ask/evidence, comparator, route-state, and public-surface verification docs |
+| Optional auth/private-data boundary | PRD-008, PRD-018 | FR-UX-004, T032 | `docs/verification/020-account-surfaces.md` and route-state checks |
+| Public/admin visual separation | PRD-013, PRD-025 | FR-UX-005, T033 | `docs/verification/020-admin-surfaces.md` and bilingual visual route suite |
+| Production-quality responsive quality gate | PRD-025, PRD-027 | FR-UX-006, T035-T045 | 49/49 viewport matrix, 60/60 route screenshots, ADR-0016, README section |
+
 ## Addendum del Plan Maestro RAG/Evals
 
 La auditoría de `PLAN-MAESTRO-RAG-EVALS.docx` no reemplaza esta matriz. Añade tres superficies que
@@ -109,7 +123,7 @@ Estas cifras no deben sumarse porque representan niveles distintos de planificac
 
 ## Estado actualizado del comparador (2026-08-05)
 
-- T033 estÃ¡ cerrado: el journey de cuatro filas pasa en inglÃ©s y espaÃ±ol con navegaciÃ³n de teclado.
+- T033 está cerrado: el journey de cuatro filas pasa en inglés y español con navegación de teclado.
 - T032 tiene 20 solicitudes y 17 matrices offline, incluida una matriz de cuatro filas con Anthropic;
   falta validarla contra un corpus real promovido.
 - Las puertas actuales son 177 pruebas backend, 12 journeys Playwright y 20 pruebas Vitest.

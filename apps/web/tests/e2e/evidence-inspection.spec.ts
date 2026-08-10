@@ -33,10 +33,10 @@ test("reader can inspect citation metadata and replace feedback", async ({ page 
 
   await expect(page.getByText("A checkpointer persists workflow state.")).toBeVisible();
   await expect(page.getByText("Inference")).toBeVisible();
-  await expect(page.getByText("Publisher")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Evidence and feedback" }).getByText("LangChain", { exact: true })).toBeVisible();
   await expect(page.getByText("Captured")).toBeVisible();
   await expect(page.getByText("August 4, 2026")).toBeVisible();
-  await expect(page.getByText("v1.0")).toBeVisible();
+  await expect(page.getByText("v1.0", { exact: true })).toBeVisible();
 
   const canonical = page.getByRole("link", { name: "Open Official LangGraph docs" });
   const revision = page.getByRole("link", { name: "Open source revision" });

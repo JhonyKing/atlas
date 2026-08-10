@@ -3,6 +3,27 @@
 ATLAS is an evidence-first technical research application. The executable source of truth for
 each feature is its SpecKit directory under `specs/`.
 
+## Feature 018: production deployment foundation
+
+The repository now contains the production deployment contract: Vercel web configuration,
+provider-neutral API/worker container and manifest, Supabase migration preflight, `/healthz`
+liveness, `/readyz` dependency readiness, deployment smoke checks, CI release gates, redacted
+release evidence, and deploy/backup/rollback runbooks. This is a deployable foundation, not a
+claim that a real Vercel or managed-container environment is already live.
+
+Local checks:
+
+```powershell
+$env:PYTHONPATH='apps/backend/src'
+apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -q
+apps\backend\.venv\Scripts\python.exe scripts\deployment-smoke.py --help
+```
+
+Operator-owned tasks still required before production: create isolated Vercel/API/Supabase
+environments, configure secrets and domains, apply the migration, run bilingual smoke tests,
+verify LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence
+bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
+
 ## Feature 021: Supabase database migration
 
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project
@@ -258,3 +279,65 @@ machine-readable evaluator output in `evals/results/001-cited-answer-baseline.js
 Docker/PostgreSQL migration, API contract checks, frontend lint/typecheck and deterministic
 46-case evaluation. The five-person usability study and seven-day refresh period are external
 acceptance evidence and remain visibly pending.
+
+## Feature 020: UX/UI and brand redesign
+
+Feature 020 gives ATLAS a route-owned AppShell, bilingual navigation, consistent brand assets,
+responsive public research surfaces, explicit account/admin boundaries, and inspectable
+loading, empty, error, and unavailable states. It is a visual/product-design slice: it does
+not change backend behavior or claim that a provider is available in the frontend-only preview.
+
+### Route map
+
+| Surface | Routes |
+| --- | --- |
+| Ask and evidence | `/`, `/en`, `/es` |
+| Comparator | `/compare`, `/en/compare`, `/es/compare` |
+| Reports | `/reports`, `/en/reports`, `/es/reports` |
+| Previous-day news | `/news`, `/en/news`, `/es/news` |
+| Corpus sources | `/sources`, `/en/sources`, `/es/sources` |
+| Optional auth/private data | `/account`, `/en/account`, `/es/account` |
+| Internal operations | `/admin`, `/admin/sources`, `/admin/reviews`, `/admin/governance` and localized equivalents |
+
+### Design system and brand assets
+
+- Tokens, typography, spacing, radii, focus treatment, state colors, and responsive rules live in
+  `apps/web/src/app/globals.css`.
+- Route composition and locale switching live in `apps/web/src/components/layout/AppShell.tsx`.
+- Source SVG logos are in `apps/web/public/brand/`; transparent PNG fallbacks are generated with
+  `pnpm --filter @atlas/web brand:generate`.
+- The app uses `atlas-mark.png` for compact/mobile identity and the horizontal SVG/PNG lockup for
+  wider navigation contexts. Favicon and Apple touch metadata are defined in the root layout.
+
+### Regression closeout
+
+The final Feature 020 regression record is **35/35 frontend unit tests**, **149 Playwright tests
+passed with 4 hosted-deployment skips**, and **379 backend tests passed with 4 skips**. The four
+Playwright skips require a configured deployed origin and are intentionally not represented as
+local product failures.
+
+### UX and visual evidence
+
+- `docs/verification/020-final-visual-review.md` — second visual-only review and resolutions.
+- `docs/verification/020-production-build.md` — production build and responsive smoke evidence.
+- `docs/verification/020-visual-matrix.md` — 49-case accessibility/visual matrix.
+- `docs/verification/020-route-states.md` — 10 empty/error/retry state checks.
+- `apps/web/tests/e2e/visual-qa-routes.spec.ts` — 60 bilingual route screenshots at 1440x900 and 390x844.
+- `specs/020-ux-ui-brand-redesign/tasks.md` — SpecKit source of truth and Definition of Done.
+
+Run the frontend checks from the repository root:
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+```
+
+For the production visual matrix, use the built server explicitly:
+
+```powershell
+$env:CI = "1"
+$env:ATLAS_PROD_SERVER = "1"
+pnpm --filter @atlas/web exec playwright test tests/visual/viewport-matrix.spec.ts --workers=4 --retries=0
+```
