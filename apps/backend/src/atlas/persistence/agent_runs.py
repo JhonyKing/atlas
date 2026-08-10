@@ -14,6 +14,7 @@ from psycopg.types.json import Jsonb
 
 from atlas.agent.events import AgentRunEvent, InMemoryEventStore
 from atlas.agent.planning import AgentPlan
+from atlas.agent.policy import Approval
 from atlas.agent.tools.schemas import ToolCallRequest
 
 
@@ -44,6 +45,28 @@ class AgentRunRepository(Protocol):
     def get(self, run_id: UUID) -> AgentRunRecord | None: ...
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]: ...
+
+    def save_approval(self, approval: Approval) -> None: ...
+
+    def get_approval(self, approval_id: UUID) -> Approval | None: ...
+
+    def save_tool_call(
+        self,
+        run_id: UUID,
+        *,
+        call_id: str,
+        tool_id: str,
+        tool_version: str,
+        arguments_hash: str,
+        status: str,
+        evidence_ids: tuple[str, ...] = (),
+        artifact_ids: tuple[str, ...] = (),
+        error_category: str | None = None,
+        started_at: datetime | None = None,
+        completed_at: datetime | None = None,
+    ) -> None: ...
+
+    def get_tool_call(self, run_id: UUID, call_id: str) -> dict[str, object] | None: ...
 
 
 class IdempotencyConflict(ValueError):
@@ -81,6 +104,8 @@ class InMemoryAgentRunRepository:
         self.events = events or InMemoryEventStore()
         self._runs: dict[UUID, AgentRunRecord] = {}
         self._plans: dict[str, AgentPlan] = {}
+        self._approvals: dict[UUID, Approval] = {}
+        self._tool_calls: dict[tuple[UUID, str], dict[str, object]] = {}
 
     def save_plan(self, plan: AgentPlan) -> AgentPlan:
         self._plans[plan.plan_hash] = plan
@@ -123,6 +148,44 @@ class InMemoryAgentRunRepository:
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:
         return self.events.list(run_id, after_sequence=after_sequence)
+
+    def save_approval(self, approval: Approval) -> None:
+        self._approvals[approval.approval_id] = approval
+
+    def get_approval(self, approval_id: UUID) -> Approval | None:
+        return self._approvals.get(approval_id)
+
+    def save_tool_call(
+        self,
+        run_id: UUID,
+        *,
+        call_id: str,
+        tool_id: str,
+        tool_version: str,
+        arguments_hash: str,
+        status: str,
+        evidence_ids: tuple[str, ...] = (),
+        artifact_ids: tuple[str, ...] = (),
+        error_category: str | None = None,
+        started_at: datetime | None = None,
+        completed_at: datetime | None = None,
+    ) -> None:
+        self._tool_calls[(run_id, call_id)] = {
+            "run_id": run_id,
+            "call_id": call_id,
+            "tool_id": tool_id,
+            "tool_version": tool_version,
+            "arguments_hash": arguments_hash,
+            "status": status,
+            "evidence_ids": evidence_ids,
+            "artifact_ids": artifact_ids,
+            "error_category": error_category,
+            "started_at": started_at,
+            "completed_at": completed_at,
+        }
+
+    def get_tool_call(self, run_id: UUID, call_id: str) -> dict[str, object] | None:
+        return self._tool_calls.get((run_id, call_id))
 
 
 class PostgresAgentEventStore:
@@ -335,3 +398,123 @@ class PostgresAgentRunRepository:
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:
         return self.events.list(run_id, after_sequence=after_sequence)
+
+    def save_approval(self, approval: Approval) -> None:
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_approvals(
+              approval_id, run_id, call_id, actor_id, tool_id, tool_version, arguments_hash,
+              target_resource, decision, decision_key, expires_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (run_id, call_id) DO UPDATE SET
+              decision = EXCLUDED.decision, decision_key = EXCLUDED.decision_key,
+              expires_at = EXCLUDED.expires_at
+            """,
+            (
+                approval.approval_id,
+                approval.run_id,
+                approval.call_id,
+                approval.actor_id,
+                approval.tool_id,
+                approval.tool_version,
+                approval.arguments_hash,
+                approval.target_resource,
+                approval.decision,
+                approval.decision_key,
+                approval.expires_at,
+            ),
+        )
+        self._connection.commit()
+
+    def get_approval(self, approval_id: UUID) -> Approval | None:
+        row = self._connection.execute(
+            """
+            SELECT approval_id, run_id, call_id, actor_id, tool_id, tool_version, arguments_hash,
+                   target_resource, decision, decision_key, expires_at
+            FROM atlas.agent_approvals WHERE approval_id = %s
+            """,
+            (approval_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return Approval(
+            approval_id=row[0],
+            run_id=row[1],
+            call_id=row[2],
+            actor_id=row[3],
+            tool_id=row[4],
+            tool_version=row[5],
+            arguments_hash=row[6].strip(),
+            target_resource=row[7],
+            decision=row[8],
+            decision_key=row[9],
+            expires_at=row[10],
+        )
+
+    def save_tool_call(
+        self,
+        run_id: UUID,
+        *,
+        call_id: str,
+        tool_id: str,
+        tool_version: str,
+        arguments_hash: str,
+        status: str,
+        evidence_ids: tuple[str, ...] = (),
+        artifact_ids: tuple[str, ...] = (),
+        error_category: str | None = None,
+        started_at: datetime | None = None,
+        completed_at: datetime | None = None,
+    ) -> None:
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_tool_calls(
+              run_id, call_id, tool_id, tool_version, arguments_hash, status,
+              evidence_ids, artifact_ids, error_category, started_at, completed_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (run_id, call_id) DO UPDATE SET
+              status = EXCLUDED.status, evidence_ids = EXCLUDED.evidence_ids,
+              artifact_ids = EXCLUDED.artifact_ids, error_category = EXCLUDED.error_category,
+              started_at = coalesce(atlas.agent_tool_calls.started_at, EXCLUDED.started_at),
+              completed_at = EXCLUDED.completed_at
+            """,
+            (
+                run_id,
+                call_id,
+                tool_id,
+                tool_version,
+                arguments_hash,
+                status,
+                list(evidence_ids),
+                list(artifact_ids),
+                error_category,
+                started_at,
+                completed_at,
+            ),
+        )
+        self._connection.commit()
+
+    def get_tool_call(self, run_id: UUID, call_id: str) -> dict[str, object] | None:
+        row = self._connection.execute(
+            """
+            SELECT run_id, call_id, tool_id, tool_version, arguments_hash, status,
+                   evidence_ids, artifact_ids, error_category, started_at, completed_at
+            FROM atlas.agent_tool_calls WHERE run_id = %s AND call_id = %s
+            """,
+            (run_id, call_id),
+        ).fetchone()
+        if row is None:
+            return None
+        return {
+            "run_id": row[0],
+            "call_id": row[1],
+            "tool_id": row[2],
+            "tool_version": row[3],
+            "arguments_hash": row[4].strip(),
+            "status": row[5],
+            "evidence_ids": tuple(row[6] or ()),
+            "artifact_ids": tuple(row[7] or ()),
+            "error_category": row[8],
+            "started_at": row[9],
+            "completed_at": row[10],
+        }

@@ -87,7 +87,7 @@ enough to close the feature.
 
 ## Phase 8: Convergence
 
-- [ ] T041 [US3] Wire a managed Postgres `AgentRunRepository` to migration `0028_agent_tool_orchestration` and use it for production plan/run/call/event/approval persistence (FR-006, FR-008; partial).
+- [X] T041 [US3] Wire a managed Postgres `AgentRunRepository` to migration `0028_agent_tool_orchestration` and use it for production plan/run/call/event/approval persistence (FR-006, FR-008).
 - [X] T042 [US2] Connect `AgentPlanner` to the existing provider adapter for GPT-5.6 Luna proposals, parse the provider response into the typed plan, and preserve deterministic fallback mode (FR-013; partial).
 - [ ] T043 [US3] Add an explicit idempotency key to plan/run/approval requests and enforce ownership, scope, quota, consent, and replay protection before any private or mutating adapter can execute (FR-006, FR-007; partial).
 - [ ] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; partial).

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
@@ -33,6 +35,11 @@ def test_tool_catalog_and_read_only_run_are_explicit() -> None:
         "tool_call.abstained",
         "run.completed",
     ]
+    tool_call = client.app.state.agent_run_repository.get_tool_call(
+        UUID(run.json()["run_id"]), "step-0"
+    )
+    assert tool_call is not None
+    assert tool_call["status"] == "abstained"
 
 
 def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
@@ -52,6 +59,11 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     pending = client.post("/v1/agent/runs", json={"plan_hash": body["plan_hash"]})
     assert pending.status_code == 202
     assert pending.json()["status"] == "awaiting_approval"
+    pending_call = client.app.state.agent_run_repository.get_tool_call(
+        UUID(pending.json()["run_id"]), "step-0"
+    )
+    assert pending_call is not None
+    assert pending_call["status"] == "awaiting_approval"
 
     decision = client.post(
         f"/v1/agent/approvals/{approval_id}/decision",
@@ -69,6 +81,11 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     assert completed.status_code == 202
     assert completed.json()["status"] == "completed"
     assert any(event["event_type"] == "tool_call.abstained" for event in completed.json()["events"])
+    completed_call = client.app.state.agent_run_repository.get_tool_call(
+        UUID(completed.json()["run_id"]), "step-0"
+    )
+    assert completed_call is not None
+    assert completed_call["status"] == "abstained"
 
 
 def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:

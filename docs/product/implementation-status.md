@@ -28,7 +28,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 
 | 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; entorno real aún pendiente | T030-T036 operator-owned | `specs/018-production-deployment/tasks.md` |
-| 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI y eval gate | 13 tareas SpecKit pendientes: executor/adapters, persistencia durable, convergencia y evidencia live | `specs/019-agent-tool-orchestration/tasks.md` |
+| 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development y eval gate | 9 tareas SpecKit pendientes: replay/idempotencia durable, convergencia, gates completos y evidencia live | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Completa para el workflow de desarrollo — migración 28/28, workflow repetible y SpecKit cerrado | 0 | `specs/021-supabase-database-migration/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio

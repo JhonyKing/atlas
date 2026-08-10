@@ -20,11 +20,12 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating.
-- PostgreSQL persistence contract tests: **3 passed** for plan round-trip, ordered event reconnect,
-  and checkpoint integrity/replay conflict. The non-development runtime selects these adapters.
+- PostgreSQL persistence contract tests: **5 passed** for plan round-trip, ordered event reconnect,
+  checkpoint integrity/replay conflict, and approval/tool-call round-trips. The non-development
+  runtime selects these adapters, and API execution records each tool call after the run exists.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   local store is intentionally process-local until the durable idempotency convergence task lands.
-- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **33 tests**, Ruff/mypy across
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **35 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
@@ -45,6 +46,6 @@ review remains a deployment gate.
 
 ## Remaining honest gaps
 
-Durable tool-call/approval writes, cross-process checkpoint claims, live provider traces,
-latency/cost measurements, and production deployment evidence remain open under Feature 018/019
-tasks. Feature 019 remains open until those mandatory tasks and convergence evidence are complete.
+Cross-process idempotency/replay claims, live provider traces, latency/cost measurements, and
+production deployment evidence remain open under Feature 018/019 tasks. Feature 019 remains open
+until those mandatory tasks and convergence evidence are complete.

@@ -17,7 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from atlas.agent.checkpoints import CheckpointRepository
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.planner import AgentPlanner
-from atlas.agent.planning import AgentPlan, PlanValidationError, validate_plan
+from atlas.agent.planning import AgentPlan, PlanValidationError, arguments_hash, validate_plan
 from atlas.agent.policy import Approval, PolicyError, assert_approval_matches, issue_approval
 from atlas.agent.review import ReviewService
 from atlas.agent.state import AtlasState
@@ -309,18 +309,38 @@ async def create_agent_run(
             fields=agent_trace_fields(plan),
             tags=agent_trace_tags(plan),
         )
+    approvals = cast(dict[str, Approval], request.app.state.agent_approvals)
     repository.create_run(plan)
+    for stored_approval in approvals.values():
+        if stored_approval.run_id == plan.run_id:
+            repository.save_approval(stored_approval)
     repository.events.emit(plan.run_id, "run.accepted", status="accepted")
     repository.events.emit(plan.run_id, "plan.created", status="planned")
-    approvals = cast(dict[str, Approval], request.app.state.agent_approvals)
     for index, step in enumerate(plan.steps):
         definition = _tool_catalog(request).get(step.tool_id)
         call_id = f"step-{index}"
         if definition is None:
             raise HTTPException(status_code=400, detail="unknown tool")
         if definition.approval != "none":
-            approval = approvals.get(call_id)
+            approval: Approval | None = approvals.get(call_id)
+            if approval is None:
+                for approval_id in payload.approval_ids:
+                    try:
+                        candidate = repository.get_approval(UUID(approval_id))
+                    except ValueError:
+                        candidate = None
+                    if candidate is not None and candidate.call_id == call_id:
+                        approval = candidate
+                        break
             if approval is None or str(approval.approval_id) not in payload.approval_ids:
+                repository.save_tool_call(
+                    plan.run_id,
+                    call_id=call_id,
+                    tool_id=step.tool_id,
+                    tool_version=step.tool_version,
+                    arguments_hash=arguments_hash(step.arguments),
+                    status="awaiting_approval",
+                )
                 repository.events.emit(
                     plan.run_id,
                     "approval.requested",
@@ -358,6 +378,16 @@ async def create_agent_run(
                     arguments=step.arguments,
                 )
             except PolicyError as exc:
+                repository.save_tool_call(
+                    plan.run_id,
+                    call_id=call_id,
+                    tool_id=step.tool_id,
+                    tool_version=step.tool_version,
+                    arguments_hash=arguments_hash(step.arguments),
+                    status="rejected",
+                    error_category="approval_mismatch",
+                    completed_at=datetime.now(UTC),
+                )
                 repository.events.emit(
                     plan.run_id,
                     "approval.decided",
@@ -374,8 +404,31 @@ async def create_agent_run(
                         fields={"latency_ms": (perf_counter() - trace_started) * 1000},
                     )
                 raise HTTPException(status_code=403, detail=str(exc)) from exc
+        started_at = datetime.now(UTC)
+        repository.save_tool_call(
+            plan.run_id,
+            call_id=call_id,
+            tool_id=step.tool_id,
+            tool_version=step.tool_version,
+            arguments_hash=arguments_hash(step.arguments),
+            status="running",
+            started_at=started_at,
+        )
         result = await _execute_domain_tool(request, plan, index)
         status_value = str(result.get("status", "completed"))
+        repository.save_tool_call(
+            plan.run_id,
+            call_id=call_id,
+            tool_id=step.tool_id,
+            tool_version=step.tool_version,
+            arguments_hash=arguments_hash(step.arguments),
+            status=status_value,
+            evidence_ids=_result_ids(result.get("evidence_ids", ())),
+            artifact_ids=_result_ids(result.get("artifact_ids", ())),
+            error_category=str(result["reason"]) if result.get("reason") else None,
+            started_at=started_at,
+            completed_at=datetime.now(UTC),
+        )
         repository.events.emit(
             plan.run_id,
             "tool_call.completed" if status_value != "abstained" else "tool_call.abstained",
@@ -485,21 +538,27 @@ def decide_agent_approval(
     pending = cast(dict[str, Approval], request.app.state.agent_approvals)
     approval = next((item for item in pending.values() if item.approval_id == approval_id), None)
     if approval is None:
+        approval = _runs(request).get_approval(approval_id)
+    if approval is None:
         raise HTTPException(status_code=404, detail="approval not found")
     if approval.actor_id != payload.actor_id or approval.decision_key != payload.decision_key:
         raise HTTPException(status_code=403, detail="approval decision mismatch")
     if payload.decision == "rejected":
-        pending[approval.call_id] = replace(approval, decision="rejected")
+        updated_approval = replace(approval, decision="rejected")
+        pending[approval.call_id] = updated_approval
         response: dict[str, object] = {
             "approval_id": str(approval_id),
             "decision": "rejected",
         }
     else:
-        pending[approval.call_id] = replace(approval, decision="approved")
+        updated_approval = replace(approval, decision="approved")
+        pending[approval.call_id] = updated_approval
         response = {
             "approval_id": str(approval_id),
             "decision": "approved",
         }
+    if _runs(request).get(updated_approval.run_id) is not None:
+        _runs(request).save_approval(updated_approval)
     if key is not None:
         _idempotency_store(request).save("agent.approval", key, fingerprint, response)
     return response

@@ -7,10 +7,15 @@ from uuid import uuid4
 from atlas.agent.checkpoints import PostgresCheckpointRepository
 from atlas.agent.events import AgentRunEvent
 from atlas.agent.planning import validate_plan
+from atlas.agent.policy import issue_approval
 from atlas.agent.state import AtlasState
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
-from atlas.persistence.agent_runs import PostgresAgentEventStore, PostgresAgentRunRepository
+from atlas.persistence.agent_runs import (
+    InMemoryAgentRunRepository,
+    PostgresAgentEventStore,
+    PostgresAgentRunRepository,
+)
 
 
 class Result:
@@ -34,6 +39,8 @@ class FakeConnection:
         self.plan_row: tuple[Any, ...] | None = None
         self.run_row: tuple[Any, ...] | None = None
         self.checkpoint_row: tuple[Any, ...] | None = None
+        self.approval_row: tuple[Any, ...] | None = None
+        self.tool_call_row: tuple[Any, ...] | None = None
         self.events: list[AgentRunEvent] = []
         self.commits = 0
 
@@ -45,6 +52,10 @@ class FakeConnection:
             return Result(self.plan_row)
         if "FROM atlas.agent_runs AS r" in sql:
             return Result(self.run_row)
+        if "FROM atlas.agent_approvals" in sql:
+            return Result(self.approval_row)
+        if "FROM atlas.agent_tool_calls" in sql:
+            return Result(self.tool_call_row)
         if "SELECT id FROM atlas.agent_plans" in sql:
             return Result((uuid4(),))
         if "FROM atlas.agent_run_events" in sql and "max(sequence)" in sql:
@@ -89,6 +100,12 @@ class FakeConnection:
                     occurred_at=params[12],
                 )
             )
+            return Result()
+        if "INSERT INTO atlas.agent_approvals" in sql:
+            self.approval_row = params
+            return Result()
+        if "INSERT INTO atlas.agent_tool_calls" in sql:
+            self.tool_call_row = params
             return Result()
         if "FROM atlas.agent_checkpoints" in sql:
             return Result(self.checkpoint_row)
@@ -176,3 +193,88 @@ def test_postgres_checkpoint_round_trip_rejects_changed_replay_state() -> None:
         assert "replay key" in str(exc)
     else:
         raise AssertionError("changed replay state must be rejected")
+
+
+def test_postgres_repository_persists_approval_and_tool_call_records() -> None:
+    connection = FakeConnection()
+    repository = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]
+    plan = _plan()
+    approval = issue_approval(
+        plan,
+        call_id="step-0",
+        actor_id="user-1",
+        tool_id="private_delete",
+        tool_version="1.0.0",
+        arguments={"resource_id": "resource-1"},
+    )
+
+    repository.save_approval(approval)
+    connection.approval_row = (
+        approval.approval_id,
+        approval.run_id,
+        approval.call_id,
+        approval.actor_id,
+        approval.tool_id,
+        approval.tool_version,
+        approval.arguments_hash,
+        approval.target_resource,
+        approval.decision,
+        approval.decision_key,
+        approval.expires_at,
+    )
+    assert repository.get_approval(approval.approval_id) == approval
+
+    repository.save_tool_call(
+        plan.run_id,
+        call_id="step-0",
+        tool_id="private_delete",
+        tool_version="1.0.0",
+        arguments_hash="a" * 64,
+        status="completed",
+        evidence_ids=("ev-1",),
+    )
+    connection.tool_call_row = (
+        plan.run_id,
+        "step-0",
+        "private_delete",
+        "1.0.0",
+        "a" * 64,
+        "completed",
+        ["ev-1"],
+        [],
+        None,
+        None,
+        datetime.now(UTC),
+    )
+    record = repository.get_tool_call(plan.run_id, "step-0")
+    assert record is not None
+    assert record["status"] == "completed"
+    assert record["evidence_ids"] == ("ev-1",)
+
+
+def test_inmemory_repository_keeps_tool_call_and_approval_records() -> None:
+    repository = InMemoryAgentRunRepository()
+    plan = _plan()
+    repository.save_plan(plan)
+    approval = issue_approval(
+        plan,
+        call_id="step-0",
+        actor_id="user-1",
+        tool_id="private_delete",
+        tool_version="1.0.0",
+        arguments={"resource_id": "resource-1"},
+    )
+    repository.save_approval(approval)
+    repository.save_tool_call(
+        plan.run_id,
+        call_id="step-0",
+        tool_id="cited_answer",
+        tool_version="1.0.0",
+        arguments_hash="a" * 64,
+        status="completed",
+        evidence_ids=("ev-1",),
+        artifact_ids=(),
+    )
+
+    assert repository.get_approval(approval.approval_id) == approval
+    assert repository.get_tool_call(plan.run_id, "step-0")["status"] == "completed"
