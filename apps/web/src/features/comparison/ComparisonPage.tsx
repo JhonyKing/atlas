@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useRef, useState } from "react";
 
 import { useLocale } from "@/i18n";
 
-import { Button, Checkbox } from "@/components/forms";
+import { Button } from "@/components/forms";
 
 import { ComparisonMatrix } from "./ComparisonMatrix";
 import { streamComparison } from "./api";
@@ -129,6 +129,22 @@ export function ComparisonPage() {
     setStatus(spanish ? "Comparación cancelada." : "Comparison cancelled.");
   }
 
+  const copy = spanish
+    ? {
+        selected: "Seleccionada",
+        available: "Disponible",
+        technologyHelp: "Elige entre 2 y 4 tecnologías.",
+        criteriaHelp: "Elige al menos un criterio para comparar.",
+        selectedSummary: `${selectedTechnologies.length} tecnologías · ${selectedCriteria.length} criterios`,
+      }
+    : {
+        selected: "Selected",
+        available: "Available",
+        technologyHelp: "Choose between 2 and 4 technologies.",
+        criteriaHelp: "Choose at least one criterion to compare.",
+        selectedSummary: `${selectedTechnologies.length} technologies · ${selectedCriteria.length} criteria`,
+      };
+
   return (
     <main className="comparison-page">
       <section className="comparison-experience" aria-labelledby="comparison-title">
@@ -137,21 +153,39 @@ export function ComparisonPage() {
         <p className="lede">{spanish ? "Selecciona un conjunto acotado de tecnologías y criterios; ATLAS conserva los estados sin evidencia." : "Select a bounded set of technologies and criteria; ATLAS preserves unsupported states."}</p>
         <form onSubmit={submit}>
           <div className="comparison-control-grid">
-          <fieldset className="comparison-control-group">
+          <fieldset className="comparison-control-group" aria-describedby="comparison-technologies-help" aria-invalid={selectedTechnologies.length < 2 || selectedTechnologies.length > 4}>
             <legend>{messages.comparison.technologies}</legend>
+            <p id="comparison-technologies-help" className="comparison-control-help">{copy.technologyHelp}</p>
             <div className="comparison-chip-list">
-              {technologies.map((technology) => <Checkbox key={technology} checked={selectedTechnologies.includes(technology)} onChange={() => toggleTechnology(technology)} label={labels[technology][spanish ? "es" : "en"]} />)}
+              {technologies.map((technology) => {
+                const selected = selectedTechnologies.includes(technology);
+                const limitReached = !selected && selectedTechnologies.length >= 4;
+                return <label className={`comparison-chip${selected ? " is-selected" : ""}${limitReached ? " is-disabled" : ""}`} key={technology}>
+                  <input type="checkbox" checked={selected} disabled={limitReached} onChange={() => toggleTechnology(technology)} />
+                  <span className="comparison-chip-label">{labels[technology][spanish ? "es" : "en"]}</span>
+                  <span className="comparison-chip-state">{selected ? copy.selected : copy.available}</span>
+                </label>;
+              })}
             </div>
           </fieldset>
-          <fieldset className="comparison-control-group">
+          <fieldset className="comparison-control-group" aria-describedby="comparison-criteria-help" aria-invalid={selectedCriteria.length < 1}>
             <legend>{messages.comparison.criteria}</legend>
+            <p id="comparison-criteria-help" className="comparison-control-help">{copy.criteriaHelp}</p>
             <div className="comparison-chip-list">
-              {criteria.map((criterion) => <Checkbox key={criterion} checked={selectedCriteria.includes(criterion)} onChange={() => toggleCriterion(criterion)} label={labels[criterion][spanish ? "es" : "en"]} />)}
+              {criteria.map((criterion) => {
+                const selected = selectedCriteria.includes(criterion);
+                return <label className={`comparison-chip${selected ? " is-selected" : ""}`} key={criterion}>
+                  <input type="checkbox" checked={selected} onChange={() => toggleCriterion(criterion)} />
+                  <span className="comparison-chip-label">{labels[criterion][spanish ? "es" : "en"]}</span>
+                  <span className="comparison-chip-state">{selected ? copy.selected : copy.available}</span>
+                </label>;
+              })}
             </div>
           </fieldset>
           </div>
           <div className="comparison-selection" aria-live="polite">
-            <span>{selectedTechnologies.length} {spanish ? "tecnologías" : "technologies"} · {selectedCriteria.length} {spanish ? "criterios" : "criteria"}</span>
+            <strong>{copy.selectedSummary}</strong>
+            <span>{spanish ? "Puedes cambiar la selección antes de iniciar." : "You can change the selection before starting."}</span>
           </div>
           <div className="actions">
             <Button type="submit" disabled={active} loading={active}>{messages.comparison.compare}</Button>

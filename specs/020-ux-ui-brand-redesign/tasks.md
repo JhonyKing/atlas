@@ -46,9 +46,9 @@
 
 ## Phase 6: Comparator (P1)
 
-- [ ] T026 [US3] Redesign technology/criteria controls as accessible chips/fields with clear selected/available states in `apps/web/src/features/comparison/ComparisonPage.tsx`.
-- [ ] T027 [US3] Redesign comparison progress and matrix readability, evidence links, supported/partial/unsupported/contradictory states, and responsive overflow strategy in `apps/web/src/features/comparison/`.
-- [ ] T028 [US3] Add comparator responsive/accessibility tests and visual QA at 1440×900 and 390×844 without changing comparison API/SSE contracts.
+- [X] T026 [US3] Redesign technology/criteria controls as accessible chips/fields with clear selected/available states in `apps/web/src/features/comparison/ComparisonPage.tsx`. Evidence: keyboard-focusable chips expose selected/available state, enforce the 2–4 technology bound, and retain native checkbox semantics.
+- [X] T027 [US3] Redesign comparison progress and matrix readability, evidence links, supported/partial/unsupported/contradictory states, and responsive overflow strategy in `apps/web/src/features/comparison/`. Evidence: matrix state legend, text/icon status labels, inspectable evidence IDs, cell explanations, sticky headers, and keyboard-focusable horizontal region.
+- [X] T028 [US3] Add comparator responsive/accessibility tests and visual QA at 1440×900 and 390×844 without changing comparison API/SSE contracts. Evidence: existing route tests plus mocked SSE matrix-state journey and desktop/mobile screenshots.
 
 ## Phase 7: Reports, News, Sources, Account, Admin (P2)
 
