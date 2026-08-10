@@ -327,8 +327,28 @@ async def _execute_domain_tool_legacy(
             return bounded_result(status="abstained", reason="news_unavailable")
         selection = service.get_daily()
         candidate = selection.candidate
-        evidence = (str(candidate.id),) if candidate is not None else ()
-        return bounded_result(status=selection.status, evidence_ids=evidence)
+        if candidate is None:
+            return bounded_result(status="abstained", reason=selection.reason_code)
+        evidence_id = f"news:{candidate.content_sha256}"
+        return {
+            "status": "completed",
+            "evidence_ids": (evidence_id,),
+            "artifact_ids": (),
+            "provenance": {
+                "publisher": candidate.publisher,
+                "canonical_url": str(candidate.canonical_url),
+                "published_at": candidate.published_at.isoformat(),
+                "captured_at": candidate.captured_at.isoformat(),
+            },
+            "excerpts": (
+                {
+                    "evidence_id": evidence_id,
+                    "excerpt": candidate.summary or candidate.title,
+                    "canonical_url": str(candidate.canonical_url),
+                    "captured_at": candidate.captured_at.isoformat(),
+                },
+            ),
+        }
     if step.tool_id == "corpus_status":
         service = request.app.state.corpus_service
         if service is None:

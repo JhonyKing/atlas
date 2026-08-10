@@ -18,6 +18,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Read-only adapter/API integration tests: **14 passed**; read-only calls are delegated through the
   adapter boundary, bounded provenance/excerpt/relation fields are preserved, and private/unknown
   tools cannot be registered there.
+- The agent `daily_news` path now derives a stable `news:<content_sha256>` evidence reference from
+  the reviewed candidate, preserves publisher/URL/capture metadata in the bounded adapter result,
+  and abstains cleanly when no previous-day candidate exists.
 - Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating. The API contract now records rejected side-effect calls as failed tool

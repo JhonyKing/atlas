@@ -1,8 +1,12 @@
+from datetime import UTC, datetime, timedelta
+from email.utils import format_datetime
 from uuid import UUID
 
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
+from atlas.news.feeds import parse_feed
+from atlas.news.ranking import InMemoryDailyNewsService
 
 
 def test_tool_catalog_and_read_only_run_are_explicit() -> None:
@@ -186,3 +190,33 @@ def test_replaying_run_with_a_different_actor_is_not_allowed() -> None:
 
     assert first.status_code == 202
     assert replay.status_code == 404
+
+
+def test_daily_news_agent_tool_preserves_stable_evidence_metadata() -> None:
+    observed = datetime.now(UTC)
+    published_at = observed.replace(hour=12, minute=0, second=0, microsecond=0) - timedelta(days=1)
+    candidates = parse_feed(
+        f"""<rss><channel><item><title>Internet signal</title>
+        <link>https://news.example/story</link>
+        <pubDate>{format_datetime(published_at, usegmt=True)}</pubDate>
+        <description>Bounded summary</description></item></channel></rss>""".encode(),
+        publisher="Example News",
+        captured_at=observed,
+        authority_score=0.9,
+        topic_score=0.9,
+    )
+    client = TestClient(
+        create_app(news_service=InMemoryDailyNewsService(candidates))
+    )
+    plan = client.post(
+        "/v1/agent/plans",
+        json={"request": "Show the previous day's news", "selected_tool": "daily_news"},
+    ).json()
+
+    run = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]})
+
+    assert run.status_code == 202
+    assert run.json()["status"] == "completed"
+    event = run.json()["events"][2]
+    assert event["event_type"] == "tool_call.completed"
+    assert event["evidence_ids"] == [f"news:{candidates[0].content_sha256}"]
