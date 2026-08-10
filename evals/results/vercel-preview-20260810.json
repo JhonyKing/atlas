@@ -1,0 +1,23 @@
+{
+  "deployment_id": "dpl_9DVb2tVwjeFinqSXfC3S9zGWZF8q",
+  "project_id": "prj_uk5h2ryyeHSYfi2AgL78cUM5TNis",
+  "target": "preview",
+  "url": "https://atlasai-re1bz6669-jhonykings-projects.vercel.app",
+  "state": "READY",
+  "deployment_mode": "mcp_file_upload",
+  "source_repository": "JhonyKing/atlas",
+  "build": {
+    "framework": "Next.js 16.2.12",
+    "install_command": "npm install --no-package-lock",
+    "build_command": "npm run build",
+    "routes_generated": 22,
+    "result": "passed"
+  },
+  "api_origin": null,
+  "notes": [
+    "Preview was uploaded from the current ATLAS workspace because the Git-linked Vercel repository is still JhonyKing/atlasai.",
+    "The deployment is frontend-only and cannot pass API-backed journeys until a managed API origin is configured."
+  ],
+  "captured_at": "2026-08-10",
+  "credentials_included": false
+}

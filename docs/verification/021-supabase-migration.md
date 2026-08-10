@@ -4,7 +4,10 @@
 
 The project-scoped Supabase development database `fcbclsaytbjpywlaplbh` contains the exact 28
 repository migration revisions, from `0001_foundation` through
-`0028_agent_tool_orchestration`.
+`0028_agent_tool_orchestration`. The application marker in `public.alembic_version` was found one
+revision behind after the hosted MCP apply and was reconciled to
+`0028_agent_tool_orchestration` on 2026-08-10. This was a development-target metadata repair; no
+production target was changed.
 
 ## Checks executed
 
@@ -13,7 +16,8 @@ repository migration revisions, from `0001_foundation` through
 - Remote project: `AtlasAI`, active/healthy, PostgreSQL 17.6.
 - Migration comparison: local 28 / remote 28, exact ordered match, no missing or unexpected
   revisions.
-- Schema inventory: 47 ATLAS tables, 6 RLS-enabled tables, 8 RLS policies.
+- Schema inventory: 53 ATLAS tables, including the five `0028_agent_tool_orchestration` tables;
+  the hosted application marker now reports the same `0028` head.
 - Required functions: retrieval, quota, retention, answer-result, and provenance helpers present.
 - Vector capability: pgvector installed in `extensions`; `atlas.chunk_embeddings.embedding` uses
   the vector type. Retrieval remains the repository's exact-cosine baseline, so no ANN index is
@@ -25,14 +29,16 @@ repository migration revisions, from `0001_foundation` through
   marker table closed.
 - Performance advisors: fresh-database unindexed-FK/unused-index results are informational and
   require workload measurements before optimization.
-- Data boundary: no local private rows or fixtures were copied; only repository-defined public
-  seed rows are present.
+- Data boundary: no local private rows or fixtures were copied. Five collection seed rows are
+  present, while `sources`, `source_versions`, `chunks`, `chunk_embeddings`, `news_candidates`,
+  `answer_runs`, and `comparison_runs` are empty until the real ingestion/refresh workflow runs.
 
 ## Evidence artifacts
 
 - [Initial inspect](../../evals/results/supabase-migration-inspect-20260807-fcbclsaytbjpywlaplbh.json)
 - [Apply run](../../evals/results/supabase-migration-apply-20260807-fcbclsaytbjpywlaplbh.json)
 - [Final verify run](../../evals/results/supabase-migration-verify-20260807-fcbclsaytbjpywlaplbh.json)
+- [Marker reconciliation](../../evals/results/supabase-marker-reconcile-20260810-fcbclsaytbjpywlaplbh.json)
 
 The JSON artifacts conform to
 `specs/021-supabase-database-migration/contracts/migration-evidence.schema.json` and contain no

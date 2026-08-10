@@ -1,0 +1,25 @@
+{
+  "run_id": "supabase-marker-reconcile-20260810-fcbclsaytbjpywlaplbh",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "development",
+  "operation": "reconcile_application_migration_marker",
+  "before": "0027_revoke_public_rls_helper",
+  "after": "0028_agent_tool_orchestration",
+  "schema_checks": {
+    "atlas_agent_plans": true,
+    "atlas_agent_runs": true,
+    "atlas_agent_tool_calls": true
+  },
+  "corpus_counts": {
+    "collections": 5,
+    "sources": 0,
+    "source_versions": 0,
+    "chunks": 0,
+    "chunk_embeddings": 0,
+    "news_candidates": 0,
+    "answer_runs": 0,
+    "comparison_runs": 0
+  },
+  "performed_at": "2026-08-10",
+  "credentials_included": false
+}
