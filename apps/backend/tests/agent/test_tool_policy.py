@@ -98,3 +98,26 @@ def test_approval_key_is_repeatable_and_expiry_is_fail_closed() -> None:
             arguments={"resource_id": "r-1"},
             now=now + timedelta(seconds=2),
         )
+
+
+def test_approval_rejects_a_different_bound_target() -> None:
+    plan = _private_plan()
+    approval = issue_approval(
+        plan,
+        call_id="step-0",
+        actor_id="user-1",
+        tool_id="private_delete",
+        tool_version="1.0.0",
+        arguments={"resource_id": "r-1"},
+        target_resource="r-1",
+    )
+
+    with pytest.raises(PolicyError, match="target"):
+        assert_approval_matches(
+            replace(approval, decision="approved", target_resource="r-2"),
+            plan=plan,
+            actor_id="user-1",
+            tool_id="private_delete",
+            tool_version="1.0.0",
+            arguments={"resource_id": "r-1"},
+        )

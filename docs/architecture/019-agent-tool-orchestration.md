@@ -12,8 +12,9 @@ normalizes arguments, calculates a plan hash, and only then executes an allowlis
 3. `validate_plan` rejects unknown tools, schema violations, dependency cycles, expired plans, and
    budget overflow before execution.
 4. Private or consequential tools create an approval bound to actor, tool/version, normalized
-   arguments, target, plan, and expiry. The run remains `awaiting_approval` until the owner submits
-   the decision key.
+   arguments, target, plan, and expiry. Execution compares the current target with the approved
+   target; a changed target fails closed. The run remains `awaiting_approval` until the owner
+   submits the decision key.
 5. Domain adapters return bounded evidence/artifact identifiers; they never expose raw provider
    responses, credentials, private document bodies, or arbitrary URLs.
 

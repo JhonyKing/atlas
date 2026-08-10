@@ -137,3 +137,5 @@ def assert_approval_matches(
         raise PolicyError("approval actor, tool, or plan mismatch")
     if approval.arguments_hash != arguments_hash(normalized_arguments(arguments)):
         raise PolicyError("approval arguments mismatch")
+    if approval.target_resource != target_from_arguments(arguments):
+        raise PolicyError("approval target mismatch")
