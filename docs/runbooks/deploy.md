@@ -7,7 +7,7 @@
 5. Wait for `/healthz` and `/readyz`; run `scripts/deployment-smoke.py`.
 6. Attach the redacted release evidence artifact to the release. Never paste secrets into logs.
 
-For Vercel, the GitHub environment must provide `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and the
+For Vercel, set the project **Root Directory** to `apps/web`. The GitHub environment must provide `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and the
 environment-specific project ID (`VERCEL_PREVIEW_PROJECT_ID` or
 `VERCEL_PRODUCTION_PROJECT_ID`). The workflow links the project explicitly before deploying;
 there is no dependency on a developer's local `.vercel` directory.
