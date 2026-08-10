@@ -53,9 +53,9 @@ main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
 .atlas-logo-horizontal { display: block; }
 .atlas-logo-mark, .atlas-mobile-menu { display: none; }
 .atlas-nav { display: flex; align-items: center; gap: .2rem; flex: 1; }
-.atlas-nav-link { color: var(--atlas-text-secondary); border-bottom: 2px solid transparent; padding: .65rem .7rem; font-size: .92rem; font-weight: 700; text-decoration: none; }
+.atlas-nav-link { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--atlas-text-secondary); border-bottom: 2px solid transparent; padding: .65rem .7rem; font-size: .92rem; font-weight: 700; text-decoration: none; }
 .atlas-nav-link:hover, .atlas-nav-link.active { color: var(--atlas-navy); border-bottom-color: var(--atlas-indigo); }
-.atlas-locale-switch { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .5rem .75rem; color: var(--atlas-indigo); background: var(--atlas-surface); font-size: .85rem; font-weight: 700; }
+.atlas-locale-switch { display: inline-flex; align-items: center; min-height: 2.75rem; gap: .4rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .5rem .75rem; color: var(--atlas-indigo); background: var(--atlas-surface); font-size: .85rem; font-weight: 700; }
 .atlas-locale-flag { font-size: 1rem; line-height: 1; }
 .atlas-content { min-height: calc(100vh - 4rem); }
 .corpus-status { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); padding: 1rem; margin: 0 auto 3rem; background: var(--atlas-surface); }
@@ -186,7 +186,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .ask-examples { border-top: 1px solid var(--atlas-border); padding-top: 1rem; }
 .ask-examples h2 { margin: 0 0 .65rem; font-size: 1rem; }
 .ask-example-list { display: flex; flex-wrap: wrap; gap: .5rem; }
-.ask-example { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .55rem .7rem; color: var(--atlas-text-secondary); background: var(--atlas-surface); font-size: .85rem; font-weight: 650; text-align: left; }
+.ask-example { min-height: 2.75rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .55rem .7rem; color: var(--atlas-text-secondary); background: var(--atlas-surface); font-size: .85rem; font-weight: 650; text-align: left; }
 .ask-example:hover { border-color: var(--atlas-indigo); color: var(--atlas-indigo); background: var(--atlas-info-bg); }
 .ask-supported-sources { margin: 0; color: var(--atlas-text-secondary); font-size: .84rem; line-height: 1.5; }
 .comparison-page { display: grid; gap: 2rem; }
@@ -314,6 +314,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .atlas-file-upload-button { display: inline-flex; align-items: center; min-height: 2rem; border: 1px solid var(--atlas-border-strong); border-radius: var(--atlas-radius-sm); padding: .35rem .6rem; color: var(--atlas-text); background: var(--atlas-surface); font-weight: 700; }
 .atlas-file-upload-name { overflow-wrap: anywhere; }
 .atlas-file-input-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; clip-path: inset(50%); }
+.atlas-file-upload .atlas-file-input-hidden { width: 1px; }
 .ask-branding { min-height: 3rem; justify-content: flex-start; padding: 0; }
 .ask-branding-logo { width: 4.25rem; }
 .agent-workspace { padding: 1.1rem 1.25rem; margin-bottom: 2rem; }

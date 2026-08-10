@@ -57,12 +57,12 @@
 - [X] T031 [US2] Redesign `/sources` collection cards with counts, publisher, freshness, stale explanation, canonical root, and semantic status in `apps/web/src/features/corpus/CorpusStatus.tsx`. Evidence: semantic collection cards and freshness/count definition lists.
 - [X] T032 [US2] Redesign `/account` auth/private resource forms with labels, helper/error/loading/signed-in states and ownership-safe empty states in `apps/web/src/features/auth/` and `apps/web/src/features/private-data/`. Evidence: accessible fields, busy/error handling, upload validation state, and anonymous ownership-safe resource empty state.
 - [X] T033 [US2] Redesign `/admin` and subroutes for governance/review/internal operations with denser utility layout and no public-home leakage in `apps/web/src/features/corpus/GovernancePanel.tsx` and `apps/web/src/features/agent/ReviewPanel.tsx`. Evidence: retryable governance metrics, labelled review fields, busy/error/decision states, and utility cards isolated from public routes.
-- [ ] T034 [US2] Add route-level empty/error/retry and visual QA artifacts for reports, news, sources, account, and admin at desktop/mobile widths.
+- [X] T034 [US2] Add route-level empty/error/retry and visual QA artifacts for reports, news, sources, account, and admin at desktop/mobile widths. Evidence: `apps/web/tests/e2e/route-states.spec.ts` covers bounded empty/error/retry states at both target viewports.
 
 ## Phase 8: Responsive, accessibility, and final visual QA (P2)
 
-- [ ] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`.
-- [ ] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`.
+- [X] T035 [US5] Add Playwright viewport matrix for 375, 390, 768, 1024, 1280, 1440, and 1920 widths, including screenshots at 1440×900 and 390×844 in `apps/web/playwright.config.ts` and `apps/web/tests/visual/`. Evidence: `apps/web/tests/visual/viewport-matrix.spec.ts`.
+- [X] T036 [US5] Add automated checks for horizontal overflow, focus order/visibility, semantic labels, contrast, reduced motion, touch targets, route reachability, favicon, and SVG rendering in `apps/web/tests/visual/`. Evidence: the viewport matrix asserts all listed checks for representative public/admin routes.
 - [ ] T037 [US5] Run a second visual-only design pass across all routes; record findings/resolutions without adding new product features in `docs/verification/020-final-visual-review.md`.
 - [ ] T038 [US5] Run production build and inspect responsive screenshots for layout shift, asset loading, and route errors; retain evidence under `test-results/`.
 
