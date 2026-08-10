@@ -20,7 +20,8 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   tools cannot be registered there.
 - Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
-  remain non-mutating.
+  remain non-mutating. The API contract now records rejected side-effect calls as failed tool
+  events instead of treating them as successful completions.
 - PostgreSQL persistence contract tests: **5 passed** for plan round-trip, ordered event reconnect,
   checkpoint integrity/replay conflict, and approval/tool-call round-trips. The non-development
   runtime selects these adapters, and API execution records each tool call after the run exists.

@@ -80,12 +80,12 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     )
     assert completed.status_code == 202
     assert completed.json()["status"] == "completed"
-    assert any(event["event_type"] == "tool_call.abstained" for event in completed.json()["events"])
+    assert any(event["event_type"] == "tool_call.failed" for event in completed.json()["events"])
     completed_call = client.app.state.agent_run_repository.get_tool_call(
         UUID(completed.json()["run_id"]), "step-0"
     )
     assert completed_call is not None
-    assert completed_call["status"] == "abstained"
+    assert completed_call["status"] == "rejected"
 
 
 def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:

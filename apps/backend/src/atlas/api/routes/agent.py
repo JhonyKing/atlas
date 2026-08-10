@@ -24,7 +24,11 @@ from atlas.agent.state import AtlasState
 from atlas.agent.tools.read_only import ReadOnlyToolAdapters, bounded_result, is_read_only_tool
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import Locale, ToolCallRequest, validate_json_object
-from atlas.agent.tools.side_effects import abstained_result
+from atlas.agent.tools.side_effects import (
+    SIDE_EFFECT_TOOL_IDS,
+    SideEffectToolAdapters,
+    abstained_result,
+)
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
@@ -104,6 +108,7 @@ class PlanCreateRequest(BaseModel):
     locale: Locale = "en-US"
     selected_tool: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_]{2,63}$")
     input: dict[str, object] = Field(default_factory=dict)
+    actor_id: str = Field(default="anonymous", min_length=1, max_length=128)
 
 
 class RunCreateRequest(BaseModel):
@@ -182,7 +187,7 @@ async def create_plan(
             approval = issue_approval(
                 plan,
                 call_id=f"step-{index}",
-                actor_id="anonymous",
+                actor_id=payload.actor_id,
                 tool_id=step.tool_id,
                 tool_version=step.tool_version,
                 arguments=step.arguments,
@@ -203,19 +208,52 @@ async def create_plan(
 
 
 async def _execute_domain_tool(
-    request: Request, plan: AgentPlan, step_index: int
+    request: Request,
+    plan: AgentPlan,
+    step_index: int,
+    *,
+    actor_id: str,
+    approval: Approval | None,
 ) -> dict[str, object]:
     """Route read-only calls through the typed adapter boundary before domain services."""
 
     step = plan.steps[step_index]
     if not is_read_only_tool(step.tool_id):
+        if step.tool_id in SIDE_EFFECT_TOOL_IDS:
+            async def side_effect_delegate(_arguments: dict[str, object]) -> dict[str, object]:
+                return await _execute_domain_tool_legacy(request, plan, step_index)
+
+            def owner_check(candidate_actor: str, arguments: Mapping[str, object]) -> bool:
+                service = request.app.state.private_resource_service
+                if service is None:
+                    return False
+                try:
+                    owner_id = UUID(candidate_actor)
+                    resource_id = UUID(str(arguments["resource_id"]))
+                    service.get_owned(owner_id, resource_id)
+                except (KeyError, TypeError, ValueError):
+                    return False
+                return True
+
+            adapters = SideEffectToolAdapters(
+                _tool_catalog(request),
+                {step.tool_id: side_effect_delegate},
+                owner_check=owner_check,
+            )
+            return await adapters.execute(
+                step.tool_id,
+                step.arguments,
+                plan=plan,
+                actor_id=actor_id,
+                approval=approval,
+            )
         return await _execute_domain_tool_legacy(request, plan, step_index)
 
-    async def delegate(_arguments: dict[str, object]) -> dict[str, object]:
+    async def read_only_delegate(_arguments: dict[str, object]) -> dict[str, object]:
         return await _execute_domain_tool_legacy(request, plan, step_index)
 
-    adapters = ReadOnlyToolAdapters({step.tool_id: delegate})
-    return await adapters.execute(step.tool_id, step.arguments)
+    read_only_adapters = ReadOnlyToolAdapters({step.tool_id: read_only_delegate})
+    return await read_only_adapters.execute(step.tool_id, step.arguments)
 
 
 async def _execute_domain_tool_legacy(
@@ -334,6 +372,7 @@ async def create_agent_run(
         call_id = f"step-{index}"
         if definition is None:
             raise HTTPException(status_code=400, detail="unknown tool")
+        approval_for_execution: Approval | None = None
         if definition.approval != "none":
             approval: Approval | None = approvals.get(call_id)
             if approval is None:
@@ -381,6 +420,7 @@ async def create_agent_run(
                         _idempotency_scope(request, "agent.run"), key, fingerprint, pending_response
                     )
                 return pending_response
+            approval_for_execution = approval
             try:
                 assert_approval_matches(
                     approval,
@@ -427,7 +467,13 @@ async def create_agent_run(
             status="running",
             started_at=started_at,
         )
-        result = await _execute_domain_tool(request, plan, index)
+        result = await _execute_domain_tool(
+            request,
+            plan,
+            index,
+            actor_id=payload.actor_id,
+            approval=approval_for_execution,
+        )
         status_value = str(result.get("status", "completed"))
         repository.save_tool_call(
             plan.run_id,
@@ -442,9 +488,16 @@ async def create_agent_run(
             started_at=started_at,
             completed_at=datetime.now(UTC),
         )
+        event_type = (
+            "tool_call.abstained"
+            if status_value == "abstained"
+            else "tool_call.failed"
+            if status_value in {"failed", "rejected"}
+            else "tool_call.completed"
+        )
         repository.events.emit(
             plan.run_id,
-            "tool_call.completed" if status_value != "abstained" else "tool_call.abstained",
+            event_type,
             status=status_value,
             tool_id=step.tool_id,
             call_id=call_id,
