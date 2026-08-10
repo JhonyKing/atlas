@@ -13,8 +13,10 @@ mutating, deleting, and publishing capabilities require a short-lived approval b
 tool version, target, normalized arguments, plan, and idempotency context. All runs emit an ordered,
 content-safe event envelope and preserve evidence/artifact IDs.
 
-The default planner label is GPT-5.6 Luna through the existing provider boundary. Provider output is
-never treated as authorization and a provider outage fails closed or abstains.
+The default planner is GPT-5.6 Luna through a dedicated Responses API adapter that returns only a
+strict `AgentPlanProposal` schema. The server validates that proposal against the catalog before
+creating an `AgentPlan`. Provider output is never treated as authorization; a provider outage uses
+the bounded deterministic fallback, while an invalid typed proposal fails closed.
 
 ## Consequences
 

@@ -100,11 +100,11 @@ def _result_ids(value: object) -> tuple[str, ...]:
 
 
 @router.post("/plans")
-def create_plan(payload: PlanCreateRequest, request: Request) -> dict[str, object]:
+async def create_plan(payload: PlanCreateRequest, request: Request) -> dict[str, object]:
     catalog = _tool_catalog(request)
     try:
         if payload.selected_tool is None:
-            plan = _planner(request).propose(payload.request, locale=payload.locale)
+            plan = await _planner(request).propose_async(payload.request, locale=payload.locale)
         else:
             definition = catalog.get(payload.selected_tool)
             if definition is None:

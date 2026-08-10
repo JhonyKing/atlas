@@ -3,6 +3,7 @@
 from datetime import timedelta
 from functools import partial
 from pathlib import Path
+from uuid import UUID
 
 import psycopg
 import uvicorn
@@ -69,8 +70,10 @@ from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpus
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
 from atlas.privacy.deletion import AccountDeletionService, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService
+from atlas.providers.openai_agent_planner import OpenAIAgentPlannerAdapter
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
+from atlas.providers.ports import AgentPlanProvider
 from atlas.reports.service import InMemoryReportService
 from atlas.retrieval.service import RetrievalService
 from atlas.uploads.deletion import UploadDeletionService
@@ -96,6 +99,7 @@ def create_app(
     private_resource_service: InMemoryOwnershipService | None = None,
     private_upload_pipeline: PrivateUploadPipeline | None = None,
     governance_service: InMemoryGovernanceRepository | None = None,
+    agent_plan_provider: AgentPlanProvider | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -163,7 +167,11 @@ def create_app(
     application.state.governance_service = governance_service
     application.state.agent_orchestrator = AgentOrchestrator()
     application.state.agent_tool_catalog = ToolCatalog.default()
-    application.state.agent_planner = AgentPlanner(application.state.agent_tool_catalog)
+    application.state.agent_planner = AgentPlanner(
+        application.state.agent_tool_catalog,
+        model=settings.atlas_answer_model,
+        proposal_provider=agent_plan_provider,
+    )
     application.state.agent_run_repository = InMemoryAgentRunRepository()
     application.state.agent_approvals = {}
     application.state.agent_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
@@ -222,13 +230,23 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
                 settings.openai_api_key and settings.openai_api_key.get_secret_value().strip()
             )
         )
-        answer_graph = DemoAnswerGraph()
+        client: AsyncOpenAI | None = None
+        planner_provider: AgentPlanProvider | None = None
+        answer_graph: CitedAnswerGraph | DemoAnswerGraph = DemoAnswerGraph()
         if real_provider and settings.openai_api_key is not None:
             client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
             safety_secret = (
                 settings.atlas_visitor_hmac_secret.get_secret_value()
                 if settings.atlas_visitor_hmac_secret is not None
                 else "atlas-development-only-visitor-secret"
+            )
+            planner_provider = OpenAIAgentPlannerAdapter(
+                client=client,
+                model=settings.atlas_answer_model,
+                safety_identifier=derive_safety_identifier(
+                    safety_secret,
+                    "development-anonymous-visitor",
+                ),
             )
             generator = OpenAIResponsesAdapter(
                 client=client,
@@ -281,8 +299,29 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             review_case_service=InMemoryReviewCaseService(),
             news_service=news_service,
             news_trace_sink=LangSmithTraceSink.from_settings(settings),
+            agent_plan_provider=planner_provider,
         )
     corpus_service = _verified_corpus_or_demo(settings)
+    client = (
+        AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
+        if settings.openai_api_key is not None
+        else None
+    )
+    planner_provider = None
+    if client is not None:
+        safety_secret = (
+            settings.atlas_visitor_hmac_secret.get_secret_value()
+            if settings.atlas_visitor_hmac_secret is not None
+            else "atlas-development-only-visitor-secret"
+        )
+        planner_provider = OpenAIAgentPlannerAdapter(
+            client=client,
+            model=settings.atlas_answer_model,
+            safety_identifier=derive_safety_identifier(
+                safety_secret,
+                "runtime-anonymous-visitor",
+            ),
+        )
     comparison_service = _comparison_service(
         settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
     )
@@ -297,6 +336,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         report_service=_report_service(settings, comparison_service=comparison_service),
         news_service=news_service,
         news_trace_sink=LangSmithTraceSink.from_settings(settings),
+        agent_plan_provider=planner_provider,
     )
 
 
@@ -318,6 +358,10 @@ def _comparison_service(
 ) -> InMemoryComparisonRunService:
     """Wire a fail-closed comparison coordinator into every runtime environment."""
 
+    def snapshot_id() -> UUID:
+        status = corpus_service.get_status()
+        return status.snapshot_id if status is not None else UUID(int=0)
+
     return InMemoryComparisonRunService(
         quota=ComparisonQuotaService(
             InMemoryComparisonQuotaRepository(
@@ -326,7 +370,7 @@ def _comparison_service(
             )
         ),
         repository=InMemoryComparisonRepository(),
-        snapshot_provider=lambda: corpus_service.get_status().snapshot_id,
+        snapshot_provider=snapshot_id,
         executor=executor,
         trace_sink=LangSmithTraceSink.from_settings(settings),
         model=settings.atlas_answer_model,

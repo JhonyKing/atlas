@@ -9,11 +9,23 @@ from decimal import Decimal
 from typing import Protocol, runtime_checkable
 from uuid import UUID
 
+from pydantic import BaseModel, ConfigDict, Field
+
+from atlas.agent.tools.registry import ToolCatalog
+from atlas.agent.tools.schemas import Locale, ToolCallRequest
 from atlas.domain import AnswerDraft, Evidence, Question
 
 
 class ProviderRefusal(RuntimeError):
     """The provider declined a question because it is outside supported scope."""
+
+
+class AgentPlanProposal(BaseModel):
+    """The only shape a model may return before ATLAS validates a plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    steps: list[ToolCallRequest] = Field(min_length=1, max_length=8)
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,6 +59,17 @@ class AnswerGenerator(Protocol):
         *,
         request_id: UUID | None = None,
     ) -> AnswerDraft: ...
+
+
+@runtime_checkable
+class AgentPlanProvider(Protocol):
+    async def propose(
+        self,
+        request: str,
+        catalog: ToolCatalog,
+        *,
+        locale: Locale,
+    ) -> AgentPlanProposal: ...
 
 
 @runtime_checkable

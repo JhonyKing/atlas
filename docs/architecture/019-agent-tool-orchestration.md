@@ -1,4 +1,4 @@
-# Feature 019 — agent tool orchestration
+# Feature 019 - agent tool orchestration
 
 ATLAS exposes a bounded agent surface rather than allowing an LLM to invoke arbitrary code. The
 planner produces a finite `AgentPlan`; the server validates it against the versioned catalog,
@@ -20,14 +20,17 @@ normalizes arguments, calculates a plan hash, and only then executes an allowlis
 ## Runtime flow
 
 ```text
-request → planner (GPT-5.6 Luna label) → typed plan → policy/approval gate
-       → bounded domain adapter → ordered safe events → evidence/artifact references
+request -> Responses planner (GPT-5.6 Luna) -> AgentPlanProposal
+        -> catalog/schema validation -> policy/approval gate
+        -> bounded domain adapter -> ordered safe events -> evidence/artifact references
 ```
 
+When the provider is unavailable, the planner uses the deterministic proposal function. This is an
+explicit fallback mode; it never fabricates provider success and it still passes through the same
+catalog and plan validation path.
+
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
-endpoint, explicit cancel/resume endpoints, and the approval decision endpoint. The local adapter
-is intentionally deterministic when a provider service is unavailable; it abstains instead of
-pretending that a tool ran.
+endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 
 ## Persistence and observability
 
@@ -42,4 +45,5 @@ never question text or tool arguments.
 - `evals/datasets/agent_tool_orchestration.jsonl`
 - `scripts/verify-agent-tools.ps1`
 - `docs/verification/019-agent-tool-orchestration.md`
+- `docs/verification/019-speckit-analysis.md`
 - `specs/019-agent-tool-orchestration/tasks.md`

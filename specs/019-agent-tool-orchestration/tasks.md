@@ -26,7 +26,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 ## Phase 3: Planning and authorization (P1)
 
 - [X] T013 [US2] Implement normalized argument validation, plan hash, finite dependency validation, budget, timeout, and expiry in `apps/backend/src/atlas/agent/planning.py`.
-- [ ] T014 [US2] Integrate GPT-5.6 Luna as the default planner through the existing provider adapter; parse model output into the typed plan and reject provider-specific objects in `apps/backend/src/atlas/agent/planner.py`.
+- [X] T014 [US2] Integrate GPT-5.6 Luna as the default planner through the existing provider adapter; parse model output into the typed plan and reject provider-specific objects in `apps/backend/src/atlas/agent/planner.py`.
 - [X] T015 [US3] Implement scope/ownership/consent/approval policy evaluation and redacted policy reasons in `apps/backend/src/atlas/agent/policy.py`.
 - [X] T016 [US3] Add approval and idempotency persistence/migration in `database/migrations/versions/` and repositories in `apps/backend/src/atlas/persistence/agent_runs.py`.
 - [X] T017 [US2] Add `POST /v1/agent/plans` and `POST /v1/agent/approvals/{approval_id}/decision` with stale-plan/argument mismatch checks in `apps/backend/src/atlas/api/routes/agent.py`.
@@ -61,7 +61,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 - [X] T034 [P] Update `docs/architecture/019-agent-tool-orchestration.md` and add an ADR for registry, trust boundaries, approval, events, and domain adapters.
 - [X] T035 [P] Update `README.md` with the agent workspace, tool catalog, local quickstart, demo journey, and evidence links.
 - [X] T036 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 019 and the mapping from existing features to tools.
-- [ ] T037 Run Speckit analyze after task generation and resolve critical gaps/contradictions before implementation.
+- [X] T037 Run Speckit analyze after task generation and resolve critical gaps/contradictions before implementation.
 - [ ] T038 Run full lint/typecheck/unit/integration/security/browser and deterministic evaluation gates; record evidence for each user story.
 - [ ] T039 Run Speckit converge after implementation and keep the feature open while mandatory tests, live evidence, or documentation remain pending.
 - [ ] T040 Commit focused vertical slices and update README/ADR/evidence after each completed feature increment.
@@ -88,7 +88,7 @@ enough to close the feature.
 ## Phase 8: Convergence
 
 - [ ] T041 [US3] Wire a managed Postgres `AgentRunRepository` to migration `0028_agent_tool_orchestration` and use it for production plan/run/call/event/approval persistence (FR-006, FR-008; partial).
-- [ ] T042 [US2] Connect `AgentPlanner` to the existing provider adapter for GPT-5.6 Luna proposals, parse the provider response into the typed plan, and preserve deterministic fallback mode (FR-013; partial).
+- [X] T042 [US2] Connect `AgentPlanner` to the existing provider adapter for GPT-5.6 Luna proposals, parse the provider response into the typed plan, and preserve deterministic fallback mode (FR-013; partial).
 - [ ] T043 [US3] Add an explicit idempotency key to plan/run/approval requests and enforce ownership, scope, quota, consent, and replay protection before any private or mutating adapter can execute (FR-006, FR-007; partial).
 - [ ] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; partial).
 - [ ] T045 [US2] Complete read-only result adapters so answer, comparison, report, news, and corpus outputs preserve provenance, source versions, bounded excerpts, typed evidence relations, and artifact links (FR-005, FR-009; partial).

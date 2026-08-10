@@ -49,8 +49,9 @@ Source, operations, and verification:
 ATLAS exposes its capabilities as a versioned, typed tool catalog. The agent can propose a bounded
 plan, preview the selected tool and arguments, request explicit approval for private or consequential
 actions, execute read-only domain adapters, and display ordered run events with evidence/artifact
-counts. GPT-5.6 Luna is the default planner label through the existing provider boundary; provider
-output never authorizes a tool.
+counts. When an OpenAI key is configured, GPT-5.6 Luna produces a structured proposal through the
+provider adapter; an outage uses the bounded deterministic fallback. Provider output never
+authorizes a tool.
 
 Run the deterministic verification from the repository root:
 

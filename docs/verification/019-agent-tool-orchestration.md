@@ -1,12 +1,17 @@
 # Feature 019 verification
 
-Executed on 2026-08-07 from branch `codex/019-agent-tool-orchestration`.
+Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 
 ## Local evidence
 
-- Backend agent contracts, policy, event, adapter, boundary, and API tests: **16 passed**.
+- Backend planner/provider, agent contracts, policy, event, adapter, boundary, and API tests:
+  **55 passed** (12 focused planner/provider/API tests plus 43 agent/security contract tests).
 - Ruff on agent/API/observability paths: **passed**.
 - Mypy on agent/API/observability paths: **passed**.
+- OpenAI planner contract: structured `AgentPlanProposal` parsed from the Responses API with
+  model `gpt-5.6-luna`; unknown tools and malformed arguments are rejected by the server catalog.
+- Provider outage behavior: `ProviderAdapterError` selects the bounded deterministic proposal;
+  provider-specific response objects never cross into the agent layer.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
 - Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.
@@ -28,4 +33,5 @@ review remains a deployment gate.
 
 The local repository implements the persistence contract in memory; managed Postgres repository
 wiring, live provider traces, latency/cost measurements, and production deployment evidence remain
-open under Feature 018/019 tasks. T040 is not closed by this deterministic verification.
+open under Feature 018/019 tasks. Feature 019 remains open until those mandatory tasks and
+convergence evidence are complete.
