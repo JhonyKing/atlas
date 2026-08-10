@@ -34,6 +34,10 @@ and the plan call/evidence budgets. A timeout, handler failure, or budget overfl
 failure event and stops the remaining plan; a cancellation before the next step records a terminal
 cancelled event without replaying the completed calls.
 
+Read-only API runs pass through `ReadOnlyToolAdapters` before invoking answer, comparison, report,
+news, or corpus services. The adapter copies arguments, bounds evidence/artifact references, and
+redacts provider/handler exceptions to a stable result envelope.
+
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 

@@ -18,7 +18,7 @@ from atlas.agent.planning import AgentPlan, PlanValidationError, validate_plan
 from atlas.agent.policy import Approval, PolicyError, assert_approval_matches, issue_approval
 from atlas.agent.review import ReviewService
 from atlas.agent.state import AtlasState
-from atlas.agent.tools.read_only import bounded_result
+from atlas.agent.tools.read_only import ReadOnlyToolAdapters, bounded_result, is_read_only_tool
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import Locale, ToolCallRequest, validate_json_object
 from atlas.agent.tools.side_effects import abstained_result
@@ -150,6 +150,22 @@ async def create_plan(payload: PlanCreateRequest, request: Request) -> dict[str,
 
 
 async def _execute_domain_tool(
+    request: Request, plan: AgentPlan, step_index: int
+) -> dict[str, object]:
+    """Route read-only calls through the typed adapter boundary before domain services."""
+
+    step = plan.steps[step_index]
+    if not is_read_only_tool(step.tool_id):
+        return await _execute_domain_tool_legacy(request, plan, step_index)
+
+    async def delegate(_arguments: dict[str, object]) -> dict[str, object]:
+        return await _execute_domain_tool_legacy(request, plan, step_index)
+
+    adapters = ReadOnlyToolAdapters({step.tool_id: delegate})
+    return await adapters.execute(step.tool_id, step.arguments)
+
+
+async def _execute_domain_tool_legacy(
     request: Request, plan: AgentPlan, step_index: int
 ) -> dict[str, object]:
     """Delegate read-only tools to the existing domain services and preserve their IDs."""
