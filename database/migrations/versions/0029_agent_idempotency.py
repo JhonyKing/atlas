@@ -4,7 +4,7 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision = "0029_agent_idempotency"
+revision = "agent_idempotency"
 down_revision = "0028_agent_tool_orchestration"
 branch_labels = None
 depends_on = None

@@ -47,7 +47,8 @@ handler failure produces a safe non-mutating result.
 
 Plan, run, and approval endpoints accept an `Idempotency-Key`. The local replay store returns the
 original response for the same fingerprint and rejects a conflicting reuse with 409. Non-development
-runtimes use the PostgreSQL replay store from migration `0029_agent_idempotency`, scoped by an
+runtimes use the PostgreSQL replay store from migration `agent_idempotency` (repository file
+`0029_agent_idempotency.py`), scoped by an
 opaque visitor hash; quota/consent convergence and production activation remain open.
 
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
@@ -56,7 +57,7 @@ endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 ## Persistence and observability
 
 Migration `0028_agent_tool_orchestration` adds private-schema tables for plans, runs, tool calls,
-ordered events, and approvals. Migration `0029_agent_idempotency` adds the scoped replay table.
+ordered events, and approvals. Migration `agent_idempotency` adds the scoped replay table.
 The local repository is an in-memory adapter with the same contract; non-development runtimes use
 PostgreSQL for plans, runs, ordered events, tool-call records, approvals, and idempotency responses.
 Approval rows are written after the run exists so the foreign-key boundary remains valid. LangSmith

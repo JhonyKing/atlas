@@ -24,10 +24,10 @@ def test_readyz_requires_migration_head() -> None:
 def test_readyz_is_ready_when_database_and_migrations_are_ready() -> None:
     app = create_app(database_probe=ready_probe)
     app.state.migration_status = "ready"
-    app.state.migration_revision = "0029_agent_idempotency"
+    app.state.migration_revision = "agent_idempotency"
     with TestClient(app) as client:
         response = client.get("/readyz")
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "ready"
-    assert payload["migration_revision"] == "0029_agent_idempotency"
+    assert payload["migration_revision"] == "agent_idempotency"

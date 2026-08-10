@@ -23,8 +23,8 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected chain currently contains 29 revisions and ends at
-`0029_agent_idempotency`.
+The expected chain currently contains 29 revisions and ends at the repository file
+`0029_agent_idempotency.py` (revision name `agent_idempotency`).
 
 For a repeatable read-only check, export the bounded project state from the authenticated MCP as
 JSON and run:

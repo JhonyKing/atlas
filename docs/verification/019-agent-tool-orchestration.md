@@ -36,9 +36,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 ## Supabase evidence
 
 Migration `0028_agent_tool_orchestration` was applied to project `fcbclsaytbjpywlaplbh` through the
-Supabase MCP migration tool. The repository now includes `0029_agent_idempotency`; it is not yet
-reported by the remote migration list. Once applied, the `atlas` schema will also contain
-`agent_idempotency_records`.
+Supabase MCP migration tool. The repository file `0029_agent_idempotency.py` is applied remotely
+under the migration name `agent_idempotency`; the remote list reports 29 revisions and the `atlas`
+schema contains `agent_idempotency_records`.
 The SQL grants revoke public access and grant only the existing `atlas_worker`/`atlas_readonly`
 roles. No user or private document data was seeded.
 

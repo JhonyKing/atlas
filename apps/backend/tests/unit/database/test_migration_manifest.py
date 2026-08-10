@@ -14,7 +14,7 @@ def test_repository_contains_one_ordered_29_revision_chain() -> None:
 
     assert len(manifest) == 29
     assert manifest[0].revision_id == "0001_foundation"
-    assert manifest[-1].revision_id == "0029_agent_idempotency"
+    assert manifest[-1].revision_id == "agent_idempotency"
     assert all(item.sha256 for item in manifest)
     assert all(
         current.down_revision == previous.revision_id
