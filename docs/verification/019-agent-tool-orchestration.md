@@ -25,7 +25,7 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   approval mismatch, bound-target mismatch, missing approval, missing consent, anonymous access,
   ownership denial, and handler errors remain non-mutating. The API contract now records rejected
   side-effect calls as failed tool events instead of treating them as successful completions.
-- PostgreSQL persistence contract tests: **10 passed** for plan round-trip, ordered event reconnect,
+- PostgreSQL persistence contract tests: **11 passed** for plan round-trip, ordered event reconnect,
   checkpoint integrity/replay conflict, cross-repository checkpoint claim, and approval/tool-call
   round-trips, atomic event-lock ordering, durable run-actor persistence, and terminal-run replay
   protection. The non-development runtime selects these adapters, and API execution records each
@@ -34,7 +34,7 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; durable saves
   use the unique scope/key constraint as the concurrent-write guard. The migration still needs to
   be applied to the hosted project before production activation.
-- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **47 tests**, Ruff/mypy across
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **48 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
