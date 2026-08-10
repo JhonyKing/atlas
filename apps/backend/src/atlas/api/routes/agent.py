@@ -117,6 +117,7 @@ class RunCreateRequest(BaseModel):
     plan_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     actor_id: str = Field(default="anonymous", min_length=1, max_length=128)
     approval_ids: list[str] = Field(default_factory=list, max_length=8)
+    consent: bool = False
 
 
 class ApprovalDecisionRequest(BaseModel):
@@ -226,6 +227,7 @@ async def _execute_domain_tool(
     *,
     actor_id: str,
     approval: Approval | None,
+    consent: bool,
 ) -> dict[str, object]:
     """Route read-only calls through the typed adapter boundary before domain services."""
 
@@ -258,6 +260,7 @@ async def _execute_domain_tool(
                 plan=plan,
                 actor_id=actor_id,
                 approval=approval,
+                consent=consent,
             )
         return await _execute_domain_tool_legacy(request, plan, step_index)
 
@@ -553,6 +556,7 @@ async def create_agent_run(
             index,
             actor_id=payload.actor_id,
             approval=approval_for_execution,
+            consent=payload.consent,
         )
         status_value = str(result.get("status", "completed"))
         repository.save_tool_call(

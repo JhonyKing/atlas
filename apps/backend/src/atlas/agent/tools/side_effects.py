@@ -53,6 +53,7 @@ class SideEffectToolAdapters:
         plan: AgentPlan,
         actor_id: str,
         approval: Approval | None = None,
+        consent: bool | None = None,
     ) -> dict[str, object]:
         definition = self._catalog.get(tool_id)
         if definition is None or not requires_explicit_approval(tool_id):
@@ -61,6 +62,8 @@ class SideEffectToolAdapters:
             return _rejected("actor_missing")
         if approval is None:
             return abstained_result_with_reason("approval_required")
+        if consent is False:
+            return _rejected("consent_required")
         try:
             assert_approval_matches(
                 approval,

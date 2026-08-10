@@ -42,11 +42,11 @@ typed evidence relations. Unknown handler fields and provider/handler exceptions
 the stable result envelope.
 
 Side-effect adapters are separate. `SideEffectToolAdapters` requires a matching, unexpired
-approval bound to the plan, actor, tool version, and normalized arguments, then checks authenticated
-ownership for private tools before invoking a handler. Missing approval, ownership denial, or
-handler failure produces a safe non-mutating result. The agent run route now crosses this adapter
-boundary for private tools; anonymous actors and unknown owners are rejected before the legacy
-domain delegate can run.
+approval bound to the plan, actor, tool version, and normalized arguments, plus an explicit
+consent signal from the run, then checks authenticated ownership for private tools before invoking
+a handler. Missing approval/consent, ownership denial, or handler failure produces a safe
+non-mutating result. The agent run route now crosses this adapter boundary for private tools;
+anonymous actors and unknown owners are rejected before the legacy domain delegate can run.
 
 Plan, run, and approval endpoints accept an `Idempotency-Key`. The local replay store returns the
 original response for the same fingerprint and rejects a conflicting reuse with 409. Non-development

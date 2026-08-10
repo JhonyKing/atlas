@@ -21,10 +21,10 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - The agent `daily_news` path now derives a stable `news:<content_sha256>` evidence reference from
   the reviewed candidate, preserves publisher/URL/capture metadata in the bounded adapter result,
   and abstains cleanly when no previous-day candidate exists.
-- Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
-  approval mismatch, bound-target mismatch, missing approval, anonymous access, ownership denial,
-  and handler errors remain non-mutating. The API contract now records rejected side-effect calls as
-  failed tool events instead of treating them as successful completions.
+- Side-effect adapter/policy tests: **48 passed** in the focused policy/agent/contract run;
+  approval mismatch, bound-target mismatch, missing approval, missing consent, anonymous access,
+  ownership denial, and handler errors remain non-mutating. The API contract now records rejected
+  side-effect calls as failed tool events instead of treating them as successful completions.
 - PostgreSQL persistence contract tests: **10 passed** for plan round-trip, ordered event reconnect,
   checkpoint integrity/replay conflict, cross-repository checkpoint claim, and approval/tool-call
   round-trips, atomic event-lock ordering, durable run-actor persistence, and terminal-run replay
