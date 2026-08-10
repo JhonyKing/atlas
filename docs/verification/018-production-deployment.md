@@ -4,6 +4,8 @@
 
 - Backend: **377 passed, 4 skipped, 3 warnings** from the repository root.
 - Deployment contract/readiness/release-evidence/managed-environment/rollback suites pass.
+- Managed-environment contract fixtures now cover the migration head, RLS/private SQL contracts,
+  no-localhost pool boundary, and distinct preview/production templates.
 - Ruff passes for the changed backend, observability, deployment tests, and release scripts.
 - Targeted mypy passes for changed deployment/config/health/pool/telemetry modules.
 - `git diff --check` passes.
@@ -12,6 +14,8 @@
 - Frontend TypeScript and targeted ESLint pass using Node 24. Vitest passes **30 tests in 10
   files** when invoked with Node 24 directly; the default system Node 20 invocation fails with an
   ESM worker incompatibility, so CI must use the repository's Node 24 requirement.
+- Deployment Playwright contract parses successfully with four intentional skips when no hosted
+  origin is configured; it will execute only after `ATLAS_DEPLOYMENT_WEB_ORIGIN` is supplied.
 - Docker image `atlas-api:deployment-contract` builds successfully from the repository root and
   imports `atlas` inside the resulting image; the first two build attempts exposed and fixed
   invalid lockfile/image-context assumptions.

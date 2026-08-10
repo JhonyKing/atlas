@@ -12,7 +12,7 @@ Vercel, Supabase, or managed-container account already exists.
 - [X] T003 [US3] Add JSON-schema validation tests for `specs/018-production-deployment/contracts/release-evidence.schema.json` in `apps/backend/tests/contract/test_release_evidence_schema.py`.
 - [X] T004 [US3] Add a failing secret-boundary test that scans browser bundles, logs, traces, and evidence artifacts for prohibited keys in `scripts/verify-deployment-secrets.ps1` and `apps/backend/tests/security/test_deployment_secret_boundary.py`.
 - [ ] T005 [US1] Add Playwright smoke journeys for deployed root/locale, API origin, Spanish labels, cited-answer/abstention, comparison, report, news, and corpus status in `apps/web/tests/e2e/deployment.spec.ts` (current file is a hosted-locale contract skeleton; full journey remains operator-gated).
-- [ ] T006 [US2] Add backend smoke contract fixtures for Supabase-like migration head, RLS ownership, private deletion, connection failure, and no-localhost fallback in `apps/backend/tests/integration/deployment/test_managed_environment.py` (manifest/environment checks exist; managed data smoke remains open).
+- [X] T006 [US2] Add backend smoke contract fixtures for Supabase-like migration head, RLS ownership, private deletion, connection failure, and no-localhost fallback in `apps/backend/tests/integration/deployment/test_managed_environment.py`. Local contract fixtures pass; live managed-data execution remains T031/T034.
 
 ## Phase 2: Environment and runtime foundation (P1)
 
