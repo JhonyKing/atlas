@@ -290,13 +290,23 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .sources-page .corpus-status-message { margin: 0; }
 .admin-page { display: grid; gap: 1.25rem; max-width: 68rem; }
 .admin-panel > p { color: var(--atlas-text-secondary); }
+.admin-panel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.admin-panel-toolbar p { margin: .5rem 0 0; color: var(--atlas-text-secondary); }
 .review-panel { max-width: 60rem; }
 .review-form-grid { display: grid; grid-template-columns: minmax(12rem, .75fr) minmax(18rem, 1.5fr); gap: 1rem; align-items: end; margin-top: 1.25rem; }
-.review-proposal textarea { min-height: 7rem; resize: vertical; }
+.review-form-grid [data-field="review-proposal"] { grid-column: 1 / -1; }
+.review-form-grid [data-field="review-proposal"] textarea { min-height: 7rem; resize: vertical; }
 .review-panel > .actions { margin-top: 1rem; }
 .review-decision-actions { flex-wrap: wrap; }
 .governance-panel { max-width: 68rem; }
 .governance-panel > p[aria-live] { margin: .5rem 0 0; }
+.governance-card { display: grid; gap: .6rem; }
+.governance-card-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.governance-policy { color: var(--atlas-indigo); font-size: .78rem; font-weight: 750; }
+.governance-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; margin: 0; }
+.governance-metrics div { border-left: 2px solid var(--atlas-border-strong); padding-left: .5rem; }
+.governance-metrics dt { color: var(--atlas-text-muted); font-size: .72rem; }
+.governance-metrics dd { margin: .1rem 0 0; color: var(--atlas-text); font-weight: 750; }
 .atlas-file-upload { margin-top: 1rem; }
 .atlas-file-upload input { border: 0; padding: 0; background: transparent; }
 .atlas-file-upload-title { color: var(--atlas-text); font-weight: 700; }
@@ -335,6 +345,8 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .daily-news-heading { display: grid; gap: .35rem; }
   .daily-news-heading time { white-space: normal; }
   .review-form-grid { grid-template-columns: 1fr; align-items: stretch; }
+  .admin-panel-toolbar { align-items: flex-start; }
+  .governance-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .review-panel > .actions { margin-top: .75rem; }
 }
 
