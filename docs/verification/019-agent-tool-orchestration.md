@@ -24,6 +24,8 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   and checkpoint integrity/replay conflict. The non-development runtime selects these adapters.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   local store is intentionally process-local until the durable idempotency convergence task lands.
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **33 tests**, Ruff/mypy across
+  **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
 - Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.
