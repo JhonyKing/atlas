@@ -11,7 +11,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
-from atlas.agent.checkpoints import InMemoryCheckpointRepository
+from atlas.agent.checkpoints import CheckpointRepository
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.planner import AgentPlanner
 from atlas.agent.planning import AgentPlan, PlanValidationError, validate_plan
@@ -27,7 +27,7 @@ from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
 from atlas.observability.context import current_request_id
 from atlas.observability.langsmith import TraceHandle, TraceSink
-from atlas.persistence.agent_runs import InMemoryAgentRunRepository
+from atlas.persistence.agent_runs import AgentRunRepository
 from atlas.reports.schemas import ReportFormat, ReportLocale, ReportSpec
 
 router = APIRouter(prefix="/v1/agent", tags=["Agent orchestration"])
@@ -41,8 +41,8 @@ def _planner(request: Request) -> AgentPlanner:
     return cast(AgentPlanner, request.app.state.agent_planner)
 
 
-def _runs(request: Request) -> InMemoryAgentRunRepository:
-    return cast(InMemoryAgentRunRepository, request.app.state.agent_run_repository)
+def _runs(request: Request) -> AgentRunRepository:
+    return cast(AgentRunRepository, request.app.state.agent_run_repository)
 
 
 @router.get("/tools")
@@ -447,8 +447,8 @@ def _review(request: Request) -> ReviewService:
     return cast(ReviewService, request.app.state.agent_review_service)
 
 
-def _checkpoints(request: Request) -> InMemoryCheckpointRepository:
-    return cast(InMemoryCheckpointRepository, request.app.state.agent_checkpoint_service)
+def _checkpoints(request: Request) -> CheckpointRepository:
+    return cast(CheckpointRepository, request.app.state.agent_checkpoint_service)
 
 
 @router.post("/prepare")

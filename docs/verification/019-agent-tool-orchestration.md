@@ -20,6 +20,8 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating.
+- PostgreSQL persistence contract tests: **3 passed** for plan round-trip, ordered event reconnect,
+  and checkpoint integrity/replay conflict. The non-development runtime selects these adapters.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
 - Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.
@@ -39,7 +41,6 @@ review remains a deployment gate.
 
 ## Remaining honest gaps
 
-The local repository implements the persistence contract in memory; managed Postgres repository
-wiring, live provider traces, latency/cost measurements, and production deployment evidence remain
-open under Feature 018/019 tasks. Feature 019 remains open until those mandatory tasks and
-convergence evidence are complete.
+Durable tool-call/approval writes, cross-process checkpoint claims, live provider traces,
+latency/cost measurements, and production deployment evidence remain open under Feature 018/019
+tasks. Feature 019 remains open until those mandatory tasks and convergence evidence are complete.

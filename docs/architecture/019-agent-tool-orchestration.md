@@ -50,9 +50,10 @@ endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 
 Migration `0028_agent_tool_orchestration` adds private-schema tables for plans, runs, tool calls,
 ordered events, and approvals. The current local repository is an in-memory adapter with the same
-contract; production wiring to the managed repository remains a deployment task. LangSmith receives
-only bounded tags and scalar metadata (plan hash, run ID, locale, tool count, budgets, and outcome),
-never question text or tool arguments.
+contract; the PostgreSQL adapter now persists plans, runs, ordered events, and checkpoints for
+non-development runtimes. Durable tool-call/approval rows and cross-process replay claims remain
+open convergence work. LangSmith receives only bounded tags and scalar metadata (plan hash, run ID,
+locale, tool count, budgets, and outcome), never question text or tool arguments.
 
 ## Evidence
 

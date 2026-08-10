@@ -4,10 +4,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from typing import Any, Protocol
 from uuid import UUID
+
+from psycopg import Connection
+from psycopg.types.json import Jsonb
 
 from atlas.agent.events import AgentRunEvent, InMemoryEventStore
 from atlas.agent.planning import AgentPlan
+from atlas.agent.tools.schemas import ToolCallRequest
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,6 +24,24 @@ class AgentRunRecord:
     status: str
     created_at: datetime
     output: dict[str, object]
+
+
+class AgentRunRepository(Protocol):
+    events: Any
+
+    def save_plan(self, plan: AgentPlan) -> AgentPlan: ...
+
+    def get_plan(self, plan_hash: str) -> AgentPlan | None: ...
+
+    def create_run(self, plan: AgentPlan) -> AgentRunRecord: ...
+
+    def update(
+        self, run_id: UUID, *, status: str, output: dict[str, object] | None = None
+    ) -> AgentRunRecord: ...
+
+    def get(self, run_id: UUID) -> AgentRunRecord | None: ...
+
+    def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]: ...
 
 
 class InMemoryAgentRunRepository:
@@ -65,6 +88,218 @@ class InMemoryAgentRunRepository:
 
     def get(self, run_id: UUID) -> AgentRunRecord | None:
         return self._runs.get(run_id)
+
+    def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:
+        return self.events.list(run_id, after_sequence=after_sequence)
+
+
+class PostgresAgentEventStore:
+    """Append-only PostgreSQL event store with the same API as the in-memory store."""
+
+    def __init__(self, connection: Connection) -> None:
+        self._connection = connection
+
+    def emit(
+        self,
+        run_id: UUID,
+        event_type: str,
+        *,
+        status: str,
+        **kwargs: object,
+    ) -> AgentRunEvent:
+        sequence_row = self._connection.execute(
+            "SELECT coalesce(max(sequence), 0) + 1 FROM atlas.agent_run_events WHERE run_id = %s",
+            (run_id,),
+        ).fetchone()
+        sequence = int(sequence_row[0]) if sequence_row is not None else 1
+        event = AgentRunEvent.model_validate(
+            {
+                "run_id": run_id,
+                "sequence": sequence,
+                "event_type": event_type,
+                "status": status,
+                **kwargs,
+            }
+        )
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_run_events(
+              run_id, sequence, event_type, status, call_id, tool_id, tool_version,
+              evidence_ids, artifact_ids, error_category, correlation_id, trace_id, occurred_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                event.run_id,
+                event.sequence,
+                event.event_type,
+                event.status,
+                event.call_id,
+                event.tool_id,
+                event.tool_version,
+                list(event.evidence_ids),
+                list(event.artifact_ids),
+                event.error_category,
+                event.correlation_id,
+                event.trace_id,
+                event.occurred_at,
+            ),
+        )
+        self._connection.commit()
+        return event
+
+    def list(self, run_id: UUID, *, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:
+        rows = self._connection.execute(
+            """
+            SELECT run_id, sequence, event_type, occurred_at, correlation_id, tool_id,
+                   tool_version, call_id, status, evidence_ids, artifact_ids, error_category,
+                   trace_id
+            FROM atlas.agent_run_events
+            WHERE run_id = %s AND sequence > %s
+            ORDER BY sequence
+            """,
+            (run_id, after_sequence),
+        ).fetchall()
+        return tuple(
+            AgentRunEvent.model_validate(
+                {
+                    "run_id": row[0],
+                    "sequence": row[1],
+                    "event_type": row[2],
+                    "occurred_at": row[3],
+                    "correlation_id": row[4],
+                    "tool_id": row[5],
+                    "tool_version": row[6],
+                    "call_id": row[7],
+                    "status": row[8],
+                    "evidence_ids": tuple(row[9] or ()),
+                    "artifact_ids": tuple(row[10] or ()),
+                    "error_category": row[11],
+                    "trace_id": row[12],
+                }
+            )
+            for row in rows
+        )
+
+
+class PostgresAgentRunRepository:
+    """Durable plan/run/event repository for the migration 0028 contract."""
+
+    def __init__(self, connection: Connection) -> None:
+        self._connection = connection
+        self.events = PostgresAgentEventStore(connection)
+
+    def save_plan(self, plan: AgentPlan) -> AgentPlan:
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_plans(
+              run_id, plan_hash, request, locale, model_label, steps, risk_summary,
+              budget, expires_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (plan_hash) DO UPDATE SET
+              request = EXCLUDED.request, steps = EXCLUDED.steps, budget = EXCLUDED.budget,
+              expires_at = EXCLUDED.expires_at
+            """,
+            (
+                plan.run_id,
+                plan.plan_hash,
+                plan.request,
+                plan.locale,
+                plan.model_label,
+                Jsonb([step.model_dump(mode="json") for step in plan.steps]),
+                Jsonb(list(plan.risk_summary)),
+                Jsonb(plan.budget),
+                plan.expires_at,
+            ),
+        )
+        self._connection.commit()
+        return plan
+
+    def get_plan(self, plan_hash: str) -> AgentPlan | None:
+        row = self._connection.execute(
+            """
+            SELECT run_id, request, locale, model_label, steps, risk_summary, budget,
+                   expires_at, plan_hash
+            FROM atlas.agent_plans WHERE plan_hash = %s
+            """,
+            (plan_hash,),
+        ).fetchone()
+        if row is None:
+            return None
+        return AgentPlan(
+            run_id=row[0],
+            request=row[1],
+            locale=row[2],
+            model_label=row[3],
+            steps=tuple(ToolCallRequest.model_validate(value) for value in row[4]),
+            risk_summary=tuple(row[5] or ()),
+            budget=dict(row[6]),
+            expires_at=row[7],
+            plan_hash=row[8],
+        )
+
+    def create_run(self, plan: AgentPlan) -> AgentRunRecord:
+        plan_row = self._connection.execute(
+            "SELECT id FROM atlas.agent_plans WHERE plan_hash = %s", (plan.plan_hash,)
+        ).fetchone()
+        if plan_row is None:
+            raise KeyError("plan not found")
+        created_at = datetime.now(UTC)
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_runs(
+              id, plan_id, actor_id, status, output, created_at, updated_at
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO NOTHING
+            """,
+            (plan.run_id, plan_row[0], "anonymous", "accepted", Jsonb({}), created_at, created_at),
+        )
+        self._connection.commit()
+        return AgentRunRecord(
+            plan.run_id, plan.request, plan.locale, plan.plan_hash, "accepted", created_at, {}
+        )
+
+    def update(
+        self, run_id: UUID, *, status: str, output: dict[str, object] | None = None
+    ) -> AgentRunRecord:
+        current = self.get(run_id)
+        if current is None:
+            raise KeyError(run_id)
+        resolved_output = output if output is not None else current.output
+        self._connection.execute(
+            """
+            UPDATE atlas.agent_runs
+            SET status = %s, output = %s, updated_at = now()
+            WHERE id = %s
+            """,
+            (status, Jsonb(resolved_output), run_id),
+        )
+        self._connection.commit()
+        return AgentRunRecord(
+            current.run_id,
+            current.request,
+            current.locale,
+            current.plan_hash,
+            status,
+            current.created_at,
+            resolved_output,
+        )
+
+    def get(self, run_id: UUID) -> AgentRunRecord | None:
+        row = self._connection.execute(
+            """
+            SELECT r.id, p.request, p.locale, p.plan_hash, r.status, r.created_at, r.output
+            FROM atlas.agent_runs AS r
+            JOIN atlas.agent_plans AS p ON p.id = r.plan_id
+            WHERE r.id = %s
+            """,
+            (run_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return AgentRunRecord(
+            row[0], row[1], row[2], row[3], row[4], row[5], dict(row[6] or {})
+        )
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:
         return self.events.list(run_id, after_sequence=after_sequence)

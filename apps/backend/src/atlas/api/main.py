@@ -11,7 +11,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
-from atlas.agent.checkpoints import InMemoryCheckpointRepository
+from atlas.agent.checkpoints import (
+    CheckpointRepository,
+    InMemoryCheckpointRepository,
+    PostgresCheckpointRepository,
+)
 from atlas.agent.cited_answer_graph import CitedAnswerDependencies, CitedAnswerGraph
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.planner import AgentPlanner
@@ -59,7 +63,11 @@ from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink, TraceSink
-from atlas.persistence.agent_runs import InMemoryAgentRunRepository
+from atlas.persistence.agent_runs import (
+    AgentRunRepository,
+    InMemoryAgentRunRepository,
+    PostgresAgentRunRepository,
+)
 from atlas.persistence.comparison_quota import (
     ComparisonQuotaService,
     InMemoryComparisonQuotaRepository,
@@ -100,6 +108,8 @@ def create_app(
     private_upload_pipeline: PrivateUploadPipeline | None = None,
     governance_service: InMemoryGovernanceRepository | None = None,
     agent_plan_provider: AgentPlanProvider | None = None,
+    agent_run_repository: AgentRunRepository | None = None,
+    agent_checkpoint_service: CheckpointRepository | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -172,13 +182,15 @@ def create_app(
         model=settings.atlas_answer_model,
         proposal_provider=agent_plan_provider,
     )
-    application.state.agent_run_repository = InMemoryAgentRunRepository()
+    application.state.agent_run_repository = agent_run_repository or InMemoryAgentRunRepository()
     application.state.agent_approvals = {}
     application.state.agent_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
         settings
     )
     application.state.agent_review_service = ReviewService()
-    application.state.agent_checkpoint_service = InMemoryCheckpointRepository()
+    application.state.agent_checkpoint_service = (
+        agent_checkpoint_service or InMemoryCheckpointRepository()
+    )
     application.state.account_deletion_service = (
         AccountDeletionService(
             private_resource_service,
@@ -302,6 +314,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             agent_plan_provider=planner_provider,
         )
     corpus_service = _verified_corpus_or_demo(settings)
+    agent_run_repository, agent_checkpoint_service = _durable_agent_repositories(settings)
     client = (
         AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
         if settings.openai_api_key is not None
@@ -337,7 +350,21 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         news_service=news_service,
         news_trace_sink=LangSmithTraceSink.from_settings(settings),
         agent_plan_provider=planner_provider,
+        agent_run_repository=agent_run_repository,
+        agent_checkpoint_service=agent_checkpoint_service,
     )
+
+
+def _durable_agent_repositories(
+    settings: Settings,
+) -> tuple[AgentRunRepository, CheckpointRepository]:
+    """Use managed PostgreSQL for non-development runtimes."""
+
+    dsn = settings.database_url.get_secret_value().replace(
+        "postgresql+psycopg://", "postgresql://", 1
+    )
+    connection = psycopg.connect(dsn)
+    return PostgresAgentRunRepository(connection), PostgresCheckpointRepository(connection)
 
 
 def _news_service(settings: Settings) -> DailyNewsProvider | None:
