@@ -33,7 +33,7 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; the new
   migration still needs to be applied to the hosted project before production activation.
-- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **35 tests**, Ruff/mypy across
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **47 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
