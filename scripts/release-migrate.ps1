@@ -1,7 +1,7 @@
 param(
     [string]$DatabaseUrl = $env:ATLAS_DATABASE_URL,
     [switch]$DryRun,
-    [string]$ExpectedHead = "agent_checkpoint_claims"
+    [string]$ExpectedHead = "agent_tool_rls"
 )
 
 $ErrorActionPreference = "Stop"

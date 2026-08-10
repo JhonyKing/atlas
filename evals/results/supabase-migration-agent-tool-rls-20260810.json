@@ -1,0 +1,56 @@
+{
+  "run_id": "supabase-verify-agent-tool-rls-20260810",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "production",
+  "mode": "verify",
+  "started_at": "2026-08-10T23:40:00Z",
+  "finished_at": "2026-08-10T23:40:12Z",
+  "repository_head": "agent_tool_rls",
+  "repository_revisions": ["agent_tool_rls"],
+  "remote_revisions": ["agent_checkpoint_claims"],
+  "applied_revisions": [],
+  "schema_inventory": {
+    "repository_migration_present": true,
+    "remote_head_before_owner_approval": "agent_checkpoint_claims",
+    "remote_revision_count": 30,
+    "agent_tool_rls_application": "blocked_pending_owner_policy_approval",
+    "security_advisor_rls_disabled_table_count": 48
+  },
+  "checks": [
+    {
+      "name": "repository_agent_tool_rls_revision",
+      "status": "passed",
+      "elapsed_ms": 12.0,
+      "detail": "The repository manifest contains agent_tool_rls after agent_checkpoint_claims."
+    },
+    {
+      "name": "remote_revision_head",
+      "status": "passed",
+      "elapsed_ms": 80.0,
+      "detail": "The hosted project remains at agent_checkpoint_claims with 30 revisions."
+    },
+    {
+      "name": "agent_tool_rls_hosted_application",
+      "status": "blocked",
+      "elapsed_ms": 120.0,
+      "detail": "MCP rejected FORCE RLS and global worker/read-only policies pending explicit owner approval."
+    },
+    {
+      "name": "rls_security_advisor",
+      "status": "blocked",
+      "elapsed_ms": 144.0,
+      "detail": "Supabase reports RLS disabled on 48 atlas tables; policy design remains required."
+    }
+  ],
+  "drift": [
+    {
+      "kind": "policy",
+      "object_name": "atlas durable agent tables",
+      "expected": "agent_tool_rls is applied with reviewed worker/read-only policies.",
+      "actual": "The repository migration is ready but the hosted project remains at agent_checkpoint_claims.",
+      "severity": "blocking",
+      "resolution": "Owner reviews the policy design, then applies agent_tool_rls through the Supabase MCP."
+    }
+  ],
+  "status": "blocked"
+}

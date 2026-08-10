@@ -46,10 +46,13 @@ Supabase MCP migration tool. The repository files `0029_agent_idempotency.py` an
 The SQL grants revoke public access and grant only the existing `atlas_worker`/`atlas_readonly`
 roles. No user or private document data was seeded.
 
-The Supabase security advisor still reports the project-wide informational/critical RLS-disabled
-lint for private `atlas` tables. This is not auto-remediated: enabling RLS without explicit policies
-would block worker access. The existing migrations revoke public privileges; a production policy
-review remains a deployment gate.
+The repository now contains migration `0031_agent_tool_rls.py` plus SQL contract
+`database/tests/015_agent_tool_rls.sql` for the seven durable agent tables. The hosted MCP rejected
+automatic application because `FORCE RLS` and global worker/read-only policies require explicit
+owner approval of the access design. The remote project therefore remains at 30 revisions; this is
+an intentional pending deployment gate, not a claim that hosted RLS is complete. The Supabase
+security advisor also still reports the project-wide RLS-disabled lint for the other private
+`atlas` tables.
 
 ## Remaining honest gaps
 

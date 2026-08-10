@@ -23,8 +23,10 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected chain currently contains 30 revisions and ends at the repository file
-`0030_agent_checkpoint_claims.py` (revision name `agent_checkpoint_claims`).
+The expected chain currently contains 31 revisions and ends at the repository file
+`0031_agent_tool_rls.py` (revision name `agent_tool_rls`). This migration enables explicit RLS
+policies for the durable Feature 019 agent tables; apply it only after the owner approves the
+worker/read-only policy design.
 
 For a repeatable read-only check, export the bounded project state from the authenticated MCP as
 JSON and run:
@@ -67,7 +69,7 @@ Rerun inspection before attempting recovery.
 
 ## Definition of done
 
-- All 30 revisions are applied or explicitly recorded as already present.
+- All 31 revisions are applied or explicitly recorded as already present.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

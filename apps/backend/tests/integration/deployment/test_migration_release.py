@@ -7,7 +7,7 @@ ROOT = Path(__file__).parents[5]
 
 def test_release_script_defaults_to_current_migration_head() -> None:
     script = (ROOT / "scripts/release-migrate.ps1").read_text(encoding="utf-8")
-    assert 'agent_checkpoint_claims' in script
+    assert 'agent_tool_rls' in script
     assert "$DryRun" in script
     assert "alembic" in script
 
