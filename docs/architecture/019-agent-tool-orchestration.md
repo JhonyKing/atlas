@@ -38,6 +38,11 @@ Read-only API runs pass through `ReadOnlyToolAdapters` before invoking answer, c
 news, or corpus services. The adapter copies arguments, bounds evidence/artifact references, and
 redacts provider/handler exceptions to a stable result envelope.
 
+Side-effect adapters are separate. `SideEffectToolAdapters` requires a matching, unexpired
+approval bound to the plan, actor, tool version, and normalized arguments, then checks authenticated
+ownership for private tools before invoking a handler. Missing approval, ownership denial, or
+handler failure produces a safe non-mutating result.
+
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 

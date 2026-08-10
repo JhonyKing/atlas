@@ -17,6 +17,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Agent/contract/security regression after executor changes: **28 passed**.
 - Read-only adapter/API integration tests: **13 passed**; read-only calls are delegated through the
   adapter boundary and private/unknown tools cannot be registered there.
+- Side-effect adapter/policy tests: **47 passed** in the focused policy/agent/contract run;
+  approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
+  remain non-mutating.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
 - Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.
