@@ -43,6 +43,10 @@ approval bound to the plan, actor, tool version, and normalized arguments, then 
 ownership for private tools before invoking a handler. Missing approval, ownership denial, or
 handler failure produces a safe non-mutating result.
 
+Plan, run, and approval endpoints accept an `Idempotency-Key`. The current local replay store
+returns the original response for the same fingerprint and rejects a conflicting reuse with 409;
+durable cross-instance idempotency and quota/consent convergence remain open.
+
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 

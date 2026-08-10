@@ -66,6 +66,7 @@ from atlas.observability.langsmith import LangSmithTraceSink, TraceSink
 from atlas.persistence.agent_runs import (
     AgentRunRepository,
     InMemoryAgentRunRepository,
+    InMemoryIdempotencyStore,
     PostgresAgentRunRepository,
 )
 from atlas.persistence.comparison_quota import (
@@ -183,6 +184,7 @@ def create_app(
         proposal_provider=agent_plan_provider,
     )
     application.state.agent_run_repository = agent_run_repository or InMemoryAgentRunRepository()
+    application.state.agent_idempotency = InMemoryIdempotencyStore()
     application.state.agent_approvals = {}
     application.state.agent_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
         settings

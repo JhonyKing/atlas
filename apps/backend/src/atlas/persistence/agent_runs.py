@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from threading import RLock
 from typing import Any, Protocol
 from uuid import UUID
 
@@ -42,6 +44,36 @@ class AgentRunRepository(Protocol):
     def get(self, run_id: UUID) -> AgentRunRecord | None: ...
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]: ...
+
+
+class IdempotencyConflict(ValueError):
+    """A key was reused with a different request fingerprint."""
+
+
+class InMemoryIdempotencyStore:
+    """Small process-local replay store used until the durable idempotency tables are wired."""
+
+    def __init__(self) -> None:
+        self._items: dict[tuple[str, str], tuple[str, dict[str, object]]] = {}
+        self._lock = RLock()
+
+    def get(self, scope: str, key: str, fingerprint: str) -> dict[str, object] | None:
+        with self._lock:
+            item = self._items.get((scope, key))
+            if item is None:
+                return None
+            if item[0] != fingerprint:
+                raise IdempotencyConflict("idempotency key conflicts with another request")
+            return dict(item[1])
+
+    def save(
+        self, scope: str, key: str, fingerprint: str, response: Mapping[str, object]
+    ) -> None:
+        with self._lock:
+            existing = self._items.get((scope, key))
+            if existing is not None and existing[0] != fingerprint:
+                raise IdempotencyConflict("idempotency key conflicts with another request")
+            self._items[(scope, key)] = (fingerprint, dict(response))
 
 
 class InMemoryAgentRunRepository:

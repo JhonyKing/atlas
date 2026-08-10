@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+from collections.abc import Mapping
 from dataclasses import replace
 from datetime import UTC, datetime
 from time import perf_counter
-from typing import Literal, cast
+from typing import Annotated, Literal, cast
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from atlas.agent.checkpoints import CheckpointRepository
@@ -27,7 +30,11 @@ from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
 from atlas.observability.context import current_request_id
 from atlas.observability.langsmith import TraceHandle, TraceSink
-from atlas.persistence.agent_runs import AgentRunRepository
+from atlas.persistence.agent_runs import (
+    AgentRunRepository,
+    IdempotencyConflict,
+    InMemoryIdempotencyStore,
+)
 from atlas.reports.schemas import ReportFormat, ReportLocale, ReportSpec
 
 router = APIRouter(prefix="/v1/agent", tags=["Agent orchestration"])
@@ -43,6 +50,25 @@ def _planner(request: Request) -> AgentPlanner:
 
 def _runs(request: Request) -> AgentRunRepository:
     return cast(AgentRunRepository, request.app.state.agent_run_repository)
+
+
+def _idempotency_store(request: Request) -> InMemoryIdempotencyStore:
+    return cast(InMemoryIdempotencyStore, request.app.state.agent_idempotency)
+
+
+def _normalize_idempotency_key(key: str | None) -> str | None:
+    if key is None:
+        return None
+    normalized = key.strip()
+    if not 8 <= len(normalized) <= 128:
+        raise HTTPException(status_code=400, detail="Idempotency-Key must be 8-128 characters")
+    return normalized
+
+
+def _fingerprint(payload: Mapping[str, object]) -> str:
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
 
 
 @router.get("/tools")
@@ -100,7 +126,20 @@ def _result_ids(value: object) -> tuple[str, ...]:
 
 
 @router.post("/plans")
-async def create_plan(payload: PlanCreateRequest, request: Request) -> dict[str, object]:
+async def create_plan(
+    payload: PlanCreateRequest,
+    request: Request,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+) -> dict[str, object]:
+    key = _normalize_idempotency_key(idempotency_key)
+    fingerprint = _fingerprint(payload.model_dump(mode="json"))
+    if key is not None:
+        try:
+            cached = _idempotency_store(request).get("agent.plan", key, fingerprint)
+        except IdempotencyConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if cached is not None:
+            return cached
     catalog = _tool_catalog(request)
     try:
         if payload.selected_tool is None:
@@ -142,11 +181,14 @@ async def create_plan(payload: PlanCreateRequest, request: Request) -> dict[str,
             approvals[approval.call_id] = approval
             approval_ids.append(str(approval.approval_id))
             approval_keys[str(approval.approval_id)] = approval.decision_key
-    return {
+    response = {
         **plan.model_dump(mode="json"),
         "required_approval_ids": approval_ids,
         "approval_decision_keys": approval_keys,
     }
+    if key is not None:
+        _idempotency_store(request).save("agent.plan", key, fingerprint, response)
+    return response
 
 
 async def _execute_domain_tool(
@@ -236,7 +278,20 @@ async def _execute_domain_tool_legacy(
 
 
 @router.post("/runs", status_code=202)
-async def create_agent_run(payload: RunCreateRequest, request: Request) -> dict[str, object]:
+async def create_agent_run(
+    payload: RunCreateRequest,
+    request: Request,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+) -> dict[str, object]:
+    key = _normalize_idempotency_key(idempotency_key)
+    fingerprint = _fingerprint(payload.model_dump(mode="json"))
+    if key is not None:
+        try:
+            cached = _idempotency_store(request).get("agent.run", key, fingerprint)
+        except IdempotencyConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if cached is not None:
+            return cached
     repository = _runs(request)
     plan = repository.get_plan(payload.plan_hash)
     if plan is None:
@@ -280,7 +335,7 @@ async def create_agent_run(payload: RunCreateRequest, request: Request) -> dict[
                         status="awaiting_approval",
                         fields={"latency_ms": (perf_counter() - trace_started) * 1000},
                     )
-                return {
+                pending_response: dict[str, object] = {
                     "run_id": str(plan.run_id),
                     "status": "awaiting_approval",
                     "events": [
@@ -288,6 +343,11 @@ async def create_agent_run(payload: RunCreateRequest, request: Request) -> dict[
                         for event in repository.list_events(plan.run_id)
                     ],
                 }
+                if key is not None:
+                    _idempotency_store(request).save(
+                        "agent.run", key, fingerprint, pending_response
+                    )
+                return pending_response
             try:
                 assert_approval_matches(
                     approval,
@@ -340,11 +400,14 @@ async def create_agent_run(payload: RunCreateRequest, request: Request) -> dict[
                 "latency_ms": (perf_counter() - trace_started) * 1000,
             },
         )
-    return {
+    completed_response: dict[str, object] = {
         "run_id": str(plan.run_id),
         "status": "completed",
         "events": [event.model_dump(mode="json") for event in repository.list_events(plan.run_id)],
     }
+    if key is not None:
+        _idempotency_store(request).save("agent.run", key, fingerprint, completed_response)
+    return completed_response
 
 
 @router.get("/runs/{run_id}")
@@ -405,8 +468,20 @@ def resume_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
 
 @router.post("/approvals/{approval_id}/decision")
 def decide_agent_approval(
-    approval_id: UUID, payload: ApprovalDecisionRequest, request: Request
+    approval_id: UUID,
+    payload: ApprovalDecisionRequest,
+    request: Request,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
 ) -> dict[str, object]:
+    key = _normalize_idempotency_key(idempotency_key)
+    fingerprint = _fingerprint({"approval_id": str(approval_id), **payload.model_dump(mode="json")})
+    if key is not None:
+        try:
+            cached = _idempotency_store(request).get("agent.approval", key, fingerprint)
+        except IdempotencyConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if cached is not None:
+            return cached
     pending = cast(dict[str, Approval], request.app.state.agent_approvals)
     approval = next((item for item in pending.values() if item.approval_id == approval_id), None)
     if approval is None:
@@ -415,9 +490,19 @@ def decide_agent_approval(
         raise HTTPException(status_code=403, detail="approval decision mismatch")
     if payload.decision == "rejected":
         pending[approval.call_id] = replace(approval, decision="rejected")
-        return {"approval_id": str(approval_id), "decision": "rejected"}
-    pending[approval.call_id] = replace(approval, decision="approved")
-    return {"approval_id": str(approval_id), "decision": "approved"}
+        response: dict[str, object] = {
+            "approval_id": str(approval_id),
+            "decision": "rejected",
+        }
+    else:
+        pending[approval.call_id] = replace(approval, decision="approved")
+        response = {
+            "approval_id": str(approval_id),
+            "decision": "approved",
+        }
+    if key is not None:
+        _idempotency_store(request).save("agent.approval", key, fingerprint, response)
+    return response
 
 
 class PrepareRequest(BaseModel):
