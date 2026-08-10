@@ -18,7 +18,7 @@
 
 - [X] T008 [P] [US4] Recreate the approved futuristic A mark as clean path/polygon/line/circle SVG without embedded PNG in `apps/web/public/brand/atlas-mark.svg`. Evidence: `docs/verification/020-brand-assets.md` and visual screenshots.
 - [X] T009 [P] [US4] Create stacked and horizontal SVG compositions from the approved mark/wordmark in `apps/web/public/brand/atlas-logo-stacked.svg` and `apps/web/public/brand/atlas-logo-horizontal.svg`. Evidence: `docs/verification/020-brand-assets.md`.
-- [ ] T010 [P] [US4] Generate transparent PNG fallbacks, favicon, and optional app icons from the approved SVG assets in `apps/web/public/brand/`.
+- [X] T010 [P] [US4] Generate transparent PNG fallbacks, favicon, and optional app icons from the approved SVG assets in `apps/web/public/brand/`. Evidence: reproducible Playwright generator, metadata wiring, and dimension tests in `apps/web/src/brand-assets.test.ts`.
 - [X] T011 [US4] Add asset rendering/transparent-background/minimum-size tests and document output dimensions in `apps/web/src/brand-assets.test.ts` and `docs/verification/020-brand-assets.md`. Evidence: 4 new Vitest checks passed; Playwright screenshots reviewed.
 
 ## Phase 3: Tokens and shared components (P1)

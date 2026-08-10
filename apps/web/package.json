@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
+    "brand:generate": "node scripts/generate-brand-fallbacks.mjs",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
   },

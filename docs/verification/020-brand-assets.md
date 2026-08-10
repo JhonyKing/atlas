@@ -11,7 +11,9 @@
 - Implemented: `apps/web/public/brand/atlas-logo-stacked.svg`.
 - Implemented: `apps/web/public/brand/atlas-logo-horizontal.svg`.
 - Implemented: `apps/web/public/brand/favicon.svg`.
-- Deferred: PNG fallback files and ICO/apple-touch-icon generation remain T010; SVG is the primary asset.
+- Implemented T010: transparent PNG fallbacks for mark, stacked, horizontal, favicon, and Apple touch icon.
+- PNG dimensions: mark `512×512`, stacked `840×1040`, horizontal `1440×440`, favicon `64×64`, Apple touch icon `180×180`.
+- Reproducible generator: `apps/web/scripts/generate-brand-fallbacks.mjs`, invoked by `pnpm --filter @atlas/web brand:generate`.
 
 ## Contract checks
 
@@ -27,6 +29,7 @@
 - TypeScript: passed with Node 24.
 - ESLint for the new asset test: passed.
 - HTTP asset smoke: mark, stacked, horizontal, and favicon each returned HTTP 200 from the local web server.
+- PNG fallback contract tests verify the five generated dimensions.
 
 ## Visual evidence
 
