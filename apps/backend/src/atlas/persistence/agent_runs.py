@@ -24,6 +24,7 @@ class AgentRunRecord:
     request: str
     locale: str
     plan_hash: str
+    actor_id: str
     status: str
     created_at: datetime
     output: dict[str, object]
@@ -36,7 +37,7 @@ class AgentRunRepository(Protocol):
 
     def get_plan(self, plan_hash: str) -> AgentPlan | None: ...
 
-    def create_run(self, plan: AgentPlan) -> AgentRunRecord: ...
+    def create_run(self, plan: AgentPlan, *, actor_id: str = "anonymous") -> AgentRunRecord: ...
 
     def update(
         self, run_id: UUID, *, status: str, output: dict[str, object] | None = None
@@ -172,12 +173,13 @@ class InMemoryAgentRunRepository:
     def get_plan(self, plan_hash: str) -> AgentPlan | None:
         return self._plans.get(plan_hash)
 
-    def create_run(self, plan: AgentPlan) -> AgentRunRecord:
+    def create_run(self, plan: AgentPlan, *, actor_id: str = "anonymous") -> AgentRunRecord:
         record = AgentRunRecord(
             plan.run_id,
             plan.request,
             plan.locale,
             plan.plan_hash,
+            actor_id,
             "accepted",
             datetime.now(UTC),
             {},
@@ -194,6 +196,7 @@ class InMemoryAgentRunRepository:
             current.request,
             current.locale,
             current.plan_hash,
+            current.actor_id,
             status,
             current.created_at,
             output or current.output,
@@ -260,6 +263,14 @@ class PostgresAgentEventStore:
         status: str,
         **kwargs: object,
     ) -> AgentRunEvent:
+        # Serialize sequence allocation per run across worker processes. The
+        # transaction-scoped advisory lock keeps the existing append-only
+        # schema while preventing two workers from selecting the same next
+        # sequence concurrently.
+        self._connection.execute(
+            "SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))",
+            (str(run_id),),
+        )
         sequence_row = self._connection.execute(
             "SELECT coalesce(max(sequence), 0) + 1 FROM atlas.agent_run_events WHERE run_id = %s",
             (run_id,),
@@ -390,7 +401,7 @@ class PostgresAgentRunRepository:
             plan_hash=row[8],
         )
 
-    def create_run(self, plan: AgentPlan) -> AgentRunRecord:
+    def create_run(self, plan: AgentPlan, *, actor_id: str = "anonymous") -> AgentRunRecord:
         plan_row = self._connection.execute(
             "SELECT id FROM atlas.agent_plans WHERE plan_hash = %s", (plan.plan_hash,)
         ).fetchone()
@@ -405,11 +416,18 @@ class PostgresAgentRunRepository:
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (id) DO NOTHING
             """,
-            (plan.run_id, plan_row[0], "anonymous", "accepted", Jsonb({}), created_at, created_at),
+            (plan.run_id, plan_row[0], actor_id, "accepted", Jsonb({}), created_at, created_at),
         )
         self._connection.commit()
         return AgentRunRecord(
-            plan.run_id, plan.request, plan.locale, plan.plan_hash, "accepted", created_at, {}
+            plan.run_id,
+            plan.request,
+            plan.locale,
+            plan.plan_hash,
+            actor_id,
+            "accepted",
+            created_at,
+            {},
         )
 
     def update(
@@ -433,6 +451,7 @@ class PostgresAgentRunRepository:
             current.request,
             current.locale,
             current.plan_hash,
+            current.actor_id,
             status,
             current.created_at,
             resolved_output,
@@ -441,7 +460,8 @@ class PostgresAgentRunRepository:
     def get(self, run_id: UUID) -> AgentRunRecord | None:
         row = self._connection.execute(
             """
-            SELECT r.id, p.request, p.locale, p.plan_hash, r.status, r.created_at, r.output
+            SELECT r.id, p.request, p.locale, p.plan_hash, r.actor_id, r.status,
+                   r.created_at, r.output
             FROM atlas.agent_runs AS r
             JOIN atlas.agent_plans AS p ON p.id = r.plan_id
             WHERE r.id = %s
@@ -451,7 +471,7 @@ class PostgresAgentRunRepository:
         if row is None:
             return None
         return AgentRunRecord(
-            row[0], row[1], row[2], row[3], row[4], row[5], dict(row[6] or {})
+            row[0], row[1], row[2], row[3], row[4], row[5], row[6], dict(row[7] or {})
         )
 
     def list_events(self, run_id: UUID, after_sequence: int = 0) -> tuple[AgentRunEvent, ...]:

@@ -131,6 +131,18 @@ def _visitor_hash(request: Request) -> str:
     return getattr(request.state, "visitor_key_hash", "development-anonymous-visitor")
 
 
+def _request_actor(request: Request, actor_id: str | None) -> str:
+    """Resolve the caller identity used for durable run ownership checks."""
+
+    return (actor_id or request.headers.get("x-atlas-actor-id") or "anonymous").strip()
+
+
+def _assert_run_actor(request: Request, record: object, actor_id: str | None) -> None:
+    resolved_actor = _request_actor(request, actor_id)
+    if getattr(record, "actor_id", "anonymous") != resolved_actor:
+        raise HTTPException(status_code=404, detail="run not found")
+
+
 def _result_ids(value: object) -> tuple[str, ...]:
     if isinstance(value, (list, tuple, set)):
         return tuple(str(item) for item in value)
@@ -361,7 +373,7 @@ async def create_agent_run(
             tags=agent_trace_tags(plan),
         )
     approvals = cast(dict[str, Approval], request.app.state.agent_approvals)
-    repository.create_run(plan)
+    repository.create_run(plan, actor_id=payload.actor_id)
     for stored_approval in approvals.values():
         if stored_approval.run_id == plan.run_id:
             repository.save_approval(stored_approval)
@@ -532,10 +544,13 @@ async def create_agent_run(
 
 
 @router.get("/runs/{run_id}")
-def get_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
+def get_agent_run(
+    run_id: UUID, request: Request, actor_id: str | None = None
+) -> dict[str, object]:
     record = _runs(request).get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="run not found")
+    _assert_run_actor(request, record, actor_id)
     return {
         "run_id": str(run_id),
         "status": record.status,
@@ -545,9 +560,16 @@ def get_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
 
 
 @router.get("/runs/{run_id}/events")
-def get_agent_events(run_id: UUID, request: Request, after_sequence: int = 0) -> dict[str, object]:
-    if _runs(request).get(run_id) is None:
+def get_agent_events(
+    run_id: UUID,
+    request: Request,
+    after_sequence: int = 0,
+    actor_id: str | None = None,
+) -> dict[str, object]:
+    record = _runs(request).get(run_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="run not found")
+    _assert_run_actor(request, record, actor_id)
     return {
         "run_id": str(run_id),
         "events": [
@@ -558,13 +580,16 @@ def get_agent_events(run_id: UUID, request: Request, after_sequence: int = 0) ->
 
 
 @router.post("/runs/{run_id}/cancel")
-def cancel_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
+def cancel_agent_run(
+    run_id: UUID, request: Request, actor_id: str | None = None
+) -> dict[str, object]:
     """Cancel a queued or approval-blocked run without executing another tool."""
 
     repository = _runs(request)
     record = repository.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="run not found")
+    _assert_run_actor(request, record, actor_id)
     if record.status in {"completed", "failed", "rejected", "cancelled"}:
         raise HTTPException(status_code=409, detail="run is no longer cancellable")
     repository.events.emit(run_id, "run.cancelled", status="cancelled")
@@ -573,13 +598,16 @@ def cancel_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
 
 
 @router.post("/runs/{run_id}/resume")
-def resume_agent_run(run_id: UUID, request: Request) -> dict[str, object]:
+def resume_agent_run(
+    run_id: UUID, request: Request, actor_id: str | None = None
+) -> dict[str, object]:
     """Resume only from a known run record; tools are never replayed implicitly."""
 
     repository = _runs(request)
     record = repository.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="run not found")
+    _assert_run_actor(request, record, actor_id)
     if record.status not in {"cancelled", "awaiting_approval"}:
         raise HTTPException(status_code=409, detail="run is not resumable")
     repository.events.emit(run_id, "run.resumed", status="resumed")

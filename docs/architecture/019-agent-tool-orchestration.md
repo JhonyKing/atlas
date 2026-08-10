@@ -68,6 +68,14 @@ Approval rows are written after the run exists so the foreign-key boundary remai
 receives only bounded tags and scalar metadata (plan hash, run ID, locale, tool count, budgets, and
 outcome), never question text or tool arguments.
 
+PostgreSQL event sequence allocation takes a transaction-scoped advisory lock per run before
+reading the next sequence, so concurrent workers cannot allocate the same lifecycle position.
+Durable run records retain the request actor; status, event, cancellation, and resume reads must
+present that same actor (or the development anonymous actor) after a process restart.
+The hosted Supabase project still has an open RLS policy gate for the durable agent tables. The
+required policy work is recorded as a convergence task; no hosted policy mutation is performed
+until the owner reviews the tenant/worker policy design.
+
 ## Evidence
 
 - `evals/datasets/agent_tool_orchestration.jsonl`

@@ -121,3 +121,26 @@ def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:
     resumed = client.post(f"/v1/agent/runs/{pending_id}/resume")
     assert resumed.status_code == 200
     assert resumed.json()["status"] == "accepted"
+
+
+def test_durable_run_reads_require_the_persisted_actor() -> None:
+    client = TestClient(create_app())
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "What is the corpus status?",
+            "selected_tool": "corpus_status",
+            "input": {},
+            "actor_id": "user-42",
+        },
+    ).json()
+    run = client.post(
+        "/v1/agent/runs",
+        json={"plan_hash": plan["plan_hash"], "actor_id": "user-42"},
+    ).json()
+    run_id = run["run_id"]
+
+    assert client.get(f"/v1/agent/runs/{run_id}").status_code == 404
+    assert client.get(
+        f"/v1/agent/runs/{run_id}", params={"actor_id": "user-42"}
+    ).status_code == 200

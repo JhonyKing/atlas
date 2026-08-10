@@ -93,3 +93,9 @@ enough to close the feature.
 - [ ] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; partial).
 - [ ] T045 [US2] Complete read-only result adapters so answer, comparison, report, news, and corpus outputs preserve provenance, source versions, bounded excerpts, typed evidence relations, and artifact links (FR-005, FR-009; partial).
 - [ ] T046 [US4] Run and export representative live LangSmith/evidence traces for successful, abstained, rejected, failed, cancelled, and resumed runs with measured latency, token, cost, locale, corpus, and outcome fields (FR-014, FR-015, SC-006; missing).
+
+## Phase 9: Convergence
+
+- [ ] T047 [US4] Make PostgreSQL run-event sequence allocation atomic per run so concurrent workers cannot compute the same `max(sequence) + 1` and violate ordered lifecycle delivery (FR-010, SC-005; partial).
+- [ ] T048 [US3] Persist the authenticated `actor_id` from plan/run requests into durable agent runs and enforce the same owner scope when loading durable runs and approvals after a restart (FR-006, FR-007; partial).
+- [ ] T049 [US3] Add a reviewed migration and verification evidence for RLS policies that prevent anon/authenticated access to private agent plans, runs, approvals, tool calls, events, idempotency records, and checkpoint claims while preserving the worker path (Constitution VI, FR-006; contradicts/CRITICAL).

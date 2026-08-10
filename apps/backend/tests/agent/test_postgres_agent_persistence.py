@@ -40,6 +40,7 @@ class FakeConnection:
     def __init__(self) -> None:
         self.plan_row: tuple[Any, ...] | None = None
         self.run_row: tuple[Any, ...] | None = None
+        self.run_actor: str | None = None
         self.checkpoint_row: tuple[Any, ...] | None = None
         self.checkpoint_claim_row: tuple[Any, ...] | None = None
         self.approval_row: tuple[Any, ...] | None = None
@@ -47,11 +48,13 @@ class FakeConnection:
         self.idempotency_row: tuple[Any, ...] | None = None
         self.events: list[AgentRunEvent] = []
         self.commits = 0
+        self.statements: list[str] = []
 
     def commit(self) -> None:
         self.commits += 1
 
     def execute(self, sql: str, params=()):
+        self.statements.append(" ".join(sql.split()))
         if "FROM atlas.agent_plans WHERE plan_hash" in sql:
             return Result(self.plan_row)
         if "FROM atlas.agent_runs AS r" in sql:
@@ -66,6 +69,9 @@ class FakeConnection:
             return Result((self.idempotency_row[0],) if self.idempotency_row else None)
         if "SELECT id FROM atlas.agent_plans" in sql:
             return Result((uuid4(),))
+        if "INSERT INTO atlas.agent_runs" in sql:
+            self.run_actor = str(params[2])
+            return Result()
         if "FROM atlas.agent_run_events" in sql and "max(sequence)" in sql:
             return Result((len(self.events) + 1,))
         if "FROM atlas.agent_run_events" in sql and "sequence >" in sql:
@@ -182,6 +188,18 @@ def test_postgres_agent_repository_round_trips_plan_and_run() -> None:
     assert connection.commits == 1
 
 
+def test_postgres_agent_repository_persists_run_actor() -> None:
+    connection = FakeConnection()
+    plan = _plan()
+    repository = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]
+
+    repository.save_plan(plan)
+    connection.plan_row = (uuid4(),)
+    repository.create_run(plan, actor_id="user-42")
+
+    assert connection.run_actor == "user-42"
+
+
 def test_postgres_event_store_preserves_sequence_and_reconnect() -> None:
     connection = FakeConnection()
     store = PostgresAgentEventStore(connection)  # type: ignore[arg-type]
@@ -191,6 +209,24 @@ def test_postgres_event_store_preserves_sequence_and_reconnect() -> None:
     store.emit(run_id, "run.completed", status="completed")
 
     assert [event.sequence for event in store.list(run_id, after_sequence=1)] == [2]
+
+
+def test_postgres_event_store_locks_run_before_allocating_sequence() -> None:
+    connection = FakeConnection()
+    store = PostgresAgentEventStore(connection)  # type: ignore[arg-type]
+    run_id = uuid4()
+
+    store.emit(run_id, "run.accepted", status="accepted")
+
+    lock_index = next(
+        index for index, statement in enumerate(connection.statements)
+        if "pg_advisory_xact_lock" in statement
+    )
+    max_index = next(
+        index for index, statement in enumerate(connection.statements)
+        if "max(sequence)" in statement
+    )
+    assert lock_index < max_index
 
 
 def test_postgres_checkpoint_round_trip_rejects_changed_replay_state() -> None:
