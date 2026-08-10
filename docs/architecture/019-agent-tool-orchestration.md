@@ -29,6 +29,11 @@ When the provider is unavailable, the planner uses the deterministic proposal fu
 explicit fallback mode; it never fabricates provider success and it still passes through the same
 catalog and plan validation path.
 
+The executor invokes only registered catalog handlers. Each call is bounded by the catalog timeout
+and the plan call/evidence budgets. A timeout, handler failure, or budget overflow records a safe
+failure event and stops the remaining plan; a cancellation before the next step records a terminal
+cancelled event without replaying the completed calls.
+
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.
 

@@ -51,7 +51,8 @@ plan, preview the selected tool and arguments, request explicit approval for pri
 actions, execute read-only domain adapters, and display ordered run events with evidence/artifact
 counts. When an OpenAI key is configured, GPT-5.6 Luna produces a structured proposal through the
 provider adapter; an outage uses the bounded deterministic fallback. Provider output never
-authorizes a tool.
+authorizes a tool. Every registered tool also runs behind its catalog timeout and plan-level call
+and evidence budgets; cancellation and partial failure remain visible in the run timeline.
 
 Run the deterministic verification from the repository root:
 

@@ -12,6 +12,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   model `gpt-5.6-luna`; unknown tools and malformed arguments are rejected by the server catalog.
 - Provider outage behavior: `ProviderAdapterError` selects the bounded deterministic proposal;
   provider-specific response objects never cross into the agent layer.
+- Bounded executor tests: **4 passed** for per-tool timeout, evidence budget overflow, cancellation
+  before the next step, and partial failure without invoking later steps.
+- Agent/contract/security regression after executor changes: **28 passed**.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
 - Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.

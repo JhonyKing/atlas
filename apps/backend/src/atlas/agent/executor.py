@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from dataclasses import dataclass
 from time import perf_counter
 from typing import cast
@@ -42,6 +43,22 @@ class BoundedExecutor:
             raise ValueError(f"cannot register unknown tool {tool_id}")
         self.handlers[tool_id] = handler
 
+    @staticmethod
+    def _invoke(
+        handler: ToolHandler, arguments: dict[str, object], *, timeout_ms: int
+    ) -> Mapping[str, object]:
+        """Run a synchronous adapter behind a bounded worker boundary."""
+
+        worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="atlas-tool")
+        future = worker.submit(handler, arguments)
+        try:
+            return future.result(timeout=timeout_ms / 1000)
+        finally:
+            # A timed-out adapter cannot be force-killed safely. Cancel queued work and do not
+            # block the agent run; adapters must keep their own downstream calls bounded too.
+            future.cancel()
+            worker.shutdown(wait=False, cancel_futures=True)
+
     def execute(
         self,
         plan: AgentPlan,
@@ -55,10 +72,35 @@ class BoundedExecutor:
         self.events.emit(plan.run_id, "run.accepted", status="accepted")
         self.events.emit(plan.run_id, "plan.created", status="planned")
         completed_steps: set[str] = set()
+        max_calls = plan.budget.get("max_calls", len(plan.steps))
+        max_evidence = plan.budget.get("max_evidence", 64)
+        used_evidence = 0
+        terminal_emitted = False
         for index, step in enumerate(plan.steps):
             call_id = f"step-{index}"
+            if index >= max_calls:
+                self.events.emit(
+                    plan.run_id,
+                    "tool_call.failed",
+                    status="failed",
+                    tool_id=step.tool_id,
+                    call_id=call_id,
+                    error_category="call_budget_exceeded",
+                )
+                results.append(
+                    ToolExecution(
+                        call_id,
+                        step.tool_id,
+                        "failed",
+                        {},
+                        0,
+                        error_category="call_budget_exceeded",
+                    )
+                )
+                break
             if cancelled is not None and cancelled():
                 self.events.emit(plan.run_id, "run.cancelled", status="cancelled")
+                terminal_emitted = True
                 results.append(ToolExecution(
                     call_id, step.tool_id, "cancelled", {}, 0, error_category="cancelled"
                 ))
@@ -127,16 +169,41 @@ class BoundedExecutor:
             )
             started = perf_counter()
             try:
-                raw = self.handlers[step.tool_id](dict(step.arguments))
+                raw = self._invoke(
+                    self.handlers[step.tool_id],
+                    dict(step.arguments),
+                    timeout_ms=definition.timeout_ms,
+                )
                 result = dict(raw)
                 status = str(result.pop("status", "completed"))
                 evidence = _ids(result.pop("evidence_ids", ()))
                 artifacts = _ids(result.pop("artifact_ids", ()))
                 elapsed = (perf_counter() - started) * 1000
+                if used_evidence + len(evidence) > max_evidence:
+                    self.events.emit(
+                        plan.run_id,
+                        "tool_call.failed",
+                        status="failed",
+                        tool_id=step.tool_id,
+                        call_id=call_id,
+                        error_category="evidence_budget_exceeded",
+                    )
+                    results.append(
+                        ToolExecution(
+                            call_id,
+                            step.tool_id,
+                            "failed",
+                            {},
+                            elapsed,
+                            error_category="evidence_budget_exceeded",
+                        )
+                    )
+                    break
                 execution = ToolExecution(
                     call_id, step.tool_id, status, result, elapsed, evidence, artifacts
                 )
                 results.append(execution)
+                used_evidence += len(evidence)
                 completed_steps.add(call_id)
                 event_type = (
                     "tool_call.abstained" if status == "abstained" else "tool_call.completed"
@@ -151,6 +218,27 @@ class BoundedExecutor:
                     evidence_ids=evidence,
                     artifact_ids=artifacts,
                 )
+            except TimeoutError:
+                elapsed = (perf_counter() - started) * 1000
+                self.events.emit(
+                    plan.run_id,
+                    "tool_call.failed",
+                    status="failed",
+                    tool_id=step.tool_id,
+                    call_id=call_id,
+                    error_category="timeout",
+                )
+                results.append(
+                    ToolExecution(
+                        call_id,
+                        step.tool_id,
+                        "failed",
+                        {},
+                        elapsed,
+                        error_category="timeout",
+                    )
+                )
+                break
             except Exception as exc:
                 elapsed = (perf_counter() - started) * 1000
                 self.events.emit(
@@ -179,9 +267,10 @@ class BoundedExecutor:
             if results
             else "failed"
         )
-        self.events.emit(
-            plan.run_id,
-            "run.completed" if final_status == "completed" else "run.failed",
-            status=final_status,
-        )
+        if not terminal_emitted:
+            self.events.emit(
+                plan.run_id,
+                "run.completed" if final_status == "completed" else "run.failed",
+                status=final_status,
+            )
         return tuple(results)

@@ -33,7 +33,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 
 ## Phase 4: Execution, tools, and durable events (P1)
 
-- [ ] T018 [US2] Implement bounded executor with sequential dependencies, per-tool timeout/budget, cancellation, safe partial failure, and no arbitrary code/URL execution in `apps/backend/src/atlas/agent/executor.py`.
+- [X] T018 [US2] Implement bounded executor with sequential dependencies, per-tool timeout/budget, cancellation, safe partial failure, and no arbitrary code/URL execution in `apps/backend/src/atlas/agent/executor.py`.
 - [ ] T019 [P] [US2] Implement read-only adapters for cited answer, comparison, report, daily news, and corpus status in `apps/backend/src/atlas/agent/tools/read_only.py`.
 - [ ] T020 [P] [US3] Implement private-resource, private-upload, private-delete, and human-review adapters with ownership/approval gates in `apps/backend/src/atlas/agent/tools/side_effects.py`.
 - [ ] T021 [US2] Implement durable run/plan/call/event/checkpoint persistence, sequence checks, and replay-safe resume in `apps/backend/src/atlas/persistence/agent_runs.py` and `apps/backend/src/atlas/agent/checkpoints.py`.
