@@ -63,15 +63,21 @@ main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
 .corpus-status h2 { margin: .25rem 0 0; }
 .corpus-snapshot, .corpus-date { color: var(--atlas-text-secondary); font-size: .9rem; }
 .corpus-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; list-style: none; padding: 0; margin: 1rem 0 0; }
-.corpus-card { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .85rem; }
+.corpus-card { display: grid; gap: .65rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: 1rem; background: var(--atlas-surface-elevated); }
 .corpus-card h3 { margin: 0; }
-.corpus-card p { margin: .5rem 0; }
+.corpus-card p { margin: 0; }
 .corpus-card-title { display: flex; justify-content: space-between; gap: .5rem; align-items: center; }
 .corpus-badge { border-radius: 999px; padding: .2rem .5rem; font-size: .8rem; font-weight: 700; }
+.corpus-card-publisher { color: var(--atlas-text-secondary); font-size: .86rem; }
+.corpus-counts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; margin: .2rem 0 0; }
+.corpus-counts div { border-left: 2px solid var(--atlas-border-strong); padding-left: .55rem; }
+.corpus-counts dt { color: var(--atlas-text-muted); font-size: .72rem; }
+.corpus-counts dd { margin: .1rem 0 0; color: var(--atlas-text); font-weight: 750; }
+.corpus-date { color: var(--atlas-text-muted); font-size: .8rem; }
 .corpus-ready { color: var(--atlas-supported); background: var(--atlas-supported-bg); }
 .corpus-stale, .corpus-refreshing { color: var(--atlas-partial); background: var(--atlas-partial-bg); }
 .corpus-unavailable { color: var(--atlas-unsupported); background: var(--atlas-unsupported-bg); }
-.corpus-card a { color: var(--atlas-indigo); font-weight: 700; }
+.corpus-card-link { color: var(--atlas-indigo); font-weight: 700; }
 .corpus-status-message { margin: 0 auto 2rem; color: var(--atlas-text-secondary); font-weight: 700; }
 .answer-shell { max-width: 48rem; margin: 0 auto; }
 .agent-workspace { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-xl); padding: 1.25rem; margin: 0 auto 3rem; background: var(--atlas-surface); }
@@ -241,17 +247,41 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .report-page { max-width: 62rem; }
 .report-page > section { max-width: 48rem; }
 .report-page > section > p:first-child { margin: 0 0 .65rem; color: var(--atlas-indigo); font-size: .85rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
-.report-page form { max-width: 34rem; margin-top: 1.25rem; }
+.report-request-panel { display: grid; gap: 1rem; }
+.report-kicker { margin-bottom: 0 !important; }
+.report-intro { max-width: 42rem; margin: 0; color: var(--atlas-text-secondary); line-height: 1.55; }
+.report-step-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.report-step-card { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .9rem; background: var(--atlas-surface-elevated); }
+.report-step-number { color: var(--atlas-indigo); font-size: .75rem; font-weight: 800; letter-spacing: .08em; }
+.report-step-card h3 { margin: .35rem 0 .3rem; font-size: 1rem; }
+.report-step-card p { margin: 0; color: var(--atlas-text-secondary); font-size: .85rem; line-height: 1.45; }
+.report-advanced { border-top: 1px solid var(--atlas-border); padding-top: 1rem; }
+.report-advanced summary { cursor: pointer; color: var(--atlas-navy); font-weight: 800; }
+.report-page form { max-width: 34rem; margin-top: 1rem; }
 .report-page form button { justify-self: start; }
 .report-page [role="alert"], .report-page [role="status"] { margin-top: 1rem; padding: .8rem 1rem; border-radius: var(--atlas-radius-md); color: var(--atlas-text-secondary); background: var(--atlas-surface-soft); }
+.report-empty-state, .report-artifact-status, .report-artifacts { border: 1px dashed var(--atlas-border-strong); border-radius: var(--atlas-radius-md); padding: .9rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); }
+.report-empty-state { margin: 0; }
+.report-recent-card { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .9rem; background: var(--atlas-surface-elevated); }
+.report-recent-card h3 { margin: 0 0 .35rem; font-size: 1rem; }
+.report-recent-card p { margin: 0; color: var(--atlas-text-secondary); font-size: .85rem; line-height: 1.45; }
+.report-progress-bar { display: block; width: 100%; height: .25rem; margin-top: .65rem; overflow: hidden; border-radius: 999px; background: var(--atlas-border); }
+.report-progress-bar::after { display: block; width: 35%; height: 100%; border-radius: inherit; background: var(--atlas-indigo); content: ""; animation: report-progress 1.2s ease-in-out infinite alternate; }
+.report-downloads { display: flex; flex-wrap: wrap; gap: .55rem; margin: .75rem 0; }
+.report-download-link { display: inline-flex; align-items: center; min-height: 2.35rem; border: 1px solid var(--atlas-border-strong); border-radius: var(--atlas-radius-md); padding: .45rem .7rem; color: var(--atlas-indigo); background: var(--atlas-surface); font-weight: 750; }
 .news-page { max-width: 62rem; }
 .daily-news { max-width: 54rem; }
 .daily-news-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .daily-news-heading h2 { margin: .25rem 0 0; font-size: clamp(1.6rem, 3vw, 2.3rem); }
 .daily-news-heading time { color: var(--atlas-text-muted); font-size: .9rem; white-space: nowrap; }
+.daily-news-deck { max-width: 42rem; margin: .6rem 0 0; color: var(--atlas-text-secondary); line-height: 1.5; }
 .daily-news-card { margin-top: 1.5rem; border-top: 1px solid var(--atlas-border); padding-top: 1.25rem; }
 .daily-news-card h3 { margin: .3rem 0 .6rem; font-size: clamp(1.25rem, 2.5vw, 1.8rem); }
 .daily-news-card a { color: var(--atlas-indigo); font-weight: 750; }
+.daily-news-meta, .daily-news-signal { color: var(--atlas-text-muted); font-size: .82rem; }
+.daily-news-signal { margin: .35rem 0 1rem; color: var(--atlas-teal); font-weight: 750; }
+.news-loading { display: flex; align-items: center; gap: .65rem; }
+.news-loading-mark { width: .85rem; height: .85rem; border: 2px solid var(--atlas-border); border-top-color: var(--atlas-indigo); border-radius: 50%; animation: atlas-spin .8s linear infinite; }
 .news-status-message, .corpus-status-message { max-width: 48rem; margin: 0; border: 1px dashed var(--atlas-border-strong); border-radius: var(--atlas-radius-lg); padding: 1.1rem 1.25rem; color: var(--atlas-text-secondary); background: var(--atlas-surface-elevated); line-height: 1.5; }
 .sources-page { max-width: 68rem; }
 .sources-page .corpus-status-message { margin: 0; }
@@ -277,6 +307,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .agent-tool-grid { gap: .6rem; margin-top: 1rem; }
 .agent-tool-card { padding: .85rem; }
 @keyframes atlas-spin { to { transform: rotate(360deg); } }
+@keyframes report-progress { from { transform: translateX(-10%); } to { transform: translateX(210%); } }
 
 @media (max-width: 720px) {
   .atlas-header { gap: .75rem; padding: .5rem 1rem; }
@@ -297,6 +328,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .agent-workspace { padding: 1rem; }
   .account-page, .report-page, .news-page, .sources-page, .admin-page { padding-top: 2.5rem; padding-bottom: 3rem; }
   .account-grid { grid-template-columns: 1fr; }
+  .report-step-grid { grid-template-columns: 1fr; }
   .daily-news-heading { display: grid; gap: .35rem; }
   .daily-news-heading time { white-space: normal; }
   .review-form-grid { grid-template-columns: 1fr; align-items: stretch; }
