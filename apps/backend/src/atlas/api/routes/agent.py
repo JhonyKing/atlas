@@ -361,6 +361,28 @@ async def create_agent_run(
         raise HTTPException(status_code=404, detail="plan not found")
     if plan.expires_at <= datetime.now(UTC):
         raise HTTPException(status_code=409, detail="plan expired")
+    existing_run = repository.get(plan.run_id)
+    if existing_run is not None and existing_run.actor_id != payload.actor_id:
+        raise HTTPException(status_code=404, detail="run not found")
+    if existing_run is not None and existing_run.status in {
+        "completed",
+        "abstained",
+        "failed",
+        "rejected",
+    }:
+        replayed_response: dict[str, object] = {
+            "run_id": str(plan.run_id),
+            "status": existing_run.status,
+            "events": [
+                event.model_dump(mode="json")
+                for event in repository.list_events(plan.run_id)
+            ],
+        }
+        if key is not None:
+            _idempotency_store(request).save(
+                _idempotency_scope(request, "agent.run"), key, fingerprint, replayed_response
+            )
+        return replayed_response
     trace_sink = cast(TraceSink | None, getattr(request.app.state, "agent_trace_sink", None))
     trace_handle: TraceHandle | None = None
     trace_started = perf_counter()
@@ -373,17 +395,26 @@ async def create_agent_run(
             tags=agent_trace_tags(plan),
         )
     approvals = cast(dict[str, Approval], request.app.state.agent_approvals)
-    repository.create_run(plan, actor_id=payload.actor_id)
-    for stored_approval in approvals.values():
-        if stored_approval.run_id == plan.run_id:
-            repository.save_approval(stored_approval)
-    repository.events.emit(plan.run_id, "run.accepted", status="accepted")
-    repository.events.emit(plan.run_id, "plan.created", status="planned")
+    if existing_run is None:
+        repository.create_run(plan, actor_id=payload.actor_id)
+        for stored_approval in approvals.values():
+            if stored_approval.run_id == plan.run_id:
+                repository.save_approval(stored_approval)
+        repository.events.emit(plan.run_id, "run.accepted", status="accepted")
+        repository.events.emit(plan.run_id, "plan.created", status="planned")
     for index, step in enumerate(plan.steps):
         definition = _tool_catalog(request).get(step.tool_id)
         call_id = f"step-{index}"
         if definition is None:
             raise HTTPException(status_code=400, detail="unknown tool")
+        existing_call = repository.get_tool_call(plan.run_id, call_id)
+        if existing_call is not None and existing_call.get("status") in {
+            "completed",
+            "abstained",
+            "failed",
+            "rejected",
+        }:
+            continue
         approval_for_execution: Approval | None = None
         if definition.approval != "none":
             approval: Approval | None = approvals.get(call_id)
@@ -397,6 +428,23 @@ async def create_agent_run(
                         approval = candidate
                         break
             if approval is None or str(approval.approval_id) not in payload.approval_ids:
+                if existing_call is not None and existing_call.get("status") == "awaiting_approval":
+                    replayed_pending_response: dict[str, object] = {
+                        "run_id": str(plan.run_id),
+                        "status": "awaiting_approval",
+                        "events": [
+                            event.model_dump(mode="json")
+                            for event in repository.list_events(plan.run_id)
+                        ],
+                    }
+                    if key is not None:
+                        _idempotency_store(request).save(
+                            _idempotency_scope(request, "agent.run"),
+                            key,
+                            fingerprint,
+                            replayed_pending_response,
+                        )
+                    return replayed_pending_response
                 repository.save_tool_call(
                     plan.run_id,
                     call_id=call_id,

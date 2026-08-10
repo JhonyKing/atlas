@@ -174,6 +174,9 @@ class InMemoryAgentRunRepository:
         return self._plans.get(plan_hash)
 
     def create_run(self, plan: AgentPlan, *, actor_id: str = "anonymous") -> AgentRunRecord:
+        existing = self._runs.get(plan.run_id)
+        if existing is not None:
+            return existing
         record = AgentRunRecord(
             plan.run_id,
             plan.request,
@@ -407,6 +410,9 @@ class PostgresAgentRunRepository:
         ).fetchone()
         if plan_row is None:
             raise KeyError("plan not found")
+        existing = self.get(plan.run_id)
+        if existing is not None:
+            return existing
         created_at = datetime.now(UTC)
         self._connection.execute(
             """

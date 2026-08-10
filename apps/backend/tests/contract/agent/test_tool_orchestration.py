@@ -144,3 +144,45 @@ def test_durable_run_reads_require_the_persisted_actor() -> None:
     assert client.get(
         f"/v1/agent/runs/{run_id}", params={"actor_id": "user-42"}
     ).status_code == 200
+
+
+def test_replaying_completed_run_does_not_duplicate_events_or_tool_calls() -> None:
+    client = TestClient(create_app())
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "What is the corpus status?",
+            "selected_tool": "corpus_status",
+            "input": {},
+        },
+    ).json()
+    first = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]})
+    second = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]})
+
+    assert first.status_code == 202
+    assert second.status_code == 202
+    assert second.json()["events"] == first.json()["events"]
+
+
+def test_replaying_run_with_a_different_actor_is_not_allowed() -> None:
+    client = TestClient(create_app())
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "What is the corpus status?",
+            "selected_tool": "corpus_status",
+            "input": {},
+            "actor_id": "user-42",
+        },
+    ).json()
+    first = client.post(
+        "/v1/agent/runs",
+        json={"plan_hash": plan["plan_hash"], "actor_id": "user-42"},
+    )
+    replay = client.post(
+        "/v1/agent/runs",
+        json={"plan_hash": plan["plan_hash"], "actor_id": "user-99"},
+    )
+
+    assert first.status_code == 202
+    assert replay.status_code == 404

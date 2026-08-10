@@ -22,10 +22,11 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   approval mismatch, missing approval, anonymous access, ownership denial, and handler errors
   remain non-mutating. The API contract now records rejected side-effect calls as failed tool
   events instead of treating them as successful completions.
-- PostgreSQL persistence contract tests: **9 passed** for plan round-trip, ordered event reconnect,
+- PostgreSQL persistence contract tests: **10 passed** for plan round-trip, ordered event reconnect,
   checkpoint integrity/replay conflict, cross-repository checkpoint claim, and approval/tool-call
-  round-trips, atomic event-lock ordering, and durable run-actor persistence. The non-development
-  runtime selects these adapters, and API execution records each tool call after the run exists.
+  round-trips, atomic event-lock ordering, durable run-actor persistence, and terminal-run replay
+  protection. The non-development runtime selects these adapters, and API execution records each
+  tool call after the run exists.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; the new
   migration still needs to be applied to the hosted project before production activation.
@@ -53,6 +54,7 @@ review remains a deployment gate.
 ## Remaining honest gaps
 
 Cross-process idempotency/replay claims, complete read-only evidence envelopes, durable owner
-scoping, atomic event sequence coverage, RLS policy design, live provider traces, latency/cost
-measurements, and production deployment evidence remain open under Feature 018/019 tasks. Feature
-019 remains open until those mandatory tasks and convergence evidence are complete.
+scoping for every lifecycle endpoint, checkpoint-aware tool resume, RLS policy design, live
+provider traces, latency/cost measurements, and production deployment evidence remain open under
+Feature 018/019 tasks. Feature 019 remains open until those mandatory tasks and convergence evidence
+are complete.

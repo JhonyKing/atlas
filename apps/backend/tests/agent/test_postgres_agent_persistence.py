@@ -200,6 +200,31 @@ def test_postgres_agent_repository_persists_run_actor() -> None:
     assert connection.run_actor == "user-42"
 
 
+def test_postgres_create_run_keeps_existing_terminal_record() -> None:
+    connection = FakeConnection()
+    plan = _plan()
+    repository = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]
+    connection.plan_row = (uuid4(),)
+    connection.run_row = (
+        plan.run_id,
+        plan.request,
+        plan.locale,
+        plan.plan_hash,
+        "user-42",
+        "completed",
+        datetime.now(UTC),
+        {"event_count": 4},
+    )
+
+    record = repository.create_run(plan, actor_id="different-user")
+
+    assert record.status == "completed"
+    assert record.actor_id == "user-42"
+    assert not any(
+        "INSERT INTO atlas.agent_runs" in statement for statement in connection.statements
+    )
+
+
 def test_postgres_event_store_preserves_sequence_and_reconnect() -> None:
     connection = FakeConnection()
     store = PostgresAgentEventStore(connection)  # type: ignore[arg-type]
