@@ -51,8 +51,10 @@ anonymous actors and unknown owners are rejected before the legacy domain delega
 Plan, run, and approval endpoints accept an `Idempotency-Key`. The local replay store returns the
 original response for the same fingerprint and rejects a conflicting reuse with 409. Non-development
 runtimes use the PostgreSQL replay store from migration `agent_idempotency` (repository file
-`0029_agent_idempotency.py`), scoped by an
-opaque visitor hash; quota/consent convergence and production activation remain open.
+`0029_agent_idempotency.py`), scoped by an opaque visitor hash. Durable writes use the
+`(scope, idempotency_key)` unique constraint with `ON CONFLICT DO NOTHING` before reading the stored
+fingerprint, so concurrent workers cannot create two responses for one key; quota convergence and
+production activation remain open.
 
 The API surface is `/v1/agent/tools`, `/v1/agent/plans`, `/v1/agent/runs`, the event reconnect
 endpoint, explicit cancel/resume endpoints, and the approval decision endpoint.

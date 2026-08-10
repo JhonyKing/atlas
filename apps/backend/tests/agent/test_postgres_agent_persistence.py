@@ -357,6 +357,19 @@ def test_postgres_idempotency_store_replays_and_rejects_conflicts() -> None:
         raise AssertionError("conflicting fingerprints must be rejected")
 
 
+def test_postgres_idempotency_save_uses_unique_key_conflict_guard() -> None:
+    connection = FakeConnection()
+    store = PostgresIdempotencyStore(connection)  # type: ignore[arg-type]
+    fingerprint = "a" * 64
+
+    store.save("agent.run:owner-1", "request-key-1", fingerprint, {"status": "completed"})
+
+    assert any(
+        "ON CONFLICT (scope, idempotency_key) DO NOTHING" in statement
+        for statement in connection.statements
+    )
+
+
 def test_inmemory_repository_keeps_tool_call_and_approval_records() -> None:
     repository = InMemoryAgentRunRepository()
     plan = _plan()

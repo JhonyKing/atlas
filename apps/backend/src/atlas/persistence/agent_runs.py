@@ -136,26 +136,28 @@ class PostgresIdempotencyStore:
     def save(
         self, scope: str, key: str, fingerprint: str, response: Mapping[str, object]
     ) -> None:
+        self._connection.execute(
+            """
+            INSERT INTO atlas.agent_idempotency_records(
+              scope, idempotency_key, fingerprint, response
+            ) VALUES (%s, %s, %s, %s)
+            ON CONFLICT (scope, idempotency_key) DO NOTHING
+            """,
+            (scope, key, fingerprint, Jsonb(dict(response))),
+        )
+        self._connection.commit()
         existing = self._connection.execute(
             """
-            SELECT fingerprint
+            SELECT fingerprint, response
             FROM atlas.agent_idempotency_records
             WHERE scope = %s AND idempotency_key = %s
             """,
             (scope, key),
         ).fetchone()
-        if existing is not None and str(existing[0]).strip() != fingerprint:
-            raise IdempotencyConflict("idempotency key conflicts with another request")
         if existing is None:
-            self._connection.execute(
-                """
-                INSERT INTO atlas.agent_idempotency_records(
-                  scope, idempotency_key, fingerprint, response
-                ) VALUES (%s, %s, %s, %s)
-                """,
-                (scope, key, fingerprint, Jsonb(dict(response))),
-            )
-            self._connection.commit()
+            raise RuntimeError("idempotency record was not persisted")
+        if str(existing[0]).strip() != fingerprint:
+            raise IdempotencyConflict("idempotency key conflicts with another request")
 
 
 class InMemoryAgentRunRepository:
