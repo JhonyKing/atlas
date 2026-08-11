@@ -46,11 +46,19 @@ development-server compilation races while retaining a separate failing build bo
 
 ## Hosted CI and branch protection verified on 2026-08-11
 
-Commit `78d58d35d4a07aff0ffa16c3e16ee5b79fd0fcda` completed GitHub Actions run
-[`31489264785`](https://github.com/JhonyKing/atlas/actions/runs/31489264785) and Offline Evaluation
-run [`31489264796`](https://github.com/JhonyKing/atlas/actions/runs/31489264796) successfully. The
-seven merge-gating checks all concluded `success`: `backend`, `cited-answer-v1`, `database`,
-`Deployment contracts and secret boundary`, `offline-eval`, `security-regression`, and `web`.
+Commit `87043701acf964038884b974414eb9528c5eb18b` completed GitHub Actions run
+[`31489992776`](https://github.com/JhonyKing/atlas/actions/runs/31489992776), Offline Evaluation run
+[`31489992707`](https://github.com/JhonyKing/atlas/actions/runs/31489992707), Supabase migration run
+[`31489992706`](https://github.com/JhonyKing/atlas/actions/runs/31489992706), and the Vercel preview
+successfully. The nine merge-gating checks all concluded `success`: `backend`, `cited-answer-v1`,
+`database`, `Deployment contracts and secret boundary`, `offline-eval`,
+`Repository and evidence contracts`, `security-regression`, `Vercel`, and `web`.
+
+This PR also supplies real failure-path evidence. The first Supabase workflow run
+[`31489718182`](https://github.com/JhonyKing/atlas/actions/runs/31489718182) failed because its test
+step used backend-relative paths while executing at repository root. The failed required check
+blocked merge. Commit `8704370` corrected the paths, the exact local suite passed **25/25**, and the
+replacement hosted run passed. The protection was not bypassed or weakened.
 
 Authenticated repository administration then set `main` as the default branch and enabled branch
 protection with strict required checks, an enforced pull-request boundary, stale-review dismissal,
@@ -59,7 +67,7 @@ deletion are disabled. The approval count is intentionally zero because this is 
 single-maintainer portfolio repository: a PR and all checks remain mandatory without requiring the
 author to manufacture an unavailable second reviewer.
 
-The redacted settings snapshot and hosted-run identifiers are preserved in
+The redacted settings snapshot, failed-gate record, correction, and hosted-run identifiers are preserved in
 [`github-main-protection-20260811.json`](../../evals/results/github-main-protection-20260811.json).
 This closes the previously external branch-protection and hosted-run evidence gap without claiming
 that the still-unprovisioned managed API/worker deployment is production-ready.
