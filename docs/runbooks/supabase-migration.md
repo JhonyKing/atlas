@@ -26,14 +26,17 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected chain currently contains 31 revisions and ends at the repository file
-`0031_agent_tool_rls.py` (revision name `agent_tool_rls`). This migration enables explicit RLS
-policies for the durable Feature 019 agent tables. The owner-approved production application is
-complete and verified; future policy changes still require a reviewed migration.
+The expected repository chain currently contains 32 revisions and ends at
+`0032_foreign_key_indexes.py` (revision name `foreign_key_indexes`). Production remains at
+`agent_tool_rls` with 31 revisions. The new revision adds covering indexes for the foreign keys
+reported by the hosted performance advisor; it changes no row data or RLS policy and still requires
+separate explicit production approval before MCP application.
 
 ## Current hosted status (2026-08-11)
 
 - Remote migration head: `agent_tool_rls` at **31** revisions.
+- Repository migration head: `foreign_key_indexes` at **32** revisions; local fresh-database and
+  SQL-contract validation pass, but the revision is not yet applied remotely.
 - Seven durable agent tables have **FORCE ROW LEVEL SECURITY** and exactly 14 policies: one
   `atlas_worker` `ALL` policy and one `atlas_readonly` `SELECT` policy per table.
 - `anon` and `authenticated` have no grants on those seven tables. No row data was written by the
@@ -85,7 +88,8 @@ Rerun inspection before attempting recovery.
 
 ## Definition of done
 
-- All 31 revisions are applied or explicitly recorded as already present.
+- Every reviewed repository revision is applied or explicitly recorded as pending approval; the
+  current known difference is `foreign_key_indexes` pending after the 31-revision remote head.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

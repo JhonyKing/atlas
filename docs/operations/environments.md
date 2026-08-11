@@ -12,7 +12,7 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 
 The Supabase project `fcbclsaytbjpywlaplbh` was explicitly identified by the owner as **main / PRODUCTION**;
 it is not a development target. Read-only inspection on 2026-08-11 found Postgres `17.6`, migration
-head `0028_agent_tool_orchestration`, 31 hosted Supabase migration records, and installed `vector`,
+head `agent_tool_rls`, 31 hosted Supabase migration records, and installed `vector`,
 `pgmq`, `pgcrypto`, and `pg_stat_statements`. Preview and staging data isolation are still open because
 Supabase branches require a paid plan and no unapproved cost was incurred. The Vercel project identifier is non-secret. The owner has already
 configured and visually confirmed `apps/web` as the Root Directory in Project Settings; that action

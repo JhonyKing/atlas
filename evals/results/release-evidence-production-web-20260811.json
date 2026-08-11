@@ -3,7 +3,7 @@
   "source_revision": "174150ba53db8a98603fcc49e4262424f908a505",
   "web_build_id": "174150ba53db8a98603fcc49e4262424f908a505",
   "api_image_digest": null,
-  "migration_revision": "0028_agent_tool_orchestration",
+  "migration_revision": "agent_tool_rls",
   "checks": [
     {
       "name": "repository-release-gates",

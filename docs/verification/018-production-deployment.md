@@ -62,8 +62,8 @@ deployment. The UTF-8-preserving evidence is in
   pass and Playwright discovers all six. Their execution is intentionally tracked by T036.
 - Vercel project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` has READY preview/main and production
   deployments. The public web is [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app).
-- Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with Alembic head
-  `0028_agent_tool_orchestration` and 31 hosted migration records.
+- Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with remote head
+  `agent_tool_rls` and 31 hosted migration records. Repository revision 32 is pending approval.
 
 T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
 managed API/worker, environment secrets, functional smoke, observability/restore and production

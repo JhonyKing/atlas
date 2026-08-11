@@ -114,7 +114,7 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 | FR-005 / SC-003 | T023, T025, T026, T027 |
 | FR-006 / SC-003 | T022, T025, T026, T027 |
 | FR-007 | T015, T018, T019 |
-| FR-008 / SC-005 | T003, T004, T010, T018, T032, T033, T038 |
+| FR-008 / SC-005 | T003, T004, T010, T018, T032, T033, T038, T046 |
 | FR-009 | T017, T018, T030 |
 | FR-010 / SC-004 | T014, T021, T031, T039 |
 | FR-011 / SC-003 | T022, T023, T024, T026, T037, T039 |
@@ -134,6 +134,7 @@ description: "Dependency-ordered tasks for the ATLAS Supabase database migration
 - [x] T043 [US2] Add the reviewed `0025_supabase_security_hardening` migration and advisor regression check so ATLAS functions use an explicit search path on hosted Supabase.
 - [x] T044 [US2] Add the reviewed `0026_supabase_extension_security` migration and regression checks for extension schema placement and public helper RPC privileges.
 - [x] T045 [US2] Add the reviewed `0027_revoke_public_rls_helper` migration and verify the hosted helper is no longer executable through the public RPC surface.
+- [ ] T046 [US2] Resolve the hosted unindexed-foreign-key advisor findings with reviewed migration `0032_foreign_key_indexes.py`, the 32-revision manifest, and `016_foreign_key_indexes.sql`; apply and re-run hosted advisors only after explicit production approval. (Repository implementation and full local validation are complete; production application is pending owner approval.)
 
 ## Dependencies and Execution Order
 

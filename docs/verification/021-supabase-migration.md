@@ -88,3 +88,13 @@ failure behavior, and a bounded verification latency assertion.
 SpecKit closure: Analyze covered all 13 functional requirements and 6 buildable success criteria
 without CRITICAL/HIGH findings. Converge found no remaining unbuilt work, so no convergence phase
 was appended to `tasks.md`.
+
+## Foreign-key advisor follow-up (2026-08-11)
+
+Supabase reported informational unindexed-foreign-key findings after the agent migrations. The
+repository now includes `0032_foreign_key_indexes.py` and `016_foreign_key_indexes.sql`. The full
+32-revision chain migrated successfully on an isolated local database; the SQL contract passed and
+the database was removed afterward. Repository Ruff and strict mypy pass, and backend pytest is
+**428 passed / 4 skipped**. Production remains at `agent_tool_rls` (31 revisions): T046 stays open
+until the owner explicitly approves applying the new index-only migration and the hosted advisor is
+re-run. No Supabase row or policy was changed during this follow-up.
