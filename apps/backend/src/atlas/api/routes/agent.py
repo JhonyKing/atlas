@@ -35,6 +35,7 @@ from atlas.agent.tools.side_effects import (
     SideEffectToolAdapters,
     abstained_result,
 )
+from atlas.api.dependencies import optional_subject_id
 from atlas.api.routes.answers import AnswerRunControl
 from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
@@ -142,6 +143,16 @@ def _request_actor(request: Request, actor_id: str | None) -> str:
     """Resolve the caller identity used for durable run ownership checks."""
 
     return (actor_id or request.headers.get("x-atlas-actor-id") or "anonymous").strip()
+
+
+def _agent_scopes(request: Request, actor_id: str) -> set[str]:
+    """Resolve only scopes backed by the validated session boundary."""
+
+    scopes = {"anonymous"}
+    subject_id = optional_subject_id(request)
+    if subject_id is not None and str(subject_id) == actor_id:
+        scopes.add("authenticated")
+    return scopes
 
 
 def _assert_run_actor(request: Request, record: object, actor_id: str | None) -> None:
@@ -304,6 +315,7 @@ async def _execute_domain_tool(
                 actor_id=actor_id,
                 approval=approval,
                 consent=consent,
+                scopes=_agent_scopes(request, actor_id),
             )
         return await _execute_domain_tool_legacy(request, plan, step_index)
 

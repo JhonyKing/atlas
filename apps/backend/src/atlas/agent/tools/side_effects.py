@@ -54,6 +54,7 @@ class SideEffectToolAdapters:
         actor_id: str,
         approval: Approval | None = None,
         consent: bool | None = None,
+        scopes: set[str] | None = None,
     ) -> dict[str, object]:
         definition = self._catalog.get(tool_id)
         if definition is None or not requires_explicit_approval(tool_id):
@@ -64,6 +65,9 @@ class SideEffectToolAdapters:
             return abstained_result_with_reason("approval_required")
         if consent is False:
             return _rejected("consent_required")
+        granted_scopes = scopes or {"anonymous"}
+        if definition.scopes and not set(definition.scopes).issubset(granted_scopes):
+            return _rejected("scope_missing")
         try:
             assert_approval_matches(
                 approval,

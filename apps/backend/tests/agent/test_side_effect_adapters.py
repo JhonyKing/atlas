@@ -76,10 +76,40 @@ async def test_side_effect_adapter_enforces_ownership_after_approval() -> None:
         plan=plan,
         actor_id="user-1",
         approval=approval,
+        scopes={"authenticated"},
     )
 
     assert result["status"] == "rejected"
     assert result["reason"] == "ownership_denied"
+
+
+@pytest.mark.asyncio
+async def test_side_effect_adapter_blocks_missing_scope_before_owner_check() -> None:
+    owner_checked = False
+
+    def owner_check(_actor_id: str, _arguments: dict[str, object]) -> bool:
+        nonlocal owner_checked
+        owner_checked = True
+        return True
+
+    async def handler(_arguments: dict[str, object]) -> dict[str, object]:
+        return {"status": "completed"}
+
+    plan = _delete_plan()
+    result = await SideEffectToolAdapters(
+        ToolCatalog.default(), {"private_delete": handler}, owner_check=owner_check
+    ).execute(
+        "private_delete",
+        {"resource_id": "resource-1"},
+        plan=plan,
+        actor_id="user-1",
+        approval=_approved(plan),
+        scopes={"anonymous"},
+    )
+
+    assert result["status"] == "rejected"
+    assert result["reason"] == "scope_missing"
+    assert owner_checked is False
 
 
 @pytest.mark.asyncio
@@ -102,6 +132,7 @@ async def test_side_effect_adapter_executes_only_approved_owned_action() -> None
         plan=plan,
         actor_id="user-1",
         approval=approval,
+        scopes={"authenticated"},
     )
 
     assert result["status"] == "completed"
@@ -129,6 +160,7 @@ async def test_side_effect_result_drops_unbounded_handler_fields() -> None:
         actor_id="user-1",
         approval=_approved(plan),
         consent=True,
+        scopes={"authenticated"},
     )
 
     assert result["artifact_links"] == {"artifact-1": "/v1/artifacts/artifact-1"}

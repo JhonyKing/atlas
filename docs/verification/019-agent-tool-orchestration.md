@@ -96,6 +96,18 @@ publisher, canonical URL, capture time, and bounded excerpt; corpus status prese
 and generation provenance plus the canonical `/v1/corpus` link. The focused contract/adapters suite
 passed **15 tests**, and the complete backend gate passed **55 tests**, Ruff, and mypy.
 
+### Session-backed scope gate evidence (2026-08-11)
+
+The side-effect adapter now receives scopes resolved from the validated request session boundary:
+every caller has the explicit `anonymous` scope, while `authenticated` is added only when the
+validated subject matches the requested actor. A private or mutating tool therefore cannot run
+merely because a caller supplied an actor ID, approval ID, consent flag, or ownership-shaped
+argument. Missing required scopes are rejected before the ownership callback or handler is reached.
+The focused adapter/route suite passed **17 tests**, including a regression test proving that the
+owner check is not invoked for an anonymous caller with an approved private-delete plan. This is
+partial T043 evidence; durable approval-key binding and quota enforcement remain open, so T043 is
+not closed.
+
 ## Supabase evidence
 
 Migration `0028_agent_tool_orchestration` was applied to project `fcbclsaytbjpywlaplbh` through the
