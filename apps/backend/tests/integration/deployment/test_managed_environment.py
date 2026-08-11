@@ -1,5 +1,6 @@
 """Provider-neutral managed environment smoke fixtures."""
 
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).parents[5]
@@ -14,6 +15,32 @@ def test_managed_manifest_requires_immutable_image_and_readiness() -> None:
         'command: ["atlas-worker", "--manifest", "corpus/manifests/expansion-v1.yaml"]'
         in manifest
     )
+
+
+def test_fly_runtime_maps_api_worker_release_and_health_contracts() -> None:
+    config = tomllib.loads(
+        (ROOT / "infra/deployment/fly.toml").read_text(encoding="utf-8")
+    )
+
+    assert config["build"]["dockerfile"] == "infra/containers/backend/Dockerfile"
+    assert config["processes"]["api"] == "/entrypoint.sh"
+    assert config["processes"]["worker"] == (
+        "atlas-worker --manifest corpus/manifests/expansion-v1.yaml"
+    )
+    assert config["deploy"]["release_command"] == (
+        "alembic -c database/alembic.ini upgrade head"
+    )
+
+    service = config["http_service"]
+    assert service["processes"] == ["api"]
+    assert service["internal_port"] == 8000
+    assert service["force_https"] is True
+    assert service["min_machines_running"] == 2
+    assert service["checks"][0]["path"] == "/readyz"
+
+    machines = {entry["processes"][0]: entry for entry in config["vm"]}
+    assert machines["api"]["memory"] == "1gb"
+    assert machines["worker"]["memory"] == "1gb"
 
 
 def test_container_entrypoint_honors_worker_command_and_packages_manifest() -> None:
