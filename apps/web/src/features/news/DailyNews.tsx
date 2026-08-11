@@ -36,7 +36,7 @@ export function DailyNews() {
         <h2 id="daily-news-title">{messages.newsTitle}</h2>
         <time dateTime={payload.day}>{payload.day} UTC</time>
       </div>
-      <p className="daily-news-deck">{locale === "es-MX" ? "Una señal editorial del día anterior, publicada sólo cuando conserva atribución verificable." : "An editorial signal from the previous day, published only when attribution remains verifiable."}</p>
+      <p className="daily-news-deck">{locale === "es-MX" ? "Una noticia útil de IA del día anterior, elegida sólo cuando puedes abrir y revisar sus fuentes." : "One useful AI development from the previous day, selected only when you can open and inspect its sources."}</p>
       {payload.status === "ready" && payload.candidate ? (
         <article className="daily-news-card">
           <p className="daily-news-label">{messages.newsOriginal}</p>

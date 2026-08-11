@@ -31,6 +31,22 @@ outputs, persistence, evaluations, observability, and architecture. Each claim l
 repository artifact. The existing agent workspace remains available inside a closed advanced
 disclosure.
 
+## Public workflow composition
+
+P1 applies the presentation boundary beyond Home without changing API contracts:
+
+- Compare begins with three realistic decision presets, then exposes the complete technology and
+  criteria controls.
+- Reports leads visitors to a completed comparison; direct comparison IDs remain available in a
+  closed advanced disclosure.
+- News and Sources state the user benefit and verification threshold before operational details.
+- Source snapshot IDs, page counts, chunk counts, and source types remain inspectable inside
+  technical details.
+- Account states that sign-in is optional and keeps anonymous Ask, Compare, and News available.
+
+Client components still call the same typed API adapters. Raw backend exception text is converted
+to localized product-safe failure states at the public component boundary.
+
 ## Hosted configuration boundary
 
 `getPublicApiAvailability()` converts missing, invalid, or insecure hosted API configuration into
@@ -53,4 +69,5 @@ non-canonical and does not indicate that the production domain is globally block
 Unit tests enforce the Home contract and safe environment behavior. Playwright verifies public
 routes, three actions, progressive disclosure, Engineering evidence, anonymous reachability, and
 desktop/mobile presentation. Final screenshots are versioned under
-`docs/verification/artifacts/022/final/`.
+`docs/verification/artifacts/022/final/` for P0 and
+`docs/verification/artifacts/022/p1/` for the five P1 public workflows.

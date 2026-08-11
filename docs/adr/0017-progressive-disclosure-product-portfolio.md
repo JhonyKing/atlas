@@ -21,6 +21,9 @@ Removing them would weaken the product and its portfolio value.
    a secret name, environment key, or raw configuration exception to a visitor.
 6. Keep the canonical production domain indexable; accept Vercel's noindex policy on noncanonical
    team/preview aliases.
+7. Apply the same boundary to secondary public workflows: decision presets before raw comparison
+   controls, completed-research guidance before report IDs, trust language before ingestion
+   metrics, and anonymous-use guidance before private-account controls.
 
 ## Alternatives considered
 
@@ -37,3 +40,7 @@ Ordinary users receive a smaller cognitive load, while engineers retain direct a
 system depth. Home and Engineering must remain consistent with the same SpecKit artifacts and
 tests. The UI can safely explain that the API is unavailable, but full hosted functionality still
 depends on Feature 018 provisioning the managed backend.
+
+The public routes keep their complete functional controls, but those controls no longer need to be
+understood before a visitor knows what the route is for. Native `details` elements preserve
+keyboard access and expose manual report identifiers and source-ingestion metadata on demand.

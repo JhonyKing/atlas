@@ -102,6 +102,9 @@ Feature 022 applies the P0 corrections:
 7. Home and Engineering were visually inspected at 1440x900 and 390x844 with no horizontal
    overflow or duplicated language control.
 
-Remaining P1 work is intentionally explicit in `specs/022-product-clarity-engineering/tasks.md`:
-plain-language refinement for Compare, Reports, News, Sources, and Account. P2 retains the richer
-measured case-study presentation and an external five-second comprehension review.
+P1 then completed the secondary public-workflow corrections: Compare starts from realistic
+decisions, Reports leads with the completed-research path and hides manual IDs by default, News and
+Sources explain their verification benefit before operational state, and Account makes optional
+sign-in and anonymous availability explicit. These routes were inspected at 1440x900 and 390x844,
+and the seven-width matrix passed 56/56 cases. P2 retains the richer measured case-study
+presentation and an external five-second comprehension review.

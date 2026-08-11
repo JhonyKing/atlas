@@ -102,9 +102,9 @@ export function ComparisonPage() {
     };
     try {
       await streamComparison(input, handleEvent, nextController.signal);
-    } catch (cause) {
+    } catch {
       if (nextController.signal.aborted) return;
-      setError(cause instanceof Error ? cause.message : spanish ? "No se pudo comparar." : "Comparison failed.");
+      setError(spanish ? "No pudimos completar la comparación. Inténtalo de nuevo más tarde." : "We couldn't complete the comparison. Try again later.");
       setStatus(spanish ? "La comparación terminó sin resultado verificado." : "Comparison ended without a verified result.");
     } finally {
       setActive(false);
@@ -129,6 +129,22 @@ export function ComparisonPage() {
     setStatus(spanish ? "Comparación cancelada." : "Comparison cancelled.");
   }
 
+  function applyDecisionPreset(preset: "framework" | "provider" | "production") {
+    if (preset === "framework") {
+      setSelectedTechnologies(["langgraph", "langchain"]);
+      setSelectedCriteria(["capability", "tool_calling", "operational_risk"]);
+    } else if (preset === "provider") {
+      setSelectedTechnologies(["openai", "anthropic"]);
+      setSelectedCriteria(["tool_calling", "context", "price"]);
+    } else {
+      setSelectedTechnologies(["openai", "anthropic", "gemini"]);
+      setSelectedCriteria(["latency", "price", "freshness", "operational_risk"]);
+    }
+    setError(null);
+    setMatrix(null);
+    setStatus(messages.comparison.ready);
+  }
+
   const copy = spanish
     ? {
         selected: "Seleccionada",
@@ -136,6 +152,13 @@ export function ComparisonPage() {
         technologyHelp: "Elige entre 2 y 4 tecnologías.",
         criteriaHelp: "Elige al menos un criterio para comparar.",
         selectedSummary: `${selectedTechnologies.length} tecnologías · ${selectedCriteria.length} criterios`,
+        lede: "Compara opciones para una decisión de IA. ATLAS muestra qué respaldan las fuentes y dónde todavía falta evidencia.",
+        commonTitle: "Empieza con una decisión común",
+        presets: [
+          { id: "framework" as const, title: "Elegir un framework de agentes", description: "LangGraph vs. LangChain para flujos con herramientas y revisión humana." },
+          { id: "provider" as const, title: "Elegir un proveedor de modelos", description: "OpenAI vs. Anthropic en herramientas, contexto y precio." },
+          { id: "production" as const, title: "Planear para producción", description: "Compara latencia, precio, actualización y riesgo operativo." },
+        ],
       }
     : {
         selected: "Selected",
@@ -143,6 +166,13 @@ export function ComparisonPage() {
         technologyHelp: "Choose between 2 and 4 technologies.",
         criteriaHelp: "Choose at least one criterion to compare.",
         selectedSummary: `${selectedTechnologies.length} technologies · ${selectedCriteria.length} criteria`,
+        lede: "Compare options for a real AI decision. ATLAS shows what the sources support—and where evidence is still missing.",
+        commonTitle: "Start with a common decision",
+        presets: [
+          { id: "framework" as const, title: "Choose an agent framework", description: "LangGraph vs. LangChain for tools and human review." },
+          { id: "provider" as const, title: "Choose a model provider", description: "OpenAI vs. Anthropic for tools, context, and price." },
+          { id: "production" as const, title: "Plan for production", description: "Compare latency, price, freshness, and operational risk." },
+        ],
       };
 
   return (
@@ -150,7 +180,18 @@ export function ComparisonPage() {
       <section className="comparison-experience" aria-labelledby="comparison-title">
         <p className="eyebrow">{messages.comparison.eyebrow}</p>
         <h1 id="comparison-title">{messages.comparison.title}</h1>
-        <p className="lede">{spanish ? "Selecciona un conjunto acotado de tecnologías y criterios; ATLAS conserva los estados sin evidencia." : "Select a bounded set of technologies and criteria; ATLAS preserves unsupported states."}</p>
+        <p className="lede">{copy.lede}</p>
+        <section className="comparison-decision-presets" aria-labelledby="comparison-decisions-title">
+          <h2 id="comparison-decisions-title">{copy.commonTitle}</h2>
+          <div className="comparison-preset-list">
+            {copy.presets.map((preset) => (
+              <button key={preset.id} type="button" onClick={() => applyDecisionPreset(preset.id)}>
+                <strong>{preset.title}</strong>
+                <span>{preset.description}</span>
+              </button>
+            ))}
+          </div>
+        </section>
         <form onSubmit={submit}>
           <div className="comparison-control-grid">
           <fieldset className="comparison-control-group" aria-describedby="comparison-technologies-help" aria-invalid={selectedTechnologies.length < 2 || selectedTechnologies.length > 4}>

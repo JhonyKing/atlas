@@ -30,8 +30,8 @@ test("comparison form renders a verified matrix only in the terminal event", asy
   });
 
   await page.goto("/en/compare");
-  await expect(page.getByRole("heading", { name: "Compare technologies without invented data." })).toBeVisible();
-  await page.getByRole("button", { name: "Compare" }).click();
+  await expect(page.getByRole("heading", { name: "Compare AI technologies for a real decision" })).toBeVisible();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
 
   await expect(page.getByRole("status")).toContainText("Comparison verified");
   await expect(page.getByText("Graph workflow")).toBeVisible();

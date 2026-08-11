@@ -28,12 +28,12 @@ test("English and Spanish comparison presentation preserve the same matrix value
   });
 
   await page.goto("/en/compare");
-  await page.getByRole("button", { name: "Compare" }).click();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
   await expect(page.getByText("Graph workflow")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Compare technologies without invented data." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Compare AI technologies for a real decision" })).toBeVisible();
 
   await page.goto("/es/compare");
   await page.getByRole("button", { name: "Comparar" }).click();
   await expect(page.getByText("Graph workflow")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Compara tecnologías sin inventar datos." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Compara tecnologías de IA para una decisión real" })).toBeVisible();
 });

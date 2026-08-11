@@ -28,7 +28,7 @@ test("comparison matrix explains unsupported and contradictory evidence states",
   });
 
   await page.goto("/en/compare");
-  await page.getByRole("button", { name: "Compare" }).click();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
 
   await expect(page.getByRole("list", { name: "Evidence states" }).getByText("Unsupported", { exact: true })).toBeVisible();
   await expect(page.getByText("No comparable price evidence.")).toBeVisible();

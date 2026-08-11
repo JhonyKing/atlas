@@ -80,10 +80,10 @@
 
 ## Phase 7: P1 — Remaining Public Workflow Clarity
 
-- [ ] T031 [P] Refine plain-language hierarchy and realistic decision examples in `apps/web/src/features/comparison/ComparisonPage.tsx`
-- [ ] T032 [P] Refine report entry language, examples, and advanced identifiers in `apps/web/src/features/reports/ReportRequest.tsx`
-- [ ] T033 [P] Refine public-benefit copy and empty/error states in `apps/web/src/features/news/DailyNews.tsx`, `apps/web/src/features/corpus/CorpusStatus.tsx`, and `apps/web/src/features/account/AccountPageContent.tsx`
-- [ ] T034 Validate P1 public workflows at desktop/mobile and update `docs/verification/022-product-clarity-engineering.md`
+- [x] T031 [P] Refine plain-language hierarchy and realistic decision examples in `apps/web/src/features/comparison/ComparisonPage.tsx`
+- [x] T032 [P] Refine report entry language, examples, and advanced identifiers in `apps/web/src/features/reports/ReportRequest.tsx`
+- [x] T033 [P] Refine public-benefit copy and empty/error states in `apps/web/src/features/news/DailyNews.tsx`, `apps/web/src/features/corpus/CorpusStatus.tsx`, and `apps/web/src/features/account/AccountPageContent.tsx`
+- [x] T034 Validate P1 public workflows at desktop/mobile and update `docs/verification/022-product-clarity-engineering.md`
 
 ---
 
@@ -101,7 +101,7 @@
 - User Story 1 is independently shippable after T010–T015.
 - User Story 2 depends only on localized copy foundations and is otherwise parallel with User Story 1.
 - User Story 3 can proceed in parallel after metadata tests exist.
-- T025–T030 close P0 only. T031–T038 remain explicitly open.
+- T025–T030 close P0. T031–T034 close P1. T035–T038 remain explicitly open for P2.
 
 ## Parallel Execution Examples
 

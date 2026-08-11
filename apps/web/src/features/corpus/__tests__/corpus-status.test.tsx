@@ -42,7 +42,7 @@ const payload = {
 };
 
 describe("CorpusStatus", () => {
-  it("shows freshness and availability for every supported collection", async () => {
+  it("shows freshness and availability while keeping catalog IDs advanced", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(payload), { status: 200 })));
 
     render(<LocaleProvider><CorpusStatus /></LocaleProvider>);
@@ -52,6 +52,8 @@ describe("CorpusStatus", () => {
     expect(screen.getByText("Stale")).toBeVisible();
     expect(screen.getByText("Unavailable")).toBeVisible();
     expect(screen.getByText("OpenAI API")).toBeVisible();
+    expect(screen.getByText(/Snapshot/)).not.toBeVisible();
+    screen.getByText("Technical catalog details").click();
     expect(screen.getByText(/Snapshot/)).toBeVisible();
   });
 
@@ -60,8 +62,8 @@ describe("CorpusStatus", () => {
 
     render(<LocaleProvider><CorpusStatus /></LocaleProvider>);
 
-    await waitFor(() => expect(screen.getByText("Corpus status unavailable.")).toBeVisible());
-    expect(screen.getByRole("heading", { name: "Corpus status" })).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/couldn't load the source catalog/i)).toBeVisible());
+    expect(screen.getByRole("heading", { name: "Sources ATLAS can verify" })).toBeVisible();
     expect(screen.queryByText(/database password/i)).not.toBeInTheDocument();
   });
 });

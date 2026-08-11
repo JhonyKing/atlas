@@ -12,6 +12,7 @@ test("completed report exposes DOCX, PDF, and delete controls", async ({ page })
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ report_id: "report-artifacts", status: "completed" }) });
   });
   await page.goto("/en/reports");
+  await page.getByText("Advanced options: enter a comparison ID").click();
   await page.getByLabel("Completed comparison ID").fill("comparison-artifacts");
   await page.getByRole("button", { name: "Generate report" }).click();
   await expect(page.getByRole("link", { name: "Download DOCX" })).toBeVisible();
