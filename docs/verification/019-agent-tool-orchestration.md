@@ -34,6 +34,10 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; durable saves
   use the unique scope/key constraint as the concurrent-write guard. The migration still needs to
   be applied to the hosted project before production activation.
+- Durable run checkpoints are now persisted after each tool result with a stable per-step replay key
+  (`agent-run:<plan_hash>:step-N`). The contract replay test recovers the checkpoint and confirms
+  that repeating the run returns the original event stream without another tool call. Full
+  checkpoint-aware resume of pending steps remains open under T044.
 - Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **48 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.

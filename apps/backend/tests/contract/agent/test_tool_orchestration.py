@@ -167,6 +167,12 @@ def test_replaying_completed_run_does_not_duplicate_events_or_tool_calls() -> No
     assert second.status_code == 202
     assert second.json()["events"] == first.json()["events"]
 
+    checkpoint = client.app.state.agent_checkpoint_service.resume(
+        UUID(first.json()["run_id"]),
+        replay_key=f"agent-run:{plan['plan_hash']}:step-0",
+    )
+    assert checkpoint.node == "tool_call:step-0"
+
 
 def test_replaying_run_with_a_different_actor_is_not_allowed() -> None:
     client = TestClient(create_app())

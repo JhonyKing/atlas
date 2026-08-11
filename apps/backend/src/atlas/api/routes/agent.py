@@ -572,6 +572,7 @@ async def create_agent_run(
             started_at=started_at,
             completed_at=datetime.now(UTC),
         )
+        _save_run_checkpoint(request, plan, index)
         event_type = (
             "tool_call.abstained"
             if status_value == "abstained"
@@ -765,6 +766,24 @@ def _review(request: Request) -> ReviewService:
 
 def _checkpoints(request: Request) -> CheckpointRepository:
     return cast(CheckpointRepository, request.app.state.agent_checkpoint_service)
+
+
+def _save_run_checkpoint(request: Request, plan: AgentPlan, step_index: int) -> None:
+    """Persist a content-safe boundary after a tool result is durable."""
+
+    call_id = f"step-{step_index}"
+    state = AtlasState(
+        thread_id=plan.run_id,
+        request_id=plan.run_id,
+        request=plan.request,
+        language=plan.locale,
+        state_version=step_index + 2,
+    )
+    _checkpoints(request).save(
+        state,
+        node=f"tool_call:{call_id}",
+        replay_key=f"agent-run:{plan.plan_hash}:{call_id}",
+    )
 
 
 @router.post("/prepare")
