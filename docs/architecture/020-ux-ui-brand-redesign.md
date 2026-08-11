@@ -35,3 +35,16 @@ The route-state suite verifies controlled unavailable/empty/retry states. The vi
 verifies no overflow, reachable skip-link focus, semantic form labels, reduced motion, touch
 targets, contrast, route status, and SVG/favicon loading at seven widths. The production visual
 route suite captures all bilingual public/admin routes at 390x844 and 1440x900.
+
+## Feature 022 product-clarity refinement
+
+The root route now composes `ProductHome` instead of placing `AgentWorkspace` before the research
+form. `ProductHome` owns the outcome-led hero, three workflow entry points, trust benefits, answer
+form, and portfolio attribution. `CitedAnswerForm` keeps automatic collection selection as the
+default and places the manual collection control in a native, keyboard-accessible disclosure.
+
+The agent system was not removed. `/engineering` documents the technical architecture and mounts
+the existing `AgentWorkspace` inside an advanced disclosure. This preserves typed-tool and
+approval behavior while giving public users a simpler default. The detailed decision and Feature
+022 architecture live in `docs/adr/0017-progressive-disclosure-product-portfolio.md` and
+`docs/architecture/022-product-clarity-engineering.md`.
