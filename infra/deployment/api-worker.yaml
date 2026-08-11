@@ -19,7 +19,7 @@ spec:
       memory: 1Gi
   worker:
     replicas: 1
-    command: ["atlas-worker"]
+    command: ["atlas-worker", "--manifest", "corpus/manifests/expansion-v1.yaml"]
     resources:
       cpu: "1"
       memory: 1Gi

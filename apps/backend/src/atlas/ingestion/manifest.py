@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import cast
@@ -26,6 +27,20 @@ class CorpusManifest:
     @property
     def source_count(self) -> int:
         return len(self.candidates)
+
+
+class ManifestDiscoverer:
+    """Expose only the reviewed candidates for the collection claimed by a worker."""
+
+    def __init__(self, manifest: CorpusManifest) -> None:
+        self._manifest = manifest
+
+    async def discover(self, collection: CollectionSlug) -> Sequence[SourceCandidate]:
+        return tuple(
+            candidate
+            for candidate in self._manifest.candidates
+            if candidate.collection is collection
+        )
 
 
 def load_manifest(path: Path) -> CorpusManifest:
@@ -104,4 +119,4 @@ def load_manifest(path: Path) -> CorpusManifest:
     )
 
 
-__all__ = ["CorpusManifest", "ManifestError", "load_manifest"]
+__all__ = ["CorpusManifest", "ManifestDiscoverer", "ManifestError", "load_manifest"]

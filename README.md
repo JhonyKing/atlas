@@ -13,6 +13,11 @@ claim that the complete managed runtime is already live. The web is published at
 [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app); the managed API/worker is not
 live yet, so the complete product is not declared production-ready.
 
+The shared backend image now has executable process separation: its default command starts the
+API, while the managed worker role runs `atlas-worker` with approved-manifest, PostgreSQL,
+allowlisted-fetch and embedding wiring. The worker implementation is locally container-verified;
+this does not replace the still-open task to provision and observe the hosted API/worker runtime.
+
 Local checks:
 
 ```powershell

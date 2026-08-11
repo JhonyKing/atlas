@@ -31,6 +31,9 @@ def test_safe_defaults_select_the_approved_portfolio_baseline() -> None:
     assert settings.atlas_reasoning_effort == "medium"
     assert settings.atlas_embedding_model == "text-embedding-3-small"
     assert settings.atlas_embedding_dimensions == 1536
+    assert settings.atlas_corpus_manifest == Path("corpus/manifests/expansion-v1.yaml")
+    assert settings.atlas_worker_poll_seconds == 10.0
+    assert settings.atlas_worker_max_runs_per_cycle == 10
     assert settings.atlas_anonymous_answer_limit == 10
     assert settings.atlas_anonymous_comparison_limit == 5
     assert settings.atlas_anonymous_window_hours == 24
@@ -55,6 +58,17 @@ def test_blank_optional_langsmith_values_are_treated_as_unset() -> None:
     assert settings.langsmith_api_key is None
     assert settings.langsmith_endpoint is None
     assert settings.langsmith_workspace_id is None
+
+
+def test_managed_database_alias_matches_deployment_templates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    managed_dsn = "postgresql+psycopg://atlas:managed-value@pooler.example:6543/atlas"
+    monkeypatch.setenv("ATLAS_DATABASE_URL", managed_dsn)
+
+    settings = Settings()
+
+    assert settings.database_url.get_secret_value() == managed_dsn
 
 
 def test_production_rejects_missing_runtime_secrets() -> None:

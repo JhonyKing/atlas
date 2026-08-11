@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, TypedDict
 
-from pydantic import AnyHttpUrl, Field, SecretStr, field_validator, model_validator
+from pydantic import AliasChoices, AnyHttpUrl, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -44,8 +44,11 @@ class Settings(BaseSettings):
 
     atlas_env: Literal["development", "test", "preview", "staging", "production"] = "development"
     atlas_log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
-    database_url: SecretStr = SecretStr(
-        "postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
+    database_url: SecretStr = Field(
+        default=SecretStr(
+            "postgresql+psycopg://atlas:atlas-local-only@localhost:55432/atlas"
+        ),
+        validation_alias=AliasChoices("DATABASE_URL", "ATLAS_DATABASE_URL"),
     )
     web_origin: AnyHttpUrl = AnyHttpUrl("http://localhost:3000")
     api_origin: AnyHttpUrl = AnyHttpUrl("http://localhost:8000")
@@ -76,6 +79,9 @@ class Settings(BaseSettings):
     atlas_ingestion_ttl_hours: int = Field(default=168, ge=1)
     atlas_ingestion_max_retries: int = Field(default=3, ge=1, le=10)
     atlas_ingestion_max_bytes: int = Field(default=4_000_000, ge=1)
+    atlas_corpus_manifest: Path = Path("corpus/manifests/expansion-v1.yaml")
+    atlas_worker_poll_seconds: float = Field(default=10.0, ge=0.1, le=300.0)
+    atlas_worker_max_runs_per_cycle: int = Field(default=10, ge=1, le=100)
     atlas_agent_node_timeout_seconds: float = Field(default=15.0, gt=0)
     atlas_agent_checkpoint_ttl_hours: int = Field(default=24, ge=1)
     atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)

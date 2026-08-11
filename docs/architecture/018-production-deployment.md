@@ -15,3 +15,17 @@ origins and missing required secrets. `/healthz` is liveness; `/readyz` is the d
 Preview and production use separate Vercel projects, database targets, storage buckets, auth
 redirects, LangSmith projects, and quotas. Live provider/LangSmith checks are evidence from the
 deployed environment; deterministic RAG evaluations remain a mandatory CI/release gate.
+
+## API and worker process boundary
+
+The backend image has one default API process and an explicit worker command. With no arguments,
+`/entrypoint.sh` starts Uvicorn; when the managed worker role supplies `atlas-worker`, the
+entrypoint dispatches that command instead of accidentally starting a second API. The image
+packages the reviewed corpus manifests alongside all database migrations.
+
+`atlas-worker` loads only an approved manifest, accepts `DATABASE_URL` or the deployment-facing
+`ATLAS_DATABASE_URL`, requires the OpenAI secret, and constructs the PostgreSQL repository,
+allowlisted fetcher, and embedding adapter inside the process. It drains a bounded number of
+durable ingestion jobs per cycle, waits interruptibly when idle, and handles termination signals
+before closing HTTP/provider/database resources. The managed runtime remains unprovisioned; this
+section records deployable repository wiring, not hosted evidence.

@@ -14,3 +14,15 @@ Root Directory setting. The GitHub environment must provide `VERCEL_TOKEN`, `VER
 the environment-specific project ID (`VERCEL_PREVIEW_PROJECT_ID` or
 `VERCEL_PRODUCTION_PROJECT_ID`). The workflow links the project explicitly before deploying;
 there is no dependency on a developer's local `.vercel` directory.
+
+For the managed backend image, keep `ATLAS_DATABASE_URL` in the platform secret manager and set
+`ATLAS_CORPUS_MANIFEST=corpus/manifests/expansion-v1.yaml`. Run the API role with the image's
+default command and the worker role with:
+
+```text
+atlas-worker --manifest corpus/manifests/expansion-v1.yaml
+```
+
+Before promotion, verify that the exact immutable image responds to `atlas-worker --help` and
+that starting it without injected secrets fails closed. Never pass database/provider secrets as
+command-line arguments.

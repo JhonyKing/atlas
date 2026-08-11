@@ -10,6 +10,18 @@ def test_managed_manifest_requires_immutable_image_and_readiness() -> None:
     assert "@sha256:" in manifest
     assert "readinessPath: /readyz" in manifest
     assert "livenessPath: /healthz" in manifest
+    assert (
+        'command: ["atlas-worker", "--manifest", "corpus/manifests/expansion-v1.yaml"]'
+        in manifest
+    )
+
+
+def test_container_entrypoint_honors_worker_command_and_packages_manifest() -> None:
+    entrypoint = (ROOT / "infra/containers/backend/entrypoint.sh").read_text(encoding="utf-8")
+    dockerfile = (ROOT / "infra/containers/backend/Dockerfile").read_text(encoding="utf-8")
+
+    assert 'exec "$@"' in entrypoint
+    assert "COPY corpus ./corpus" in dockerfile
 
 
 def test_managed_environment_has_separate_preview_and_production_templates() -> None:

@@ -4,6 +4,9 @@ API_ORIGIN=https://api.example.invalid
 NEXT_PUBLIC_API_ORIGIN=https://api.example.invalid
 ATLAS_DATABASE_URL=postgresql+psycopg://USER:PASSWORD@POOLER_HOST:6543/atlas
 ATLAS_ANSWER_MODEL=gpt-5.6-luna
+ATLAS_CORPUS_MANIFEST=corpus/manifests/expansion-v1.yaml
+ATLAS_WORKER_POLL_SECONDS=10
+ATLAS_WORKER_MAX_RUNS_PER_CYCLE=10
 LANGSMITH_TRACING=true
 LANGSMITH_PROJECT=atlas-ai-production
 # Set secrets in the platform secret manager; never commit values here.

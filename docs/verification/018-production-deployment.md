@@ -82,3 +82,21 @@ rollback evidence do not yet exist.
   Authentication, private data, reviews, and governance also use that same origin.
 - Four hosted functional journeys remain blocked, not failed: API health/readiness, cited
   answer/abstention, comparison/report generation, and corpus/news data. T032-T036 remain open.
+
+## Managed worker wiring follow-up (2026-08-11)
+
+- SpecKit Converge found that the declared worker command was not executable: the container
+  entrypoint ignored role commands and `atlas-worker` deliberately raised a placeholder error.
+- T044 replaced that placeholder with approved-manifest, PostgreSQL, bounded fetch, OpenAI
+  embedding, retry-budget, queue-polling and graceful-shutdown wiring. `ATLAS_DATABASE_URL` now
+  maps explicitly to the typed database setting used by the deployment templates.
+- Focused configuration/deployment/ingestion verification passed **22/22** with Ruff and mypy
+  clean.
+- The complete backend regression suite then passed **434 tests with 4 intentional skips**;
+  repository-wide Ruff and strict mypy passed across 183 source files.
+- Docker built image
+  `sha256:443d1bba82c306df09c369b0a8cab6b66a5a9147d08fdee1bb67517fcce41e76`.
+  Running the image through its real entrypoint displayed the `atlas-worker` CLI, while a
+  secret-free `--once` start exited non-zero with the controlled `OPENAI_API_KEY` requirement.
+- T044 is closed. T032 remains open because no managed runtime, immutable registry digest, API
+  domain or hosted worker observation has been provisioned.

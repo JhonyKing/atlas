@@ -31,3 +31,10 @@ def test_safe_summary_never_contains_secret_values() -> None:
     settings = Settings(openai_api_key=SecretStr("sk-test-not-exported"))
     summary = settings.safe_summary()
     assert "sk-test-not-exported" not in repr(summary)
+
+
+def test_managed_database_secret_name_is_consumed(monkeypatch: pytest.MonkeyPatch) -> None:
+    managed_dsn = "postgresql+psycopg://atlas:managed-test@pooler.example:6543/atlas"
+    monkeypatch.setenv("ATLAS_DATABASE_URL", managed_dsn)
+
+    assert Settings().database_url.get_secret_value() == managed_dsn

@@ -14,6 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app
 COPY --from=build /opt/venv /opt/venv
 COPY database ./database
+COPY corpus ./corpus
 COPY infra/containers/backend/entrypoint.sh /entrypoint.sh
 RUN useradd --create-home --uid 10001 atlas && chmod 0555 /entrypoint.sh && chown -R atlas:atlas /app /opt/venv
 USER atlas

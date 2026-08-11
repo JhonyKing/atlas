@@ -58,15 +58,16 @@ Vercel, Supabase, or managed-container account already exists.
 - [ ] T034 [US3] Execute the complete quickstart against preview/staging and retain the release evidence bundle under `evals/results/`.
 - [ ] T035 [US4] Verify traces, redaction, alerts, backups/restore, and rollback rehearsal in the real environment.
 - [ ] T036 [US1] Execute production smoke tests in both locales and verify answer, comparison, report artifact, daily news, corpus freshness, auth/private-data, and truthful abstention behavior.
+- [X] T044 [US2] Replace the placeholder `atlas-worker` entrypoint with deployable, fail-closed PostgreSQL/manifest/fetcher/embedding wiring, bounded queue polling, graceful shutdown, container command dispatch, and deterministic tests before T032. (Evidence: 22/22 focused tests, Ruff/mypy clean, image `sha256:443d1bba82c306df09c369b0a8cab6b66a5a9147d08fdee1bb67517fcce41e76`, container CLI dispatch verified, and missing-secret start rejected.)
 
 ## Phase 7: Documentation and convergence
 
 - [X] T037 [P] Update `README.md` with local versus deployed URLs, architecture, setup, environment boundaries, and evidence links.
 - [X] T038 [P] Add/update the deployment ADR in `docs/adr/` explaining Vercel web, Supabase data, managed API/worker, migrations, and rollback decisions.
 - [X] T039 [P] Update `docs/product/prd-v1.1-backlog.md`, `docs/product/feature-status-matrix.md`, and `docs/operations/` with Feature 018 traceability and SCL-011 status.
-- [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (No critical inconsistencies remain; T005/T006 and T030-T036 stay explicitly open.)
-- [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Converged to existing open tasks; no extra phase appended.)
-- [X] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results. (Evidence: backend 428 passed/4 skipped with repository Ruff and strict mypy clean; frontend lint/typecheck, Vitest 35/35, Playwright 149 passed/4 hosted skips and production build pass; the final locale/flag delta passed 5/5 focused journeys; deployment/security follow-up passed 17 tests and the deployment secret scan. Hosted execution remains T034-T036, not this local gate.)
+- [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (The 2026-08-11 follow-up found and resolved the worker placeholder/entrypoint inconsistency as T044; T031-T036 stay explicitly open.)
+- [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Follow-up convergence appended and completed T044; the six external activation tasks remain open.)
+- [X] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results. (Evidence: backend 434 passed/4 skipped with repository Ruff and strict mypy clean after T044; frontend lint/typecheck, Vitest 35/35, Playwright 149 passed/4 hosted skips and production build pass; the final locale/flag delta passed 5/5 focused journeys; deployment/security follow-up passed 17 tests and the deployment secret scan. Hosted execution remains T034-T036, not this local gate.)
 - [X] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs. (Implementation commit: `e8de6b9`.)
 
 ## Dependencies & Execution Order
@@ -76,7 +77,7 @@ Vercel, Supabase, or managed-container account already exists.
 - T013-T017 depend on T007 and block any real managed-data smoke test.
 - T018-T024 depend on T001-T017 and block promotion.
 - T025-T029 may proceed after runtime/release identifiers exist; T027 is required before T035.
-- T030-T036 require operator credentials and external environments; they cannot be faked by local tests.
+- T044 is local runtime wiring required before T032; T030-T036 require operator credentials and external environments and cannot be faked by local tests.
 - T037-T043 close only after implementation and real-environment evidence are reviewed.
 
 ## Definition of Done
