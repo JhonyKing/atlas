@@ -9,10 +9,29 @@ describe("getPublicEnvironment", () => {
 
   it("uses the documented local API origin by default", () => {
     vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "");
+    vi.stubEnv("NEXT_PUBLIC_ATLAS_ENV", "development");
 
     expect(getPublicEnvironment()).toEqual({
       apiOrigin: "http://localhost:8000",
     });
+  });
+
+  it("fails closed instead of calling localhost when a hosted API origin is missing", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "");
+    vi.stubEnv("NEXT_PUBLIC_ATLAS_ENV", "production");
+
+    expect(() => getPublicEnvironment()).toThrowError(
+      "NEXT_PUBLIC_API_ORIGIN is required in hosted environments",
+    );
+  });
+
+  it("rejects local API origins in hosted environments", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "http://localhost:8000");
+    vi.stubEnv("NEXT_PUBLIC_ATLAS_ENV", "preview");
+
+    expect(() => getPublicEnvironment()).toThrowError(
+      "NEXT_PUBLIC_API_ORIGIN must be a public HTTPS origin in hosted environments",
+    );
   });
 
   it("accepts an HTTP or HTTPS API origin and removes its trailing slash", () => {

@@ -57,6 +57,9 @@ jobs:
 
   web:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_ATLAS_ENV: test
+      NEXT_PUBLIC_API_ORIGIN: http://localhost:8000
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
