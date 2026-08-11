@@ -1,7 +1,7 @@
 # Feature 022 — product clarity and engineering portfolio verification
 
-**Status**: P0 verified in canonical production; P1 implemented and verified locally
-**Branch**: `codex/022-product-clarity-engineering`  
+**Status**: P0 verified in canonical production; P1 merged; P2 implementation verified locally
+**Branch**: `codex/022-p2-case-study`
 **Started**: 2026-08-11
 
 ## Baseline audit
@@ -167,3 +167,42 @@ duplicated locale control, exposed internal exception, or advanced identifier vi
 
 SpecKit convergence after P1 found no missing P1 implementation work. P2 tasks T035-T038 remain
 open and are not included in this completion claim.
+
+## P2 engineering case-study verification ledger
+
+P2 adds a public evidence narrative without inventing production maturity. The component consumes
+the versioned KPI and evidence ledgers and only presents a measurement when both files associate it
+with a retained, non-pending artifact. Four results currently satisfy that boundary:
+
+| Result | Measured scope | Explicit boundary |
+|---|---|---|
+| 11/11 | Owner-reviewed citations in corrected comparator run `ed9e093f-74ed-4d47-a5c6-8a05ace0e505` | One reviewed run, not platform-wide precision |
+| 18.59 s | Terminal latency of one optimized Spanish four-technology comparator run | Not normal-answer p95 or general production latency |
+| 60/60 | Versioned deterministic cited-answer fixtures | Not a replacement for live-provider or usability evidence |
+| 21/21 | Anonymous canonical route variants in the hosted P0 audit | Point-in-time check, not continuous availability |
+
+The Engineering page also presents five ordered architecture boundaries—product experience,
+agent orchestration, evidence pipeline, durable state, and quality/operations—as semantic HTML
+with an accessible figure name and caption.
+
+### P2 automated and visual checks
+
+| Check | Result |
+|---|---|
+| Case-study component contract | **2/2 passed** in English and Spanish |
+| Strict TypeScript | passed as part of the production build |
+| ESLint | passed |
+| Next.js production build | passed; external versioned JSON evidence compiled successfully |
+| Engineering browser contract | **4/4 passed** at 1440x900 and 390x844 in both locales |
+| Horizontal overflow | **0** across the four browser cases |
+
+Retained screenshots:
+
+- [English desktop](artifacts/022/p2/engineering-en-desktop.png)
+- [English mobile](artifacts/022/p2/engineering-en-mobile.png)
+- [Spanish desktop](artifacts/022/p2/engineering-es-desktop.png)
+- [Spanish mobile](artifacts/022/p2/engineering-es-mobile.png)
+
+T035–T037 are implemented and evidenced. T038 remains open because it requires a genuine external
+five-second comprehension review; automated tests and Codex visual inspection are not substituted
+for human-participant evidence.

@@ -30,7 +30,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; activación externa aún pendiente | 6: T031-T036 | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development con replay entre repositorios, idempotencia durable, envelopes de evidencia read-only, enlaces de artefactos, trazas de ciclo de vida y evidencia live sin contenido privado | 0 | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 32 migraciones; `foreign_key_indexes` aplicado y advisors verificados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
-| 022 | Claridad de producto y portafolio de ingeniería | P1 implementado localmente: Home simple, decisiones realistas en Compare, ruta guiada de Reports, beneficios antes de infraestructura en News/Sources, acceso opcional en Account, `/engineering`, SEO y error hospedado seguro | 4: T035-T038; sólo P2 queda planificado | `specs/022-product-clarity-engineering/tasks.md` |
+| 022 | Claridad de producto y portafolio de ingeniería | P1 fusionado; P2 implementado localmente con case study basado en evidencia, cuatro resultados acotados y arquitectura accesible de cinco capas | 1: T038, revisión externa real | `specs/022-product-clarity-engineering/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 
@@ -39,8 +39,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 2. Ejecutar las cuatro evidencias externas de Feature 001: estudio de cinco personas, refresh de
    siete días, quickstart completo y consolidación final.
 3. Completar el refresh de siete días de Feature 014.
-4. Ejecutar las cuatro tareas P2 de Feature 022 para ampliar el case study y obtener la revisión
-   externa. En total quedan 15 tareas SpecKit abiertas: 11 previas y 4 de Feature 022; el
+4. Ejecutar la revisión externa de cinco segundos de Feature 022; T035-T037 ya tienen código y
+   evidencia local. En total quedan 12 tareas SpecKit abiertas: 11 previas y T038 de Feature 022; el
    tablero separa claramente código, evidencia externa y despliegue.
 
 ## Comandos y archivos que debes consultar

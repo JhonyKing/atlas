@@ -31,6 +31,23 @@ outputs, persistence, evaluations, observability, and architecture. Each claim l
 repository artifact. The existing agent workspace remains available inside a closed advanced
 disclosure.
 
+P2 expands this presentation without creating a second source of truth. `CaseStudy` imports the
+versioned `docs/portfolio/kpis.json` measurements and accepts a result only when
+`docs/portfolio/evidence-ledger.json` contains a non-pending entry for the same artifact. The
+public result therefore keeps four fields together: display value, measured scope, limitation,
+and repository evidence link.
+
+The richer architecture is a semantic `figure` with five ordered boundaries:
+
+1. Product experience.
+2. Agent orchestration.
+3. Evidence pipeline.
+4. Durable state.
+5. Quality and operations.
+
+It uses headings, ordered content, and a caption rather than a canvas-only diagram, so the system
+relationships remain available to keyboard and assistive-technology users.
+
 ## Public workflow composition
 
 P1 applies the presentation boundary beyond Home without changing API contracts:
@@ -70,4 +87,5 @@ Unit tests enforce the Home contract and safe environment behavior. Playwright v
 routes, three actions, progressive disclosure, Engineering evidence, anonymous reachability, and
 desktop/mobile presentation. Final screenshots are versioned under
 `docs/verification/artifacts/022/final/` for P0 and
-`docs/verification/artifacts/022/p1/` for the five P1 public workflows.
+`docs/verification/artifacts/022/p1/` for the five P1 public workflows, and
+`docs/verification/artifacts/022/p2/` for the bilingual case-study review.

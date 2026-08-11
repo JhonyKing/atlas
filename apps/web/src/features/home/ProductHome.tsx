@@ -7,7 +7,6 @@ import { useLocale } from "@/i18n";
 import { CitedAnswerForm } from "../cited-answer/CitedAnswerForm";
 
 const GITHUB_URL = "https://github.com/JhonyKing/atlas";
-const CASE_STUDY_URL = `${GITHUB_URL}/blob/main/docs/verification/012-portfolio-productization-proof.md`;
 
 export function ProductHome() {
   const { locale, messages } = useLocale();
@@ -48,7 +47,7 @@ export function ProductHome() {
         <nav aria-label={messages.home.builtBy}>
           <a href={GITHUB_URL} target="_blank" rel="noreferrer">{messages.home.github}</a>
           <Link href={`${prefix}/engineering`}>{messages.home.architecture}</Link>
-          <a href={CASE_STUDY_URL} target="_blank" rel="noreferrer">{messages.home.caseStudy}</a>
+          <Link href={`${prefix}/engineering#case-study-title`}>{messages.home.caseStudy}</Link>
         </nav>
       </footer>
     </>

@@ -24,6 +24,9 @@ Removing them would weaken the product and its portfolio value.
 7. Apply the same boundary to secondary public workflows: decision presets before raw comparison
    controls, completed-research guidance before report IDs, trust language before ingestion
    metrics, and anonymous-use guidance before private-account controls.
+8. Source public portfolio measurements from the versioned KPI and evidence ledgers. Every number
+   must link to a retained artifact and display its measured scope and limitation; unmeasured SLO,
+   cost, refresh, or usability claims remain explicitly pending.
 
 ## Alternatives considered
 
@@ -44,3 +47,7 @@ depends on Feature 018 provisioning the managed backend.
 The public routes keep their complete functional controls, but those controls no longer need to be
 understood before a visitor knows what the route is for. Native `details` elements preserve
 keyboard access and expose manual report identifiers and source-ingestion metadata on demand.
+
+The Engineering route now adds an evidence-backed case study and semantic five-layer architecture.
+This makes measured proof visible to recruiters without converting local fixtures or one-off live
+runs into general production claims.
