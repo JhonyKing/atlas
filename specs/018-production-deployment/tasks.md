@@ -71,6 +71,10 @@ Vercel, Supabase, or managed-container account already exists.
 - [X] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results. (Evidence: backend 436 passed/4 skipped with repository Ruff and strict mypy clean after T045; frontend lint/typecheck, Vitest 35/35, Playwright 149 passed/4 hosted skips and production build pass; the final locale/flag delta passed 5/5 focused journeys; deployment/security follow-up passed 17 tests and the deployment secret scan. Hosted execution remains T034-T036, not this local gate.)
 - [X] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs. (Implementation commit: `e8de6b9`.)
 
+## Phase 8: Interim portfolio beta activation (owner-approved)
+
+- [ ] T046 [US1] Deploy the existing FastAPI HTTP surface as an owner-approved Vercel Python Function for the cited-answer beta, configure Supabase/OpenAI/LangSmith secrets without committing values, set `NEXT_PUBLIC_API_ORIGIN`, and retain bilingual `/healthz`, `/readyz`, and cited-answer smoke evidence. This is an interim activation only; it does not close T032, does not activate the continuous worker, and does not mark Feature 018 production-ready.
+
 ## Dependencies & Execution Order
 
 - T001-T006 are the red contracts and block implementation.

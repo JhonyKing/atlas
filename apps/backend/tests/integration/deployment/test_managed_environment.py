@@ -1,5 +1,6 @@
 """Provider-neutral managed environment smoke fixtures."""
 
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).parents[5]
@@ -14,6 +15,14 @@ def test_managed_manifest_requires_immutable_image_and_readiness() -> None:
         'command: ["atlas-worker", "--manifest", "corpus/manifests/expansion-v1.yaml"]'
         in manifest
     )
+
+
+def test_vercel_api_adapter_exports_fastapi_and_caps_beta_duration() -> None:
+    entrypoint = (ROOT / "apps/backend/app.py").read_text(encoding="utf-8")
+    config = json.loads((ROOT / "apps/backend/vercel.json").read_text(encoding="utf-8"))
+
+    assert "from atlas.api.main import app" in entrypoint
+    assert config["functions"]["app.py"]["maxDuration"] == 60
 
 
 def test_container_entrypoint_honors_worker_command_and_packages_manifest() -> None:
