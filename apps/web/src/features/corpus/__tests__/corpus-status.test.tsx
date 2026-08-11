@@ -61,6 +61,7 @@ describe("CorpusStatus", () => {
     render(<LocaleProvider><CorpusStatus /></LocaleProvider>);
 
     await waitFor(() => expect(screen.getByText("Corpus status unavailable.")).toBeVisible());
+    expect(screen.getByRole("heading", { name: "Corpus status" })).toBeVisible();
     expect(screen.queryByText(/database password/i)).not.toBeInTheDocument();
   });
 });

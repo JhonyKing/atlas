@@ -19,16 +19,15 @@ export function CorpusStatus() {
     return () => { active = false; };
   }, []);
 
-  if (unavailable) return <p className="corpus-status-message" aria-live="polite">{messages.unavailableCorpus}</p>;
-  if (!payload) return <p className="corpus-status-message" aria-live="polite">{messages.loadingCorpus}</p>;
-
   return (
     <section className="corpus-status" aria-labelledby="corpus-title">
       <div className="corpus-status-heading">
         <div><p className="eyebrow">{messages.corpusEyebrow}</p><h2 id="corpus-title">{messages.corpusTitle}</h2></div>
-        <p className="corpus-snapshot">{messages.snapshot} {payload.snapshot_id.slice(0, 8)} · {formatDate(payload.generated_at, locale, "medium")}</p>
+        {payload ? <p className="corpus-snapshot">{messages.snapshot} {payload.snapshot_id.slice(0, 8)} · {formatDate(payload.generated_at, locale, "medium")}</p> : null}
       </div>
-      <ul className="corpus-list">{payload.collections.map((collection) => <CollectionCard key={collection.slug} collection={collection} />)}</ul>
+      {unavailable ? <p className="corpus-status-message" role="alert">{messages.unavailableCorpus}</p> : null}
+      {!unavailable && !payload ? <p className="corpus-status-message" role="status">{messages.loadingCorpus}</p> : null}
+      {payload ? <ul className="corpus-list">{payload.collections.map((collection) => <CollectionCard key={collection.slug} collection={collection} />)}</ul> : null}
     </section>
   );
 }
