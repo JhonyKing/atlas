@@ -1,7 +1,7 @@
 param(
     [string]$DatabaseUrl = $env:ATLAS_DATABASE_URL,
     [switch]$DryRun,
-    [string]$ExpectedHead = "agent_tool_rls"
+    [string]$ExpectedHead = "foreign_key_indexes"
 )
 
 $ErrorActionPreference = "Stop"

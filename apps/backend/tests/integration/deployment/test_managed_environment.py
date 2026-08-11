@@ -30,6 +30,7 @@ def test_private_boundaries_are_present_in_database_contract_suite() -> None:
         "010_private_data_rls.sql",
         "011_cross_user_resources.sql",
         "015_agent_tool_rls.sql",
+        "016_foreign_key_indexes.sql",
     }
     assert required_contracts <= sql_contracts
 

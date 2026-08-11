@@ -43,7 +43,7 @@ def _parse_revision(path: Path) -> MigrationRevision:
 
 
 def load_migration_manifest(
-    migrations_dir: Path, *, expected_count: int = 31
+    migrations_dir: Path, *, expected_count: int = 32
 ) -> list[MigrationRevision]:
     """Return a validated, dependency-ordered manifest for all migration files."""
 
