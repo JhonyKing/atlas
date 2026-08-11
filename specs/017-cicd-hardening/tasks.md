@@ -4,8 +4,8 @@
 
 ## Phase 1: Database CI (Priority P1)
 
-- [X] T001 [US1] Install backend dependencies and run Alembic migrations against the fresh CI PostgreSQL service in `.github/workflows/ci.yml`. Evidence: local `alembic upgrade head` reached `0015_expand_corpus_collections`.
-- [X] T002 [US1] Run the versioned foundation, corpus-ingestion, retrieval, retention, provenance, collection-expansion, and daily-news SQL contracts with `ON_ERROR_STOP` in `.github/workflows/ci.yml`. Evidence: all 11 local SQL contracts passed.
+- [X] T001 [US1] Install backend dependencies and run Alembic migrations against the fresh CI PostgreSQL service in `.github/workflows/ci.yml`. Evidence: on 2026-08-11 an isolated empty database reached hosted-equivalent head `agent_tool_rls` through the complete migration chain.
+- [X] T002 [US1] Run all versioned SQL contracts with `ON_ERROR_STOP` in `.github/workflows/ci.yml`. Evidence: all 19 SQL contract files passed against the isolated database on 2026-08-11.
 - [X] T003 [US1] Add a CI smoke assertion that the migration head and required collection tables exist.
 
 ## Phase 2: Browser CI (Priority P2)
@@ -35,3 +35,9 @@
 ## Phase 5: Convergence
 
 - [X] T013 Complete strict mypy cleanup for production and tests without blanket module exclusions; exact command `mypy src tests` exits successfully (FR-007, SC-003).
+
+## Phase 6: Hosted CI regression repair
+
+- [X] T014 [US1] Make migration `0026_supabase_extension_security` self-contained on both Supabase and a fresh local/CI pgvector database by creating the `extensions` schema idempotently before moving pgvector.
+- [X] T015 [US1] Correct root-relative monorepo paths and backend `PYTHONPATH` in `.github/workflows/ci.yml`; focused security and deployment-contract suites pass locally before hosted verification.
+- [X] T016 Update the feature verification document with the fresh-database reproduction, root cause, correction, and regression evidence.

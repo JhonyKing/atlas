@@ -13,6 +13,11 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # Supabase creates this schema for managed extensions, while the local
+    # pgvector image starts with the extension in ``public`` and no
+    # ``extensions`` schema. Keep the migration self-contained so the same
+    # Alembic chain works against both environments.
+    op.execute(sa.text("CREATE SCHEMA IF NOT EXISTS extensions"))
     op.execute(sa.text("ALTER EXTENSION vector SET SCHEMA extensions"))
     op.execute(
         sa.text(

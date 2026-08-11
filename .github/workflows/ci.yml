@@ -10,7 +10,7 @@ permissions:
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
-  PYTHONPATH: ${{ github.workspace }}
+  PYTHONPATH: ${{ github.workspace }}/apps/backend/src
 
 jobs:
   backend:
@@ -45,7 +45,7 @@ jobs:
           python-version: "3.13"
       - run: uv sync --project apps/backend --frozen
       - name: Run security regression suite
-        run: uv run --project apps/backend pytest tests/security -q
+        run: uv run --project apps/backend pytest apps/backend/tests/security -q
       - name: Scan frontend source for common secret patterns
         shell: bash
         run: |
@@ -150,7 +150,12 @@ jobs:
           python-version: "3.13"
       - run: uv sync --project apps/backend --frozen
       - name: Validate deployment contract tests
-        run: uv run --project apps/backend pytest tests/contract/test_deployment_config.py tests/contract/test_readiness.py tests/contract/test_release_evidence_schema.py tests/security/test_deployment_secret_boundary.py -q
+        run: >-
+          uv run --project apps/backend pytest
+          apps/backend/tests/contract/test_deployment_config.py
+          apps/backend/tests/contract/test_readiness.py
+          apps/backend/tests/contract/test_release_evidence_schema.py
+          apps/backend/tests/security/test_deployment_secret_boundary.py -q
       - name: Validate release evidence generator
         shell: bash
         run: |
