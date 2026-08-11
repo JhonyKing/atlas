@@ -127,6 +127,38 @@ def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:
     assert resumed.json()["status"] == "accepted"
 
 
+def test_explicit_resume_execution_reuses_the_durable_run_boundary() -> None:
+    client = TestClient(create_app())
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "Delete my private resource",
+            "selected_tool": "private_delete",
+            "input": {"resource_id": "resource-2"},
+        },
+    ).json()
+    approval_id = plan["required_approval_ids"][0]
+    pending = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}).json()
+    run_id = pending["run_id"]
+    assert client.post(f"/v1/agent/runs/{run_id}/cancel").json()["status"] == "cancelled"
+    decision = client.post(
+        f"/v1/agent/approvals/{approval_id}/decision",
+        json={
+            "actor_id": "anonymous",
+            "decision": "approved",
+            "decision_key": plan["approval_decision_keys"][approval_id],
+        },
+    )
+    assert decision.status_code == 200
+
+    resumed = client.post(
+        f"/v1/agent/runs/{run_id}/resume",
+        params={"execute": "true", "approval_ids": approval_id, "consent": "true"},
+    )
+    assert resumed.status_code == 200
+    assert any(event["event_type"] == "run.resumed" for event in resumed.json()["events"])
+
+
 def test_durable_run_reads_require_the_persisted_actor() -> None:
     client = TestClient(create_app())
     plan = client.post(

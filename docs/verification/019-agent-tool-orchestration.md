@@ -5,7 +5,7 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 ## Local evidence
 
 - Backend planner/provider, agent contracts, policy, event, adapter, boundary, and API tests:
-  **55 passed** (12 focused planner/provider/API tests plus 43 agent/security contract tests).
+  **56 passed** (12 focused planner/provider/API tests plus 44 agent/security contract tests).
 - Ruff on agent/API/observability paths: **passed**.
 - Mypy on agent/API/observability paths: **passed**.
 - OpenAI planner contract: structured `AgentPlanProposal` parsed from the Responses API with
@@ -14,6 +14,9 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   provider-specific response objects never cross into the agent layer.
 - Bounded executor tests: **4 passed** for per-tool timeout, evidence budget overflow, cancellation
   before the next step, and partial failure without invoking later steps.
+- API execution now applies each catalog tool's `timeout_ms`; an explicit
+  `POST /v1/agent/runs/{run_id}/resume?execute=true` continues pending steps while durable
+  completed-call records and per-step checkpoints prevent duplicate tool invocation.
 - Agent/contract/security regression after executor changes: **28 passed**.
 - Read-only adapter/API integration tests: **14 passed**; read-only calls are delegated through the
   adapter boundary, bounded provenance/excerpt/relation fields are preserved, and private/unknown
@@ -37,8 +40,10 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
 - Durable run checkpoints are now persisted after each tool result with a stable per-step replay key
   (`agent-run:<plan_hash>:step-N`). The contract replay test recovers the checkpoint and confirms
   that repeating the run returns the original event stream without another tool call. Full
-  checkpoint-aware resume of pending steps remains open under T044.
-- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **48 tests**, Ruff/mypy across
+  checkpoint-aware resume of pending steps is now explicitly opt-in through
+  `POST /v1/agent/runs/{run_id}/resume?execute=true`; approval IDs and consent remain explicit,
+  while the default acknowledgement path stays backwards compatible.
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **49 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
@@ -65,7 +70,6 @@ security advisor also still reports the project-wide RLS-disabled lint for the o
 ## Remaining honest gaps
 
 Cross-process idempotency/replay claims, complete read-only evidence envelopes, durable owner
-scoping for every lifecycle endpoint, checkpoint-aware tool resume, RLS policy design, live
-provider traces, latency/cost measurements, and production deployment evidence remain open under
-Feature 018/019 tasks. Feature 019 remains open until those mandatory tasks and convergence evidence
-are complete.
+scoping integration evidence, RLS policy design, live provider traces, latency/cost measurements,
+and production deployment evidence remain open under Feature 018/019 tasks. Feature 019 remains
+open until those mandatory tasks and convergence evidence are complete.

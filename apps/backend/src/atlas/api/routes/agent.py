@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 from collections.abc import Mapping
@@ -550,14 +551,20 @@ async def create_agent_run(
             status="running",
             started_at=started_at,
         )
-        result = await _execute_domain_tool(
-            request,
-            plan,
-            index,
-            actor_id=payload.actor_id,
-            approval=approval_for_execution,
-            consent=payload.consent,
-        )
+        try:
+            result = await asyncio.wait_for(
+                _execute_domain_tool(
+                    request,
+                    plan,
+                    index,
+                    actor_id=payload.actor_id,
+                    approval=approval_for_execution,
+                    consent=payload.consent,
+                ),
+                timeout=definition.timeout_ms / 1000,
+            )
+        except TimeoutError:
+            result = bounded_result(status="failed", reason="timeout")
         status_value = str(result.get("status", "completed"))
         repository.save_tool_call(
             plan.run_id,
@@ -671,10 +678,20 @@ def cancel_agent_run(
 
 
 @router.post("/runs/{run_id}/resume")
-def resume_agent_run(
-    run_id: UUID, request: Request, actor_id: str | None = None
+async def resume_agent_run(
+    run_id: UUID,
+    request: Request,
+    actor_id: str | None = None,
+    execute: bool = False,
+    approval_ids: list[str] | None = None,
+    consent: bool = False,
 ) -> dict[str, object]:
-    """Resume only from a known run record; tools are never replayed implicitly."""
+    """Resume a known run, optionally executing only its still-pending steps.
+
+    The default remains a lifecycle acknowledgement for backwards compatibility. Callers that
+    explicitly set ``execute=true`` opt into continuing the durable plan; completed tool calls are
+    skipped by ``create_agent_run`` and are never invoked again.
+    """
 
     repository = _runs(request)
     record = repository.get(run_id)
@@ -685,6 +702,19 @@ def resume_agent_run(
         raise HTTPException(status_code=409, detail="run is not resumable")
     repository.events.emit(run_id, "run.resumed", status="resumed")
     repository.update(run_id, status="accepted")
+    if execute:
+        plan = repository.get_plan(record.plan_hash)
+        if plan is None:
+            raise HTTPException(status_code=404, detail="plan not found")
+        return await create_agent_run(
+            RunCreateRequest(
+                plan_hash=record.plan_hash,
+                actor_id=record.actor_id,
+                approval_ids=approval_ids or [],
+                consent=consent,
+            ),
+            request,
+        )
     return {"run_id": str(run_id), "status": "accepted"}
 
 

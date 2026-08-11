@@ -90,7 +90,7 @@ enough to close the feature.
 - [X] T041 [US3] Wire a managed Postgres `AgentRunRepository` to migration `0028_agent_tool_orchestration` and use it for production plan/run/call/event/approval persistence (FR-006, FR-008).
 - [X] T042 [US2] Connect `AgentPlanner` to the existing provider adapter for GPT-5.6 Luna proposals, parse the provider response into the typed plan, and preserve deterministic fallback mode (FR-013; partial).
 - [ ] T043 [US3] Add an explicit idempotency key to plan/run/approval requests and enforce ownership, scope, quota, consent, and replay protection before any private or mutating adapter can execute (FR-006, FR-007; partial).
-- [ ] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; partial).
+- [X] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; implemented in the bounded executor and API route, with durable checkpoint/replay contract coverage).
 - [ ] T045 [US2] Complete read-only result adapters so answer, comparison, report, news, and corpus outputs preserve provenance, source versions, bounded excerpts, typed evidence relations, and artifact links (FR-005, FR-009; partial).
 - [ ] T046 [US4] Run and export representative live LangSmith/evidence traces for successful, abstained, rejected, failed, cancelled, and resumed runs with measured latency, token, cost, locale, corpus, and outcome fields (FR-014, FR-015, SC-006; missing).
 
