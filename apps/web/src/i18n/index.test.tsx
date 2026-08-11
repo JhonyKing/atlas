@@ -1,19 +1,20 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { LocaleProvider } from "./index";
-import { CitedAnswerForm } from "@/features/cited-answer/CitedAnswerForm";
+import { ProductHome } from "@/features/home/ProductHome";
 
 describe("locale parity", () => {
-  it("switches the cited-answer journey to Mexican Spanish", async () => {
+  it("uses Mexican Spanish for the explicit /es product journey", async () => {
     window.localStorage.clear();
-    render(<LocaleProvider><CitedAnswerForm /></LocaleProvider>);
-
-    fireEvent.change(screen.getByLabelText("Language"), { target: { value: "es-MX" } });
+    window.history.replaceState({}, "", "/es");
+    render(<LocaleProvider><ProductHome /></LocaleProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole("heading", { name: "Respuestas que puedes verificar." })).toBeVisible();
-      expect(screen.getByLabelText("Pregunta técnica")).toBeVisible();
+      expect(screen.getByLabelText("¿Qué quieres investigar?")).toBeVisible();
+      expect(screen.getByText("Opciones avanzadas")).toBeVisible();
     });
+    window.history.replaceState({}, "", "/");
   });
 });

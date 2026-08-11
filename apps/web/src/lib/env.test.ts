@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { getApiUrl, getPublicEnvironment } from "./env";
+import {
+  PublicApiConfigurationError,
+  getApiUrl,
+  getPublicApiAvailability,
+  getPublicEnvironment,
+} from "./env";
 
 describe("getPublicEnvironment", () => {
   afterEach(() => {
@@ -20,18 +25,17 @@ describe("getPublicEnvironment", () => {
     vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "");
     vi.stubEnv("NEXT_PUBLIC_ATLAS_ENV", "production");
 
-    expect(() => getPublicEnvironment()).toThrowError(
-      "NEXT_PUBLIC_API_ORIGIN is required in hosted environments",
-    );
+    expect(getPublicApiAvailability()).toEqual({ available: false, reason: "missing" });
+    expect(() => getPublicEnvironment()).toThrowError(PublicApiConfigurationError);
+    expect(() => getPublicEnvironment()).toThrowError("ATLAS public API is unavailable");
   });
 
   it("rejects local API origins in hosted environments", () => {
     vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "http://localhost:8000");
     vi.stubEnv("NEXT_PUBLIC_ATLAS_ENV", "preview");
 
-    expect(() => getPublicEnvironment()).toThrowError(
-      "NEXT_PUBLIC_API_ORIGIN must be a public HTTPS origin in hosted environments",
-    );
+    expect(getPublicApiAvailability()).toEqual({ available: false, reason: "insecure" });
+    expect(() => getPublicEnvironment()).toThrowError(PublicApiConfigurationError);
   });
 
   it("accepts an HTTP or HTTPS API origin and removes its trailing slash", () => {
@@ -43,9 +47,8 @@ describe("getPublicEnvironment", () => {
   it("rejects malformed and non-HTTP public origins", () => {
     vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "javascript:alert(1)");
 
-    expect(() => getPublicEnvironment()).toThrowError(
-      "NEXT_PUBLIC_API_ORIGIN must be an absolute HTTP(S) URL",
-    );
+    expect(getPublicApiAvailability()).toEqual({ available: false, reason: "invalid" });
+    expect(() => getPublicEnvironment()).toThrowError(PublicApiConfigurationError);
   });
 
   it("returns a frozen public-only object even when server secrets exist", () => {

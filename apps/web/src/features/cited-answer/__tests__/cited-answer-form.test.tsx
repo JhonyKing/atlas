@@ -25,7 +25,7 @@ function sseResponse(frames: string[]): Response {
 describe("CitedAnswerForm", () => {
   it("preserves invalid entered text and explains the correction", () => {
     renderForm();
-    const input = screen.getByLabelText("Technical question");
+    const input = screen.getByLabelText("What do you want to research?");
     fireEvent.change(input, { target: { value: "???" } });
     fireEvent.click(screen.getByRole("button", { name: "Ask ATLAS" }));
 
@@ -43,7 +43,7 @@ describe("CitedAnswerForm", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
     renderForm();
-    fireEvent.change(screen.getByLabelText("Technical question"), {
+    fireEvent.change(screen.getByLabelText("What do you want to research?"), {
       target: { value: "How does LangGraph work?" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Ask ATLAS" }));
@@ -66,7 +66,7 @@ describe("CitedAnswerForm", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
     renderForm();
-    fireEvent.change(screen.getByLabelText("Technical question"), {
+    fireEvent.change(screen.getByLabelText("What do you want to research?"), {
       target: { value: "Can I cancel this?" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Ask ATLAS" }));

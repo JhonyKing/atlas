@@ -10,6 +10,7 @@ test("AppShell exposes the public research map and active Ask state", async ({ p
   await expect(page.getByRole("link", { name: "News", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Sources", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Account", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Engineering", exact: true })).toBeVisible();
   const spanishSwitch = page.getByRole("button", { name: "Switch to Spanish" });
   await expect(spanishSwitch).toContainText("Español");
   await expect(spanishSwitch.locator("img")).toHaveAttribute("src", /flag-mx\.svg/);
@@ -37,8 +38,10 @@ test("required route surfaces resolve without a server error", async ({ page }) 
   test.setTimeout(180_000);
   for (const route of [
     "/", "/compare", "/reports", "/news", "/sources", "/account",
+    "/engineering",
     "/admin/sources", "/admin/reviews", "/admin/governance",
     "/es", "/es/compare", "/es/reports", "/es/news", "/es/sources", "/es/account",
+    "/es/engineering",
     "/es/admin", "/es/admin/sources", "/es/admin/reviews", "/es/admin/governance",
   ]) {
     const response = await page.request.get(route);
