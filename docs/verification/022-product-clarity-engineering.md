@@ -1,6 +1,6 @@
 # Feature 022 — product clarity and engineering portfolio verification
 
-**Status**: P0 locally implemented and verified; hosted preview verification pending  
+**Status**: P0 implemented and verified locally and in canonical production
 **Branch**: `codex/022-product-clarity-engineering`  
 **Started**: 2026-08-11
 
@@ -100,10 +100,29 @@ closed by default. The header contains one locale control.
 
 ### Hosted boundary
 
-The pre-change canonical production audit is recorded above. Post-change preview and canonical
-checks remain open until the branch is pushed and Vercel builds it. The complete research runtime
-is also not claimed live: Feature 018 must provision the managed API/worker and configure the real
-`NEXT_PUBLIC_API_ORIGIN`. Feature 022 fixes the public failure mode; it does not fabricate a
-backend URL.
+Pull request [#2](https://github.com/JhonyKing/atlas/pull/2) merged the feature to protected `main`
+as verified commit `6d810fc2d717e2e04f92b68192032a4bedde40c2`. GitHub Actions run
+`31496103046` passed backend, web, database, offline-eval, security-regression, and deployment
+contract gates; run `31496103033` passed the cited-answer evaluation, and run `31496103065` passed
+repository/evidence contracts. The database gate was rerun after its first attempt could not bind
+Docker port 55432; the retry passed in 28 seconds without a code change.
+
+Vercel production deployment `dpl_EGRvByCxGhkrsHLmUNFSx7JR1WVr` is READY for that exact commit.
+Anonymous HTTP verification against `https://atlasai-lilac.vercel.app` produced:
+
+- **21/21** public route variants returned 200 across unprefixed, `/en`, and `/es` paths;
+- **0** Vercel authentication pages and **0** raw `NEXT_PUBLIC_API_ORIGIN` occurrences;
+- Home and Engineering in all three route variants exposed title, canonical, OpenGraph, and
+  index/follow metadata (**6/6**);
+- `x-robots-tag` was absent from canonical production responses;
+- `robots.txt` and `sitemap.xml` returned 200, and the sitemap includes Engineering routes.
+
+The PR preview remained protected by Vercel Authentication, which is acceptable for a preview and
+does not represent canonical public access. The canonical production deployment is the anonymous
+surface verified above.
+
+The complete research runtime is still not claimed live: Feature 018 must provision the managed
+API/worker and configure the real `NEXT_PUBLIC_API_ORIGIN`. Feature 022 fixes the public failure
+mode; it does not fabricate a backend URL.
 
 P1 and P2 remain open and are not part of the P0 completion claim.
