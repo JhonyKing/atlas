@@ -37,7 +37,7 @@ test("four-technology comparison preserves all selected rows and supports keyboa
   await page.getByLabel("LangGraph").focus();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("LangChain")).toBeFocused();
-  await page.getByRole("button", { name: "Compare" }).click();
+  await page.getByRole("button", { name: "Compare", exact: true }).click();
 
   await expect(page.getByRole("status")).toContainText("Comparison verified");
   await expect(page.getByText("Graph", { exact: true })).toBeVisible();

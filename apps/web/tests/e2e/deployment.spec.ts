@@ -84,7 +84,7 @@ test.describe("deployed release smoke contract", () => {
     expect(runId).toBeTruthy();
 
     await page.goto(`${deploymentUrl}/en/compare`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Compare" }).click();
+    await page.getByRole("button", { name: "Compare", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Comparison matrix" })).toBeVisible({ timeout: 120_000 });
 
     await page.goto(`${deploymentUrl}/en/reports`, { waitUntil: "networkidle" });
