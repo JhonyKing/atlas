@@ -18,7 +18,7 @@ test("supported question reveals verified claims only in the terminal event", as
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Technical question").fill("How does LangGraph work?");
+  await page.getByLabel("What do you want to research?").fill("How does LangGraph work?");
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
 
   await expect(page.getByText("Verified claim")).toBeVisible();
@@ -29,10 +29,10 @@ test("invalid question keeps entered text and offers a correction", async ({ pag
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Technical question").fill("???");
+  await page.getByLabel("What do you want to research?").fill("???");
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
 
-  await expect(page.getByLabel("Technical question")).toHaveValue("???");
+  await expect(page.getByLabel("What do you want to research?")).toHaveValue("???");
   await expect(page.locator("#question-error")).toContainText("technical question");
 });
 
@@ -61,7 +61,7 @@ test("explicit cancellation calls the repeat-safe DELETE endpoint", async ({ pag
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Technical question").fill("Can I cancel this?");
+  await page.getByLabel("What do you want to research?").fill("Can I cancel this?");
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
   await page.getByRole("button", { name: "Cancel request" }).click();
 

@@ -4,7 +4,7 @@ async function openQuestion(page: Page, question: string) {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Technical question").fill(question);
+  await page.getByLabel("What do you want to research?").fill(question);
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
 }
 
@@ -54,5 +54,6 @@ test("malicious source instructions produce a safe abstention with no executable
   await expect(page.locator("#question-error")).toContainText("ignored instructions embedded in source evidence");
   await expect(page.locator(".evidence-panel")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /send secrets|run instruction/i })).toHaveCount(0);
-  await expect(page.locator("main").getByRole("link")).toHaveCount(0);
+  await expect(page.locator(".abstention-result").getByRole("link")).toHaveCount(0);
+  await expect(page.locator(".abstention-result").getByRole("button")).toHaveCount(0);
 });

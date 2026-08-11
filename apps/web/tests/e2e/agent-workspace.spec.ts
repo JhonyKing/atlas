@@ -60,7 +60,8 @@ test("agent workspace selects a typed tool and shows its run timeline", async ({
     });
   });
 
-  await page.goto("/");
+  await page.goto("/engineering");
+  await page.getByText("Advanced agent controls").click();
   await expect(page.getByRole("heading", { name: "Choose what ATLAS should do" })).toBeVisible();
   await page.getByRole("button", { name: /Cited answer/ }).click();
   await page.locator(".agent-tool-form").getByRole("textbox").fill("How does LangGraph persist state?");
