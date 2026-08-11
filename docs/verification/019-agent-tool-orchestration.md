@@ -46,7 +46,7 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   checkpoint-aware resume of pending steps is now explicitly opt-in through
   `POST /v1/agent/runs/{run_id}/resume?execute=true`; approval IDs and consent remain explicit,
   while the default acknowledgement path stays backwards compatible.
-- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **49 tests**, Ruff/mypy across
+- Deterministic gate: `scripts/verify-agent-tools.ps1` passed with **50 tests**, Ruff/mypy across
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
