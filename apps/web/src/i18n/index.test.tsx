@@ -5,6 +5,12 @@ import { LocaleProvider } from "./index";
 import { ProductHome } from "@/features/home/ProductHome";
 
 describe("locale parity", () => {
+  it("renders the explicit server locale on the first pass", () => {
+    render(<LocaleProvider initialLocale="es-MX"><ProductHome /></LocaleProvider>);
+
+    expect(screen.getByRole("heading", { name: "Respuestas que puedes verificar." })).toBeVisible();
+  });
+
   it("uses Mexican Spanish for the explicit /es product journey", async () => {
     window.localStorage.clear();
     window.history.replaceState({}, "", "/es");

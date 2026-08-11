@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 
 import "./globals.css";
-import { LocaleProvider } from "@/i18n";
+import { LocaleProvider, type Locale } from "@/i18n";
 import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
@@ -39,10 +40,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const requestHeaders = await headers();
+  const localeHeader = requestHeaders.get("x-atlas-locale");
+  const initialLocale: Locale | undefined = localeHeader === "es-MX" || localeHeader === "en-US"
+    ? localeHeader
+    : undefined;
+
   return (
-    <html lang="en">
-      <body><LocaleProvider><AppShell>{children}</AppShell></LocaleProvider></body>
+    <html lang={initialLocale ?? "en-US"}>
+      <body><LocaleProvider initialLocale={initialLocale}><AppShell>{children}</AppShell></LocaleProvider></body>
     </html>
   );
 }

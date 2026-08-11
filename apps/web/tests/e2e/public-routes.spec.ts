@@ -17,8 +17,16 @@ test("all public routes resolve anonymously in English and Spanish", async ({ pa
 
 test("engineering pages preserve locale and expose evidence-linked capabilities", async ({ page }) => {
   test.setTimeout(180_000);
-  for (const route of ["/en/engineering", "/es/engineering"] as const) {
+  for (const [route, initialHeading] of [
+    ["/en/engineering", "Measured results, not promises"],
+    ["/es/engineering", "Resultados medidos, no promesas"],
+  ] as const) {
+    const initialResponse = await page.request.get(route);
+    expect(initialResponse.status(), route).toBe(200);
+    expect(await initialResponse.text(), `${route} initial HTML`).toContain(initialHeading);
+
     await page.goto(route, { waitUntil: "domcontentloaded", timeout: 120_000 });
+    await expect(page.getByRole("heading", { name: initialHeading })).toBeVisible();
     await expect(page.locator("[data-engineering-capability]")).toHaveCount(10);
     await expect(page.locator("[data-engineering-capability] a")).toHaveCount(10);
     await expect(page.getByText("NEXT_PUBLIC_API_ORIGIN")).toHaveCount(0);
