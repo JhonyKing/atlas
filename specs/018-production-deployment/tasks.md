@@ -51,7 +51,7 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 6: Real environment activation (operator-assisted P1)
 
-- [ ] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`.
+- [ ] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`. (Progress: Git-connected preview deployment `dpl_CmQzV1FW1xzQc73DoHF611cb2Azy` for commit `cd94bde` is `READY`; the main-branch production release, managed API origin and environment-scoped release evidence remain open.)
 - [ ] T031 [US2] Provision isolated Supabase preview/staging/production targets, enable required extensions/policies, and record redacted project metadata in `docs/operations/environments.md`.
 - [ ] T032 [US2] Provision the managed container API/worker runtime, configure HTTPS/custom domain, and record immutable image/deployment identifiers.
 - [ ] T033 [US3] Configure environment-scoped secrets, CORS, auth callbacks, storage, model providers, and LangSmith project/tags without committing values.
