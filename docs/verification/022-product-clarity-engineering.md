@@ -165,7 +165,7 @@ The final images were captured against `next start`, not the development server,
 no Next.js developer toolbar. Manual inspection found no clipped text, horizontal overflow,
 duplicated locale control, exposed internal exception, or advanced identifier visible by default.
 
-SpecKit convergence after P1 found no missing P1 implementation work. P2 tasks T035-T038 remain
+SpecKit convergence after P1 found no missing P1 implementation work. P2 task T038 remains
 open and are not included in this completion claim.
 
 ## P2 engineering case-study verification ledger
@@ -229,5 +229,7 @@ Local verification before deployment:
 | Next.js production build | passed; request proxy detected |
 | Anonymous raw-HTML and hydrated public-route contract | **2/2 passed** |
 
-T039 remains open until the merged commit is observed on canonical production and both raw
-Engineering responses are checked there.
+The merged commit `23576ca7aec74b408708edb42ea5a161864787a5` is live on the canonical production
+deployment `dpl_JAQPF6gyxREu4zAf3v14WyEFAeMq`. Anonymous raw responses for `/en/engineering` and
+`/es/engineering` both returned 200; the Spanish response contained `Resultados medidos, no
+promesas` and `11/11`, while the canonical response had no `noindex` directive. T039 is closed.
