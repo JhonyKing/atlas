@@ -110,6 +110,32 @@ async def test_side_effect_adapter_executes_only_approved_owned_action() -> None
 
 
 @pytest.mark.asyncio
+async def test_side_effect_result_drops_unbounded_handler_fields() -> None:
+    async def handler(_arguments: dict[str, object]) -> dict[str, object]:
+        return {
+            "status": "completed",
+            "artifact_ids": ["artifact-1"],
+            "artifact_links": {"artifact-1": "/v1/artifacts/artifact-1"},
+            "private_payload": "must not cross the adapter",
+        }
+
+    plan = _delete_plan()
+    result = await SideEffectToolAdapters(
+        ToolCatalog.default(), {"private_delete": handler}, owner_check=lambda *_: True
+    ).execute(
+        "private_delete",
+        {"resource_id": "resource-1"},
+        plan=plan,
+        actor_id="user-1",
+        approval=_approved(plan),
+        consent=True,
+    )
+
+    assert result["artifact_links"] == {"artifact-1": "/v1/artifacts/artifact-1"}
+    assert "private_payload" not in result
+
+
+@pytest.mark.asyncio
 async def test_side_effect_adapter_requires_explicit_consent() -> None:
     called = False
 

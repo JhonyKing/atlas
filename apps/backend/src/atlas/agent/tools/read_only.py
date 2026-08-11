@@ -94,6 +94,16 @@ def _bounded_relations(value: object) -> tuple[dict[str, str], ...]:
     return tuple(records)
 
 
+def _bounded_artifact_links(value: object) -> dict[str, str]:
+    if not isinstance(value, Mapping):
+        return {}
+    return {
+        str(key)[:MAX_REFERENCE_LENGTH]: str(raw)[:MAX_REFERENCE_LENGTH]
+        for key, raw in list(value.items())[:MAX_REFERENCES]
+        if raw is not None
+    }
+
+
 class ReadOnlyToolAdapters:
     """Async adapter registry that delegates to existing domain service contracts."""
 
@@ -116,10 +126,10 @@ class ReadOnlyToolAdapters:
             raw = await handler(dict(arguments))
         except Exception:
             return bounded_result(status="failed", reason="adapter_failed")
-        return _normalize_result(raw)
+        return normalize_result(raw)
 
 
-def _normalize_result(raw: Mapping[str, object]) -> dict[str, object]:
+def normalize_result(raw: Mapping[str, object]) -> dict[str, object]:
     """Preserve known typed result fields while bounding provenance and references."""
 
     status = str(raw.get("status", "abstained"))[:64]
@@ -141,6 +151,9 @@ def _normalize_result(raw: Mapping[str, object]) -> dict[str, object]:
     source_versions = _bounded_ids(raw.get("source_versions", ()))
     if source_versions:
         result["source_versions"] = source_versions
+    artifact_links = _bounded_artifact_links(raw.get("artifact_links"))
+    if artifact_links:
+        result["artifact_links"] = artifact_links
     for key in SAFE_SCALAR_KEYS:
         if key in raw and raw[key] is not None:
             value = raw[key]

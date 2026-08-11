@@ -8,7 +8,7 @@ from typing import Final
 
 from atlas.agent.planning import AgentPlan
 from atlas.agent.policy import Approval, PolicyError, assert_approval_matches
-from atlas.agent.tools.read_only import bounded_result
+from atlas.agent.tools.read_only import bounded_result, normalize_result
 from atlas.agent.tools.registry import ToolCatalog
 
 SIDE_EFFECT_TOOL_IDS: Final[frozenset[str]] = frozenset(
@@ -116,22 +116,6 @@ def _rejected(reason: str) -> dict[str, object]:
 
 
 def _normalize_result(raw: Mapping[str, object]) -> dict[str, object]:
-    def references(value: object) -> tuple[str, ...]:
-        if not isinstance(value, (list, tuple, set)):
-            return ()
-        return tuple(str(item)[:MAX_REFERENCE_LENGTH] for item in tuple(value)[:MAX_REFERENCES])
+    """Use the same bounded evidence envelope as read-only tool results."""
 
-    result = bounded_result(
-        status=str(raw.get("status", "completed"))[:64],
-        evidence_ids=references(raw.get("evidence_ids", ())),
-        artifact_ids=references(raw.get("artifact_ids", ())),
-        reason=str(raw["reason"])[:256] if raw.get("reason") is not None else None,
-    )
-    result.update(
-        {
-            str(key): value
-            for key, value in raw.items()
-            if key not in {"status", "evidence_ids", "artifact_ids", "reason"}
-        }
-    )
-    return result
+    return normalize_result(raw)
