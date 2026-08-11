@@ -42,9 +42,9 @@ The durable persistence finding is now resolved by the cross-repository run/even
 (`apps/backend/tests/agent/test_postgres_agent_persistence.py`, 12 tests passed). T021 is marked
 complete; the remaining Feature 019 gaps are policy convergence and the full browser/deployment
 gate. T045 is now also complete: normalized read-only result envelopes are persisted and exposed
-through the run output, with 15 focused contract/adapter tests and the 55-test backend gate.
+through the run output, with 15 focused contract/adapter tests and the 56-test backend gate.
 
 The policy slice now includes a session-backed scope gate: anonymous callers are rejected before
 private ownership checks or side-effect handlers, even when an approval and consent are present.
-The focused adapter/route suite is **17 tests**. T043 remains open because durable approval-key
+The focused adapter/route suite is **18 tests**. T043 remains open because durable approval-key
 binding and quota enforcement still need implementation and evidence.

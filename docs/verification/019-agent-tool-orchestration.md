@@ -94,7 +94,7 @@ links can be inspected without exposing provider-specific objects or unbounded c
 answer, comparison, and report jobs expose safe status/download links; daily news preserves its
 publisher, canonical URL, capture time, and bounded excerpt; corpus status preserves its snapshot
 and generation provenance plus the canonical `/v1/corpus` link. The focused contract/adapters suite
-passed **15 tests**, and the complete backend gate passed **55 tests**, Ruff, and mypy.
+passed **15 tests**, and the complete backend gate passed **56 tests**, Ruff, and mypy.
 
 ### Session-backed scope gate evidence (2026-08-11)
 
@@ -103,7 +103,7 @@ every caller has the explicit `anonymous` scope, while `authenticated` is added 
 validated subject matches the requested actor. A private or mutating tool therefore cannot run
 merely because a caller supplied an actor ID, approval ID, consent flag, or ownership-shaped
 argument. Missing required scopes are rejected before the ownership callback or handler is reached.
-The focused adapter/route suite passed **17 tests**, including a regression test proving that the
+The focused adapter/route suite passed **18 tests**, including regressions proving that the
 owner check is not invoked for an anonymous caller with an approved private-delete plan. This is
 partial T043 evidence; durable approval-key binding and quota enforcement remain open, so T043 is
 not closed.

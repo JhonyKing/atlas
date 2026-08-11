@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
+from atlas.auth.fake_provider import FakeAuthProvider
 from atlas.demo import DemoCorpusStatusProvider
 from atlas.news.feeds import parse_feed
 from atlas.news.ranking import InMemoryDailyNewsService
@@ -136,6 +137,65 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     )
     assert completed_call is not None
     assert completed_call["status"] == "rejected"
+
+
+def test_bearer_session_grants_authenticated_scope_without_authorizing_ownership() -> None:
+    subject_id = UUID("00000000-0000-0000-0000-000000000001")
+    client = TestClient(
+        create_app(
+            auth_provider=FakeAuthProvider(
+                {"ana@example.test": ("correct horse", subject_id)}
+            )
+        )
+    )
+    client.post(
+        "/v1/auth/session",
+        json={"email": "ana@example.test", "password": "correct horse"},
+    )
+    session_token = client.cookies.get("atlas_session")
+    assert session_token
+    client.cookies.clear()
+    headers = {"Authorization": f"Bearer {session_token}"}
+
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "Delete my private resource",
+            "selected_tool": "private_delete",
+            "input": {"resource_id": "resource-bearer"},
+            "actor_id": str(subject_id),
+        },
+    ).json()
+    approval_id = plan["required_approval_ids"][0]
+    pending = client.post(
+        "/v1/agent/runs",
+        json={"plan_hash": plan["plan_hash"], "actor_id": str(subject_id)},
+        headers=headers,
+    )
+    assert pending.json()["status"] == "awaiting_approval"
+    decision = client.post(
+        f"/v1/agent/approvals/{approval_id}/decision",
+        json={
+            "actor_id": str(subject_id),
+            "decision": "approved",
+            "decision_key": plan["approval_decision_keys"][approval_id],
+        },
+    )
+    assert decision.status_code == 200
+
+    completed = client.post(
+        "/v1/agent/runs",
+        json={
+            "plan_hash": plan["plan_hash"],
+            "actor_id": str(subject_id),
+            "approval_ids": [approval_id],
+            "consent": True,
+        },
+        headers=headers,
+    )
+    assert completed.status_code == 202
+    result = completed.json()["output"]["tool_results"][0]
+    assert result.get("reason") != "scope_missing"
 
 
 def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:

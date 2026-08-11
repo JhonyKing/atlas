@@ -149,7 +149,9 @@ def _agent_scopes(request: Request, actor_id: str) -> set[str]:
     """Resolve only scopes backed by the validated session boundary."""
 
     scopes = {"anonymous"}
-    subject_id = optional_subject_id(request)
+    # Calling the dependency directly bypasses FastAPI's Header injection, so pass the
+    # request Authorization value explicitly; cookie sessions remain supported by the helper.
+    subject_id = optional_subject_id(request, request.headers.get("Authorization"))
     if subject_id is not None and str(subject_id) == actor_id:
         scopes.add("authenticated")
     return scopes
