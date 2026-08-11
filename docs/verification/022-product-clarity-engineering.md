@@ -206,3 +206,28 @@ Retained screenshots:
 T035–T037 are implemented and evidenced. T038 remains open because it requires a genuine external
 five-second comprehension review; automated tests and Codex visual inspection are not substituted
 for human-participant evidence.
+
+## Server-rendered locale integrity follow-up
+
+The first canonical production inspection after the P2 merge found that `/es/engineering` became
+Spanish after hydration but its raw server-rendered HTML still contained the English case-study
+heading. That is retained as a real production regression finding rather than hidden by the
+hydrated browser result.
+
+The follow-up passes the explicit route locale from the Next.js 16 request proxy into the root
+locale provider. The server HTML, first hydration pass, document language, and visible interface
+therefore start from the same locale. The unprefixed route keeps its existing browser/preference
+fallback.
+
+Local verification before deployment:
+
+| Check | Result |
+|---|---|
+| Locale provider first-pass contract | **2/2 passed** |
+| Strict TypeScript | passed |
+| ESLint | passed |
+| Next.js production build | passed; request proxy detected |
+| Anonymous raw-HTML and hydrated public-route contract | **2/2 passed** |
+
+T039 remains open until the merged commit is observed on canonical production and both raw
+Engineering responses are checked there.

@@ -93,6 +93,7 @@
 - [x] T036 Add measured portfolio metrics without unsupported claims using `docs/portfolio/kpis.json` and `docs/portfolio/evidence-ledger.json`
 - [x] T037 Add a richer accessible architecture presentation in `apps/web/src/features/engineering/EngineeringPage.tsx`
 - [ ] T038 Run an external five-second comprehension review and record results in `docs/portfolio/external-evidence.md`
+- [ ] T039 Preserve the explicit `/en` or `/es` locale in the server-rendered HTML and hydration pass, verify both Engineering routes from the raw anonymous response, and record the production regression check.
 
 ## Dependencies
 
@@ -120,3 +121,4 @@
 6. Run full verification and documentation closeout.
 7. Deliver P1/P2 as separate increments and mark only work backed by code and retained evidence;
    never substitute automated review for T038's external participants.
+8. Treat production-only findings as explicit follow-up tasks and verify the raw server response, not only the hydrated browser UI.
