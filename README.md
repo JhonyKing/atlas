@@ -17,6 +17,8 @@ The shared backend image now has executable process separation: its default comm
 API, while the managed worker role runs `atlas-worker` with approved-manifest, PostgreSQL,
 allowlisted-fetch and embedding wiring. The worker implementation is locally container-verified;
 this does not replace the still-open task to provision and observe the hosted API/worker runtime.
+The non-development API process now also wires the verified cited-answer graph and durable
+operator ingestion queue before declaring its model provider ready.
 
 Local checks:
 

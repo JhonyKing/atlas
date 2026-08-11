@@ -142,7 +142,9 @@ async def get_readiness(request: Request) -> JSONResponse:
         model_provider=provider,
         observability=observability,
     )
-    ready = database_is_ready and migrations == "ready"
+    provider_is_required = environment in {"preview", "staging", "production"}
+    provider_is_ready = not provider_is_required or provider == "ready"
+    ready = database_is_ready and migrations == "ready" and provider_is_ready
     payload = ReadinessStatus(
         status="ready" if ready else "unavailable",
         environment=environment,

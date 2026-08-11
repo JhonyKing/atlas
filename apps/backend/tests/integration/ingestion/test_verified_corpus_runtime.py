@@ -4,11 +4,12 @@ import os
 
 import psycopg
 import pytest
-from pydantic import SecretStr
+from pydantic import AnyHttpUrl, SecretStr
 
 from atlas.api import main as main_module
 from atlas.api.main import _verified_corpus_or_demo
 from atlas.config import Settings
+from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
 from atlas.persistence.corpus_status import PostgresCorpusStatusRepository
 
 
@@ -83,3 +84,48 @@ def test_development_answer_traces_use_the_verified_snapshot_id(
     snapshot_id = str(provider.get_status().snapshot_id)
     assert answer_service._trace_metadata["corpus_snapshot"] == snapshot_id
     provider._connection.close()
+
+
+def test_production_runtime_wires_answer_and_operator_services(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    settings = Settings(
+        atlas_env="production",
+        database_url=SecretStr(
+            "postgresql+psycopg://atlas:test-value@pooler.example:6543/atlas"
+        ),
+        web_origin=AnyHttpUrl("https://atlas.example"),
+        api_origin=AnyHttpUrl("https://api.atlas.example"),
+        openai_api_key=SecretStr("test-openai-key"),
+        atlas_operator_token=SecretStr("test-operator-token"),
+        atlas_visitor_hmac_secret=SecretStr("test-visitor-secret"),
+    )
+    operator_service = object()
+    monkeypatch.setattr(main_module, "get_settings", lambda: settings)
+    monkeypatch.setattr(
+        main_module,
+        "_verified_corpus_or_demo",
+        lambda _settings: DemoCorpusStatusProvider(),
+    )
+    monkeypatch.setattr(
+        main_module,
+        "_durable_agent_repositories",
+        lambda _settings: (object(), object(), object(), object()),
+    )
+    monkeypatch.setattr(
+        main_module,
+        "_durable_ingestion_service",
+        lambda _settings: operator_service,
+        raising=False,
+    )
+    monkeypatch.setattr(
+        main_module,
+        "_answer_graph",
+        lambda *_args, **_kwargs: DemoAnswerGraph(),
+    )
+
+    application = main_module.create_runtime_app()
+
+    assert application.state.answer_service is not None
+    assert application.state.operator_service is operator_service
+    assert application.state.model_provider_status == "ready"

@@ -3,6 +3,7 @@
 from datetime import timedelta
 from functools import partial
 from pathlib import Path
+from typing import Literal
 from uuid import UUID
 
 import psycopg
@@ -58,7 +59,11 @@ from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusCompari
 from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
 from atlas.ingestion.governance import InMemoryGovernanceRepository
-from atlas.ingestion.service import OperatorIngestionService
+from atlas.ingestion.service import (
+    IngestionService,
+    OperatorIngestionService,
+    PostgresIngestionRepository,
+)
 from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
@@ -121,6 +126,7 @@ def create_app(
     agent_checkpoint_service: CheckpointRepository | None = None,
     agent_idempotency_store: AgentIdempotencyStore | None = None,
     agent_quota_repository: AgentToolQuotaRepository | None = None,
+    model_provider_status: Literal["ready", "degraded", "disabled"] = "disabled",
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -157,7 +163,7 @@ def create_app(
     application.state.source_revision = "local"
     application.state.migration_revision = "unknown"
     application.state.migration_status = "unknown"
-    application.state.model_provider_status = "disabled"
+    application.state.model_provider_status = model_provider_status
     application.state.observability_status = "ready"
     application.state.operator_service = operator_service
     application.state.answer_service = answer_service
@@ -328,6 +334,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             news_service=news_service,
             news_trace_sink=LangSmithTraceSink.from_settings(settings),
             agent_plan_provider=planner_provider,
+            model_provider_status="ready" if real_provider else "disabled",
         )
     corpus_service = _verified_corpus_or_demo(settings)
     (
@@ -338,30 +345,58 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
     ) = (
         _durable_agent_repositories(settings)
     )
-    client = (
-        AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
-        if settings.openai_api_key is not None
-        else None
+    if settings.openai_api_key is None:
+        raise RuntimeError("a model provider secret is required outside development")
+    if settings.atlas_visitor_hmac_secret is None:
+        raise RuntimeError("a visitor HMAC secret is required outside development")
+    client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
+    safety_identifier = derive_safety_identifier(
+        settings.atlas_visitor_hmac_secret.get_secret_value(),
+        "runtime-anonymous-visitor",
     )
-    planner_provider = None
-    if client is not None:
-        safety_secret = (
-            settings.atlas_visitor_hmac_secret.get_secret_value()
-            if settings.atlas_visitor_hmac_secret is not None
-            else "atlas-development-only-visitor-secret"
-        )
-        planner_provider = OpenAIAgentPlannerAdapter(
+    planner_provider = OpenAIAgentPlannerAdapter(
+        client=client,
+        model=settings.atlas_answer_model,
+        safety_identifier=safety_identifier,
+    )
+    verified_answer_graph = _answer_graph(
+        settings,
+        corpus_service,
+        client=client,
+        generator=OpenAIResponsesAdapter(
             client=client,
-            model=settings.atlas_answer_model,
-            safety_identifier=derive_safety_identifier(
-                safety_secret,
-                "runtime-anonymous-visitor",
+            safety_identifier=safety_identifier,
+        ),
+    )
+    if verified_answer_graph is None:
+        raise RuntimeError("verified cited-answer runtime could not be constructed")
+    corpus_status = corpus_service.get_status()
+    if corpus_status is None:
+        raise RuntimeError("verified corpus status is unavailable")
+    corpus_snapshot = str(corpus_status.snapshot_id)
+    answer_service = InMemoryAnswerRunService(
+        verified_answer_graph,
+        trace_sink=LangSmithTraceSink.from_settings(settings),
+        trace_metadata={
+            "model": settings.atlas_answer_model,
+            "prompt_version": "cited-answer-v1",
+            "retrieval_version": "hybrid-v1",
+            "embedding_profile": (
+                f"{settings.atlas_embedding_model}:{settings.atlas_embedding_dimensions}"
             ),
-        )
+            "application_version": "0.1.0",
+            "corpus_snapshot": corpus_snapshot,
+        },
+    )
+    operator_service = _durable_ingestion_service(settings)
     comparison_service = _comparison_service(
-        settings, corpus_service, executor=_comparison_executor(settings, corpus_service)
+        settings,
+        corpus_service,
+        executor=_comparison_executor(settings, corpus_service, client=client),
     )
     return create_app(
+        operator_service=operator_service,
+        answer_service=answer_service,
         corpus_service=corpus_service,
         migration_probe=partial(
             probe_migration_head,
@@ -377,6 +412,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         agent_checkpoint_service=agent_checkpoint_service,
         agent_idempotency_store=agent_idempotency_store,
         agent_quota_repository=agent_quota_repository,
+        model_provider_status="ready",
     )
 
 
@@ -404,6 +440,16 @@ def _durable_agent_repositories(
             window=timedelta(hours=settings.atlas_agent_side_effect_window_hours),
         ),
     )
+
+
+def _durable_ingestion_service(settings: Settings) -> OperatorIngestionService:
+    """Connect operator enqueue/status routes to the queue consumed by `atlas-worker`."""
+
+    dsn = settings.database_url.get_secret_value().replace(
+        "postgresql+psycopg://", "postgresql://", 1
+    )
+    connection = psycopg.connect(dsn)
+    return IngestionService(PostgresIngestionRepository(connection))
 
 
 def _news_service(settings: Settings) -> DailyNewsProvider | None:

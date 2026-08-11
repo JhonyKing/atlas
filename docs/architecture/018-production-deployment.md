@@ -29,3 +29,10 @@ allowlisted fetcher, and embedding adapter inside the process. It drains a bound
 durable ingestion jobs per cycle, waits interruptibly when idle, and handles termination signals
 before closing HTTP/provider/database resources. The managed runtime remains unprovisioned; this
 section records deployable repository wiring, not hosted evidence.
+
+The non-development FastAPI composition also fails closed. It requires provider and visitor
+secrets, a verified corpus snapshot, a constructible cited-answer graph, durable agent
+repositories, and a durable ingestion enqueue/status service. Only after those dependencies are
+constructed does the app expose the answer/operator services and report `model_provider=ready`.
+For preview, staging and production, `/readyz` returns non-2xx when that provider state is not
+ready; a healthy database alone is no longer sufficient to accept traffic.

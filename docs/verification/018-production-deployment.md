@@ -100,3 +100,21 @@ rollback evidence do not yet exist.
   secret-free `--once` start exited non-zero with the controlled `OPENAI_API_KEY` requirement.
 - T044 is closed. T032 remains open because no managed runtime, immutable registry digest, API
   domain or hosted worker observation has been provisioned.
+
+## Production API composition follow-up (2026-08-11)
+
+- SpecKit Converge then found that the non-development app omitted `answer_service` and
+  `operator_service`, so a future healthy container would still return 503 for cited answers and
+  operator ingestion.
+- New red contracts reproduced both defects and proved that `/readyz` incorrectly returned 200
+  with `model_provider=disabled` in production.
+- T045 now wires the verified cited-answer graph, durable operator queue and shared provider client
+  before exposing the app. Preview/staging/production readiness requires the provider state to be
+  `ready`.
+- The focused contracts pass and the complete backend passes **436 tests with 4 intentional
+  skips**; repository-wide Ruff and strict mypy remain clean across 183 source files.
+- Docker image
+  `sha256:bc1752b61a1b4e28ad3dacfea78aa6e01c096377cc96798a71f1fde578ca05a0`
+  imports the corrected FastAPI runtime successfully with a deliberately unreachable local test
+  DSN and no real secret values.
+- T045 is closed. Hosted reachability and end-to-end behavior still require T032-T036.
