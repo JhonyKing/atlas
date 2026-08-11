@@ -71,7 +71,7 @@
 
 - [x] T025 Run web lint, strict typecheck, unit tests, production build, and focused browser suites from `apps/web/package.json`
 - [x] T026 Capture final 1440×900 and 390×844 Home and Engineering screenshots under `docs/verification/artifacts/022/final/`
-- [ ] T027 Verify canonical and alias headers plus anonymous hosted routes and record evidence in `docs/verification/022-product-clarity-engineering.md`
+- [x] T027 Verify canonical and alias headers plus anonymous hosted routes and record evidence in `docs/verification/022-product-clarity-engineering.md`
 - [x] T028 Update `README.md`, `docs/design/information-architecture.md`, `docs/design/ux-audit.md`, and `docs/architecture/020-ux-ui-brand-redesign.md` from the delivered P0 behavior
 - [x] T029 Add Feature 022 status and remaining P1/P2 scope to `docs/product/feature-status-matrix.md` and `docs/product/implementation-status.md`
 - [x] T030 Run SpecKit convergence against `specs/022-product-clarity-engineering/` and leave P1/P2 tasks open
