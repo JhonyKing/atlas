@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
+from atlas.demo import DemoCorpusStatusProvider
 from atlas.news.feeds import parse_feed
 from atlas.news.ranking import InMemoryDailyNewsService
 from atlas.observability.langsmith import TraceHandle
@@ -77,6 +78,7 @@ def test_tool_catalog_and_read_only_run_are_explicit() -> None:
     run = client.post("/v1/agent/runs", json={"plan_hash": plan.json()["plan_hash"]})
     assert run.status_code == 202
     assert run.json()["status"] == "completed"
+    assert run.json()["output"]["tool_results"][0]["status"] == "abstained"
     assert [event["event_type"] for event in run.json()["events"]] == [
         "run.accepted",
         "plan.created",
@@ -241,6 +243,7 @@ def test_replaying_completed_run_does_not_duplicate_events_or_tool_calls() -> No
 
     assert first.status_code == 202
     assert second.status_code == 202
+    assert second.json()["output"] == first.json()["output"]
     assert second.json()["events"] == first.json()["events"]
 
     checkpoint = client.app.state.agent_checkpoint_service.resume(
@@ -302,3 +305,23 @@ def test_daily_news_agent_tool_preserves_stable_evidence_metadata() -> None:
     event = run.json()["events"][2]
     assert event["event_type"] == "tool_call.completed"
     assert event["evidence_ids"] == [f"news:{candidates[0].content_sha256}"]
+    tool_result = run.json()["output"]["tool_results"][0]
+    assert tool_result["provenance"]["publisher"] == "Example News"
+    assert tool_result["excerpts"][0]["evidence_id"] == event["evidence_ids"][0]
+    assert tool_result["excerpts"][0]["canonical_url"] == "https://news.example/story"
+
+
+def test_corpus_status_agent_tool_preserves_snapshot_provenance_and_link() -> None:
+    client = TestClient(create_app(corpus_service=DemoCorpusStatusProvider()))
+    plan = client.post(
+        "/v1/agent/plans",
+        json={"request": "Inspect corpus status", "selected_tool": "corpus_status"},
+    ).json()
+
+    run = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]})
+
+    assert run.status_code == 202
+    tool_result = run.json()["output"]["tool_results"][0]
+    assert tool_result["artifact_links"] == {"corpus_status": "/v1/corpus"}
+    assert tool_result["provenance"]["snapshot_id"]
+    assert tool_result["provenance"]["generated_at"]

@@ -22,7 +22,12 @@ from atlas.agent.planning import AgentPlan, PlanValidationError, arguments_hash,
 from atlas.agent.policy import Approval, PolicyError, assert_approval_matches, issue_approval
 from atlas.agent.review import ReviewService
 from atlas.agent.state import AtlasState
-from atlas.agent.tools.read_only import ReadOnlyToolAdapters, bounded_result, is_read_only_tool
+from atlas.agent.tools.read_only import (
+    ReadOnlyToolAdapters,
+    bounded_result,
+    is_read_only_tool,
+    normalize_result,
+)
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import Locale, ToolCallRequest, validate_json_object
 from atlas.agent.tools.side_effects import (
@@ -330,7 +335,13 @@ async def _execute_domain_tool_legacy(
             idempotency_key=idempotency_key,
             request_id=request_id,
         )
-        return {"status": "queued", "artifact_ids": (f"answer_run:{run_id}",)}
+        artifact_id = f"answer_run:{run_id}"
+        return {
+            "status": "queued",
+            "artifact_ids": (artifact_id,),
+            "artifact_links": {artifact_id: f"/v1/answers/{run_id}"},
+            "provenance": {"service": "answer_run", "status": "queued"},
+        }
     if step.tool_id == "comparison":
         comparison_service = cast(
             ComparisonRunControl | None, request.app.state.comparison_service
@@ -343,7 +354,13 @@ async def _execute_domain_tool_legacy(
             idempotency_key=idempotency_key,
             request_id=request_id,
         )
-        return {"status": "queued", "artifact_ids": (f"comparison_run:{run_id}",)}
+        artifact_id = f"comparison_run:{run_id}"
+        return {
+            "status": "queued",
+            "artifact_ids": (artifact_id,),
+            "artifact_links": {artifact_id: f"/v1/comparisons/{run_id}"},
+            "provenance": {"service": "comparison_run", "status": "queued"},
+        }
     if step.tool_id == "report":
         service = request.app.state.report_service
         if service is None:
@@ -361,7 +378,18 @@ async def _execute_domain_tool_legacy(
             idempotency_key=idempotency_key,
             request_id=request_id,
         )
-        return {"status": "queued", "artifact_ids": (f"report:{report_id}",)}
+        artifact_id = f"report:{report_id}"
+        return {
+            "status": "queued",
+            "artifact_ids": (artifact_id,),
+            "artifact_links": {
+                artifact_id: f"/v1/reports/{report_id}",
+                f"{artifact_id}:download": (
+                    f"/v1/reports/{report_id}/download?format={spec.format.value}"
+                ),
+            },
+            "provenance": {"service": "report", "status": "queued"},
+        }
     if step.tool_id == "daily_news":
         service = request.app.state.news_service
         if service is None:
@@ -395,7 +423,21 @@ async def _execute_domain_tool_legacy(
         if service is None:
             return bounded_result(status="abstained", reason="corpus_unavailable")
         status_value = service.get_status()
-        return bounded_result(status="completed" if status_value is not None else "abstained")
+        if status_value is None:
+            return bounded_result(status="abstained", reason="corpus_unavailable")
+        snapshot_id = getattr(status_value, "snapshot_id", None)
+        generated_at = getattr(status_value, "generated_at", None)
+        return {
+            "status": "completed",
+            "artifact_links": {"corpus_status": "/v1/corpus"},
+            "provenance": {
+                "service": "corpus_status",
+                "snapshot_id": str(snapshot_id) if snapshot_id is not None else None,
+                "generated_at": generated_at.isoformat()
+                if isinstance(generated_at, datetime)
+                else None,
+            },
+        }
     return abstained_result(step.tool_id)
 
 
@@ -434,6 +476,7 @@ async def create_agent_run(
         replayed_response: dict[str, object] = {
             "run_id": str(plan.run_id),
             "status": existing_run.status,
+            "output": existing_run.output,
             "events": [
                 event.model_dump(mode="json")
                 for event in repository.list_events(plan.run_id)
@@ -447,6 +490,11 @@ async def create_agent_run(
     trace_sink = cast(TraceSink | None, getattr(request.app.state, "agent_trace_sink", None))
     trace_handle: TraceHandle | None = None
     trace_started = perf_counter()
+    tool_results: list[dict[str, object]] = []
+    if existing_run is not None:
+        previous_results = existing_run.output.get("tool_results")
+        if isinstance(previous_results, list):
+            tool_results.extend(item for item in previous_results if isinstance(item, dict))
     if trace_sink is not None:
         trace_handle = trace_sink.start(
             "agent.run",
@@ -603,6 +651,14 @@ async def create_agent_run(
         except TimeoutError:
             result = bounded_result(status="failed", reason="timeout")
         status_value = str(result.get("status", "completed"))
+        safe_result = normalize_result(result)
+        tool_results.append(
+            {
+                "call_id": call_id,
+                "tool_id": step.tool_id,
+                **safe_result,
+            }
+        )
         repository.save_tool_call(
             plan.run_id,
             call_id=call_id,
@@ -634,10 +690,14 @@ async def create_agent_run(
             artifact_ids=_result_ids(result.get("artifact_ids", ())),
         )
     repository.events.emit(plan.run_id, "run.completed", status="completed")
+    run_output = {
+        "event_count": len(repository.list_events(plan.run_id)),
+        "tool_results": tool_results,
+    }
     repository.update(
         plan.run_id,
         status="completed",
-        output={"event_count": len(repository.list_events(plan.run_id))},
+        output=run_output,
     )
     if trace_handle is not None and trace_sink is not None:
         trace_sink.end(
@@ -651,6 +711,7 @@ async def create_agent_run(
     completed_response: dict[str, object] = {
         "run_id": str(plan.run_id),
         "status": "completed",
+        "output": run_output,
         "events": [event.model_dump(mode="json") for event in repository.list_events(plan.run_id)],
     }
     if key is not None:

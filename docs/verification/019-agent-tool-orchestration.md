@@ -75,6 +75,17 @@ The full browser suite is not claimed by this evidence: the targeted agent-works
 currently waits on a catalog response in the local test harness, and the hosted deployment
 journeys remain skipped without `ATLAS_DEPLOYMENT_API_ORIGIN`.
 
+### Read-only evidence envelope evidence (2026-08-11)
+
+The agent run route now persists a normalized `tool_results` envelope in `agent_runs.output` and
+returns it in the completed-run response. The envelope is bounded by the same adapter allowlist,
+so provenance, source versions, excerpts, typed evidence relations, artifact IDs, and artifact
+links can be inspected without exposing provider-specific objects or unbounded content. Queued
+answer, comparison, and report jobs expose safe status/download links; daily news preserves its
+publisher, canonical URL, capture time, and bounded excerpt; corpus status preserves its snapshot
+and generation provenance plus the canonical `/v1/corpus` link. The focused contract/adapters suite
+passed **15 tests**, and the complete backend gate passed **55 tests**, Ruff, and mypy.
+
 ## Supabase evidence
 
 Migration `0028_agent_tool_orchestration` was applied to project `fcbclsaytbjpywlaplbh` through the
@@ -103,8 +114,9 @@ Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json
 
 ## Remaining honest gaps
 
-Cross-process idempotency/replay claims, complete read-only evidence envelopes, full quota/scope
-policy enforcement, and production deployment evidence remain open under Feature 018/019 tasks.
+Full quota/scope policy enforcement and production deployment evidence remain open under Feature
+018/019 tasks. Cross-process replay and read-only evidence envelopes are now covered by the
+durable repository and route contract tests.
 Agent-tool RLS for the seven durable tables is verified; the separate project-wide 41-table RLS
 backlog remains open. Feature 019 remains open until its other mandatory tasks and convergence
 evidence are complete.

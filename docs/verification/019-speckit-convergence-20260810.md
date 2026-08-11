@@ -40,5 +40,6 @@ other `atlas` tables without RLS; that project-wide backlog is intentionally sep
 
 The durable persistence finding is now resolved by the cross-repository run/event replay contract
 (`apps/backend/tests/agent/test_postgres_agent_persistence.py`, 12 tests passed). T021 is marked
-complete; the remaining Feature 019 gaps are policy convergence, complete read-only result
-envelopes, and the full browser/deployment gate.
+complete; the remaining Feature 019 gaps are policy convergence and the full browser/deployment
+gate. T045 is now also complete: normalized read-only result envelopes are persisted and exposed
+through the run output, with 15 focused contract/adapter tests and the 55-test backend gate.
