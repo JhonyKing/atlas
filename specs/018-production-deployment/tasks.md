@@ -53,7 +53,7 @@ Vercel, Supabase, or managed-container account already exists.
 
 - [X] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`. (Evidence: project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis`, main-branch deployment `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` and production deployment `dpl_8KpDGAy7wZSjeEyXEefnPWuH3JZi` are `READY`; `atlasai-lilac.vercel.app` serves HTTPS. Managed API activation remains T032-T036.)
 - [ ] T031 [US2] Provision isolated Supabase preview/staging/production targets, enable required extensions/policies, and record redacted project metadata in `docs/operations/environments.md`.
-- [ ] T032 [US2] Provision the managed container API/worker runtime, configure HTTPS/custom domain, and record immutable image/deployment identifiers.
+- [ ] T032 [US2] Provision the managed container API/worker runtime, configure HTTPS/custom domain, and record immutable image/deployment identifiers. (Repository progress: Fly.io selected from current official pricing/runtime contracts; `infra/deployment/fly.toml` maps the API, worker, release migration, readiness check, HTTPS, and 1 GiB machine bounds. External provisioning remains open until the owner authenticates a Fly account and approves approximately USD 17.76/month plus traffic.)
 - [ ] T033 [US3] Configure environment-scoped secrets, CORS, auth callbacks, storage, model providers, and LangSmith project/tags without committing values.
 - [ ] T034 [US3] Execute the complete quickstart against preview/staging and retain the release evidence bundle under `evals/results/`.
 - [ ] T035 [US4] Verify traces, redaction, alerts, backups/restore, and rollback rehearsal in the real environment.
