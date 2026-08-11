@@ -54,6 +54,6 @@ describe("DailyNews", () => {
 
     render(<LocaleProvider><DailyNews /></LocaleProvider>);
 
-    await waitFor(() => expect(screen.getByText(/No verified headline/i)).toBeVisible());
+    await waitFor(() => expect(screen.getByText(/No story met the evidence threshold/i)).toBeVisible());
   });
 });

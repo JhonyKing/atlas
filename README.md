@@ -12,6 +12,11 @@ primary journey. The public `/engineering` route documents the real RAG, agent, 
 verification, citation, structured-output, persistence, evaluation, observability, and
 architecture boundaries with links to repository evidence.
 
+The same plain-language boundary now extends across the public workflows: Compare offers realistic
+decision presets, Reports starts from a completed comparison and keeps manual IDs in Advanced
+options, Sources explains what can be verified before showing ingestion details, News explains the
+reader benefit before its evidence threshold, and Account makes optional sign-in explicit.
+
 Feature 022 is the source of truth for this product/portfolio separation:
 
 - `specs/022-product-clarity-engineering/`

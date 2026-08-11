@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 
 import { useLocale } from "@/i18n";
 import { Button, Field, Input } from "@/components/forms";
@@ -10,6 +11,7 @@ import { createReport, deleteReport, getReport, reportDownloadUrl, type ReportSt
 export function ReportRequest() {
   const { locale } = useLocale();
   const spanish = locale === "es-MX";
+  const prefix = spanish ? "/es" : "/en";
   const [sourceRunId, setSourceRunId] = useState("");
   const [report, setReport] = useState<ReportStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,8 +35,8 @@ export function ReportRequest() {
         if (["completed", "failed", "expired", "deleted"].includes(next.status)) return;
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Report failed.");
+    } catch {
+      setError(spanish ? "No pudimos crear el reporte. Inténtalo de nuevo más tarde." : "We couldn't create the report. Try again later.");
     } finally {
       setSubmitting(false);
     }
@@ -55,15 +57,18 @@ export function ReportRequest() {
 
   return (
     <section className="report-request-panel" aria-labelledby="report-title">
-      <p className="report-kicker">{spanish ? "Artefactos auditables" : "Auditable artifacts"}</p>
-      <h2 id="report-title">{spanish ? "Generar informe DOCX/PDF" : "Generate DOCX/PDF report"}</h2>
-      <p className="report-intro">{spanish ? "Convierte una comparación verificada en documentos descargables, conservando sus citas y limitaciones." : "Turn a verified comparison into downloadable documents while preserving its citations and limitations."}</p>
-      <div className="report-step-grid">
-        <article className="report-step-card"><span className="report-step-number">01</span><h3>{spanish ? "Elige una comparación" : "Choose a comparison"}</h3><p>{spanish ? "Usa el ID de una ejecución con estado completado." : "Use the ID of a run with completed status."}</p></article>
-        <article className="report-step-card"><span className="report-step-number">02</span><h3>{spanish ? "Genera los artefactos" : "Generate artifacts"}</h3><p>{spanish ? "ATLAS prepara DOCX y PDF con el mismo contenido verificable." : "ATLAS prepares DOCX and PDF from the same verifiable content."}</p></article>
-      </div>
-      <details className="report-advanced" open>
-        <summary>{spanish ? "Modo manual: ID de comparación" : "Manual mode: comparison ID"}</summary>
+      <p className="report-kicker">{spanish ? "Reportes con evidencia" : "Evidence-backed reports"}</p>
+      <h2 id="report-title">{spanish ? "Crea un reporte a partir de investigación verificada" : "Create a report from verified research"}</h2>
+      <p className="report-intro">{spanish ? "Convierte una comparación terminada en DOCX y PDF conservando sus fuentes, citas y limitaciones." : "Turn a completed comparison into DOCX and PDF while preserving its sources, citations, and limitations."}</p>
+      <section className="report-primary-path" aria-labelledby="report-start-title">
+        <div>
+          <h3 id="report-start-title">{spanish ? "Primero termina una comparación" : "Start with a completed comparison"}</h3>
+          <p>{spanish ? "ATLAS necesita resultados verificados antes de crear un documento." : "ATLAS needs verified results before it can create a document."}</p>
+        </div>
+        <Link className="report-primary-link" href={`${prefix}/compare`}>{spanish ? "Comparar tecnologías primero" : "Compare technologies first"}</Link>
+      </section>
+      <details className="report-advanced">
+        <summary>{spanish ? "Opciones avanzadas: ingresar un ID de comparación" : "Advanced options: enter a comparison ID"}</summary>
         <form onSubmit={submit}>
           <Field id="source-run-id" label={spanish ? "ID de comparación completada" : "Completed comparison ID"} helper={spanish ? "Pega el ID que aparece en la pantalla de resultados." : "Paste the ID shown on the completed results screen."} error={error ?? undefined}>
             <Input id="source-run-id" value={sourceRunId} onChange={(event) => setSourceRunId(event.target.value)} placeholder="e.g. 7d3e…" autoComplete="off" required />
@@ -71,7 +76,7 @@ export function ReportRequest() {
           <Button type="submit" loading={submitting}>{spanish ? "Generar informe" : "Generate report"}</Button>
         </form>
       </details>
-      {report ? <ReportArtifacts report={report} spanish={spanish} deleting={deleting} onDelete={() => void removeReport()} /> : <section className="report-recent-card" aria-labelledby="report-recent-title"><h3 id="report-recent-title">{spanish ? "Comparaciones recientes" : "Recent completed comparisons"}</h3><p>{spanish ? "Aquí aparecerán las ejecuciones completadas cuando el historial esté disponible. Por ahora usa el modo manual." : "Completed runs will appear here when history is available. For now, use manual mode."}</p></section>}
+      {report ? <ReportArtifacts report={report} spanish={spanish} deleting={deleting} onDelete={() => void removeReport()} /> : <section className="report-recent-card" aria-labelledby="report-recent-title"><h3 id="report-recent-title">{spanish ? "Aún no hay comparaciones terminadas" : "No completed comparisons yet"}</h3><p>{spanish ? "Cuando termines una comparación, aparecerá aquí para convertirla en reporte. Si ya tienes un ID, usa Opciones avanzadas." : "When you finish a comparison, it will appear here for report creation. If you already have an ID, use Advanced options."}</p></section>}
     </section>
   );
 }

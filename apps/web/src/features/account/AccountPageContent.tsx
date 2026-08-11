@@ -11,13 +11,14 @@ export function AccountPageContent() {
   return (
     <main className="account-page">
       <div className="account-page-intro">
-        <p className="eyebrow">{locale === "es-MX" ? "Espacio privado" : "Private workspace"}</p>
-        <h1>{locale === "es-MX" ? "Tu espacio ATLAS" : "Your ATLAS workspace"}</h1>
+        <p className="eyebrow">{locale === "es-MX" ? "Investigación privada opcional" : "Optional private research"}</p>
+        <h1>{locale === "es-MX" ? "Tu espacio privado de investigación" : "Your private research space"}</h1>
         <p className="lede">
           {locale === "es-MX"
-            ? "Administra tu sesión y conserva tus materiales privados bajo tu control."
-            : "Manage your session and keep private materials under your control."}
+            ? "Iniciar sesión es opcional. Hazlo cuando quieras conservar materiales privados y mantenerlos separados de la investigación pública."
+            : "Signing in is optional. Use it when you want to keep private materials separate from public research."}
         </p>
+        <p className="account-anonymous-note">{locale === "es-MX" ? "La investigación anónima sigue disponible desde Preguntar, Comparar y Noticias." : "Anonymous research remains available through Ask, Compare, and News."}</p>
       </div>
       <div className="account-grid">
         <SessionPanel locale={locale} />

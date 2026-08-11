@@ -10,6 +10,7 @@ test("researcher can generate a completed cited report", async ({ page }) => {
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ report_id: "report-e2e", status: "completed" }) });
   });
   await page.goto("/en/reports");
+  await page.getByText("Advanced options: enter a comparison ID").click();
   await page.getByLabel("Completed comparison ID").fill("comparison-e2e");
   await page.getByRole("button", { name: "Generate report" }).click();
   await expect(page.getByText("Report ready.", { exact: true })).toBeVisible();

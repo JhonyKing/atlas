@@ -1,6 +1,6 @@
 # Feature 022 — product clarity and engineering portfolio verification
 
-**Status**: P0 implemented and verified locally and in canonical production
+**Status**: P0 verified in canonical production; P1 implemented and verified locally
 **Branch**: `codex/022-product-clarity-engineering`  
 **Started**: 2026-08-11
 
@@ -125,4 +125,45 @@ The complete research runtime is still not claimed live: Feature 018 must provis
 API/worker and configure the real `NEXT_PUBLIC_API_ORIGIN`. Feature 022 fixes the public failure
 mode; it does not fabricate a backend URL.
 
-P1 and P2 remain open and are not part of the P0 completion claim.
+## P1 public-workflow verification ledger
+
+P1 keeps every existing capability and changes its order of explanation:
+
+1. Compare offers three realistic AI decisions before the complete technology/criteria controls.
+2. Reports starts from a completed comparison and moves direct IDs into closed Advanced options.
+3. News explains the inspectable-source benefit before its evidence-threshold state.
+4. Sources explains trust first; snapshot IDs and ingestion counts remain available on demand.
+5. Account states that sign-in is optional and that anonymous research remains available.
+6. Compare and Reports convert backend exceptions into localized product-safe messages.
+
+### P1 automated checks
+
+| Check | Result |
+|---|---|
+| Vitest with local compatible Node 22 runtime | 12 files, **44/44 passed** |
+| TypeScript and ESLint | both passed |
+| Next.js production build | passed; all 15 routes generated |
+| New public-workflow contract | **7/7 passed** |
+| Inherited Reports and route-state regression | **13/13 passed** |
+| Production-mode 1440x900 and 390x844 capture | **2/2 passed**, ten images inspected |
+| Seven-width viewport/accessibility matrix | **56/56 passed** |
+
+The machine's default Node 20 could not start jsdom because of an ESM dependency mismatch. The
+same unchanged suite passed 44/44 under the installed Node 22 runtime; Vercel continues to use the
+configured modern runtime. This is recorded as a local tooling boundary, not represented as a
+product test failure.
+
+### P1 visual evidence
+
+- [Compare — desktop](artifacts/022/p1/022-p1-desktop-compare.png) and [mobile](artifacts/022/p1/022-p1-mobile-compare.png)
+- [Reports — desktop](artifacts/022/p1/022-p1-desktop-reports.png) and [mobile](artifacts/022/p1/022-p1-mobile-reports.png)
+- [News — desktop](artifacts/022/p1/022-p1-desktop-news.png) and [mobile](artifacts/022/p1/022-p1-mobile-news.png)
+- [Sources — desktop](artifacts/022/p1/022-p1-desktop-sources.png) and [mobile](artifacts/022/p1/022-p1-mobile-sources.png)
+- [Account — desktop](artifacts/022/p1/022-p1-desktop-account.png) and [mobile](artifacts/022/p1/022-p1-mobile-account.png)
+
+The final images were captured against `next start`, not the development server, so they contain
+no Next.js developer toolbar. Manual inspection found no clipped text, horizontal overflow,
+duplicated locale control, exposed internal exception, or advanced identifier visible by default.
+
+SpecKit convergence after P1 found no missing P1 implementation work. P2 tasks T035-T038 remain
+open and are not included in this completion claim.

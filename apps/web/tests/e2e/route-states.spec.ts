@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 const cases = [
-  { name: "reports empty history", path: "/reports", api: null, marker: "Recent completed comparisons" },
-  { name: "news unavailable", path: "/news", api: "/v1/news/daily", marker: "No verified headline" },
-  { name: "sources unavailable", path: "/sources", api: "/v1/corpus", marker: "Corpus status unavailable" },
+  { name: "reports empty history", path: "/reports", api: null, marker: "No completed comparisons yet" },
+  { name: "news unavailable", path: "/news", api: "/v1/news/daily", marker: "No story met the evidence threshold" },
+  { name: "sources unavailable", path: "/sources", api: "/v1/corpus", marker: "couldn't load the source catalog" },
   { name: "account private resources unavailable", path: "/account", api: "/v1/private/resources", marker: "Private resources are unavailable" },
   { name: "admin governance retry", path: "/admin", api: "/v1/corpus/governance", marker: "Corpus governance unavailable" },
 ] as const;

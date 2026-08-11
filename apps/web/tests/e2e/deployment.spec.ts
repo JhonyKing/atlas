@@ -33,10 +33,10 @@ test.describe("deployed release smoke contract", () => {
 
   test("loads every public feature route with the expected localized surface", async ({ page }) => {
     const routes = [
-      { path: "/es/compare", heading: "Compara tecnologías sin inventar datos." },
-      { path: "/es/reports", heading: "Generar informe DOCX/PDF" },
-      { path: "/es/news", heading: "Titular del día anterior" },
-      { path: "/es/sources", heading: "Estado del corpus" },
+      { path: "/es/compare", heading: "Compara tecnologías de IA para una decisión real" },
+      { path: "/es/reports", heading: "Crea un reporte a partir de investigación verificada" },
+      { path: "/es/news", heading: "La noticia de IA verificada más importante de ayer" },
+      { path: "/es/sources", heading: "Fuentes que ATLAS puede verificar" },
     ];
     const localRequests = observeLocalhostFallbacks(page);
 
@@ -88,6 +88,7 @@ test.describe("deployed release smoke contract", () => {
     await expect(page.getByRole("heading", { name: "Comparison matrix" })).toBeVisible({ timeout: 120_000 });
 
     await page.goto(`${deploymentUrl}/en/reports`, { waitUntil: "networkidle" });
+    await page.getByText("Advanced options: enter a comparison ID").click();
     await page.getByLabel("Completed comparison ID").fill(runId!);
     await page.getByRole("button", { name: "Generate report" }).click();
     await expect(page.getByText("Report ready.", { exact: true })).toBeVisible({ timeout: 120_000 });
@@ -100,7 +101,7 @@ test.describe("deployed release smoke contract", () => {
     await page.goto(`${deploymentUrl}/en/sources`, { waitUntil: "networkidle" });
     await expect(page.locator(".corpus-card").first()).toBeVisible({ timeout: 60_000 });
     await expect(page.locator(".corpus-card")).not.toHaveCount(0);
-    await expect(page.getByText("Corpus status unavailable.")).toHaveCount(0);
+    await expect(page.getByText(/couldn't load the source catalog/i)).toHaveCount(0);
 
     await page.goto(`${deploymentUrl}/en/news`, { waitUntil: "networkidle" });
     const news = page.locator(".daily-news");
