@@ -25,7 +25,7 @@ jobs:
         shell: pwsh
         run: ./scripts/verify-supabase-migration.ps1
       - name: Run migration contract tests
-        run: uv run --project apps/backend pytest tests/unit/database tests/integration/database -q
+        run: uv run --project apps/backend pytest apps/backend/tests/unit/database apps/backend/tests/integration/database -q
 
   remote-read-only:
     name: Optional project-scoped remote comparison
