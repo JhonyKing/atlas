@@ -13,8 +13,8 @@ Development/staging remains the preferred target for future data-bearing migrati
 - Restart Codex after adding the MCP so the tools are available in the active session.
 - The operator must classify the remote project before the first write. Production or unknown
   projects require explicit owner confirmation; that confirmation is recorded for the
-  `agent_tool_rls` production run in
-  `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.
+  `foreign_key_indexes` production run in
+  `evals/results/supabase-migration-foreign-key-indexes-20260811-applied.json`.
 
 ## Source of truth
 
@@ -26,17 +26,16 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected repository chain currently contains 32 revisions and ends at
-`0032_foreign_key_indexes.py` (revision name `foreign_key_indexes`). Production remains at
-`agent_tool_rls` with 31 revisions. The new revision adds covering indexes for the foreign keys
-reported by the hosted performance advisor; it changes no row data or RLS policy and still requires
-separate explicit production approval before MCP application.
+The expected repository and production chains contain 32 revisions and end at
+`0032_foreign_key_indexes.py` (revision name `foreign_key_indexes`). The revision adds covering
+indexes for the foreign keys reported by the hosted performance advisor and changes no row data or
+RLS policy.
 
 ## Current hosted status (2026-08-11)
 
-- Remote migration head: `agent_tool_rls` at **31** revisions.
-- Repository migration head: `foreign_key_indexes` at **32** revisions; local fresh-database and
-  SQL-contract validation pass, but the revision is not yet applied remotely.
+- Remote and repository migration head: `foreign_key_indexes` at **32** revisions.
+- All 24 reviewed covering indexes are present, valid, and ready. The hosted performance advisor
+  reports zero `unindexed_foreign_keys` findings.
 - Seven durable agent tables have **FORCE ROW LEVEL SECURITY** and exactly 14 policies: one
   `atlas_worker` `ALL` policy and one `atlas_readonly` `SELECT` policy per table.
 - `anon` and `authenticated` have no grants on those seven tables. No row data was written by the
@@ -69,7 +68,7 @@ script itself has no database credential or write transport.
 2. **Compare**: classify missing revisions and unexplained drift against the repository manifest.
 3. **Approve**: stop for production/unknown classification, real existing data, unexplained drift,
    or missing privileges. Record the owner decision before any write. The explicit production
-   approval for `agent_tool_rls` is now part of the applied evidence.
+   approvals for `agent_tool_rls` and `foreign_key_indexes` are part of their applied evidence.
 4. **Apply**: apply only reviewed, missing, ordered revisions. Stop at the first failed revision;
    never continue automatically after a failure.
 5. **Verify**: run schema, pgvector, provenance, retrieval, RLS, and idempotent-rerun checks using
@@ -88,8 +87,8 @@ Rerun inspection before attempting recovery.
 
 ## Definition of done
 
-- Every reviewed repository revision is applied or explicitly recorded as pending approval; the
-  current known difference is `foreign_key_indexes` pending after the 31-revision remote head.
+- Every reviewed repository revision is applied; repository and remote both end at
+  `foreign_key_indexes` with 32 revisions.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

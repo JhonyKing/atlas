@@ -63,7 +63,8 @@ deployment. The UTF-8-preserving evidence is in
 - Vercel project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` has READY preview/main and production
   deployments. The public web is [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app).
 - Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with remote head
-  `agent_tool_rls` and 31 hosted migration records. Repository revision 32 is pending approval.
+  `foreign_key_indexes` and 32 hosted migration records. All 24 reviewed covering indexes are valid
+  and ready; the hosted advisor reports zero unindexed foreign keys.
 
 T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
 managed API/worker, environment secrets, functional smoke, observability/restore and production

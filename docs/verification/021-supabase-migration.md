@@ -2,9 +2,9 @@
 
 ## Latest owner-approved production hardening (2026-08-11)
 
-The owner authorized the reviewed `agent_tool_rls` migration for the production project
-`fcbclsaytbjpywlaplbh`. The Supabase MCP applied revision `agent_tool_rls`; the remote history now
-contains **31** revisions and reports that revision as the head.
+The owner authorized the reviewed `agent_tool_rls` and `foreign_key_indexes` migrations for the
+production project `fcbclsaytbjpywlaplbh`. The Supabase MCP applied both revisions; the remote
+history now contains **32** revisions and reports `foreign_key_indexes` as the head.
 
 Post-apply inspection verified all seven durable agent tables (`agent_plans`, `agent_runs`,
 `agent_tool_calls`, `agent_run_events`, `agent_approvals`, `agent_idempotency_records`, and
@@ -19,6 +19,7 @@ migrations. The informational `public.alembic_version` RLS-without-policy adviso
 preserved without changing the marker table.
 
 Applied-run evidence: [owner-approved agent-tool RLS verification](../../evals/results/supabase-migration-agent-tool-rls-20260811-applied.json).
+Index migration evidence: [owner-approved foreign-key index verification](../../evals/results/supabase-migration-foreign-key-indexes-20260811-applied.json).
 The earlier blocked attempt remains preserved at
 `../../evals/results/supabase-migration-agent-tool-rls-20260810.json` and was not overwritten.
 
@@ -95,6 +96,17 @@ Supabase reported informational unindexed-foreign-key findings after the agent m
 repository now includes `0032_foreign_key_indexes.py` and `016_foreign_key_indexes.sql`. The full
 32-revision chain migrated successfully on an isolated local database; the SQL contract passed and
 the database was removed afterward. Repository Ruff and strict mypy pass, and backend pytest is
-**428 passed / 4 skipped**. Production remains at `agent_tool_rls` (31 revisions): T046 stays open
-until the owner explicitly approves applying the new index-only migration and the hosted advisor is
-re-run. No Supabase row or policy was changed during this follow-up.
+**428 passed / 4 skipped**.
+
+The owner then explicitly approved the production write. A strict first transaction detected that
+`public.alembic_version` still reported `0028_agent_tool_orchestration` and rolled back without
+creating indexes. Inspection showed that hosted migration history and physical schema already
+contained revisions 29–31: all seven agent tables, FORCE RLS settings, 14 policies, reviewed grants,
+and supporting idempotency/checkpoint indexes matched the repository. A stronger transactional
+guard verified those objects before reconciling the marker and applying `foreign_key_indexes`.
+
+Post-apply verification reports remote head **`foreign_key_indexes`**, **32** hosted revisions,
+**24/24** expected indexes present, valid, and ready, and **0** `unindexed_foreign_keys` advisor
+findings. Immediate `unused_index` findings are informational because no representative workload
+has exercised the new indexes yet. No Supabase row or RLS policy changed. T046 is closed, and the
+failed guarded attempt remains represented in the final evidence rather than being hidden.

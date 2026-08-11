@@ -29,7 +29,7 @@ task remains open.
 
 | 019 - Agent tool orchestration | Versioned catalog, typed schema validation, GPT-5.6 Luna structured planner boundary with deterministic fallback, bounded executor timeouts/budgets/cancellation, read-only and approval/ownership-gated side-effect adapter boundaries, operation-key-bound approvals, rolling per-visitor/tool quotas, session-backed scope gating, ordered events, durable Postgres persistence, evidence/artifact mapping, cancel/resume APIs, localized workspace, LangSmith-safe tags, and deterministic evaluation gate are implemented. | Full backend **428 passed, 4 skipped**, strict Ruff/mypy, deterministic agent gate **58 passed** plus 5/5 dataset cases, frontend **35/35** component tests and **149 passed, 4 skipped** Playwright journeys, and production web build passed. Evidence is in `docs/verification/019-agent-tool-orchestration.md`. | Production API/worker activation remains Feature 018 deployment work, not an open Feature 019 implementation task. | **Met** — 0 mandatory tasks open. |
 | 020 - UX/UI and brand redesign | Route-owned AppShell, bilingual navigation, brand assets, responsive panels, refined states, account/admin layouts, citations, and reports/news/source surfaces are implemented. | Production build passed; viewport matrix **49/49** and bilingual route visual QA **60/60** passed at 1440x900 and 390x844; frontend lint/typecheck, Node 24 Vitest **35/35**, Playwright **149 passed/4 skipped**, and backend regression **379 passed/4 skipped**. Evidence: `docs/verification/020-final-visual-review.md`, `020-production-build.md`, `020-speckit-analysis.md`, `020-visual-matrix.md`, and `020-route-states.md`. | Hosted provider/data smoke and durable screenshot baselines remain deployment work; backend behavior was intentionally out of scope. | **Met for design slice** - T001-T045 are evidenced; remaining hosted smoke is deployment work outside Feature 020. |
-| 021 - Supabase database migration | Project-scoped Supabase schema, a 32-revision repository chain, pgvector/provenance checks, hosted security hardening, evidence export, deterministic MCP snapshot helpers, failure-path tests, and read-only CI wiring are implemented. | Hosted head is `agent_tool_rls` at 31 revisions; the seven durable agent tables have FORCE RLS and reviewed policies. Candidate `foreign_key_indexes` passes a fresh database, SQL contract, Ruff, strict mypy, and 428 backend tests. | Explicit production approval/application of revision 32 and project-wide RLS planning for the other private `atlas` tables remain open. | **Production revision 31 verified; T046 awaits production approval.** |
+| 021 - Supabase database migration | Project-scoped Supabase schema, a 32-revision repository chain, pgvector/provenance checks, hosted security hardening, evidence export, deterministic MCP snapshot helpers, failure-path tests, and read-only CI wiring are implemented. | Hosted and repository head is `foreign_key_indexes` at 32 revisions; 24/24 covering indexes are valid and ready, and the advisor reports zero unindexed foreign keys. The seven durable agent tables retain FORCE RLS and reviewed policies. | Project-wide RLS planning for the other private `atlas` tables remains a separate security backlog. | **Met — production revision 32 verified; T046 closed.** |
 
 ## Branch mapping
 
@@ -39,9 +39,9 @@ task remains open.
 
 ## Hosted state update (2026-08-11)
 
-This dated update supersedes the pre-approval wording in the Feature 019 and Feature 021 rows
-above. The owner-approved `agent_tool_rls` migration is applied in production at remote revision
-head `agent_tool_rls` (31 revisions). Seven durable agent tables have FORCE RLS and 14 reviewed
+This dated update records the owner-approved production migrations. `agent_tool_rls` and
+`foreign_key_indexes` are applied, with remote head `foreign_key_indexes` (32 revisions). Seven
+durable agent tables have FORCE RLS and 14 reviewed
 worker/read-only policies; `anon` and `authenticated` have no grants on those tables. Feature 019
 therefore has 0 mandatory tasks open after the approval-key/quota and browser verification slices. Supabase still reports 41 other `atlas`
 tables without RLS; that separate project-wide backlog remains open. See

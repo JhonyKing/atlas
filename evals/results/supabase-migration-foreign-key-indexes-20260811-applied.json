@@ -1,0 +1,126 @@
+{
+  "run_id": "supabase-apply-foreign-key-indexes-20260811-production",
+  "project_ref": "fcbclsaytbjpywlaplbh",
+  "environment": "production",
+  "mode": "apply",
+  "started_at": "2026-08-11T11:54:33Z",
+  "finished_at": "2026-08-11T11:56:55Z",
+  "repository_head": "foreign_key_indexes",
+  "repository_revisions": ["foreign_key_indexes"],
+  "remote_revisions": ["foreign_key_indexes"],
+  "applied_revisions": ["foreign_key_indexes"],
+  "schema_inventory": {
+    "remote_head": "foreign_key_indexes",
+    "remote_revision_count": 32,
+    "previous_marker": "0028_agent_tool_orchestration",
+    "intermediate_schema_verified_before_marker_reconciliation": true,
+    "foreign_key_indexes_expected": 24,
+    "foreign_key_indexes_present": 24,
+    "foreign_key_indexes_valid_and_ready": 24,
+    "foreign_key_indexes_missing": 0,
+    "unindexed_foreign_key_advisor_findings": 0,
+    "index_names": [
+      "agent_review_decisions_request_idx",
+      "agent_review_decisions_reviewer_idx",
+      "agent_review_requests_reviewer_idx",
+      "agent_runs_plan_idx",
+      "answer_citations_run_claim_idx",
+      "answer_citations_run_evidence_idx",
+      "answer_runs_snapshot_idx",
+      "chunk_embeddings_profile_idx",
+      "chunks_parent_idx",
+      "comparison_cell_evidence_chunk_idx",
+      "comparison_runs_snapshot_idx",
+      "governance_connector_runs_collection_idx",
+      "governance_policy_reviews_collection_idx",
+      "governance_policy_reviews_source_idx",
+      "governed_source_versions_parent_idx",
+      "governed_sources_current_version_idx",
+      "governed_sources_private_owner_idx",
+      "ingestion_items_run_idx",
+      "ingestion_items_source_version_idx",
+      "news_selections_candidate_idx",
+      "report_jobs_source_run_idx",
+      "run_evidence_chunk_idx",
+      "source_versions_ingestion_run_idx",
+      "sources_current_version_idx"
+    ]
+  },
+  "checks": [
+    {
+      "name": "owner_production_authorization",
+      "status": "passed",
+      "elapsed_ms": 0,
+      "detail": "The owner explicitly authorized applying foreign_key_indexes to AtlasAI production and rerunning advisors."
+    },
+    {
+      "name": "initial_revision_guard",
+      "status": "passed",
+      "elapsed_ms": 18,
+      "detail": "The first guarded transaction detected the stale 0028 marker instead of the expected agent_tool_rls marker and rolled back without creating indexes."
+    },
+    {
+      "name": "intermediate_schema_integrity",
+      "status": "passed",
+      "elapsed_ms": 143,
+      "detail": "All seven expected agent tables, FORCE RLS states, 14 policies, worker/read-only grants, and idempotency/checkpoint indexes were present before marker reconciliation."
+    },
+    {
+      "name": "foreign_key_indexes_application",
+      "status": "passed",
+      "elapsed_ms": 236,
+      "detail": "The project-scoped Supabase MCP applied the reviewed index-only revision after the stronger transactional guard passed."
+    },
+    {
+      "name": "remote_revision_head",
+      "status": "passed",
+      "elapsed_ms": 61,
+      "detail": "Hosted migration history contains 32 revisions and public.alembic_version reports foreign_key_indexes."
+    },
+    {
+      "name": "index_catalog_verification",
+      "status": "passed",
+      "elapsed_ms": 84,
+      "detail": "All 24 expected indexes exist and are valid and ready; none are missing."
+    },
+    {
+      "name": "hosted_performance_advisor",
+      "status": "passed",
+      "elapsed_ms": 207,
+      "detail": "The hosted advisor reports zero unindexed_foreign_keys findings. New indexes may appear as unused until production queries exercise them."
+    },
+    {
+      "name": "hosted_security_advisor",
+      "status": "passed",
+      "elapsed_ms": 182,
+      "detail": "The only remaining finding is informational rls_enabled_no_policy on the intentionally closed public.alembic_version marker table."
+    }
+  ],
+  "drift": [
+    {
+      "kind": "revision",
+      "object_name": "public.alembic_version",
+      "expected": "agent_tool_rls before applying foreign_key_indexes",
+      "actual": "0028_agent_tool_orchestration while hosted migration history and the physical intermediate schema already included revisions 29 through 31",
+      "severity": "informational",
+      "resolution": "The first transaction rolled back. A second transaction reconciled the marker only after verifying every expected intermediate table, RLS state, policy, grant, and supporting index."
+    },
+    {
+      "kind": "index",
+      "object_name": "new foreign-key covering indexes",
+      "expected": "Indexes may initially have no workload usage statistics",
+      "actual": "The performance advisor reports unused_index informational findings immediately after creation",
+      "severity": "informational",
+      "resolution": "Retain the reviewed foreign-key indexes and reassess usage after representative production traffic; do not remove them from an immediate post-create snapshot."
+    },
+    {
+      "kind": "policy",
+      "object_name": "public.alembic_version",
+      "expected": "The migration marker remains closed to public access",
+      "actual": "The security advisor reports informational rls_enabled_no_policy for the marker table",
+      "severity": "informational",
+      "resolution": "Keep the marker table non-public; change only through a separately reviewed operational-access migration."
+    }
+  ],
+  "status": "passed"
+}

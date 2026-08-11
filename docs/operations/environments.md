@@ -11,8 +11,8 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 | Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | `TODO_MANAGED_API` | Web deployment `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T` from `main` is `READY`; Supabase is `ACTIVE_HEALTHY`; full product remains unavailable until the managed API/worker and environment variables exist |
 
 The Supabase project `fcbclsaytbjpywlaplbh` was explicitly identified by the owner as **main / PRODUCTION**;
-it is not a development target. Read-only inspection on 2026-08-11 found Postgres `17.6`, migration
-head `agent_tool_rls`, 31 hosted Supabase migration records, and installed `vector`,
+it is not a development target. Post-apply inspection on 2026-08-11 found Postgres `17.6`, migration
+head `foreign_key_indexes`, 32 hosted Supabase migration records, and installed `vector`,
 `pgmq`, `pgcrypto`, and `pg_stat_statements`. Preview and staging data isolation are still open because
 Supabase branches require a paid plan and no unapproved cost was incurred. The Vercel project identifier is non-secret. The owner has already
 configured and visually confirmed `apps/web` as the Root Directory in Project Settings; that action

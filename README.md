@@ -38,9 +38,10 @@ bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase production project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
-current remote head is `agent_tool_rls` (31 hosted revisions). The repository now contains a
-32nd reviewed candidate, `foreign_key_indexes`, which resolves the hosted unindexed-foreign-key
-advisor findings; it has passed fresh-database validation but is not yet applied to production.
+current remote and repository head is `foreign_key_indexes` (32 hosted revisions). The
+owner-approved index-only migration resolved the hosted unindexed-foreign-key advisor findings:
+all 24 expected indexes are valid and ready, and the advisor now reports zero unindexed foreign
+keys.
 
 The repeatable verification workflow lives in `scripts/supabase/` and is enforced by
 `.github/workflows/supabase-migration.yml`. Pull requests run manifest, evidence-contract, and
@@ -57,18 +58,15 @@ Source, operations, and verification:
 
 ### Latest hosted Supabase update (2026-08-11)
 
-The owner-approved `agent_tool_rls` migration is now applied in production. The remote head is
-`agent_tool_rls` at 31 revisions. Seven durable agent tables have FORCE RLS, 14 reviewed
+The owner-approved `foreign_key_indexes` migration is now applied in production. The remote head
+is `foreign_key_indexes` at 32 revisions. Seven durable agent tables retain FORCE RLS, 14 reviewed
 worker/read-only policies, and no `anon`/`authenticated` grants. Supabase still reports 41 other
 `atlas` tables without RLS; those require a separate reviewed policy plan.
 
-Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The earlier
-blocked attempt remains preserved at `evals/results/supabase-migration-agent-tool-rls-20260810.json`.
-
-The next migration, `0032_foreign_key_indexes.py`, adds 24 covering indexes without changing row
-data or RLS. Local evidence: ordered 32-revision manifest, fresh-database migration, SQL contract,
-Ruff, strict mypy, and **428 passed / 4 skipped** backend tests. Production remains at revision 31
-until the owner explicitly approves this new production write.
+Evidence: `evals/results/supabase-migration-foreign-key-indexes-20260811-applied.json`. The earlier
+RLS evidence remains preserved at
+`evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`; neither artifact contains
+credentials or private row payloads.
 
 ## Feature 019: agent tool orchestration
 
