@@ -63,7 +63,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 - [X] T036 [P] Update `docs/product/feature-status-matrix.md` and PRD traceability with Feature 019 and the mapping from existing features to tools.
 - [X] T037 Run Speckit analyze after task generation and resolve critical gaps/contradictions before implementation.
 - [ ] T038 Run full lint/typecheck/unit/integration/security/browser and deterministic evaluation gates; record evidence for each user story.
-- [ ] T039 Run Speckit converge after implementation and keep the feature open while mandatory tests, live evidence, or documentation remain pending.
+- [X] T039 Run Speckit converge after implementation and keep the feature open while mandatory tests, live evidence, or documentation remain pending.
 - [ ] T040 Commit focused vertical slices and update README/ADR/evidence after each completed feature increment.
 
 ## Dependencies & Execution Order
@@ -96,6 +96,6 @@ enough to close the feature.
 
 ## Phase 9: Convergence
 
-- [ ] T047 [US4] Make PostgreSQL run-event sequence allocation atomic per run so concurrent workers cannot compute the same `max(sequence) + 1` and violate ordered lifecycle delivery (FR-010, SC-005; partial).
-- [ ] T048 [US3] Persist the authenticated `actor_id` from plan/run requests into durable agent runs and enforce the same owner scope when loading durable runs and approvals after a restart (FR-006, FR-007; partial).
+- [X] T047 [US4] Make PostgreSQL run-event sequence allocation atomic per run so concurrent workers cannot compute the same `max(sequence) + 1` and violate ordered lifecycle delivery (FR-010, SC-005; implemented and covered by focused persistence tests).
+- [X] T048 [US3] Persist the authenticated `actor_id` from plan/run requests into durable agent runs and enforce the same owner scope when loading durable runs and approvals after a restart (FR-006, FR-007; implemented and covered by focused persistence/API tests).
 - [ ] T049 [US3] Add a reviewed migration and verification evidence for RLS policies that prevent anon/authenticated access to private agent plans, runs, approvals, tool calls, events, idempotency records, and checkpoint claims while preserving the worker path (Constitution VI, FR-006; contradicts/CRITICAL).
