@@ -31,5 +31,6 @@
 
 ## Notes
 
-- Planning must select and document the managed container runtime for the FastAPI API and worker.
+- [X] Planning selects and documents a Cloud Run service plus worker pool for FastAPI and the
+  continuous ingestion worker.
 - Production credentials, billing, domain ownership, and account provisioning remain operator inputs.

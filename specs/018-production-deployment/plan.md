@@ -24,7 +24,8 @@ Auth, and Storage for preview/staging/production
 **Testing**: pytest, Ruff, mypy, Vitest, Playwright, SQL contracts, deterministic RAG evals,
 deployment readiness/smoke runner, secret scan
 
-**Target Platform**: Vercel for web; managed HTTPS container runtime for API/worker; Supabase for data
+**Target Platform**: Vercel for web; Google Cloud Run service plus worker pool for API/worker;
+Supabase for data
 
 **Project Type**: Monorepo web application, API, worker, and deployment automation
 

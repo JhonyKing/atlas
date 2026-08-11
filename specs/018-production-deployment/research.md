@@ -41,5 +41,25 @@
 
 ## Open operator inputs (not repository ambiguity)
 
-- The operator must choose/provision a managed container runtime and provide its credentials. The repository contract stays provider-neutral so the API/worker image can be moved without domain changes.
+- The operator must provision the selected Google Cloud project, enable billing, and provide an
+  authenticated deployment identity. The repository contract stays provider-neutral so the
+  API/worker image can be moved without domain changes.
 - The operator must provide Vercel, Supabase, domain, model-provider, and LangSmith credentials. No secret is generated or committed by this feature.
+
+## Decision 6: Select Cloud Run for the managed API and worker
+
+- **Decision**: Deploy FastAPI as a Cloud Run service and the polling ingestion process as a Cloud
+  Run worker pool. Store runtime values in Secret Manager, deploy only immutable image digests, and
+  keep the worker pool at zero instances until the owner explicitly authorizes billable activation.
+- **Rationale**: Cloud Run services provide the required managed HTTPS container endpoint and
+  health probes. Worker pools are designed for continuous non-HTTP pull workloads, matching the
+  existing `atlas-worker` queue loop without translating it into a time-bounded function. The same
+  image and service identity can be used by both roles while deployments remain separate and
+  rollbackable.
+- **Alternatives considered**:
+  - Vercel Services: rejected for the backend because services retain function duration limits and
+    do not provide the continuous worker contract required by FR-003.
+  - Render: technically suitable, but its continuously running background worker is a separate
+    always-on service and the repository has no authenticated Render control plane.
+  - A VM: still rejected because it adds patching, process supervision, and rollback work that the
+    managed runtime should own.
