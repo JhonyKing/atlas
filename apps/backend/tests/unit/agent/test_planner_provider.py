@@ -5,17 +5,28 @@ import pytest
 from atlas.agent.planner import AgentPlanner
 from atlas.agent.planning import PlanValidationError
 from atlas.agent.tools.registry import ToolCatalog
+from atlas.agent.tools.schemas import Locale, ToolCallRequest
 from atlas.providers.openai_responses import ProviderAdapterError
 from atlas.providers.ports import AgentPlanProposal
 
 
 class FakeProposalProvider:
-    def __init__(self, proposal: AgentPlanProposal | None = None, error: Exception | None = None):
+    def __init__(
+        self,
+        proposal: AgentPlanProposal | None = None,
+        error: Exception | None = None,
+    ) -> None:
         self.proposal = proposal
         self.error = error
         self.calls = 0
 
-    async def propose(self, request, catalog, *, locale):
+    async def propose(
+        self,
+        request: str,
+        catalog: ToolCatalog,
+        *,
+        locale: Locale,
+    ) -> AgentPlanProposal:
         del request, catalog, locale
         self.calls += 1
         if self.error is not None:
@@ -29,11 +40,11 @@ async def test_planner_uses_typed_provider_proposal_and_luna_label() -> None:
     provider = FakeProposalProvider(
         AgentPlanProposal(
             steps=[
-                {
-                    "tool_id": "cited_answer",
-                    "tool_version": "1.0.0",
-                    "arguments": {"question": "How does LangGraph persist state?"},
-                }
+                ToolCallRequest(
+                    tool_id="cited_answer",
+                    tool_version="1.0.0",
+                    arguments={"question": "How does LangGraph persist state?"},
+                )
             ]
         )
     )
@@ -51,7 +62,7 @@ async def test_planner_uses_typed_provider_proposal_and_luna_label() -> None:
 async def test_invalid_provider_tool_fails_closed_instead_of_falling_back() -> None:
     provider = FakeProposalProvider(
         AgentPlanProposal(
-            steps=[{"tool_id": "not_allowlisted", "tool_version": "1.0.0"}]
+            steps=[ToolCallRequest(tool_id="not_allowlisted", tool_version="1.0.0")]
         )
     )
     planner = AgentPlanner(ToolCatalog.default(), proposal_provider=provider)

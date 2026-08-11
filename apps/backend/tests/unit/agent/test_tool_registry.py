@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
-from atlas.agent.tools.registry import ToolCatalog, ToolDefinition
+from atlas.agent.tools.registry import ToolCatalog
+from atlas.agent.tools.schemas import ToolDefinition, ToolLocalization
 from atlas.api.main import create_app
 
 
@@ -52,12 +53,15 @@ def test_tool_definition_rejects_unknown_fields() -> None:
             version="1.0.0",
             input_schema={"type": "object"},
             output_schema={"type": "object"},
-            scopes=[],
+            scopes=(),
             side_effect_level="read",
             approval="none",
             timeout_ms=1,
             budget={"max_calls": 1},
-            localization={"en-US": {"name": "Bad", "description": "Bad"}},
+            localization={
+                "en-US": ToolLocalization(name="Bad", description="Bad"),
+                "es-MX": ToolLocalization(name="Mala", description="Mala"),
+            },
             unknown="secret",  # type: ignore[call-arg]
         )
     except ValueError:

@@ -7,8 +7,8 @@ from atlas.observability.langsmith import LangSmithTraceSink
 
 class FakeClient:
     def __init__(self) -> None:
-        self.created: dict = {}
-        self.updated: dict = {}
+        self.created: dict[str, object] = {}
+        self.updated: dict[str, object] = {}
 
     def create_run(self, **kwargs: object) -> None:
         self.created = kwargs

@@ -1,7 +1,9 @@
 from datetime import UTC, datetime, timedelta
 from email.utils import format_datetime
+from typing import cast
 from uuid import UUID
 
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
@@ -90,7 +92,7 @@ def test_tool_catalog_and_read_only_run_are_explicit() -> None:
         "tool_call.abstained",
         "run.completed",
     ]
-    tool_call = client.app.state.agent_run_repository.get_tool_call(
+    tool_call = cast(FastAPI, client.app).state.agent_run_repository.get_tool_call(
         UUID(run.json()["run_id"]), "step-0"
     )
     assert tool_call is not None
@@ -118,7 +120,7 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     )
     assert pending.status_code == 202
     assert pending.json()["status"] == "awaiting_approval"
-    pending_call = client.app.state.agent_run_repository.get_tool_call(
+    pending_call = cast(FastAPI, client.app).state.agent_run_repository.get_tool_call(
         UUID(pending.json()["run_id"]), "step-0"
     )
     assert pending_call is not None
@@ -142,7 +144,7 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     assert completed.status_code == 202
     assert completed.json()["status"] == "completed"
     assert any(event["event_type"] == "tool_call.failed" for event in completed.json()["events"])
-    completed_call = client.app.state.agent_run_repository.get_tool_call(
+    completed_call = cast(FastAPI, client.app).state.agent_run_repository.get_tool_call(
         UUID(completed.json()["run_id"]), "step-0"
     )
     assert completed_call is not None
@@ -330,7 +332,7 @@ def test_replaying_completed_run_does_not_duplicate_events_or_tool_calls() -> No
     assert second.json()["output"] == first.json()["output"]
     assert second.json()["events"] == first.json()["events"]
 
-    checkpoint = client.app.state.agent_checkpoint_service.resume(
+    checkpoint = cast(FastAPI, client.app).state.agent_checkpoint_service.resume(
         UUID(first.json()["run_id"]),
         replay_key=f"agent-run:{plan['plan_hash']}:step-0",
     )

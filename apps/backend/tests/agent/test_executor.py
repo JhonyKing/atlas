@@ -4,12 +4,12 @@ import time
 
 from atlas.agent.events import InMemoryEventStore
 from atlas.agent.executor import BoundedExecutor
-from atlas.agent.planning import validate_plan
+from atlas.agent.planning import AgentPlan, validate_plan
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
 
 
-def _plan(*steps: ToolCallRequest):
+def _plan(*steps: ToolCallRequest) -> AgentPlan:
     return validate_plan(
         catalog=ToolCatalog.default(),
         request="How does LangGraph persist state?",

@@ -1,6 +1,6 @@
 from atlas.agent.tools.catalog import filter_catalog
 from atlas.agent.tools.registry import ToolCatalog
-from atlas.agent.tools.schemas import ToolDefinition
+from atlas.agent.tools.schemas import ToolDefinition, ToolLocalization
 
 
 def test_catalog_has_versioned_localized_allowlist() -> None:
@@ -35,7 +35,10 @@ def test_registry_rejects_unknown_fields() -> None:
             approval="none",
             timeout_ms=1000,
             budget={"max_calls": 1},
-            localization={"en-US": {"name": "Example", "description": "Example"}},
+            localization={
+                "en-US": ToolLocalization(name="Example", description="Example"),
+                "es-MX": ToolLocalization(name="Ejemplo", description="Ejemplo"),
+            },
             unexpected="nope",  # type: ignore[call-arg]
         )
     except ValueError:

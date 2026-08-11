@@ -2,12 +2,12 @@ from datetime import UTC, datetime
 
 import pytest
 
-from atlas.agent.planning import PlanValidationError, validate_plan
+from atlas.agent.planning import AgentPlan, PlanValidationError, validate_plan
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
 
 
-def _validate(step: ToolCallRequest):
+def _validate(step: ToolCallRequest) -> AgentPlan:
     return validate_plan(
         catalog=ToolCatalog.default(),
         request="How does LangGraph persist state?",

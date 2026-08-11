@@ -24,3 +24,13 @@ Final result: **60/60 routes rendered successfully** and retained screenshots in
 No new product features were added during this pass. The review focused on hierarchy,
 spacing, responsive behavior, states, contrast, citations/controls, and public-versus-admin
 surface separation.
+
+## CI viewport regression follow-up — 2026-08-11
+
+The first hosted `main` run after production-branch activation exposed a real 768 px overflow on all
+seven base routes. The horizontal desktop navigation plus locale switch required 823 px, while the
+compact AppShell did not activate until 720 px. The responsive breakpoint is now 840 px. A focused
+Playwright rerun passed **7/7** routes at 768x900 with no horizontal overflow, reachable focus,
+touch-safe controls, loaded assets, semantic labels, reduced motion, and contrast checks intact.
+The final production-server regression then completed with **150 passed / 6 hosted-only skips** out
+of 156 Playwright tests across the complete functional and visual suite.

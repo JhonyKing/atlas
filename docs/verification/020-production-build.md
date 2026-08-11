@@ -32,3 +32,10 @@ availability was counted as product UI.
 
 The E2E run was executed from `apps/web` with the existing production server and direct
 Playwright CLI so the result was not affected by the local pnpm web-server wrapper.
+
+## CI follow-up — 2026-08-11
+
+After deployment-smoke and agent work expanded the repository, the current production-server
+regression is **150 passed / 6 hosted-only skips** out of 156 Playwright tests. The backend
+closeout is now **428 passed / 4 skipped**, and strict mypy covers 383 files. CI builds the
+optimized Next application before browser execution and runs Playwright against `next start`.

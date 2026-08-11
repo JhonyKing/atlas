@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import pytest
 
-from atlas.agent.planning import validate_plan
-from atlas.agent.policy import issue_approval
+from atlas.agent.planning import AgentPlan, validate_plan
+from atlas.agent.policy import Approval, issue_approval
 from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
 from atlas.agent.tools.side_effects import SideEffectToolAdapters
 
 
-def _delete_plan():
+def _delete_plan() -> AgentPlan:
     return validate_plan(
         catalog=ToolCatalog.default(),
         request="Delete my private resource",
@@ -24,7 +26,7 @@ def _delete_plan():
     )
 
 
-def _approved(plan, *, actor_id: str = "user-1"):
+def _approved(plan: AgentPlan, *, actor_id: str = "user-1") -> Approval:
     return issue_approval(
         plan,
         call_id="step-0",
@@ -87,7 +89,7 @@ async def test_side_effect_adapter_enforces_ownership_after_approval() -> None:
 async def test_side_effect_adapter_blocks_missing_scope_before_owner_check() -> None:
     owner_checked = False
 
-    def owner_check(_actor_id: str, _arguments: dict[str, object]) -> bool:
+    def owner_check(_actor_id: str, _arguments: Mapping[str, object]) -> bool:
         nonlocal owner_checked
         owner_checked = True
         return True

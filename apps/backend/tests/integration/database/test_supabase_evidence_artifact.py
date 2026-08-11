@@ -4,7 +4,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from atlas.database.migration_evidence import PROJECT_REF, MigrationEvidence
+from atlas.database.migration_evidence import PROJECT_REF, MigrationCheck, MigrationEvidence
 
 
 def test_existing_verification_artifact_has_required_provenance() -> None:
@@ -31,7 +31,7 @@ def test_new_artifact_can_be_validated_without_private_payloads() -> None:
         mode="verify",
         started_at=datetime.now(UTC),
         finished_at=datetime.now(UTC),
-        checks=[{"name": "provenance", "status": "passed"}],
+        checks=[MigrationCheck(name="provenance", status="passed")],
         drift=[],
         status="passed",
     )

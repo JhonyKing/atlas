@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from atlas.agent.planning import validate_plan
+from atlas.agent.planning import AgentPlan, validate_plan
 from atlas.agent.policy import (
     PolicyError,
     assert_approval_matches,
@@ -14,7 +14,7 @@ from atlas.agent.tools.registry import ToolCatalog
 from atlas.agent.tools.schemas import ToolCallRequest
 
 
-def _private_plan():
+def _private_plan() -> AgentPlan:
     return validate_plan(
         catalog=ToolCatalog.default(),
         request="Delete resource",

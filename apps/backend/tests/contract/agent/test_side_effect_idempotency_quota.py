@@ -1,6 +1,8 @@
 from datetime import timedelta
+from typing import cast
 from uuid import UUID
 
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from atlas.api.main import create_app
@@ -154,7 +156,7 @@ def test_side_effect_quota_blocks_a_new_operation_before_adapter_execution() -> 
 
     assert second.status_code == 429
     assert second.headers["Retry-After"]
-    call = client.app.state.agent_run_repository.get_tool_call(
+    call = cast(FastAPI, client.app).state.agent_run_repository.get_tool_call(
         UUID(second.json()["detail"]["run_id"]), "step-0"
     )
     assert call is not None

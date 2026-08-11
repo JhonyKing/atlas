@@ -323,7 +323,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 @keyframes atlas-spin { to { transform: rotate(360deg); } }
 @keyframes report-progress { from { transform: translateX(-10%); } to { transform: translateX(210%); } }
 
-@media (max-width: 720px) {
+@media (max-width: 840px) {
   .atlas-header { gap: .75rem; padding: .5rem 1rem; }
   .atlas-logo-horizontal { display: none; }
   .atlas-logo-mark, .atlas-mobile-menu { display: block; }

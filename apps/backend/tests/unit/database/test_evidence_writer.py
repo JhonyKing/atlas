@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from atlas.database.evidence_writer import write_evidence
-from atlas.database.migration_evidence import PROJECT_REF, MigrationEvidence
+from atlas.database.migration_evidence import PROJECT_REF, MigrationCheck, MigrationEvidence
 
 
 def test_writer_emits_schema_compatible_non_secret_json(tmp_path: Path) -> None:
@@ -16,7 +16,7 @@ def test_writer_emits_schema_compatible_non_secret_json(tmp_path: Path) -> None:
         mode="inspect",
         started_at=datetime(2026, 8, 7, tzinfo=UTC),
         finished_at=datetime(2026, 8, 7, 0, 0, 1, tzinfo=UTC),
-        checks=[{"name": "project", "status": "passed"}],
+        checks=[MigrationCheck(name="project", status="passed")],
         status="passed",
     )
 

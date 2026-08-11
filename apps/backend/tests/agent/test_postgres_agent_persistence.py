@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from atlas.agent.checkpoints import PostgresCheckpointRepository
 from atlas.agent.events import AgentRunEvent
-from atlas.agent.planning import validate_plan
+from atlas.agent.planning import AgentPlan, validate_plan
 from atlas.agent.policy import issue_approval
 from atlas.agent.state import AtlasState
 from atlas.agent.tools.registry import ToolCatalog
@@ -25,14 +25,14 @@ class Result:
         self,
         row: tuple[Any, ...] | None = None,
         rows: list[tuple[Any, ...]] | None = None,
-    ):
+    ) -> None:
         self.row = row
         self.rows = rows or []
 
-    def fetchone(self):
+    def fetchone(self) -> tuple[Any, ...] | None:
         return self.row
 
-    def fetchall(self):
+    def fetchall(self) -> list[tuple[Any, ...]]:
         return self.rows
 
 
@@ -53,7 +53,7 @@ class FakeConnection:
     def commit(self) -> None:
         self.commits += 1
 
-    def execute(self, sql: str, params=()):
+    def execute(self, sql: str, params: tuple[Any, ...] = ()) -> Result:
         self.statements.append(" ".join(sql.split()))
         if "FROM atlas.agent_plans WHERE plan_hash" in sql:
             return Result(self.plan_row)
@@ -148,7 +148,7 @@ class FakeConnection:
         return Result()
 
 
-def _plan():
+def _plan() -> AgentPlan:
     return validate_plan(
         catalog=ToolCatalog.default(),
         request="How does LangGraph persist state?",
@@ -436,4 +436,6 @@ def test_inmemory_repository_keeps_tool_call_and_approval_records() -> None:
     )
 
     assert repository.get_approval(approval.approval_id) == approval
-    assert repository.get_tool_call(plan.run_id, "step-0")["status"] == "completed"
+    tool_call = repository.get_tool_call(plan.run_id, "step-0")
+    assert tool_call is not None
+    assert tool_call["status"] == "completed"

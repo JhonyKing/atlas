@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from atlas.privacy.redaction import redact_mapping  # type: ignore[import-untyped]
+from atlas.privacy.redaction import redact_mapping
 
 
 @dataclass(frozen=True, slots=True)

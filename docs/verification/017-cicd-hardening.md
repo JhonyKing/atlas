@@ -5,13 +5,15 @@
 | Workflow YAML parse | **passed** for `ci.yml` and `evals.yml` |
 | Docker Compose config | **passed** (`docker compose config --quiet`) |
 | Evaluation unit gate | **20 passed** |
-| Exact CI mypy gate (`mypy src tests`) | **passed: 314 files checked with zero diagnostics** |
-| Backend pytest from CI working directory | **304 passed, 4 skipped** |
+| Exact CI mypy gate (`mypy src tests`) | **passed: 383 files checked with zero diagnostics** |
+| Backend pytest from CI working directory | **428 passed, 4 skipped** |
 | Fresh database job | **passed locally on 2026-08-11:** an isolated empty database reached `agent_tool_rls` and all 19 versioned SQL contract files passed with `ON_ERROR_STOP` |
 | Browser job | workflow installs Chromium and runs Playwright; report uploads only on failure |
 | Provider secrets | no OpenAI/LangSmith secret is required by PR CI |
 | Security regression paths | **14 passed** using the corrected repository-root path |
 | Deployment contract paths | **7 passed** using the corrected repository-root paths |
+| Deterministic offline evaluation | **46/46 passed** with execution mode `deterministic-fixture` |
+| CI 768 px browser regression | **7/7 affected routes passed** after the responsive AppShell breakpoint correction |
 
 ## Hosted CI regression repaired on 2026-08-11
 
@@ -26,6 +28,21 @@ The hosted security and deployment-contract jobs also used paths relative to `ap
 executing from the repository root. The workflow now uses complete `apps/backend/tests/...` paths,
 and its global `PYTHONPATH` points to `apps/backend/src`. Hosted-run identifiers are recorded only
 after the corrected commit completes on GitHub Actions.
+
+The first corrected hosted run then exposed two later integration regressions: new agent tests had
+not been added to the existing strict typing baseline, and the offline evaluator needs both
+`apps/backend/src` and the repository root on `PYTHONPATH`. The test fixtures now use the actual
+typed domain models and explicit return types rather than weakening mypy. CI includes both import
+roots. Local closeout is Ruff clean, mypy clean across 383 files, 428 backend tests passed with 4
+environment skips, and all 46 deterministic evaluation cases passed.
+
+The browser job's public check annotations identified seven failures, all caused by the same 768 px
+header overflow: the desktop navigation remained active until 720 px and pushed the locale control
+55 px beyond the viewport. The compact navigation breakpoint is now 840 px. The seven affected
+home, comparison, report, news, sources, account, and admin routes pass the focused Playwright matrix.
+The complete rerun against a prebuilt Next production server reports **150 passed and 6 hosted-only
+smoke skips** out of 156 tests. CI now builds before Playwright and tests `next start`, avoiding
+development-server compilation races while retaining a separate failing build boundary.
 
 The repository controls workflow checks. GitHub branch protection (required checks, approvals and
 direct-push policy) must still be verified in repository settings; it cannot be proven by a local

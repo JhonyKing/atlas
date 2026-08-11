@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
 
 from atlas.agent.tools.read_only import ReadOnlyToolAdapters, bounded_result
@@ -57,8 +59,10 @@ async def test_read_only_adapter_preserves_bounded_provenance_and_drops_unknown_
 
     assert result["source_versions"] == ("v1",)
     assert result["provenance"] == {"publisher": "LangChain", "captured_at": "2026-08-10"}
-    assert result["excerpts"][0]["evidence_id"] == "ev-1"
-    assert result["evidence_relations"][0]["relation"] == "supports"
+    excerpts = cast(tuple[dict[str, str], ...], result["excerpts"])
+    relations = cast(tuple[dict[str, str], ...], result["evidence_relations"])
+    assert excerpts[0]["evidence_id"] == "ev-1"
+    assert relations[0]["relation"] == "supports"
     assert "secret" not in result
 
 
