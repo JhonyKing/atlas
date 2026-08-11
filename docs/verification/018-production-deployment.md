@@ -68,3 +68,17 @@ deployment. The UTF-8-preserving evidence is in
 T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
 managed API/worker, environment secrets, functional smoke, observability/restore and production
 rollback evidence do not yet exist.
+
+## Public web fail-closed verification (2026-08-11)
+
+- Commit `174150ba53db8a98603fcc49e4262424f908a505` is `READY` in production deployment
+  `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T` and serves the primary domain.
+- GitHub CI run [`31466909123`](https://github.com/JhonyKing/atlas/actions/runs/31466909123)
+  passed all six jobs; Offline Evaluation run `31466909139` also passed.
+- Frontend Vitest passed **38/38**; ESLint, strict TypeScript, and the production build passed.
+- Hosted Playwright passed **2/2 executable web-only journeys**: explicit locales and SVG flags,
+  every public feature route, bounded unavailable states, and zero requests to localhost.
+- The browser now requires a configured public HTTPS `NEXT_PUBLIC_API_ORIGIN` in hosted builds.
+  Authentication, private data, reviews, and governance also use that same origin.
+- Four hosted functional journeys remain blocked, not failed: API health/readiness, cited
+  answer/abstention, comparison/report generation, and corpus/news data. T032-T036 remain open.

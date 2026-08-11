@@ -3,12 +3,12 @@
 This file records non-secret environment identifiers after the owner provisions them. Never add
 tokens, database passwords, Supabase service-role keys, or LangSmith API keys here.
 
-| Environment | Vercel project ID | API origin | Supabase project ref | API image digest | Status |
+| Environment | Vercel project ID | Web origin | Supabase project ref | API image digest | Status |
 |---|---|---|---|---|---|
 | Development | n/a | `http://localhost:8000` | Local Docker PostgreSQL | n/a | Local development only |
-| Preview | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`atlasai-l6wipy1hp-jhonykings-projects.vercel.app`](https://atlasai-l6wipy1hp-jhonykings-projects.vercel.app) | `TODO_ISOLATED_TARGET` | n/a | Main-branch web deployment `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` is `READY`; managed API/database isolation remains open |
+| Preview | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`atlasai-35ucmz40i-jhonykings-projects.vercel.app`](https://atlasai-35ucmz40i-jhonykings-projects.vercel.app) | `TODO_ISOLATED_TARGET` | n/a | Integration-branch web deployment `dpl_BdNauARdjjeJroNFuQ75GfiNzmEz` is `READY`; managed API/database isolation remains open |
 | Staging | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
-| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | `TODO_MANAGED_API` | Web production is `READY`; Supabase is `ACTIVE_HEALTHY`; full product remains unavailable until the managed API/worker and environment variables exist |
+| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | `TODO_MANAGED_API` | Web deployment `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T` from `main` is `READY`; Supabase is `ACTIVE_HEALTHY`; full product remains unavailable until the managed API/worker and environment variables exist |
 
 The Supabase project `fcbclsaytbjpywlaplbh` was explicitly identified by the owner as **main / PRODUCTION**;
 it is not a development target. Read-only inspection on 2026-08-11 found Postgres `17.6`, migration
@@ -51,3 +51,11 @@ Commit `251b10c163fdd9db44ae038c8ee401d1b09932ee` was built as preview
 `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` is `READY` and contains the explicit locale-route and SVG flag
 fixes. The public web is real; `NEXT_PUBLIC_API_ORIGIN` is not configured yet, so this is not a claim
 that answer, comparison, report, corpus, news, auth, or agent operations work in production.
+
+Production later advanced to commit `174150ba53db8a98603fcc49e4262424f908a505` in deployment
+`dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T`. The GitHub CI run
+[`31466909123`](https://github.com/JhonyKing/atlas/actions/runs/31466909123) completed successfully.
+Two hosted Playwright journeys passed against the public domain: explicit Spanish/English routes,
+both SVG flags, all public feature routes, professional unavailable states, and zero calls to a
+localhost fallback. Four API-dependent journeys remain intentionally unexecuted until T032-T033
+provide the managed API origin and its secrets.

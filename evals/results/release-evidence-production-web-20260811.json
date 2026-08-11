@@ -1,43 +1,65 @@
 {
-  "release_id": "dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481",
-  "source_revision": "d596fc39415b1abaa4b47e0b2dd5b5e620a09617",
-  "web_build_id": "d596fc39415b1abaa4b47e0b2dd5b5e620a09617",
+  "release_id": "dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T",
+  "source_revision": "174150ba53db8a98603fcc49e4262424f908a505",
+  "web_build_id": "174150ba53db8a98603fcc49e4262424f908a505",
   "api_image_digest": null,
   "migration_revision": "0028_agent_tool_orchestration",
   "checks": [
     {
       "name": "repository-release-gates",
       "status": "passed",
-      "observed_at": "2026-08-11T05:48:18.340596Z",
-      "evidence_url": null,
-      "summary": "Recorded by CI."
+      "observed_at": "2026-08-11T06:58:01.457571Z",
+      "evidence_url": "https://github.com/JhonyKing/atlas/actions/runs/31466909123",
+      "summary": "CI completed successfully: backend, web, database, deployment contracts, security regression, and offline eval."
     },
     {
       "name": "corpus-version",
-      "status": "passed",
-      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "status": "skipped",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
       "evidence_url": null,
       "summary": "pending-managed-api"
     },
     {
       "name": "model-version",
-      "status": "passed",
-      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "status": "skipped",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
       "evidence_url": null,
-      "summary": "gpt-5.6-luna"
+      "summary": "gpt-5.6-luna is the configured repository default; no hosted API/model call is claimed."
     },
     {
       "name": "locale-version",
       "status": "passed",
-      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
       "evidence_url": null,
       "summary": "en-US,es-MX"
     }
   ],
-  "smoke_results": [],
+  "smoke_results": [
+    {
+      "name": "hosted-locale-and-localhost-boundary",
+      "status": "passed",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
+      "evidence_url": "https://atlasai-lilac.vercel.app",
+      "summary": "Spanish and English routes, both SVG flag controls, and zero localhost requests passed in Playwright."
+    },
+    {
+      "name": "hosted-public-feature-routes",
+      "status": "passed",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
+      "evidence_url": "https://atlasai-lilac.vercel.app",
+      "summary": "Compare, reports, news, and sources routes expose their expected Spanish product surfaces."
+    },
+    {
+      "name": "hosted-api-readiness-and-functional-journeys",
+      "status": "skipped",
+      "observed_at": "2026-08-11T06:58:01.457571Z",
+      "evidence_url": null,
+      "summary": "Four API-dependent journeys remain blocked until a managed API origin exists."
+    }
+  ],
   "health": {
     "environment": "production",
     "status": "pending"
   },
-  "created_at": "2026-08-11T05:48:18.340596Z"
+  "created_at": "2026-08-11T06:58:01.457571Z"
 }
