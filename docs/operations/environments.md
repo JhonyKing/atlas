@@ -8,7 +8,7 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 | Development | n/a | `http://localhost:8000` | `fcbclsaytbjpywlaplbh` | n/a | Active Supabase development target; not production |
 | Preview | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
 | Staging | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
-| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Vercel project exists; latest deployment `dpl_7RCLdYHmuEhiNUEc9uZgA6PVPoKn` failed because the configured root did not expose a Next.js package |
+| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Vercel project exists; latest deployment `dpl_4Y61qUavPgHBz8vsZDjrvHJuqvTs` failed with `NEXT_NO_VERSION` because the configured root did not expose a Next.js package |
 
 The development row is included only to make the current database target explicit; it must not be
 used as a production identifier. The Vercel project identifier is non-secret, but the repository
@@ -16,6 +16,9 @@ root/build state and deployment remain an open operator task until the project i
 `JhonyKing/atlas` with `apps/web` as its Root Directory (or an equivalent monorepo build command)
 and a managed API origin exists. MCP evidence from 2026-08-11 reports the exact build failure:
 `No Next.js version detected. Make sure your package.json has "next" ... and Root Directory ...`.
+
+The Git-connected deployment for commit `0d57e00` was rechecked on 2026-08-11 and failed with the
+same `NEXT_NO_VERSION` error; this is deployment configuration evidence, not a code-test failure.
 
 An MCP file-upload preview was verified on 2026-08-10 at
 [`https://atlasai-hu543gtvg-jhonykings-projects.vercel.app`](https://atlasai-hu543gtvg-jhonykings-projects.vercel.app).
