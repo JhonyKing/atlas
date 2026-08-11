@@ -93,7 +93,7 @@
 - [x] T036 Add measured portfolio metrics without unsupported claims using `docs/portfolio/kpis.json` and `docs/portfolio/evidence-ledger.json`
 - [x] T037 Add a richer accessible architecture presentation in `apps/web/src/features/engineering/EngineeringPage.tsx`
 - [ ] T038 Run an external five-second comprehension review and record results in `docs/portfolio/external-evidence.md`
-- [ ] T039 Preserve the explicit `/en` or `/es` locale in the server-rendered HTML and hydration pass, verify both Engineering routes from the raw anonymous response, and record the production regression check.
+- [x] T039 Preserve the explicit `/en` or `/es` locale in the server-rendered HTML and hydration pass, verify both Engineering routes from the raw anonymous response, and record the production regression check.
 
 ## Dependencies
 

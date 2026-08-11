@@ -30,7 +30,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; activación externa aún pendiente | 6: T031-T036 | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development con replay entre repositorios, idempotencia durable, envelopes de evidencia read-only, enlaces de artefactos, trazas de ciclo de vida y evidencia live sin contenido privado | 0 | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 32 migraciones; `foreign_key_indexes` aplicado y advisors verificados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
-| 022 | Claridad de producto y portafolio de ingeniería | P1 y P2 fusionados; corrección SSR bilingüe validada localmente y pendiente de comprobación canónica | 2: T038, revisión externa real; T039, verificación SSR en producción | `specs/022-product-clarity-engineering/tasks.md` |
+| 022 | Claridad de producto y portafolio de ingeniería | P1 y P2 fusionados; corrección SSR bilingüe verificada en producción | 1: T038, revisión externa real | `specs/022-product-clarity-engineering/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 
@@ -39,9 +39,9 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 2. Ejecutar las cuatro evidencias externas de Feature 001: estudio de cinco personas, refresh de
    siete días, quickstart completo y consolidación final.
 3. Completar el refresh de siete días de Feature 014.
-4. Verificar en producción la corrección SSR bilingüe T039 y ejecutar la revisión externa de cinco
-   segundos T038 de Feature 022. En total quedan 13 tareas SpecKit abiertas mientras T039 espera el
-   despliegue canónico; el tablero separa claramente código, evidencia externa y despliegue.
+4. Ejecutar la revisión externa de cinco segundos T038 de Feature 022. T039 ya está verificada en
+   producción; en total quedan 12 tareas SpecKit abiertas y el tablero separa claramente código,
+   evidencia externa y despliegue.
 
 ## Comandos y archivos que debes consultar
 
