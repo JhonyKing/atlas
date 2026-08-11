@@ -30,6 +30,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; activación externa aún pendiente | 6: T031-T036 | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development con replay entre repositorios, idempotencia durable, envelopes de evidencia read-only, enlaces de artefactos, trazas de ciclo de vida y evidencia live sin contenido privado | 0 | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 32 migraciones; `foreign_key_indexes` aplicado y advisors verificados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
+| 022 | Claridad de producto y portafolio de ingeniería | P0 implementado y verificado localmente: Home simple, fuentes automáticas, opciones avanzadas, `/engineering`, SEO y error hospedado seguro | 9: T027 y T031-T038; la verificación hospedada espera el preview, P1/P2 quedan planificados | `specs/022-product-clarity-engineering/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 
@@ -37,8 +38,10 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
    018; esto desbloquea las pruebas reales del producto desplegado.
 2. Ejecutar las cuatro evidencias externas de Feature 001: estudio de cinco personas, refresh de
    siete días, quickstart completo y consolidación final.
-3. Completar el refresh de siete días de Feature 014. Estas 11 tareas son todo el backlog SpecKit
-   actualmente abierto; ninguna es código local pendiente oculto.
+3. Completar el refresh de siete días de Feature 014.
+4. Verificar el preview hospedado de Feature 022 y después ejecutar sus ocho tareas P1/P2 de
+   refinamiento público y case study. En total quedan 20 tareas SpecKit abiertas: 11 previas y 9
+   de Feature 022; el tablero separa claramente código, evidencia externa y despliegue.
 
 ## Comandos y archivos que debes consultar
 

@@ -3,6 +3,28 @@
 ATLAS is an evidence-first technical research application. The executable source of truth for
 each feature is its SpecKit directory under `specs/`.
 
+## Product experience and engineering portfolio
+
+The public Home now explains ATLAS in plain language: ask an AI question, compare technologies,
+or create an evidence-backed report. Source selection is automatic by default; corpus controls
+and agent budgets remain available through progressive disclosure instead of competing with the
+primary journey. The public `/engineering` route documents the real RAG, agent, retrieval,
+verification, citation, structured-output, persistence, evaluation, observability, and
+architecture boundaries with links to repository evidence.
+
+Feature 022 is the source of truth for this product/portfolio separation:
+
+- `specs/022-product-clarity-engineering/`
+- `docs/architecture/022-product-clarity-engineering.md`
+- `docs/adr/0017-progressive-disclosure-product-portfolio.md`
+- `docs/verification/022-product-clarity-engineering.md`
+
+The canonical public web deployment is
+[`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app). A missing hosted API origin
+is presented as a localized product-availability state; the browser never exposes the environment
+variable name. That safe UI does not mean the managed API/worker is live: Feature 018 still owns
+runtime provisioning and the final `NEXT_PUBLIC_API_ORIGIN` value.
+
 ## Feature 018: production deployment foundation
 
 The repository now contains the production deployment contract: Vercel web configuration,

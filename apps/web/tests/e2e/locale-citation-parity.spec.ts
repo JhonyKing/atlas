@@ -6,7 +6,7 @@ test("locale switch updates the route and persists the Spanish preference", asyn
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
   await expect(page.getByRole("heading", { name: "Answers you can verify." })).toBeVisible();
 
-  await page.getByLabel("Switch language").selectOption("es-MX");
+  await page.getByRole("button", { name: "Switch to Spanish" }).click();
   await expect(page).toHaveURL(/\/es$/);
   await expect(page.getByRole("heading", { name: "Respuestas que puedes verificar." })).toBeVisible();
 
@@ -35,7 +35,7 @@ test("Spanish presentation preserves citation identity and original-language evi
   await page.goto("/es");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Pregunta técnica").fill("¿Cómo conserva el estado LangGraph?");
+  await page.getByLabel("¿Qué quieres investigar?").fill("¿Cómo conserva el estado LangGraph?");
   await page.getByRole("button", { name: "Preguntar a ATLAS" }).click();
 
   await expect(page.getByText("La afirmación traducida conserva su evidencia.")).toBeVisible();

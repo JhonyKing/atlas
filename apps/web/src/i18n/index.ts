@@ -4,6 +4,18 @@ import { createContext, createElement, useContext, useEffect, useMemo, useState,
 
 export type Locale = "en-US" | "es-MX";
 
+type EngineeringCapabilityId =
+  | "rag"
+  | "agents"
+  | "retrieval"
+  | "verification"
+  | "citations"
+  | "structured"
+  | "persistence"
+  | "evals"
+  | "observability"
+  | "architecture";
+
 type MessageCatalog = {
   localeName: string;
   switchLabel: string;
@@ -19,6 +31,11 @@ type MessageCatalog = {
   questionPlaceholder: string;
   corpus: string;
   allCollections: string;
+  advancedOptions: string;
+  sourceHelp: string;
+  apiUnavailable: string;
+  askSectionTitle: string;
+  askSectionLede: string;
   ask: string;
   cancel: string;
   ready: string;
@@ -95,6 +112,35 @@ type MessageCatalog = {
     noEvidence: string;
     criterionLabels: Record<string, string>;
   };
+  home: {
+    actionPrompt: string;
+    actionAria: string;
+    researchBenefit: string;
+    askTitle: string;
+    askDescription: string;
+    compareTitle: string;
+    compareDescription: string;
+    reportTitle: string;
+    reportDescription: string;
+    trustPoints: string[];
+    builtBy: string;
+    github: string;
+    architecture: string;
+    caseStudy: string;
+  };
+  engineering: {
+    eyebrow: string;
+    title: string;
+    lede: string;
+    flowTitle: string;
+    flow: string[];
+    capabilitiesTitle: string;
+    capabilitiesLede: string;
+    evidence: string;
+    advancedTitle: string;
+    advancedLede: string;
+    capabilityCopy: Record<EngineeringCapabilityId, { title: string; summary: string }>;
+  };
 };
 
 const catalogs: Record<Locale, MessageCatalog> = {
@@ -104,15 +150,20 @@ const catalogs: Record<Locale, MessageCatalog> = {
     switchTo: "Switch language",
     eyebrow: "ATLAS AI · evidence-first research",
     title: "Answers you can verify.",
-    lede: "Ask one technical question about the curated LangGraph, LangChain, or OpenAI corpus. Claims appear only after their evidence is checked.",
+    lede: "Research AI topics and get answers backed by sources you can inspect.",
     supportedSources: "Verified sources: LangGraph · LangChain · OpenAI · Anthropic · Gemini",
-    trustNote: "ATLAS shows a claim only when its source, capture date, and evidence state can be inspected.",
-    examplesTitle: "Try a focused question",
-    examples: ["How does LangGraph persist state?", "What can OpenAI tool calling do?", "How does LangChain manage context?"],
-    technicalQuestion: "Technical question",
-    questionPlaceholder: "How does LangGraph persist state across a workflow?",
-    corpus: "Corpus (optional)",
-    allCollections: "All supported collections",
+    trustNote: "Every supported claim includes an inspectable source and capture date.",
+    examplesTitle: "Try a real AI decision",
+    examples: ["Should I use LangGraph or LangChain for a human-in-the-loop research agent?", "Compare OpenAI and Anthropic tool calling for a production agent.", "What are the trade-offs of long context versus RAG for technical support?"],
+    technicalQuestion: "What do you want to research?",
+    questionPlaceholder: "Example: Which agent framework fits a human-in-the-loop research workflow?",
+    corpus: "Source selection",
+    allCollections: "Automatic — use the most relevant verified sources",
+    advancedOptions: "Advanced options",
+    sourceHelp: "Automatic selection is recommended. Choose a collection only when you need to limit the research scope.",
+    apiUnavailable: "Live research is temporarily unavailable while the public service is being connected. You can still explore comparisons, reports, sources, and the engineering case study.",
+    askSectionTitle: "Ask a question",
+    askSectionLede: "Describe the AI decision, problem, or technology you want ATLAS to investigate.",
     ask: "Ask ATLAS",
     cancel: "Cancel request",
     ready: "Ready to verify an answer.",
@@ -212,6 +263,46 @@ const catalogs: Record<Locale, MessageCatalog> = {
         operational_risk: "Operational risk",
       },
     },
+    home: {
+      actionPrompt: "Start with the outcome you need",
+      actionAria: "What would you like to do?",
+      researchBenefit: "ATLAS researches technical AI questions, checks each supported claim, and keeps the original source one click away.",
+      askTitle: "Ask a question",
+      askDescription: "Research an AI problem and inspect the evidence behind the answer.",
+      compareTitle: "Compare AI technologies",
+      compareDescription: "Evaluate capabilities and trade-offs using the same evidence standard.",
+      reportTitle: "Create a report",
+      reportDescription: "Turn completed research into a shareable, reproducible document.",
+      trustPoints: ["Inspect sources", "See capture dates", "Know when evidence is insufficient"],
+      builtBy: "Built by Jhonnatan Vazquez — AI Engineer",
+      github: "GitHub",
+      architecture: "Architecture",
+      caseStudy: "Case study",
+    },
+    engineering: {
+      eyebrow: "Engineering case study",
+      title: "How ATLAS earns a verifiable answer.",
+      lede: "A production-minded AI research system with explicit retrieval, agent orchestration, verification, persistence, evaluation, and observability boundaries.",
+      flowTitle: "From question to inspected evidence",
+      flow: ["Understand the request", "Retrieve versioned sources", "Compose structured claims", "Verify every citation", "Return evidence or abstain"],
+      capabilitiesTitle: "Engineering depth, with receipts",
+      capabilitiesLede: "Each capability links to the public design or verification artifact that supports the claim.",
+      evidence: "View evidence",
+      advancedTitle: "Advanced agent controls",
+      advancedLede: "Inspect the typed tool catalog, permission boundaries, approval decisions, and run timeline used by the agent layer.",
+      capabilityCopy: {
+        rag: { title: "Evidence-first RAG", summary: "Retrieval-augmented generation is bounded by curated, versioned technical sources." },
+        agents: { title: "Explicit agents", summary: "Typed tools and resumable plans keep orchestration inspectable instead of hiding it in a prompt loop." },
+        retrieval: { title: "Measured retrieval", summary: "Hybrid retrieval and reranking are evaluated against versioned multilingual cases." },
+        verification: { title: "Claim verification", summary: "Factual claims are checked against cited evidence before they can appear as supported." },
+        citations: { title: "Inspectable citations", summary: "Source, publisher, bounded excerpt, version, URL, and capture date stay attached to evidence." },
+        structured: { title: "Structured outputs", summary: "Validated schemas separate model text from claims, evidence, reports, and tool decisions." },
+        persistence: { title: "Durable persistence", summary: "Supabase Postgres stores governed system state with migrations, ownership, and row-level security." },
+        evals: { title: "Evaluation gates", summary: "Deterministic and live evaluation records measure citations, usefulness, latency, cost, and regressions." },
+        observability: { title: "Safe observability", summary: "LangSmith and application telemetry trace the research path without treating raw sensitive content as a metric." },
+        architecture: { title: "Documented architecture", summary: "Specs, plans, tasks, ADRs, contracts, and verification evidence keep implementation decisions reviewable." },
+      },
+    },
   },
   "es-MX": {
     localeName: "Español",
@@ -219,15 +310,20 @@ const catalogs: Record<Locale, MessageCatalog> = {
     switchTo: "Cambiar idioma",
     eyebrow: "ATLAS AI · investigación con evidencia",
     title: "Respuestas que puedes verificar.",
-    lede: "Haz una pregunta técnica sobre el corpus curado de LangGraph, LangChain u OpenAI. Las afirmaciones aparecen sólo después de comprobar su evidencia.",
+    lede: "Investiga temas de IA y obtén respuestas respaldadas por fuentes que puedes inspeccionar.",
     supportedSources: "Fuentes verificadas: LangGraph · LangChain · OpenAI · Anthropic · Gemini",
-    trustNote: "ATLAS muestra una afirmación sólo cuando puedes inspeccionar su fuente, fecha de captura y estado de evidencia.",
-    examplesTitle: "Prueba una pregunta concreta",
-    examples: ["¿Cómo conserva LangGraph el estado?", "¿Qué permite la llamada de herramientas de OpenAI?", "¿Cómo gestiona LangChain el contexto?"],
-    technicalQuestion: "Pregunta técnica",
-    questionPlaceholder: "¿Cómo conserva LangGraph el estado durante un flujo de trabajo?",
-    corpus: "Corpus (opcional)",
-    allCollections: "Todas las colecciones compatibles",
+    trustNote: "Cada afirmación respaldada incluye una fuente y fecha de captura que puedes inspeccionar.",
+    examplesTitle: "Prueba una decisión real de IA",
+    examples: ["¿Debo usar LangGraph o LangChain para un agente de investigación con revisión humana?", "Compara las llamadas de herramientas de OpenAI y Anthropic para un agente en producción.", "¿Qué ventajas y desventajas tienen el contexto largo y RAG para soporte técnico?"],
+    technicalQuestion: "¿Qué quieres investigar?",
+    questionPlaceholder: "Ejemplo: ¿Qué framework de agentes conviene para investigar con revisión humana?",
+    corpus: "Selección de fuentes",
+    allCollections: "Automática — usar las fuentes verificadas más relevantes",
+    advancedOptions: "Opciones avanzadas",
+    sourceHelp: "Se recomienda la selección automática. Elige una colección sólo cuando necesites limitar la investigación.",
+    apiUnavailable: "La investigación en vivo no está disponible temporalmente mientras conectamos el servicio público. Aún puedes explorar comparaciones, reportes, fuentes y el caso de ingeniería.",
+    askSectionTitle: "Haz una pregunta",
+    askSectionLede: "Describe la decisión, problema o tecnología de IA que quieres que ATLAS investigue.",
     ask: "Preguntar a ATLAS",
     cancel: "Cancelar solicitud",
     ready: "Listo para verificar una respuesta.",
@@ -325,6 +421,46 @@ const catalogs: Record<Locale, MessageCatalog> = {
         license: "Licencia",
         freshness: "Actualización",
         operational_risk: "Riesgo operativo",
+      },
+    },
+    home: {
+      actionPrompt: "Comienza con el resultado que necesitas",
+      actionAria: "¿Qué quieres hacer?",
+      researchBenefit: "ATLAS investiga preguntas técnicas de IA, comprueba cada afirmación respaldada y mantiene la fuente original a un clic.",
+      askTitle: "Haz una pregunta",
+      askDescription: "Investiga un problema de IA e inspecciona la evidencia detrás de la respuesta.",
+      compareTitle: "Compara tecnologías de IA",
+      compareDescription: "Evalúa capacidades y decisiones usando el mismo estándar de evidencia.",
+      reportTitle: "Crea un reporte",
+      reportDescription: "Convierte una investigación terminada en un documento compartible y reproducible.",
+      trustPoints: ["Inspecciona fuentes", "Consulta fechas de captura", "Sabe cuándo falta evidencia"],
+      builtBy: "Creado por Jhonnatan Vazquez — Ingeniero de IA",
+      github: "GitHub",
+      architecture: "Arquitectura",
+      caseStudy: "Caso de estudio",
+    },
+    engineering: {
+      eyebrow: "Caso de estudio de ingeniería",
+      title: "Cómo ATLAS obtiene una respuesta verificable.",
+      lede: "Un sistema de investigación de IA orientado a producción, con límites explícitos para recuperación, agentes, verificación, persistencia, evaluación y observabilidad.",
+      flowTitle: "De la pregunta a la evidencia inspeccionada",
+      flow: ["Entender la solicitud", "Recuperar fuentes versionadas", "Redactar afirmaciones estructuradas", "Verificar cada cita", "Entregar evidencia o abstenerse"],
+      capabilitiesTitle: "Profundidad técnica con evidencia",
+      capabilitiesLede: "Cada capacidad enlaza el diseño público o la verificación que respalda la afirmación.",
+      evidence: "Ver evidencia",
+      advancedTitle: "Controles avanzados del agente",
+      advancedLede: "Inspecciona el catálogo de herramientas tipadas, permisos, aprobaciones y la línea de tiempo del agente.",
+      capabilityCopy: {
+        rag: { title: "RAG basado en evidencia", summary: "La generación aumentada por recuperación se limita a fuentes técnicas curadas y versionadas." },
+        agents: { title: "Agentes explícitos", summary: "Herramientas tipadas y planes reanudables hacen visible la orquestación en vez de ocultarla en un prompt." },
+        retrieval: { title: "Recuperación medida", summary: "La recuperación híbrida y el reranking se evalúan con casos multilingües versionados." },
+        verification: { title: "Verificación de afirmaciones", summary: "Las afirmaciones factuales se contrastan con la evidencia citada antes de mostrarse como respaldadas." },
+        citations: { title: "Citas inspeccionables", summary: "Fuente, editor, fragmento, versión, URL y fecha de captura permanecen unidos a la evidencia." },
+        structured: { title: "Salidas estructuradas", summary: "Esquemas validados separan el texto del modelo de afirmaciones, evidencia, reportes y decisiones de herramientas." },
+        persistence: { title: "Persistencia duradera", summary: "Supabase Postgres guarda estado gobernado con migraciones, propiedad y seguridad por fila." },
+        evals: { title: "Compuertas de evaluación", summary: "Evaluaciones deterministas y en vivo miden citas, utilidad, latencia, costo y regresiones." },
+        observability: { title: "Observabilidad segura", summary: "LangSmith y la telemetría siguen la investigación sin convertir contenido sensible en una métrica." },
+        architecture: { title: "Arquitectura documentada", summary: "Specs, planes, tareas, ADRs, contratos y evidencia mantienen revisables las decisiones." },
       },
     },
   },

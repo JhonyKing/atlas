@@ -19,7 +19,7 @@ function sseResponse(body: string): Response {
 }
 
 function ask(question: string) {
-  fireEvent.change(screen.getByLabelText("Technical question"), { target: { value: question } });
+  fireEvent.change(screen.getByLabelText("What do you want to research?"), { target: { value: question } });
   fireEvent.click(screen.getByRole("button", { name: "Ask ATLAS" }));
 }
 

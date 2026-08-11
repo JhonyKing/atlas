@@ -28,7 +28,7 @@ test("reader can inspect citation metadata and replace feedback", async ({ page 
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
-  await page.getByLabel("Technical question").fill("How does LangGraph persist state?");
+  await page.getByLabel("What do you want to research?").fill("How does LangGraph persist state?");
   await page.getByRole("button", { name: "Ask ATLAS" }).click();
 
   await expect(page.getByText("A checkpointer persists workflow state.")).toBeVisible();

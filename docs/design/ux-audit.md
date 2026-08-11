@@ -81,3 +81,27 @@ scope for the UX/UI feature.
 Proceed to planning and implementation in vertical slices. Do not begin by rewriting every feature
 component. Start with brand asset inventory, tokens, AppShell, and route boundaries; then move the
 existing functional journeys into their proper surfaces.
+
+## Feature 022 follow-up audit (2026-08-11)
+
+Feature 020 fixed route ownership and visual consistency, but Home still introduced the product
+twice: an agent workspace presented typed tools, budgets, permissions, and approval rules before
+the cited-answer form repeated the product promise and exposed corpus selection. On mobile, the
+actual question field fell below the first viewport.
+
+Feature 022 applies the P0 corrections:
+
+1. One outcome-led hero keeps “Answers you can verify” as the central promise.
+2. Exactly three plain-language entry actions lead to Ask, Compare, and Create report.
+3. Automatic source selection is the default; manual selection lives in a closed Advanced options
+   disclosure.
+4. Realistic prompts cover architecture choices, provider comparison, and production decisions.
+5. Portfolio attribution and `/engineering` separate recruiter depth from first-use simplicity.
+6. Missing hosted API configuration becomes a localized availability state and never leaks the
+   `NEXT_PUBLIC_API_ORIGIN` key.
+7. Home and Engineering were visually inspected at 1440x900 and 390x844 with no horizontal
+   overflow or duplicated language control.
+
+Remaining P1 work is intentionally explicit in `specs/022-product-clarity-engineering/tasks.md`:
+plain-language refinement for Compare, Reports, News, Sources, and Account. P2 retains the richer
+measured case-study presentation and an external five-second comprehension review.
