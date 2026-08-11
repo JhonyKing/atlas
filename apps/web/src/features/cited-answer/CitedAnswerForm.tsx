@@ -2,11 +2,11 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-import { useLocale, type Locale } from "@/i18n";
+import { useLocale } from "@/i18n";
 
-import { AtlasLogo } from "@/components/brand/AtlasLogo";
 import { Button, Field, Select, Textarea } from "@/components/forms";
 import { ResearchProgress, type ResearchStep } from "@/components/research/ResearchProgress";
+import { PublicApiConfigurationError, getPublicApiAvailability } from "@/lib/env";
 
 import { EvidencePanel } from "../evidence/EvidencePanel";
 import { putAnswerFeedback } from "../evidence/api";
@@ -34,7 +34,8 @@ type AbstentionNotice = {
 };
 
 export function CitedAnswerForm() {
-  const { locale, setLocale, messages } = useLocale();
+  const { locale, messages } = useLocale();
+  const apiAvailability = getPublicApiAvailability();
   const [question, setQuestion] = useState("");
   const [product, setProduct] = useState<CollectionSlug | "">("");
   const [status, setStatus] = useState<string | null>(null);
@@ -65,6 +66,11 @@ export function CitedAnswerForm() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!apiAvailability.available) {
+      setError(messages.apiUnavailable);
+      setStatus(messages.requestEnded);
+      return;
+    }
     const validationError = validate();
     if (validationError) {
       setError(validationError);
@@ -96,13 +102,13 @@ export function CitedAnswerForm() {
       setRunId(nextRunId);
     } catch (caught) {
       if (!nextController.signal.aborted) {
-        const message = caught instanceof AtlasApiError
+        const message = caught instanceof PublicApiConfigurationError
+          ? messages.apiUnavailable
+          : caught instanceof AtlasApiError
           ? messages.genericRequestError
           : caught instanceof TypeError
             ? messages.networkError
-            : caught instanceof Error
-              ? caught.message
-              : messages.genericRequestError;
+            : messages.genericRequestError;
         setError(message);
         setStatus(messages.requestEnded);
       }
@@ -164,24 +170,16 @@ export function CitedAnswerForm() {
       setError(null);
       setStatus(messages.feedbackSaved);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : messages.feedbackSaveError);
+      setError(caught instanceof PublicApiConfigurationError ? messages.apiUnavailable : messages.feedbackSaveError);
     }
   }
 
   return (
-    <section ref={shellRef} className="answer-shell ask-experience" aria-labelledby="page-title" data-hydrated="false">
-      <div className="ask-branding"><AtlasLogo variant="stacked" alt="ATLAS" className="ask-branding-logo" /></div>
-      <div className="locale-control-legacy">
-        <label htmlFor="locale">{messages.switchLabel}</label>
-        <select id="locale" value={locale} onChange={(event) => setLocale(event.target.value as Locale)} aria-label={messages.switchTo}>
-          <option value="en-US">English</option>
-          <option value="es-MX">Español</option>
-        </select>
+    <section id="ask-atlas" ref={shellRef} className="answer-shell ask-experience" aria-labelledby="ask-atlas-title" data-hydrated="false">
+      <div className="ask-section-heading">
+        <h2 id="ask-atlas-title">{messages.askSectionTitle}</h2>
+        <p>{messages.askSectionLede}</p>
       </div>
-      <p className="eyebrow">{messages.eyebrow}</p>
-      <h1 id="page-title">{messages.title}</h1>
-      <p className="lede">{messages.lede}</p>
-      <p className="ask-trust-note">{messages.trustNote}</p>
       <form onSubmit={submit} noValidate>
         <Field id="question" label={messages.technicalQuestion} helper={messages.trustNote} error={error ?? undefined}>
           <Textarea
@@ -193,18 +191,24 @@ export function CitedAnswerForm() {
             placeholder={messages.questionPlaceholder}
           />
         </Field>
-        <Field id="product" label={messages.corpus}>
-          <Select id="product" value={product} onChange={(event) => setProduct(event.target.value as CollectionSlug | "")}>
-            <option value="">{messages.allCollections}</option>
-            <option value="langgraph">LangGraph</option>
-            <option value="langchain">LangChain</option>
-            <option value="openai">OpenAI API</option>
-            <option value="anthropic">Anthropic Claude</option>
-            <option value="gemini">Google Gemini</option>
-          </Select>
-        </Field>
+        <details className="ask-advanced-options">
+          <summary>{messages.advancedOptions}</summary>
+          <div className="ask-advanced-content">
+            <Field id="product" label={messages.corpus} helper={messages.sourceHelp}>
+              <Select id="product" value={product} onChange={(event) => setProduct(event.target.value as CollectionSlug | "")}>
+                <option value="">{messages.allCollections}</option>
+                <option value="langgraph">LangGraph</option>
+                <option value="langchain">LangChain</option>
+                <option value="openai">OpenAI API</option>
+                <option value="anthropic">Anthropic Claude</option>
+                <option value="gemini">Google Gemini</option>
+              </Select>
+            </Field>
+          </div>
+        </details>
+        {!apiAvailability.available ? <p className="api-availability-note" role="status">{messages.apiUnavailable}</p> : null}
         <div className="actions">
-          <Button type="submit" disabled={active} loading={active && stageKey === "accepted"}>{messages.ask}</Button>
+          <Button type="submit" disabled={active || !apiAvailability.available} loading={active && stageKey === "accepted"}>{messages.ask}</Button>
           {active ? <Button type="button" variant="secondary" onClick={cancel}>{messages.cancel}</Button> : null}
         </div>
       </form>
@@ -214,7 +218,7 @@ export function CitedAnswerForm() {
           {messages.examples.map((example) => <button key={example} type="button" className="ask-example" onClick={() => setQuestion(example)}>{example}</button>)}
         </div>
       </section>
-      <p className="ask-supported-sources">{messages.supportedSources}</p>
+      <p className="ask-supported-sources">{messages.trustNote} {messages.supportedSources}</p>
       {active || answer || abstention ? <ResearchProgress steps={buildResearchSteps(stageKey, messages.stage)} label={messages.stage.verifying ?? "Research progress"} /> : null}
       <p className="progress" role="status" aria-live="polite">{status ?? messages.ready}</p>
       {answer ? <EvidencePanel answerStatus={answer.answerStatus} claims={answer.claims} citations={answer.citations} limitations={answer.limitations} onFeedback={handleFeedback} /> : null}

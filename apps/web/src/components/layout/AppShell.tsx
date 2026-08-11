@@ -14,6 +14,7 @@ const navigation = [
   { key: "news", en: "News", es: "Noticias", path: "news" },
   { key: "sources", en: "Sources", es: "Fuentes", path: "sources" },
   { key: "account", en: "Account", es: "Cuenta", path: "account" },
+  { key: "engineering", en: "Engineering", es: "Ingeniería", path: "engineering" },
 ] as const;
 
 const shellCopy = {
