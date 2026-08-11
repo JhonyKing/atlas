@@ -36,6 +36,9 @@ Executed on 2026-08-11 from branch `codex/019-agent-tool-orchestration`.
   round-trips, atomic event-lock ordering, durable run-actor persistence, and terminal-run replay
   protection. The non-development runtime selects these adapters, and API execution records each
   tool call after the run exists.
+- PostgreSQL persistence contract suite now totals **12 passed**; the added cross-repository test
+  proves a second repository instance can read the same terminal run and ordered event stream,
+  complementing the checkpoint claim test for replay-safe worker handoff.
 - Idempotency contract tests: **5 passed** for plan/run replay and conflicting-key rejection. The
   non-development store is now PostgreSQL-backed and scoped by an opaque visitor hash; durable saves
   use the unique scope/key constraint as the concurrent-write guard. The migration still needs to

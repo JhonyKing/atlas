@@ -283,6 +283,47 @@ def test_postgres_checkpoint_claim_is_cross_repository_idempotent() -> None:
     assert second.claim_resume(state.thread_id, replay_key="r1") is False
 
 
+def test_postgres_run_and_event_replay_is_visible_across_repository_instances() -> None:
+    connection = FakeConnection()
+    first = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]
+    second = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]
+    plan = _plan()
+    connection.plan_row = (
+        plan.run_id,
+        plan.request,
+        plan.locale,
+        plan.model_label,
+        [step.model_dump(mode="json") for step in plan.steps],
+        list(plan.risk_summary),
+        plan.budget,
+        plan.expires_at,
+        plan.plan_hash,
+    )
+    first.save_plan(plan)
+    first.create_run(plan, actor_id="user-42")
+    connection.run_row = (
+        plan.run_id,
+        plan.request,
+        plan.locale,
+        plan.plan_hash,
+        "user-42",
+        "completed",
+        datetime.now(UTC),
+        {"event_count": 2},
+    )
+    first.events.emit(plan.run_id, "run.accepted", status="accepted")
+    first.events.emit(plan.run_id, "run.completed", status="completed")
+
+    record = second.get(plan.run_id)
+    replayed = second.list_events(plan.run_id)
+
+    assert record is not None
+    assert record.actor_id == "user-42"
+    assert record.status == "completed"
+    assert [event.sequence for event in replayed] == [1, 2]
+    assert [event.event_type for event in replayed] == ["run.accepted", "run.completed"]
+
+
 def test_postgres_repository_persists_approval_and_tool_call_records() -> None:
     connection = FakeConnection()
     repository = PostgresAgentRunRepository(connection)  # type: ignore[arg-type]

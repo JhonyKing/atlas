@@ -37,3 +37,8 @@ The owner approved the reviewed worker/read-only policy design and the Supabase 
 `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The historical blocked
 finding above is preserved as evidence of the pre-approval state. Supabase still reports 41
 other `atlas` tables without RLS; that project-wide backlog is intentionally separate from T049.
+
+The durable persistence finding is now resolved by the cross-repository run/event replay contract
+(`apps/backend/tests/agent/test_postgres_agent_persistence.py`, 12 tests passed). T021 is marked
+complete; the remaining Feature 019 gaps are policy convergence, complete read-only result
+envelopes, and the full browser/deployment gate.
