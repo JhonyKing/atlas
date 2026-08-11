@@ -109,5 +109,12 @@ acotados almacenados por ATLAS y los enlaces canónicos permiten abrir la fuente
 
 ## Estado de revisión
 
-Este documento queda en `pending_owner_review`. No cierra T040. Para cerrar T040 todavía debe
-registrarse el veredicto humano de las 12 celdas de este run nuevo.
+Revisión del owner confirmada el 2026-08-07 para el run
+`ed9e093f-74ed-4d47-a5c6-8a05ace0e505`: las 11 celdas con citas están directamente respaldadas
+por su evidencia (11/11; precisión de citas `1.0`) y `openai/context` queda correctamente como
+`expected unsupported`.
+
+T040 se cierra porque las métricas de latencia exigidas también están registradas en el run vivo
+optimizado `2a317ed1-a0b9-4f6c-9227-f6fcdf93f382`: progreso útil `0 ms` y latencia terminal
+`18,590 ms`. El run anterior `aae76ef0-931b-49bc-9b42-6686f773fcbb` se conserva sin sobrescribir
+como evidencia de la regresión real que motivó T043.

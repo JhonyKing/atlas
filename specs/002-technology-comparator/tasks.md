@@ -110,7 +110,7 @@ trustworthy. US3 is required before calling the public bilingual feature complet
 
 - [X] T038 [US1] Wire a production-safe comparison run service into `create_runtime_app()` with the separate quota, verified snapshot selection, retrieval/workflow, persistence, trace tree and terminal SSE events per FR-CMP-001–FR-CMP-010. (Evidence: live Spanish four-technology run completed against snapshot `660b0578-992f-43d2-9722-fa0c49568bbd`; terminal SSE and trace metadata are recorded.)
 - [X] T039 [US3] Approve, ingest and verify a fourth supported technology collection, then add the four-technology dataset and Playwright journey for FR-CMP-001, FR-CMP-011 and SC-CMP-006. (Evidence: Anthropic review approved, four sources and 677 chunks are present in the promoted snapshot, and the bilingual four-row journey passes.)
-- [ ] T040 [US1] Expand `evals/datasets/comparison-v1.jsonl` to at least 20 representative comparison requests and record matrix citation precision, useful-progress latency and terminal latency for SC-CMP-001, SC-CMP-002 and SC-CMP-004. (Progress: dataset has 20 requests and 17 deterministic matrix cases with structure/state/evidence parity 1.0; the original live run recorded 12 cells at 68,751 ms and the optimized T042 run recorded useful progress at 0 ms and terminal latency at 18,590 ms; the earlier provisional review found 27/27 cited evidence links directly relevant and precision 1.0, while the expanded latest-run review is in `evals/results/live-comparator-t040-20260807-complete-review.md`; owner confirmation remains required.)
+- [X] T040 [US1] Expand `evals/datasets/comparison-v1.jsonl` to at least 20 representative comparison requests and record matrix citation precision, useful-progress latency and terminal latency for SC-CMP-001, SC-CMP-002 and SC-CMP-004. (Evidence: dataset has 20 requests and 17 deterministic matrix cases with structure/state/evidence parity 1.0; the owner reviewed corrected run `ed9e093f-74ed-4d47-a5c6-8a05ace0e505` and accepted 11/11 cited cells for precision 1.0, with `openai/context` correctly unsupported; optimized live run `2a317ed1-a0b9-4f6c-9227-f6fcdf93f382` records useful progress at 0 ms and terminal latency at 18,590 ms. The superseded run remains preserved as regression evidence.)
 - [X] T041 [US3] Execute the locale component test with a working Vitest Windows resolver and record the result in `evals/results/002-technology-comparator-baseline.md`. (Evidence: bundled Node 24/Vitest 4.1.10 run passed 8 files and 20 tests; the sandboxed Node 20 invocation remains an environment permission issue, not a test failure.)
 
 ## Convergence evidence update (2026-08-06)
@@ -119,9 +119,9 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   `660b0578-992f-43d2-9722-fa0c49568bbd`.
 - T039 is evidenced by verified Anthropic and Gemini collections, the 20-request dataset and the
   bilingual four-row journey.
-- T040 live latency evidence is recorded in `evals/results/live-comparator-t040.json`: 76,712 ms
-  for four technologies and three criteria; live citation precision remains pending manual ground
-  truth review.
+- T040 is closed with owner-reviewed citation precision 1.0 (11/11 cited cells) from corrected run
+  `ed9e093f-74ed-4d47-a5c6-8a05ace0e505` and live latency evidence from optimized run
+  `2a317ed1-a0b9-4f6c-9227-f6fcdf93f382` (0 ms useful progress, 18,590 ms terminal).
 
 ## Phase 8: Convergence
 
@@ -144,4 +144,4 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   suite 311 passed/4 skipped; comparison suite 42 passed; new run `ed9e093f-74ed-4d47-a5c6-8a05ace0e505`
   completed in 24,565 ms; `evals/results/live-comparator-t043-20260807-fixed-review.md` and its
   machine-readable JSON record report 40/40 evidence IDs resolved with zero collection mismatches.
-  T040 remains open for owner review.)
+  The corrected evidence mapping was subsequently owner-reviewed and accepted under T040.)

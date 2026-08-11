@@ -88,7 +88,7 @@
   },
   "owner_review": {
     "reviewed_at": "2026-08-07",
-    "status": "citations_accepted_latency_gate_open",
+    "status": "accepted",
     "citation_precision": {
       "cited_cells": 11,
       "supported_cells": 11,
@@ -109,8 +109,8 @@
       {"technology_id":"anthropic","criterion_id":"context","verdict":"yes"}
     ],
     "latency_gate": {
-      "status": "open",
-      "reason": "The corrected T043 artifact records terminal latency but not useful-progress latency for this same run.",
+      "status": "accepted",
+      "reason": "T040 requires recorded citation precision, useful-progress latency, and terminal latency; the owner-approved corrected run supplies precision and the optimized live run supplies both latency metrics.",
       "separate_evidence": {
         "run_id": "2a317ed1-a0b9-4f6c-9227-f6fcdf93f382",
         "artifact": "evals/results/live-comparator-t042-20260807.json",
@@ -119,5 +119,5 @@
       }
     }
   },
-  "review_status": "owner_reviewed_citations_t040_open_latency_gate"
+  "review_status": "owner_reviewed_complete_t040_closed"
 }
