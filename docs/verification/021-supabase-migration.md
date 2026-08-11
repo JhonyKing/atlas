@@ -1,5 +1,27 @@
 # Feature 021 verification: Supabase database migration
 
+## Latest owner-approved production hardening (2026-08-11)
+
+The owner authorized the reviewed `agent_tool_rls` migration for the production project
+`fcbclsaytbjpywlaplbh`. The Supabase MCP applied revision `agent_tool_rls`; the remote history now
+contains **31** revisions and reports that revision as the head.
+
+Post-apply inspection verified all seven durable agent tables (`agent_plans`, `agent_runs`,
+`agent_tool_calls`, `agent_run_events`, `agent_approvals`, `agent_idempotency_records`, and
+`agent_checkpoint_claims`) with **FORCE ROW LEVEL SECURITY** enabled and exactly two policies
+each: an `atlas_worker` `ALL` policy and an `atlas_readonly` `SELECT` policy. `anon` and
+`authenticated` have zero grants on those tables; the reviewed worker/read-only grants remain
+available. The migration changed schema/policy state only and wrote no user or private rows.
+
+This does **not** close project-wide RLS. Supabase still reports **41 other `atlas` tables** with
+RLS disabled. They are a separate security backlog requiring their own reviewed policy design and
+migrations. The informational `public.alembic_version` RLS-without-policy advisor finding is also
+preserved without changing the marker table.
+
+Applied-run evidence: [owner-approved agent-tool RLS verification](../../evals/results/supabase-migration-agent-tool-rls-20260811-applied.json).
+The earlier blocked attempt remains preserved at
+`../../evals/results/supabase-migration-agent-tool-rls-20260810.json` and was not overwritten.
+
 ## Result
 
 The project-scoped Supabase development database `fcbclsaytbjpywlaplbh` contains the exact 28

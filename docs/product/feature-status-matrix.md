@@ -35,3 +35,13 @@ task remains open.
 - Stable Feature 003 branch: `codex/release-feature-003`, based on `a2cfed8` plus the artifact-evidence commit.
 - Feature 004 branch: `codex/004-optional-auth-private-data`, based on `a2cfed8` plus only its seven feature commits.
 - Legacy omnibus branch retained unchanged for rollback: `codex/001-cited-answer`.
+
+## Hosted state update (2026-08-11)
+
+This dated update supersedes the pre-approval wording in the Feature 019 and Feature 021 rows
+above. The owner-approved `agent_tool_rls` migration is applied in production at remote revision
+head `agent_tool_rls` (31 revisions). Seven durable agent tables have FORCE RLS and 14 reviewed
+worker/read-only policies; `anon` and `authenticated` have no grants on those tables. Feature 019
+therefore has 7, not 8, mandatory tasks open after T049. Supabase still reports 41 other `atlas`
+tables without RLS; that separate project-wide backlog remains open. See
+`evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.

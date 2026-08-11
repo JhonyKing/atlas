@@ -29,3 +29,11 @@ Convergence is **not clean**. No existing task was deleted or renumbered. The fi
 represented by open tasks T021, T033, T038, T040, T043, T045, T046, and T049; no duplicate convergence tasks
 were added. Feature 019 remains open until the mandatory local gates, live evidence, integration
 evidence, and reviewed Supabase policy deployment are complete.
+
+## Post-convergence update (2026-08-11)
+
+The owner approved the reviewed worker/read-only policy design and the Supabase MCP applied
+`agent_tool_rls` in production. T049 is now complete with post-apply evidence in
+`evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The historical blocked
+finding above is preserved as evidence of the pre-approval state. Supabase still reports 41
+other `atlas` tables without RLS; that project-wide backlog is intentionally separate from T049.

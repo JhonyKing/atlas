@@ -44,6 +44,16 @@ Source, operations, and verification:
 - `docs/adr/0013-supabase-development-migration.md`
 - `docs/verification/021-supabase-migration.md`
 
+### Latest hosted Supabase update (2026-08-11)
+
+The owner-approved `agent_tool_rls` migration is now applied in production. The remote head is
+`agent_tool_rls` at 31 revisions. Seven durable agent tables have FORCE RLS, 14 reviewed
+worker/read-only policies, and no `anon`/`authenticated` grants. Supabase still reports 41 other
+`atlas` tables without RLS; those require a separate reviewed policy plan.
+
+Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The earlier
+blocked attempt remains preserved at `evals/results/supabase-migration-agent-tool-rls-20260810.json`.
+
 ## Feature 019: agent tool orchestration
 
 ATLAS exposes its capabilities as a versioned, typed tool catalog. The agent can propose a bounded

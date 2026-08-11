@@ -70,9 +70,18 @@ an intentional pending deployment gate, not a claim that hosted RLS is complete.
 security advisor also still reports the project-wide RLS-disabled lint for the other private
 `atlas` tables.
 
+### Owner-approved RLS follow-up (2026-08-11)
+
+The owner then approved and the hosted MCP applied `agent_tool_rls` in production. Verification
+found 31 remote revisions, seven durable agent tables with FORCE RLS, 14 worker/read-only
+policies, and no `anon`/`authenticated` grants on those tables. This closes T049 for the Agent
+Tool slice. The remaining 41 `atlas` tables without RLS remain a separate project-wide backlog.
+Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.
+
 ## Remaining honest gaps
 
 Cross-process idempotency/replay claims, complete read-only evidence envelopes, durable owner
-scoping integration evidence, RLS policy design, live provider traces, latency/cost measurements,
-and production deployment evidence remain open under Feature 018/019 tasks. Feature 019 remains
-open until those mandatory tasks and convergence evidence are complete.
+scoping integration evidence, live provider traces, latency/cost measurements, and production
+deployment evidence remain open under Feature 018/019 tasks. Agent-tool RLS for the seven durable
+tables is verified; the separate project-wide 41-table RLS backlog remains open. Feature 019
+remains open until its other mandatory tasks and convergence evidence are complete.

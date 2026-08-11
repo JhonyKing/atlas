@@ -1,8 +1,9 @@
 # Supabase migration runbook
 
 This runbook covers Feature 021 (`021-supabase-database-migration`). It migrates the
-versioned ATLAS PostgreSQL schema to the project-scoped Supabase development project
+versioned ATLAS PostgreSQL schema to the project-scoped Supabase project
 `fcbclsaytbjpywlaplbh`. It does not copy private user rows, local fixtures, or local credentials.
+Development/staging remains the preferred target for future data-bearing migration tests.
 
 ## Required access
 
@@ -10,8 +11,10 @@ versioned ATLAS PostgreSQL schema to the project-scoped Supabase development pro
 - Authenticate with OAuth in Codex. Never add a PAT, service-role key, database password, or
   bearer token to the repository, a prompt, a command argument, a trace, or an evidence artifact.
 - Restart Codex after adding the MCP so the tools are available in the active session.
-- The operator must confirm that the remote project is development or staging before the first
-  write. Production or unknown projects are blocked.
+- The operator must classify the remote project before the first write. Production or unknown
+  projects require explicit owner confirmation; that confirmation is recorded for the
+  `agent_tool_rls` production run in
+  `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.
 
 ## Source of truth
 
@@ -25,8 +28,20 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 
 The expected chain currently contains 31 revisions and ends at the repository file
 `0031_agent_tool_rls.py` (revision name `agent_tool_rls`). This migration enables explicit RLS
-policies for the durable Feature 019 agent tables; apply it only after the owner approves the
-worker/read-only policy design.
+policies for the durable Feature 019 agent tables. The owner-approved production application is
+complete and verified; future policy changes still require a reviewed migration.
+
+## Current hosted status (2026-08-11)
+
+- Remote migration head: `agent_tool_rls` at **31** revisions.
+- Seven durable agent tables have **FORCE ROW LEVEL SECURITY** and exactly 14 policies: one
+  `atlas_worker` `ALL` policy and one `atlas_readonly` `SELECT` policy per table.
+- `anon` and `authenticated` have no grants on those seven tables. No row data was written by the
+  migration.
+- Supabase still reports **41 other `atlas` tables** with RLS disabled. This is a separate warning
+  backlog; do not claim project-wide RLS is complete or expand this migration implicitly.
+- Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The earlier
+  blocked run remains preserved as `...20260810.json`.
 
 For a repeatable read-only check, export the bounded project state from the authenticated MCP as
 JSON and run:
@@ -50,7 +65,8 @@ script itself has no database credential or write transport.
    indexes, tables, policies, and bounded seed identifiers through the project-scoped MCP.
 2. **Compare**: classify missing revisions and unexplained drift against the repository manifest.
 3. **Approve**: stop for production/unknown classification, real existing data, unexplained drift,
-   or missing privileges. Record the owner decision before any write.
+   or missing privileges. Record the owner decision before any write. The explicit production
+   approval for `agent_tool_rls` is now part of the applied evidence.
 4. **Apply**: apply only reviewed, missing, ordered revisions. Stop at the first failed revision;
    never continue automatically after a failure.
 5. **Verify**: run schema, pgvector, provenance, retrieval, RLS, and idempotent-rerun checks using

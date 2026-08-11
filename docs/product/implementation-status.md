@@ -57,6 +57,16 @@ $f = 'specs/014-real-corpus/tasks.md'
 El backlog completo mantiene la trazabilidad PRD → feature → tarea:
 `docs/product/prd-v1.1-backlog.md`.
 
+## Actualización hospedada (2026-08-11)
+
+La autorización explícita del propietario permitió aplicar `agent_tool_rls` en el proyecto
+Supabase de producción. El remoto está en 31 migraciones con `agent_tool_rls` como head; las siete
+tablas durables del agente tienen FORCE RLS, 14 policies worker/read-only y cero grants para
+`anon`/`authenticated`. T049 queda cerrada y Feature 019 pasa de 8 a 7 tareas abiertas. Supabase
+todavía reporta 41 tablas `atlas` restantes sin RLS; ese backlog requiere políticas separadas y no
+se considera resuelto por esta migración. Evidencia:
+`evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.
+
 ## Evidencia de verificación de Feature 003
 
 - Backend completo: `196 passed, 4 skipped, 3 warnings`.
