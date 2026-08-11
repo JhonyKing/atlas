@@ -26,7 +26,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 015 | Noticia del día anterior | Cerrado funcionalmente | 0 | `specs/015-daily-news/tasks.md` |
 | 016 | Harness conectado a LangSmith | Slice implementado y verificado | 0 | `specs/016-langsmith-evaluation-harness/tasks.md` |
 
-| 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
+| 017 | CI/CD hardening | Cerrada: workflows hospedados verdes y `main` protegida | 0 | `specs/017-cicd-hardening/tasks.md` |
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; activación externa aún pendiente | 6: T031-T036 | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development con replay entre repositorios, idempotencia durable, envelopes de evidencia read-only, enlaces de artefactos, trazas de ciclo de vida y evidencia live sin contenido privado | 0 | `specs/019-agent-tool-orchestration/tasks.md` |
 | 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 32 migraciones; `foreign_key_indexes` aplicado y advisors verificados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |

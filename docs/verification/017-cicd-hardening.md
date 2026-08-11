@@ -44,7 +44,22 @@ The complete rerun against a prebuilt Next production server reports **150 passe
 smoke skips** out of 156 tests. CI now builds before Playwright and tests `next start`, avoiding
 development-server compilation races while retaining a separate failing build boundary.
 
-The repository controls workflow checks. GitHub branch protection (required checks, approvals and
-direct-push policy) must still be verified in repository settings; it cannot be proven by a local
-workflow parse. The repository-controlled implementation and local verification are complete;
-branch-protection settings remain external evidence.
+## Hosted CI and branch protection verified on 2026-08-11
+
+Commit `78d58d35d4a07aff0ffa16c3e16ee5b79fd0fcda` completed GitHub Actions run
+[`31489264785`](https://github.com/JhonyKing/atlas/actions/runs/31489264785) and Offline Evaluation
+run [`31489264796`](https://github.com/JhonyKing/atlas/actions/runs/31489264796) successfully. The
+seven merge-gating checks all concluded `success`: `backend`, `cited-answer-v1`, `database`,
+`Deployment contracts and secret boundary`, `offline-eval`, `security-regression`, and `web`.
+
+Authenticated repository administration then set `main` as the default branch and enabled branch
+protection with strict required checks, an enforced pull-request boundary, stale-review dismissal,
+admin enforcement, linear history, and required conversation resolution. Force-pushes and branch
+deletion are disabled. The approval count is intentionally zero because this is currently a
+single-maintainer portfolio repository: a PR and all checks remain mandatory without requiring the
+author to manufacture an unavailable second reviewer.
+
+The redacted settings snapshot and hosted-run identifiers are preserved in
+[`github-main-protection-20260811.json`](../../evals/results/github-main-protection-20260811.json).
+This closes the previously external branch-protection and hosted-run evidence gap without claiming
+that the still-unprovisioned managed API/worker deployment is production-ready.

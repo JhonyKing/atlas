@@ -1,0 +1,60 @@
+{
+  "observed_at": "2026-08-11T12:05:00Z",
+  "repository": "JhonyKing/atlas",
+  "default_branch": "main",
+  "branch": "main",
+  "protected": true,
+  "protection": {
+    "strict_status_checks": true,
+    "required_status_checks": [
+      "backend",
+      "cited-answer-v1",
+      "database",
+      "Deployment contracts and secret boundary",
+      "offline-eval",
+      "security-regression",
+      "web"
+    ],
+    "pull_request_required": true,
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": true,
+    "enforce_admins": true,
+    "required_linear_history": true,
+    "required_conversation_resolution": true,
+    "allow_force_pushes": false,
+    "allow_deletions": false
+  },
+  "verified_commit": {
+    "sha": "78d58d35d4a07aff0ffa16c3e16ee5b79fd0fcda",
+    "subject": "docs(021): record foreign key index migration",
+    "checks": {
+      "backend": "success",
+      "cited-answer-v1": "success",
+      "database": "success",
+      "Deployment contracts and secret boundary": "success",
+      "offline-eval": "success",
+      "security-regression": "success",
+      "web": "success"
+    }
+  },
+  "workflow_runs": [
+    {
+      "id": 31489264785,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/JhonyKing/atlas/actions/runs/31489264785"
+    },
+    {
+      "id": 31489264796,
+      "name": "Offline Evaluation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/JhonyKing/atlas/actions/runs/31489264796"
+    }
+  ],
+  "notes": [
+    "The zero-approval rule preserves a mandatory pull-request boundary for a solo-maintainer portfolio repository without requiring an unavailable second reviewer.",
+    "Vercel Preview Comments and dependency graph update checks completed successfully but are not required merge checks."
+  ]
+}
