@@ -233,3 +233,9 @@ The merged commit `23576ca7aec74b408708edb42ea5a161864787a5` is live on the cano
 deployment `dpl_JAQPF6gyxREu4zAf3v14WyEFAeMq`. Anonymous raw responses for `/en/engineering` and
 `/es/engineering` both returned 200; the Spanish response contained `Resultados medidos, no
 promesas` and `11/11`, while the canonical response had no `noindex` directive. T039 is closed.
+
+The earlier baseline row showing a 302 for `atlasai-jhonykings-projects.vercel.app` is historical.
+After explicit owner authorization, Vercel Authentication was changed to preview-only on
+2026-08-11. The LinkedIn production alias now returns 200 anonymously with ATLAS content and no
+`noindex`; a current preview still returns 302 to Vercel login. The retained operational evidence
+is `evals/results/vercel-production-access-20260811.json`.

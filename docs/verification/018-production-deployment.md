@@ -70,6 +70,19 @@ T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated 
 managed API/worker, environment secrets, functional smoke, observability/restore and production
 rollback evidence do not yet exist.
 
+## Production access boundary follow-up (2026-08-11)
+
+- Owner-authorized Vercel Authentication now protects preview deployments only.
+- `atlasai-jhonykings-projects.vercel.app/en`, the URL already shared on LinkedIn, returns 200
+  anonymously with ATLAS content and without `noindex`.
+- The canonical and `main` production aliases also return 200 anonymously.
+- Preview `atlasai-rjcxyvm0b-jhonykings-projects.vercel.app/en` still returns 302 to Vercel login.
+- Evidence: `evals/results/vercel-production-access-20260811.json`.
+
+This resolves public web access for recruiters. It does not close T032-T036 because the managed
+API/worker, production secrets, functional research smoke, restore, and rollback evidence remain
+unavailable.
+
 ## Public web fail-closed verification (2026-08-11)
 
 - Commit `174150ba53db8a98603fcc49e4262424f908a505` is `READY` in production deployment
