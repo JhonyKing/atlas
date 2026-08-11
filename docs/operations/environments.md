@@ -8,17 +8,23 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 | Development | n/a | `http://localhost:8000` | `fcbclsaytbjpywlaplbh` | n/a | Active Supabase development target; not production |
 | Preview | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
 | Staging | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
-| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Vercel project exists; latest deployment `dpl_4Y61qUavPgHBz8vsZDjrvHJuqvTs` failed with `NEXT_NO_VERSION` because the configured root did not expose a Next.js package |
+| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Vercel project exists; Git deployment `dpl_GpEevej8ekvyiJKTPcjmM8VBr92K` failed with `NEXT_NO_VERSION` while the effective project framework was reported as `null` |
 
 The development row is included only to make the current database target explicit; it must not be
-used as a production identifier. The Vercel project identifier is non-secret, but the repository
-root/build state and deployment remain an open operator task until the project is linked to
-`JhonyKing/atlas` with `apps/web` as its Root Directory (or an equivalent monorepo build command)
-and a managed API origin exists. MCP evidence from 2026-08-11 reports the exact build failure:
-`No Next.js version detected. Make sure your package.json has "next" ... and Root Directory ...`.
+used as a production identifier. The Vercel project identifier is non-secret. The owner has already
+configured and visually confirmed `apps/web` as the Root Directory in Project Settings; that action
+is not pending. Vercel nevertheless installed the whole pnpm workspace and evaluated the repository
+root for Git deployment `dpl_GpEevej8ekvyiJKTPcjmM8VBr92K`, while the project API reported
+`framework: null` and the dashboard warned that the effective deployment configuration differed
+from current Project Settings. The repository therefore also provides an equivalent monorepo build:
+the root declares the same Next.js version as `apps/web`, builds `@atlas/web`, and emits
+`apps/web/.next`. A managed API origin and a successful Git-connected deployment are still required
+before production can be declared ready.
 
-The Git-connected deployment for commit `0d57e00` was rechecked on 2026-08-11 and failed with the
-same `NEXT_NO_VERSION` error; this is deployment configuration evidence, not a code-test failure.
+The Git-connected deployment for commit `1bf85aa` was checked on 2026-08-11. Its complete build log
+shows a successful frozen-lockfile workspace install followed by `NEXT_NO_VERSION`; this is evidence
+of framework/package detection at the repository root, not evidence that the owner failed to set
+the Root Directory in the dashboard.
 
 An MCP file-upload preview was verified on 2026-08-10 at
 [`https://atlasai-hu543gtvg-jhonykings-projects.vercel.app`](https://atlasai-hu543gtvg-jhonykings-projects.vercel.app).
