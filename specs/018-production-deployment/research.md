@@ -39,33 +39,7 @@
 - **Alternatives considered**:
   - Only retain provider dashboard screenshots: rejected because screenshots are incomplete and hard to compare.
 
-## Decision 6: Use Fly.io for the first managed API/worker runtime
-
-- **Decision**: Use one Fly.io application with separate `api` and `worker` process groups. Run two
-  1 GiB shared-CPU API machines and one 1 GiB shared-CPU worker machine in `dfw`; execute Alembic as
-  the release command and expose only the API process through Fly's HTTPS service.
-- **Rationale**: Fly process groups map directly to the existing single-image API/worker contract,
-  support process-specific machine sizing and health checks, and avoid refactoring the continuous
-  queue worker into a serverless job. At the published 2026-08-11 North America rate, the required
-  three 1 GiB `shared-cpu-1x` machines are approximately USD 17.76/month before network charges.
-  The checked-in configuration creates no billable resource until an operator creates and deploys
-  the Fly application.
-- **Alternatives considered**:
-  - Railway: operationally suitable, but its usage price of USD 10/GB-month for continuously
-    allocated RAM makes the required three 1 GiB processes less predictable for this beta.
-  - Render: supports web services and background workers, but requires separately billed service
-    instances and provides no advantage over the existing single-image process-group model.
-  - Cloud Run: attractive for request-driven API traffic, but the existing continuous polling
-    worker would require a worker-pool/job redesign that is outside this deployment slice.
-- **Primary sources checked 2026-08-11**:
-  - Fly.io process-specific configuration: https://fly.io/docs/reference/configuration/
-  - Fly.io compute pricing: https://fly.io/docs/about/pricing/
-  - Railway resource pricing: https://docs.railway.com/pricing
-  - Render service types: https://render.com/docs/service-types
-
 ## Open operator inputs (not repository ambiguity)
 
-- The operator must create/authenticate the Fly.io account and approve billing before the prepared
-  `infra/deployment/fly.toml` can provision the managed runtime. The domain and application remain
-  provider-neutral so this edge adapter can be replaced without domain changes.
+- The operator must choose/provision a managed container runtime and provide its credentials. The repository contract stays provider-neutral so the API/worker image can be moved without domain changes.
 - The operator must provide Vercel, Supabase, domain, model-provider, and LangSmith credentials. No secret is generated or committed by this feature.

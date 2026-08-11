@@ -10,11 +10,6 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 | Staging | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
 | Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | `TODO_MANAGED_API` | Web deployment `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T` from `main` is `READY`; Supabase is `ACTIVE_HEALTHY`; full product remains unavailable until the managed API/worker and environment variables exist |
 
-The managed API/worker provider is now selected as Fly.io and its deployable profile is retained in
-`infra/deployment/fly.toml`. No Fly application, domain, image digest, or billable machine has been
-created yet. T032 therefore remains open until the owner authenticates the provider account and
-approves the expected compute spend; see `docs/operations/fly-runtime.md`.
-
 The Supabase project `fcbclsaytbjpywlaplbh` was explicitly identified by the owner as **main / PRODUCTION**;
 it is not a development target. Post-apply inspection on 2026-08-11 found Postgres `17.6`, migration
 head `foreign_key_indexes`, 32 hosted Supabase migration records, and installed `vector`,
