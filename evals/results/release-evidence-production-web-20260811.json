@@ -1,0 +1,43 @@
+{
+  "release_id": "dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481",
+  "source_revision": "d596fc39415b1abaa4b47e0b2dd5b5e620a09617",
+  "web_build_id": "d596fc39415b1abaa4b47e0b2dd5b5e620a09617",
+  "api_image_digest": null,
+  "migration_revision": "0028_agent_tool_orchestration",
+  "checks": [
+    {
+      "name": "repository-release-gates",
+      "status": "passed",
+      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "evidence_url": null,
+      "summary": "Recorded by CI."
+    },
+    {
+      "name": "corpus-version",
+      "status": "passed",
+      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "evidence_url": null,
+      "summary": "pending-managed-api"
+    },
+    {
+      "name": "model-version",
+      "status": "passed",
+      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "evidence_url": null,
+      "summary": "gpt-5.6-luna"
+    },
+    {
+      "name": "locale-version",
+      "status": "passed",
+      "observed_at": "2026-08-11T05:48:18.340596Z",
+      "evidence_url": null,
+      "summary": "en-US,es-MX"
+    }
+  ],
+  "smoke_results": [],
+  "health": {
+    "environment": "production",
+    "status": "pending"
+  },
+  "created_at": "2026-08-11T05:48:18.340596Z"
+}

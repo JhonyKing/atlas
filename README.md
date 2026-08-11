@@ -9,7 +9,9 @@ The repository now contains the production deployment contract: Vercel web confi
 provider-neutral API/worker container and manifest, Supabase migration preflight, `/healthz`
 liveness, `/readyz` dependency readiness, deployment smoke checks, CI release gates, redacted
 release evidence, and deploy/backup/rollback runbooks. This is a deployable foundation, not a
-claim that a real Vercel or managed-container environment is already live.
+claim that the complete managed runtime is already live. The web is published at
+[`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app); the managed API/worker is not
+live yet, so the complete product is not declared production-ready.
 
 Local checks:
 
@@ -19,14 +21,14 @@ apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -q
 apps\backend\.venv\Scripts\python.exe scripts\deployment-smoke.py --help
 ```
 
-Operator-owned tasks still required before production: create isolated Vercel/API/Supabase
-environments, configure secrets and domains, apply the migration, run bilingual smoke tests,
+Remaining deployment tasks: create isolated preview/staging Supabase targets, provision the managed
+API/worker, configure environment secrets and API origin, run bilingual functional smoke tests,
 verify LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence
 bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
 
 ## Feature 021: Supabase database migration
 
-The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project
+The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase production project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
 current remote head is `agent_tool_rls` (31 hosted revisions).

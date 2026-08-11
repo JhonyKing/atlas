@@ -23,10 +23,8 @@
 
 ## Intentionally not claimed
 
-No Vercel project, public API URL, managed container, hosted migration, production Supabase
-target, live LangSmith trace, backup restore, rollback rehearsal, or hosted bilingual smoke has
-been claimed. Those require operator-owned credentials and are tracked as T030-T036. The
-Playwright deployment file is a contract skeleton until `ATLAS_DEPLOYMENT_WEB_ORIGIN` is supplied.
+No public API URL, managed API/worker container, live LangSmith production trace, backup restore,
+rollback rehearsal, or complete hosted functional smoke has been claimed. Those remain T031-T036.
 
 ## Follow-up verification (2026-08-10)
 
@@ -51,6 +49,22 @@ deployment. The UTF-8-preserving evidence is in
   in this local harness, both in dev and production-server modes. No hosted smoke result is claimed;
   the existing local browser evidence remains valid where its manual Node 24 server was used.
 
-Therefore T042 remains open: the application/backend test gates are recorded, but the full mypy
-gate and the complete Playwright deployment journey still require remediation or an operator-hosted
-environment.
+## Integrated verification and web activation follow-up (2026-08-11)
+
+- The integrated backend suite passed **428 tests with 4 skips**; full repository Ruff and strict
+  mypy passed across 183 source files.
+- Frontend Node 24 lint and typecheck passed; Vitest passed **35/35**; the full local Playwright run
+  passed **149 tests with 4 intentional hosted-only skips**; the production build passed.
+- The final explicit-locale and SVG-flag correction passed **5/5** focused AppShell journeys.
+- Deployment contract/readiness/schema/security/integration follow-up passed **17/17** and
+  `scripts/verify-deployment-secrets.ps1` passed.
+- `apps/web/tests/e2e/deployment.spec.ts` now defines six real hosted journeys; TypeScript/ESLint
+  pass and Playwright discovers all six. Their execution is intentionally tracked by T036.
+- Vercel project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` has READY preview/main and production
+  deployments. The public web is [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app).
+- Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with Alembic head
+  `0028_agent_tool_orchestration` and 31 hosted migration records.
+
+T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
+managed API/worker, environment secrets, functional smoke, observability/restore and production
+rollback evidence do not yet exist.

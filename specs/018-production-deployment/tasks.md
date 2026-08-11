@@ -11,7 +11,7 @@ Vercel, Supabase, or managed-container account already exists.
 - [X] T002 [US3] Add readiness contract tests for `/healthz` and `/readyz`, including truthful database/migration/provider failure categories, in `apps/backend/tests/contract/test_readiness.py`.
 - [X] T003 [US3] Add JSON-schema validation tests for `specs/018-production-deployment/contracts/release-evidence.schema.json` in `apps/backend/tests/contract/test_release_evidence_schema.py`.
 - [X] T004 [US3] Add a failing secret-boundary test that scans browser bundles, logs, traces, and evidence artifacts for prohibited keys in `scripts/verify-deployment-secrets.ps1` and `apps/backend/tests/security/test_deployment_secret_boundary.py`.
-- [ ] T005 [US1] Add Playwright smoke journeys for deployed root/locale, API origin, Spanish labels, cited-answer/abstention, comparison, report, news, and corpus status in `apps/web/tests/e2e/deployment.spec.ts` (current file is a hosted-locale contract skeleton; full journey remains operator-gated).
+- [X] T005 [US1] Add Playwright smoke journeys for deployed root/locale, API origin, Spanish labels, cited-answer/abstention, comparison, report, news, and corpus status in `apps/web/tests/e2e/deployment.spec.ts`. (Evidence: six hosted journeys now reject localhost requests, assert both explicit locales and flag assets, verify readiness, exercise answer/abstention, comparison/report artifacts, corpus and news; TypeScript/ESLint pass and Playwright lists all six. Their real-environment execution remains T036.)
 - [X] T006 [US2] Add backend smoke contract fixtures for Supabase-like migration head, RLS ownership, private deletion, connection failure, and no-localhost fallback in `apps/backend/tests/integration/deployment/test_managed_environment.py`. Local contract fixtures pass; live managed-data execution remains T031/T034.
 
 ## Phase 2: Environment and runtime foundation (P1)
@@ -51,7 +51,7 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 6: Real environment activation (operator-assisted P1)
 
-- [ ] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`. (Progress: Git-connected preview deployment `dpl_CmQzV1FW1xzQc73DoHF611cb2Azy` for commit `cd94bde` is `READY`; the main-branch production release, managed API origin and environment-scoped release evidence remain open.)
+- [X] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`. (Evidence: project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis`, main-branch deployment `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` and production deployment `dpl_8KpDGAy7wZSjeEyXEefnPWuH3JZi` are `READY`; `atlasai-lilac.vercel.app` serves HTTPS. Managed API activation remains T032-T036.)
 - [ ] T031 [US2] Provision isolated Supabase preview/staging/production targets, enable required extensions/policies, and record redacted project metadata in `docs/operations/environments.md`.
 - [ ] T032 [US2] Provision the managed container API/worker runtime, configure HTTPS/custom domain, and record immutable image/deployment identifiers.
 - [ ] T033 [US3] Configure environment-scoped secrets, CORS, auth callbacks, storage, model providers, and LangSmith project/tags without committing values.
@@ -66,7 +66,7 @@ Vercel, Supabase, or managed-container account already exists.
 - [X] T039 [P] Update `docs/product/prd-v1.1-backlog.md`, `docs/product/feature-status-matrix.md`, and `docs/operations/` with Feature 018 traceability and SCL-011 status.
 - [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (No critical inconsistencies remain; T005/T006 and T030-T036 stay explicitly open.)
 - [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Converged to existing open tasks; no extra phase appended.)
-- [ ] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results.
+- [X] T042 Run full local verification (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, backend Ruff/mypy/pytest, security checks, deployment contract/smoke tests) and record results. (Evidence: backend 428 passed/4 skipped with repository Ruff and strict mypy clean; frontend lint/typecheck, Vitest 35/35, Playwright 149 passed/4 hosted skips and production build pass; the final locale/flag delta passed 5/5 focused journeys; deployment/security follow-up passed 17 tests and the deployment secret scan. Hosted execution remains T034-T036, not this local gate.)
 - [X] T043 Commit the feature in focused groups, update the README/ADR/evidence bundle, and link each commit/PR to this spec and task IDs. (Implementation commit: `e8de6b9`.)
 
 ## Dependencies & Execution Order
