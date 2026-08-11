@@ -19,7 +19,13 @@ from atlas.agent.checkpoints import CheckpointRepository
 from atlas.agent.orchestration import AgentOrchestrator
 from atlas.agent.planner import AgentPlanner
 from atlas.agent.planning import AgentPlan, PlanValidationError, arguments_hash, validate_plan
-from atlas.agent.policy import Approval, PolicyError, assert_approval_matches, issue_approval
+from atlas.agent.policy import (
+    Approval,
+    PolicyError,
+    assert_approval_idempotency_key,
+    assert_approval_matches,
+    issue_approval,
+)
 from atlas.agent.review import ReviewService
 from atlas.agent.state import AtlasState
 from atlas.agent.tools.read_only import (
@@ -41,6 +47,11 @@ from atlas.api.routes.comparisons import ComparisonRunControl
 from atlas.observability.agent_trace import agent_trace_fields, agent_trace_tags
 from atlas.observability.context import current_request_id
 from atlas.observability.langsmith import TraceHandle, TraceSink
+from atlas.persistence.agent_quota import (
+    AgentToolQuotaConflict,
+    AgentToolQuotaExceeded,
+    AgentToolQuotaRepository,
+)
 from atlas.persistence.agent_runs import (
     AgentIdempotencyStore,
     AgentRunRepository,
@@ -65,6 +76,10 @@ def _runs(request: Request) -> AgentRunRepository:
 
 def _idempotency_store(request: Request) -> AgentIdempotencyStore:
     return cast(AgentIdempotencyStore, request.app.state.agent_idempotency)
+
+
+def _agent_quota(request: Request) -> AgentToolQuotaRepository:
+    return cast(AgentToolQuotaRepository, request.app.state.agent_quota)
 
 
 def _idempotency_scope(request: Request, operation: str) -> str:
@@ -246,6 +261,16 @@ async def create_plan(
             )
     except (PlanValidationError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    requires_bound_key = any(
+        (definition := catalog.get(step.tool_id)) is not None
+        and definition.approval != "none"
+        for step in plan.steps
+    )
+    if requires_bound_key and key is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Idempotency-Key is required for private or mutating agent plans",
+        )
     _runs(request).save_plan(plan)
     approvals = cast(dict[str, Approval], request.app.state.agent_approvals)
     approval_ids: list[str] = []
@@ -260,6 +285,7 @@ async def create_plan(
                 tool_id=step.tool_id,
                 tool_version=step.tool_version,
                 arguments=step.arguments,
+                idempotency_key=key,
             )
             approvals[approval.call_id] = approval
             approval_ids.append(str(approval.approval_id))
@@ -284,6 +310,7 @@ async def _execute_domain_tool(
     actor_id: str,
     approval: Approval | None,
     consent: bool,
+    idempotency_key: str | None,
 ) -> dict[str, object]:
     """Route read-only calls through the typed adapter boundary before domain services."""
 
@@ -318,6 +345,7 @@ async def _execute_domain_tool(
                 approval=approval,
                 consent=consent,
                 scopes=_agent_scopes(request, actor_id),
+                idempotency_key=idempotency_key,
             )
         return await _execute_domain_tool_legacy(request, plan, step_index)
 
@@ -476,6 +504,16 @@ async def create_agent_run(
     plan = repository.get_plan(payload.plan_hash)
     if plan is None:
         raise HTTPException(status_code=404, detail="plan not found")
+    plan_requires_approval = any(
+        (definition := _tool_catalog(request).get(step.tool_id)) is not None
+        and definition.approval != "none"
+        for step in plan.steps
+    )
+    if plan_requires_approval and key is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Idempotency-Key is required for private or mutating agent runs",
+        )
     if plan.expires_at <= datetime.now(UTC):
         raise HTTPException(status_code=409, detail="plan expired")
     existing_run = repository.get(plan.run_id)
@@ -560,13 +598,6 @@ async def create_agent_run(
                             for event in repository.list_events(plan.run_id)
                         ],
                     }
-                    if key is not None:
-                        _idempotency_store(request).save(
-                            _idempotency_scope(request, "agent.run"),
-                            key,
-                            fingerprint,
-                            replayed_pending_response,
-                        )
                     return replayed_pending_response
                 repository.save_tool_call(
                     plan.run_id,
@@ -598,10 +629,6 @@ async def create_agent_run(
                         for event in repository.list_events(plan.run_id)
                     ],
                 }
-                if key is not None:
-                    _idempotency_store(request).save(
-                        _idempotency_scope(request, "agent.run"), key, fingerprint, pending_response
-                    )
                 return pending_response
             approval_for_execution = approval
             try:
@@ -612,6 +639,7 @@ async def create_agent_run(
                     tool_id=step.tool_id,
                     tool_version=step.tool_version,
                     arguments=step.arguments,
+                    idempotency_key=key,
                 )
             except PolicyError as exc:
                 repository.save_tool_call(
@@ -640,6 +668,64 @@ async def create_agent_run(
                         fields={"latency_ms": (perf_counter() - trace_started) * 1000},
                     )
                 raise HTTPException(status_code=403, detail=str(exc)) from exc
+        if definition.side_effect_level != "read":
+            scopes = _agent_scopes(request, payload.actor_id)
+            scope_is_granted = not definition.scopes or set(definition.scopes).issubset(scopes)
+            if scope_is_granted and payload.consent:
+                assert key is not None
+                quota_fingerprint = _fingerprint(
+                    {
+                        "plan_hash": plan.plan_hash,
+                        "run_id": str(plan.run_id),
+                        "call_id": call_id,
+                        "actor_id": payload.actor_id,
+                        "tool_id": step.tool_id,
+                        "tool_version": step.tool_version,
+                        "arguments_hash": arguments_hash(step.arguments),
+                    }
+                )
+                try:
+                    _agent_quota(request).reserve(
+                        _visitor_hash(request),
+                        step.tool_id,
+                        key,
+                        plan.run_id,
+                        call_id,
+                        quota_fingerprint,
+                        now=datetime.now(UTC),
+                    )
+                except AgentToolQuotaConflict as exc:
+                    raise HTTPException(status_code=409, detail=str(exc)) from exc
+                except AgentToolQuotaExceeded as exc:
+                    repository.save_tool_call(
+                        plan.run_id,
+                        call_id=call_id,
+                        tool_id=step.tool_id,
+                        tool_version=step.tool_version,
+                        arguments_hash=arguments_hash(step.arguments),
+                        status="rejected",
+                        error_category="quota_exhausted",
+                        completed_at=datetime.now(UTC),
+                    )
+                    repository.events.emit(
+                        plan.run_id,
+                        "tool_call.failed",
+                        status="rejected",
+                        tool_id=step.tool_id,
+                        call_id=call_id,
+                        error_category="quota_exhausted",
+                    )
+                    repository.update(plan.run_id, status="rejected")
+                    now = datetime.now(UTC)
+                    raise HTTPException(
+                        status_code=429,
+                        detail={
+                            "code": "quota_exhausted",
+                            "run_id": str(plan.run_id),
+                            "retry_at": exc.retry_at.isoformat(),
+                        },
+                        headers={"Retry-After": str(exc.retry_after_seconds(now=now))},
+                    ) from exc
         started_at = datetime.now(UTC)
         repository.save_tool_call(
             plan.run_id,
@@ -659,6 +745,7 @@ async def create_agent_run(
                     actor_id=payload.actor_id,
                     approval=approval_for_execution,
                     consent=payload.consent,
+                    idempotency_key=key,
                 ),
                 timeout=definition.timeout_ms / 1000,
             )
@@ -806,6 +893,7 @@ async def resume_agent_run(
     execute: bool = False,
     approval_ids: list[str] | None = None,
     consent: bool = False,
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
 ) -> dict[str, object]:
     """Resume a known run, optionally executing only its still-pending steps.
 
@@ -844,6 +932,7 @@ async def resume_agent_run(
                 consent=consent,
             ),
             request,
+            idempotency_key,
         )
     _trace_lifecycle(
         request,
@@ -864,6 +953,11 @@ def decide_agent_approval(
     idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
 ) -> dict[str, object]:
     key = _normalize_idempotency_key(idempotency_key)
+    if key is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Idempotency-Key is required for approval decisions",
+        )
     fingerprint = _fingerprint({"approval_id": str(approval_id), **payload.model_dump(mode="json")})
     if key is not None:
         try:
@@ -880,6 +974,10 @@ def decide_agent_approval(
         approval = _runs(request).get_approval(approval_id)
     if approval is None:
         raise HTTPException(status_code=404, detail="approval not found")
+    try:
+        assert_approval_idempotency_key(approval, key)
+    except PolicyError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
     if approval.actor_id != payload.actor_id or approval.decision_key != payload.decision_key:
         raise HTTPException(status_code=403, detail="approval decision mismatch")
     if payload.decision == "rejected":

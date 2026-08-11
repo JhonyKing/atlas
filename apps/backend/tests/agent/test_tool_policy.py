@@ -121,3 +121,39 @@ def test_approval_rejects_a_different_bound_target() -> None:
             tool_version="1.0.0",
             arguments={"resource_id": "r-1"},
         )
+
+
+def test_approval_is_bound_to_the_original_operation_idempotency_key() -> None:
+    plan = _private_plan()
+    approval = replace(
+        issue_approval(
+            plan,
+            call_id="step-0",
+            actor_id="user-1",
+            tool_id="private_delete",
+            tool_version="1.0.0",
+            arguments={"resource_id": "r-1"},
+            idempotency_key="operation-key-001",
+        ),
+        decision="approved",
+    )
+
+    assert_approval_matches(
+        approval,
+        plan=plan,
+        actor_id="user-1",
+        tool_id="private_delete",
+        tool_version="1.0.0",
+        arguments={"resource_id": "r-1"},
+        idempotency_key="operation-key-001",
+    )
+    with pytest.raises(PolicyError, match="idempotency"):
+        assert_approval_matches(
+            approval,
+            plan=plan,
+            actor_id="user-1",
+            tool_id="private_delete",
+            tool_version="1.0.0",
+            arguments={"resource_id": "r-1"},
+            idempotency_key="operation-key-002",
+        )

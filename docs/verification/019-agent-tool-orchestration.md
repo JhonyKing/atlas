@@ -1,6 +1,31 @@
 # Feature 019 verification
 
-Executed on 2026-08-11 from branch `codex/019-agent-tool-orchestration`.
+Executed on 2026-08-11 and finalized from integration branch `codex/main-integration`.
+
+## Final T038 promotion gate (2026-08-11)
+
+- Complete backend suite: **428 passed, 4 conditionally skipped, 0 failed**.
+- Python quality gates: Ruff passed; strict mypy passed across **183 source files**.
+- Deterministic agent-tool gate: **58 tests passed**, Ruff/mypy passed across its focused paths,
+  and all **5/5** fixture cases passed.
+- Web quality gates: TypeScript passed, ESLint passed, and **35/35** Vitest tests passed.
+- Chromium browser matrix: **149 passed, 4 deployment-only tests skipped, 0 failed** across
+  localized routes, public journeys, private-data states, agent workspace, route-state QA and the
+  375/390/768/1024/1280/1440/1920 px viewport matrix. The four skipped tests require hosted
+  `ATLAS_DEPLOYMENT_WEB_ORIGIN`/`ATLAS_DEPLOYMENT_API_ORIGIN` and belong to Feature 018's
+  post-deployment smoke gate.
+- Next.js 16.2.12 production build with Webpack: passed; all static and dynamic routes compiled,
+  typechecked and generated successfully.
+- The first full browser pass exposed two stale-locale upload messages. The component was changed
+  to store semantic `accepted`/`rejected` state and translate during render; the focused 3/3 account
+  rerun and the final 149-test matrix passed.
+- Playwright reported a non-blocking hydration warning for an injected
+  `style="caret-color: transparent"` attribute on one report input. No matching source/test code
+  exists in the repository and every report, route-state and viewport journey passed; it is kept as
+  an environment warning rather than represented as an application defect.
+
+This closes T038 and Feature 019's implementation/verification scope. Hosted deployment smoke and
+production API readiness remain Feature 018 responsibilities and can run only after integration.
 
 ## Local evidence
 
@@ -71,9 +96,9 @@ The lifecycle contract test `test_cancel_and_resume_emit_content_free_lifecycle_
 asserts numeric latency and explicit `cancelled`/`resumed` terminal trace statuses. The separate
 opt-in LangSmith connectivity smoke passed (**1 passed**).
 
-The full browser suite is not claimed by this evidence: hosted deployment journeys remain
-skipped without `ATLAS_DEPLOYMENT_API_ORIGIN`, and the broader matrix still includes dependency
-and operator journeys outside this focused agent check.
+This historical focused-live-evidence section did not claim the full browser suite at the time it
+was produced. The later final T038 promotion gate above supersedes that limitation; only the four
+hosted deployment journeys remain intentionally deferred to Feature 018.
 
 ### Browser/build harness correction (2026-08-11)
 
@@ -82,8 +107,8 @@ The local harness failure was traced to Next 16 Turbopack root inference plus th
 Playwright starts the same `process.execPath` as the test runner with Webpack, and the Vercel/web
 build command uses `next build --webpack`. Evidence: production build generated all 12 routes;
 the agent workspace journey passed **1/1** and the AppShell/locale/route contract passed **4/4**.
-The broader 153-test browser matrix remains open because it includes hosted/dependency journeys
-and was not claimed as a complete gate in this local run.
+The later final T038 run completed the full 153-test matrix with **149 passed and 4 hosted
+deployment-only tests skipped**; there were no browser failures.
 
 ### Read-only evidence envelope evidence (2026-08-11)
 
@@ -103,10 +128,27 @@ every caller has the explicit `anonymous` scope, while `authenticated` is added 
 validated subject matches the requested actor. A private or mutating tool therefore cannot run
 merely because a caller supplied an actor ID, approval ID, consent flag, or ownership-shaped
 argument. Missing required scopes are rejected before the ownership callback or handler is reached.
-The focused adapter/route suite passed **18 tests**, including regressions proving that the
-owner check is not invoked for an anonymous caller with an approved private-delete plan. This is
-partial T043 evidence; durable approval-key binding and quota enforcement remain open, so T043 is
-not closed.
+The focused adapter/route suite includes regressions proving that the owner check is not invoked
+for an anonymous caller with an approved private-delete plan.
+
+### Operation-key binding and quota closure (2026-08-11)
+
+Private and side-effecting plans now require one operation-level `Idempotency-Key`. That exact key
+is cryptographically included in the durable approval decision key and must be reused for approval
+and run requests. Missing keys fail with `400`; mismatched keys fail with `403`; a conflicting
+replay fails with `409`. The web client retains the plan operation key and reuses it for the full
+journey instead of generating unrelated keys per request.
+
+Before a private or mutating adapter executes, ATLAS rechecks approval, session-backed scope and
+consent, then reserves a per-visitor/tool rolling quota. Development uses a lock-protected
+repository; non-development runtimes use the existing PostgreSQL
+`atlas.agent_idempotency_records` ledger under an advisory transaction lock. Exact replays return
+the original reservation without consuming another unit. Exhaustion records a rejected tool call,
+emits `tool_call.failed`, returns `429` plus `Retry-After`, and does not call the adapter.
+
+Evidence: **66** focused agent and agent-contract tests passed, including the approval-key and
+quota contract; **7** focused policy/quota unit tests passed; Ruff passed; strict mypy passed for
+**183 source files**; web typecheck and ESLint passed; **35/35** web tests passed. This closes T043.
 
 ## Supabase evidence
 
@@ -136,9 +178,9 @@ Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json
 
 ## Remaining honest gaps
 
-Full quota/scope policy enforcement and production deployment evidence remain open under Feature
-018/019 tasks. Cross-process replay and read-only evidence envelopes are now covered by the
+Production deployment evidence remains open under Feature 018. Cross-process replay, quota/scope
+policy enforcement, approval-key binding, and read-only evidence envelopes are covered by the
 durable repository and route contract tests.
 Agent-tool RLS for the seven durable tables is verified; the separate project-wide 41-table RLS
-backlog remains open. Feature 019 remains open until its other mandatory tasks and convergence
-evidence are complete.
+backlog remains open. Feature 019 remains open only until its complete verification task T038 is
+executed and recorded.

@@ -19,6 +19,8 @@ class SafeSettingsSummary(TypedDict):
     embedding_dimensions: int
     anonymous_answer_limit: int
     anonymous_comparison_limit: int
+    agent_side_effect_limit: int
+    agent_side_effect_window_hours: int
     anonymous_window_hours: int
     content_retention_days: int
     web_origin: str
@@ -77,6 +79,8 @@ class Settings(BaseSettings):
     atlas_agent_node_timeout_seconds: float = Field(default=15.0, gt=0)
     atlas_agent_checkpoint_ttl_hours: int = Field(default=24, ge=1)
     atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)
+    atlas_agent_side_effect_limit: int = Field(default=5, ge=1)
+    atlas_agent_side_effect_window_hours: int = Field(default=24, ge=1)
     atlas_migration_head: str = "agent_tool_rls"
 
     @field_validator(
@@ -139,6 +143,8 @@ class Settings(BaseSettings):
             "embedding_dimensions": self.atlas_embedding_dimensions,
             "anonymous_answer_limit": self.atlas_anonymous_answer_limit,
             "anonymous_comparison_limit": self.atlas_anonymous_comparison_limit,
+            "agent_side_effect_limit": self.atlas_agent_side_effect_limit,
+            "agent_side_effect_window_hours": self.atlas_agent_side_effect_window_hours,
             "anonymous_window_hours": self.atlas_anonymous_window_hours,
             "content_retention_days": self.atlas_content_retention_days,
             "web_origin": str(self.web_origin),

@@ -98,9 +98,14 @@ export function AgentWorkspace() {
       for (const approvalId of approvalIds) {
         const decisionKey = plan.approval_decision_keys?.[approvalId];
         if (!decisionKey) throw new Error("Approval token unavailable");
-        await approveAgentTool(approvalId, decisionKey);
+        await approveAgentTool(approvalId, decisionKey, plan.idempotency_key);
       }
-      const result = await startAgentRun(plan.plan_hash, "anonymous", approvalIds);
+      const result = await startAgentRun(
+        plan.plan_hash,
+        plan.idempotency_key,
+        "anonymous",
+        approvalIds,
+      );
       setRunId(result.run_id);
       setRunStatus(result.status);
       setEvents(result.events);
@@ -116,7 +121,7 @@ export function AgentWorkspace() {
     const approvalId = plan.required_approval_ids?.[0];
     const decisionKey = approvalId ? plan.approval_decision_keys?.[approvalId] : undefined;
     if (!approvalId || !decisionKey) return;
-    await rejectAgentTool(approvalId, decisionKey);
+    await rejectAgentTool(approvalId, decisionKey, plan.idempotency_key);
     setError(locale === "es-MX" ? "Plan rechazado." : "Plan rejected.");
   }
 

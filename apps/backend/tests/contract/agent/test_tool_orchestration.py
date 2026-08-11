@@ -31,6 +31,7 @@ class RecordingTraceSink:
 def test_cancel_and_resume_emit_content_free_lifecycle_traces() -> None:
     sink = RecordingTraceSink()
     client = TestClient(create_app(news_trace_sink=sink))
+    operation_headers = {"Idempotency-Key": "operation-trace-001"}
     plan = client.post(
         "/v1/agent/plans",
         json={
@@ -38,8 +39,11 @@ def test_cancel_and_resume_emit_content_free_lifecycle_traces() -> None:
             "selected_tool": "private_delete",
             "input": {"resource_id": "resource-trace"},
         },
+        headers=operation_headers,
     ).json()
-    run = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}).json()
+    run = client.post(
+        "/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}, headers=operation_headers
+    ).json()
     run_id = run["run_id"]
 
     assert client.post(f"/v1/agent/runs/{run_id}/cancel").json()["status"] == "cancelled"
@@ -95,6 +99,7 @@ def test_tool_catalog_and_read_only_run_are_explicit() -> None:
 
 def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
     client = TestClient(create_app())
+    operation_headers = {"Idempotency-Key": "operation-delete-001"}
     plan = client.post(
         "/v1/agent/plans",
         json={
@@ -103,11 +108,14 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
             "selected_tool": "private_delete",
             "input": {"resource_id": "resource-1"},
         },
+        headers=operation_headers,
     )
     assert plan.status_code == 200
     body = plan.json()
     approval_id = body["required_approval_ids"][0]
-    pending = client.post("/v1/agent/runs", json={"plan_hash": body["plan_hash"]})
+    pending = client.post(
+        "/v1/agent/runs", json={"plan_hash": body["plan_hash"]}, headers=operation_headers
+    )
     assert pending.status_code == 202
     assert pending.json()["status"] == "awaiting_approval"
     pending_call = client.app.state.agent_run_repository.get_tool_call(
@@ -123,11 +131,13 @@ def test_side_effect_tool_stays_blocked_until_explicit_approval() -> None:
             "decision": "approved",
             "decision_key": body["approval_decision_keys"][approval_id],
         },
+        headers=operation_headers,
     )
     assert decision.status_code == 200
     completed = client.post(
         "/v1/agent/runs",
         json={"plan_hash": body["plan_hash"], "approval_ids": [approval_id]},
+        headers=operation_headers,
     )
     assert completed.status_code == 202
     assert completed.json()["status"] == "completed"
@@ -155,7 +165,10 @@ def test_bearer_session_grants_authenticated_scope_without_authorizing_ownership
     session_token = client.cookies.get("atlas_session")
     assert session_token
     client.cookies.clear()
-    headers = {"Authorization": f"Bearer {session_token}"}
+    headers = {
+        "Authorization": f"Bearer {session_token}",
+        "Idempotency-Key": "operation-bearer-001",
+    }
 
     plan = client.post(
         "/v1/agent/plans",
@@ -165,6 +178,7 @@ def test_bearer_session_grants_authenticated_scope_without_authorizing_ownership
             "input": {"resource_id": "resource-bearer"},
             "actor_id": str(subject_id),
         },
+        headers=headers,
     ).json()
     approval_id = plan["required_approval_ids"][0]
     pending = client.post(
@@ -180,6 +194,7 @@ def test_bearer_session_grants_authenticated_scope_without_authorizing_ownership
             "decision": "approved",
             "decision_key": plan["approval_decision_keys"][approval_id],
         },
+        headers=headers,
     )
     assert decision.status_code == 200
 
@@ -222,9 +237,12 @@ def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:
             "selected_tool": "private_delete",
             "input": {"resource_id": "resource-2"},
         },
+        headers={"Idempotency-Key": "operation-cancel-001"},
     ).json()
     pending = client.post(
-        "/v1/agent/runs", json={"plan_hash": private_plan["plan_hash"]}
+        "/v1/agent/runs",
+        json={"plan_hash": private_plan["plan_hash"]},
+        headers={"Idempotency-Key": "operation-cancel-001"},
     ).json()
     pending_id = pending["run_id"]
     assert client.post(f"/v1/agent/runs/{pending_id}/cancel").json()["status"] == "cancelled"
@@ -235,6 +253,7 @@ def test_run_cancel_and_resume_are_explicit_and_non_replaying() -> None:
 
 def test_explicit_resume_execution_reuses_the_durable_run_boundary() -> None:
     client = TestClient(create_app())
+    operation_headers = {"Idempotency-Key": "operation-resume-001"}
     plan = client.post(
         "/v1/agent/plans",
         json={
@@ -242,9 +261,12 @@ def test_explicit_resume_execution_reuses_the_durable_run_boundary() -> None:
             "selected_tool": "private_delete",
             "input": {"resource_id": "resource-2"},
         },
+        headers=operation_headers,
     ).json()
     approval_id = plan["required_approval_ids"][0]
-    pending = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}).json()
+    pending = client.post(
+        "/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}, headers=operation_headers
+    ).json()
     run_id = pending["run_id"]
     assert client.post(f"/v1/agent/runs/{run_id}/cancel").json()["status"] == "cancelled"
     decision = client.post(
@@ -254,12 +276,14 @@ def test_explicit_resume_execution_reuses_the_durable_run_boundary() -> None:
             "decision": "approved",
             "decision_key": plan["approval_decision_keys"][approval_id],
         },
+        headers=operation_headers,
     )
     assert decision.status_code == 200
 
     resumed = client.post(
         f"/v1/agent/runs/{run_id}/resume",
         params={"execute": "true", "approval_ids": approval_id, "consent": "true"},
+        headers=operation_headers,
     )
     assert resumed.status_code == 200
     assert any(event["event_type"] == "run.resumed" for event in resumed.json()["events"])

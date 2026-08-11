@@ -30,6 +30,7 @@ export type AgentPlanStep = {
 };
 
 export type AgentPlan = {
+  idempotency_key: string;
   run_id: string;
   request: string;
   locale: AgentLocale;

@@ -63,6 +63,11 @@ from atlas.news.ranking import DailyNewsProvider
 from atlas.news.runtime import LiveDailyNewsService
 from atlas.observability.context import RequestContextMiddleware
 from atlas.observability.langsmith import LangSmithTraceSink, TraceSink
+from atlas.persistence.agent_quota import (
+    AgentToolQuotaRepository,
+    InMemoryAgentToolQuotaRepository,
+    PostgresAgentToolQuotaRepository,
+)
 from atlas.persistence.agent_runs import (
     AgentIdempotencyStore,
     AgentRunRepository,
@@ -115,6 +120,7 @@ def create_app(
     agent_run_repository: AgentRunRepository | None = None,
     agent_checkpoint_service: CheckpointRepository | None = None,
     agent_idempotency_store: AgentIdempotencyStore | None = None,
+    agent_quota_repository: AgentToolQuotaRepository | None = None,
 ) -> FastAPI:
     """Build an isolated application whose external dependencies can be replaced in tests."""
 
@@ -189,6 +195,10 @@ def create_app(
     )
     application.state.agent_run_repository = agent_run_repository or InMemoryAgentRunRepository()
     application.state.agent_idempotency = agent_idempotency_store or InMemoryIdempotencyStore()
+    application.state.agent_quota = agent_quota_repository or InMemoryAgentToolQuotaRepository(
+        limit=settings.atlas_agent_side_effect_limit,
+        window=timedelta(hours=settings.atlas_agent_side_effect_window_hours),
+    )
     application.state.agent_approvals = {}
     application.state.agent_trace_sink = news_trace_sink or LangSmithTraceSink.from_settings(
         settings
@@ -320,7 +330,12 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
             agent_plan_provider=planner_provider,
         )
     corpus_service = _verified_corpus_or_demo(settings)
-    agent_run_repository, agent_checkpoint_service, agent_idempotency_store = (
+    (
+        agent_run_repository,
+        agent_checkpoint_service,
+        agent_idempotency_store,
+        agent_quota_repository,
+    ) = (
         _durable_agent_repositories(settings)
     )
     client = (
@@ -361,12 +376,18 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         agent_run_repository=agent_run_repository,
         agent_checkpoint_service=agent_checkpoint_service,
         agent_idempotency_store=agent_idempotency_store,
+        agent_quota_repository=agent_quota_repository,
     )
 
 
 def _durable_agent_repositories(
     settings: Settings,
-) -> tuple[AgentRunRepository, CheckpointRepository, AgentIdempotencyStore]:
+) -> tuple[
+    AgentRunRepository,
+    CheckpointRepository,
+    AgentIdempotencyStore,
+    AgentToolQuotaRepository,
+]:
     """Use managed PostgreSQL for non-development runtimes."""
 
     dsn = settings.database_url.get_secret_value().replace(
@@ -377,6 +398,11 @@ def _durable_agent_repositories(
         PostgresAgentRunRepository(connection),
         PostgresCheckpointRepository(connection),
         PostgresIdempotencyStore(connection),
+        PostgresAgentToolQuotaRepository(
+            connection,
+            limit=settings.atlas_agent_side_effect_limit,
+            window=timedelta(hours=settings.atlas_agent_side_effect_window_hours),
+        ),
     )
 
 

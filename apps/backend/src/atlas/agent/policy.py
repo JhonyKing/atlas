@@ -80,24 +80,21 @@ def issue_approval(
     ttl_seconds: int = 600,
     now: datetime | None = None,
     decision: Decision = "rejected",
+    idempotency_key: str | None = None,
 ) -> Approval:
     current = now or datetime.now(UTC)
     digest = arguments_hash(arguments)
     expires = min(plan.expires_at, current + timedelta(seconds=ttl_seconds))
-    decision_key = hashlib.sha256(
-        json.dumps(
-            {
-                "run_id": str(plan.run_id),
-                "call_id": call_id,
-                "actor_id": actor_id,
-                "tool_id": tool_id,
-                "tool_version": tool_version,
-                "arguments_hash": digest,
-                "target": target_resource or target_from_arguments(arguments),
-            },
-            sort_keys=True,
-        ).encode()
-    ).hexdigest()
+    decision_key = _approval_decision_key(
+        run_id=plan.run_id,
+        call_id=call_id,
+        actor_id=actor_id,
+        tool_id=tool_id,
+        tool_version=tool_version,
+        arguments_hash_value=digest,
+        target_resource=target_resource or target_from_arguments(arguments),
+        idempotency_key=idempotency_key,
+    )
     return Approval(
         approval_id=uuid4(),
         run_id=plan.run_id,
@@ -122,6 +119,7 @@ def assert_approval_matches(
     tool_version: str,
     arguments: dict[str, object],
     now: datetime | None = None,
+    idempotency_key: str | None = None,
 ) -> None:
     current = now or datetime.now(UTC)
     if approval.decision != "approved":
@@ -139,3 +137,47 @@ def assert_approval_matches(
         raise PolicyError("approval arguments mismatch")
     if approval.target_resource != target_from_arguments(arguments):
         raise PolicyError("approval target mismatch")
+    if idempotency_key is not None:
+        assert_approval_idempotency_key(approval, idempotency_key)
+
+
+def assert_approval_idempotency_key(approval: Approval, idempotency_key: str) -> None:
+    """Require the same operation key that was bound when the approval was issued."""
+
+    expected = _approval_decision_key(
+        run_id=approval.run_id,
+        call_id=approval.call_id,
+        actor_id=approval.actor_id,
+        tool_id=approval.tool_id,
+        tool_version=approval.tool_version,
+        arguments_hash_value=approval.arguments_hash,
+        target_resource=approval.target_resource,
+        idempotency_key=idempotency_key,
+    )
+    if approval.decision_key != expected:
+        raise PolicyError("approval idempotency key mismatch")
+
+
+def _approval_decision_key(
+    *,
+    run_id: UUID,
+    call_id: str,
+    actor_id: str,
+    tool_id: str,
+    tool_version: str,
+    arguments_hash_value: str,
+    target_resource: str,
+    idempotency_key: str | None,
+) -> str:
+    payload = {
+        "run_id": str(run_id),
+        "call_id": call_id,
+        "actor_id": actor_id,
+        "tool_id": tool_id,
+        "tool_version": tool_version,
+        "arguments_hash": arguments_hash_value,
+        "target": target_resource,
+    }
+    if idempotency_key is not None:
+        payload["idempotency_key"] = idempotency_key
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()

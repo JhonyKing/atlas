@@ -55,6 +55,7 @@ class SideEffectToolAdapters:
         approval: Approval | None = None,
         consent: bool | None = None,
         scopes: set[str] | None = None,
+        idempotency_key: str | None = None,
     ) -> dict[str, object]:
         definition = self._catalog.get(tool_id)
         if definition is None or not requires_explicit_approval(tool_id):
@@ -76,6 +77,7 @@ class SideEffectToolAdapters:
                 tool_id=tool_id,
                 tool_version=definition.version,
                 arguments=dict(arguments),
+                idempotency_key=idempotency_key,
             )
         except PolicyError:
             return _rejected("approval_mismatch")

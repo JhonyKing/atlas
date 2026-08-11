@@ -21,16 +21,15 @@ const copy = {
 
 export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale }) {
   const labels = copy[locale];
-  const [message, setMessage] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<"accepted" | "rejected" | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   async function upload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     setSelectedFileName(file.name);
     setBusy(true);
-    setError(null);
+    setOutcome(null);
     try {
       const bytes = await file.arrayBuffer();
       const contentBase64 = btoa(String.fromCharCode(...new Uint8Array(bytes)));
@@ -41,14 +40,12 @@ export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale
         body: JSON.stringify({ filename: file.name, declared_content_type: file.type, content_base64: contentBase64 }),
       });
       if (!response.ok) {
-        setMessage(null);
-        setError(labels.rejected);
+        setOutcome("rejected");
         return;
       }
-      setMessage(labels.accepted);
+      setOutcome("accepted");
     } catch {
-      setMessage(null);
-      setError(labels.rejected);
+      setOutcome("rejected");
     } finally {
       setBusy(false);
     }
@@ -65,8 +62,12 @@ export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale
         <span id="private-upload-helper" className="atlas-helper-text">{locale === "es-MX" ? "Los archivos se validan y permanecen asociados a tu cuenta." : "Files are validated and remain associated with your account."}</span>
         <input className="atlas-file-input-hidden" type="file" accept=".pdf,.docx,.txt,.md" disabled={busy} onChange={upload} />
       </label>
-      {error ? <p className="account-error" role="alert">{error}</p> : null}
-      <p className="account-status" aria-live="polite">{message ?? labels.select}</p>
+      {outcome === "rejected" ? (
+        <p className="account-error" role="alert">{labels.rejected}</p>
+      ) : null}
+      <p className="account-status" aria-live="polite">
+        {outcome === "accepted" ? labels.accepted : labels.select}
+      </p>
     </section>
   );
 }

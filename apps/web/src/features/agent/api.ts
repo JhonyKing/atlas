@@ -24,22 +24,25 @@ export async function createAgentPlan(
   selectedTool: string | null,
   input: Record<string, unknown>,
 ): Promise<AgentPlan> {
+  const operationKey = idempotencyKey("operation");
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/agent/plans`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey("plan"),
+      "Idempotency-Key": operationKey,
     },
     body: JSON.stringify({ request, locale, selected_tool: selectedTool, input }),
   });
   if (!response.ok) throw new Error((await response.text()) || "Agent plan unavailable");
-  return (await response.json()) as AgentPlan;
+  const plan = (await response.json()) as Omit<AgentPlan, "idempotency_key">;
+  return { ...plan, idempotency_key: operationKey };
 }
 
 export async function approveAgentTool(
   approvalId: string,
   decisionKey: string,
+  operationKey: string,
   actorId = "anonymous",
 ): Promise<void> {
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/agent/approvals/${approvalId}/decision`, {
@@ -47,7 +50,7 @@ export async function approveAgentTool(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey("approval"),
+      "Idempotency-Key": operationKey,
     },
     body: JSON.stringify({ actor_id: actorId, decision: "approved", decision_key: decisionKey }),
   });
@@ -57,6 +60,7 @@ export async function approveAgentTool(
 export async function rejectAgentTool(
   approvalId: string,
   decisionKey: string,
+  operationKey: string,
   actorId = "anonymous",
 ): Promise<void> {
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/agent/approvals/${approvalId}/decision`, {
@@ -64,7 +68,7 @@ export async function rejectAgentTool(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey("approval-reject"),
+      "Idempotency-Key": operationKey,
     },
     body: JSON.stringify({ actor_id: actorId, decision: "rejected", decision_key: decisionKey }),
   });
@@ -73,6 +77,7 @@ export async function rejectAgentTool(
 
 export async function startAgentRun(
   planHash: string,
+  operationKey: string,
   actorId = "anonymous",
   approvalIds: string[] = [],
 ): Promise<{ run_id: string; status: string; events: AgentRunEvent[] }> {
@@ -81,9 +86,14 @@ export async function startAgentRun(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey("run"),
+      "Idempotency-Key": operationKey,
     },
-    body: JSON.stringify({ plan_hash: planHash, actor_id: actorId, approval_ids: approvalIds }),
+    body: JSON.stringify({
+      plan_hash: planHash,
+      actor_id: actorId,
+      approval_ids: approvalIds,
+      consent: approvalIds.length > 0,
+    }),
   });
   if (!response.ok) throw new Error((await response.text()) || "Agent run unavailable");
   return (await response.json()) as { run_id: string; status: string; events: AgentRunEvent[] };
