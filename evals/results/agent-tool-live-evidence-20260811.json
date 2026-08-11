@@ -1,0 +1,219 @@
+{
+  "artifact_type": "atlas.agent_live_trace_evidence",
+  "generated_at": "2026-08-11T01:36:30.695439+00:00",
+  "trace_backend": "LangSmith-compatible sink",
+  "content_policy": "opaque IDs and bounded metrics only; no private content",
+  "cases": [
+    {
+      "case_id": "successful",
+      "http_status": 202,
+      "run_id": "c1bfc48f-5ddd-4c87-b923-c20ffecc9de5",
+      "outcome": "completed",
+      "latency_ms": 2836.068,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "eb22574d-e833-4e37-8341-ba9428c051b4",
+          "operation": "agent.run",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "c1bfc48f-5ddd-4c87-b923-c20ffecc9de5",
+            "plan_hash": "9fc679328bbc2ac67d4ac3a8b477ae4efcc499d7658c723c58ee3cce379abc8c",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": "measured_on_completion",
+            "approval_required": false
+          }
+        },
+        {
+          "trace_id": "eb22574d-e833-4e37-8341-ba9428c051b4",
+          "operation": "end",
+          "active": true,
+          "status": "completed",
+          "latency_ms": 2695.735000015702
+        }
+      ]
+    },
+    {
+      "case_id": "abstained",
+      "http_status": 202,
+      "run_id": "c67e7274-4b50-4920-b264-9b777b27185d",
+      "outcome": "abstained",
+      "latency_ms": 219.371,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "6b108f08-5ff5-46e5-8ac4-62bc5ad7bf4d",
+          "operation": "agent.run",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "c67e7274-4b50-4920-b264-9b777b27185d",
+            "plan_hash": "768e9ff7db04b9013bb309a201c7a676dfb1631d1bfdf299e6f5666eb0a07342",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": "measured_on_completion",
+            "approval_required": false
+          }
+        },
+        {
+          "trace_id": "6b108f08-5ff5-46e5-8ac4-62bc5ad7bf4d",
+          "operation": "end",
+          "active": true,
+          "status": "completed",
+          "latency_ms": 97.3719000176061
+        }
+      ]
+    },
+    {
+      "case_id": "rejected",
+      "http_status": 403,
+      "run_id": null,
+      "outcome": "rejected",
+      "latency_ms": 213.809,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "f544cb42-1b7e-4d6c-b4aa-00d3c90b7cbb",
+          "operation": "agent.run",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "55b9267c-aa2e-443e-98c1-68acbad8332c",
+            "plan_hash": "5c4e14aafb87a4e981254ccaba4adf979797f9652ee2d4937b441c77fdf45adc",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": "measured_on_completion",
+            "approval_required": true
+          }
+        },
+        {
+          "trace_id": "f544cb42-1b7e-4d6c-b4aa-00d3c90b7cbb",
+          "operation": "end",
+          "active": true,
+          "status": "rejected",
+          "latency_ms": 96.94729998591356
+        }
+      ]
+    },
+    {
+      "case_id": "failed",
+      "http_status": 202,
+      "run_id": "330b7c4f-803c-4ba7-b664-73be2ede18f5",
+      "outcome": "failed",
+      "latency_ms": 238.106,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "dae1edc9-a547-447e-96a4-8764d0960189",
+          "operation": "agent.run",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "330b7c4f-803c-4ba7-b664-73be2ede18f5",
+            "plan_hash": "be63c4d55ee0f8a151cba83d5c7f90a5c714d91e8069bb7c5cb1e41a7ddf1b7a",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": "measured_on_completion",
+            "approval_required": false
+          }
+        },
+        {
+          "trace_id": "dae1edc9-a547-447e-96a4-8764d0960189",
+          "operation": "end",
+          "active": true,
+          "status": "completed",
+          "latency_ms": 105.00890002003871
+        }
+      ]
+    },
+    {
+      "case_id": "cancelled",
+      "http_status": 200,
+      "run_id": "1b0723c3-bec8-469b-b9c2-5cb076af55f7",
+      "outcome": "cancelled",
+      "latency_ms": 239.859,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "4f923e77-be2e-481a-8056-fd93db466980",
+          "operation": "agent.run.cancel",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "1b0723c3-bec8-469b-b9c2-5cb076af55f7",
+            "plan_hash": "933a243f99f19b6e4d8838b5dd8da9a7730317274961537852e7551bcc3a7943",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": 0.077,
+            "approval_required": true
+          }
+        },
+        {
+          "trace_id": "4f923e77-be2e-481a-8056-fd93db466980",
+          "operation": "end",
+          "active": true,
+          "status": "cancelled",
+          "latency_ms": 0.077,
+          "tokens": "not_reported",
+          "cost_usd": "not_reported",
+          "outcome": "cancelled"
+        }
+      ]
+    },
+    {
+      "case_id": "resumed",
+      "http_status": 200,
+      "run_id": "1b0723c3-bec8-469b-b9c2-5cb076af55f7",
+      "outcome": "resumed",
+      "latency_ms": 231.793,
+      "trace_count": 1,
+      "traces": [
+        {
+          "trace_id": "5e6e1361-14c9-4e69-828f-c8ff920d6ec6",
+          "operation": "agent.run.resume",
+          "active": true,
+          "status": "started",
+          "fields": {
+            "run_id": "1b0723c3-bec8-469b-b9c2-5cb076af55f7",
+            "plan_hash": "933a243f99f19b6e4d8838b5dd8da9a7730317274961537852e7551bcc3a7943",
+            "model": "gpt-5.6-luna",
+            "locale": "en-US",
+            "corpus": "configured",
+            "tokens": "not_reported",
+            "cost_usd": "not_reported",
+            "latency_ms": 0.074,
+            "approval_required": true
+          }
+        },
+        {
+          "trace_id": "5e6e1361-14c9-4e69-828f-c8ff920d6ec6",
+          "operation": "end",
+          "active": true,
+          "status": "resumed",
+          "latency_ms": 0.074,
+          "tokens": "not_reported",
+          "cost_usd": "not_reported",
+          "outcome": "resumed"
+        }
+      ]
+    }
+  ],
+  "status": "passed"
+}

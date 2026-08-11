@@ -7,6 +7,50 @@ from fastapi.testclient import TestClient
 from atlas.api.main import create_app
 from atlas.news.feeds import parse_feed
 from atlas.news.ranking import InMemoryDailyNewsService
+from atlas.observability.langsmith import TraceHandle
+
+
+class RecordingTraceSink:
+    def __init__(self) -> None:
+        self.started: list[tuple[str, dict[str, object]]] = []
+        self.finished: list[tuple[str, str, dict[str, object]]] = []
+
+    def start(self, name: str, **kwargs: object) -> TraceHandle:
+        self.started.append((name, dict(kwargs)))
+        run_id = kwargs["run_id"]
+        assert isinstance(run_id, UUID)
+        return TraceHandle(run_id=run_id, active=True)
+
+    def end(self, handle: TraceHandle, *, status: str, fields: object = None) -> None:
+        safe_fields = fields if isinstance(fields, dict) else {}
+        self.finished.append((str(handle.run_id), status, safe_fields))
+
+
+def test_cancel_and_resume_emit_content_free_lifecycle_traces() -> None:
+    sink = RecordingTraceSink()
+    client = TestClient(create_app(news_trace_sink=sink))
+    plan = client.post(
+        "/v1/agent/plans",
+        json={
+            "request": "Delete my private resource",
+            "selected_tool": "private_delete",
+            "input": {"resource_id": "resource-trace"},
+        },
+    ).json()
+    run = client.post("/v1/agent/runs", json={"plan_hash": plan["plan_hash"]}).json()
+    run_id = run["run_id"]
+
+    assert client.post(f"/v1/agent/runs/{run_id}/cancel").json()["status"] == "cancelled"
+    assert client.post(f"/v1/agent/runs/{run_id}/resume").json()["status"] == "accepted"
+
+    lifecycle = [name for name, _ in sink.started if name.startswith("agent.run.")]
+    assert lifecycle == ["agent.run.cancel", "agent.run.resume"]
+    assert [status for _, status, _ in sink.finished[-2:]] == ["cancelled", "resumed"]
+    for _, _, fields in sink.finished[-2:]:
+        assert isinstance(fields["run_id"], str)
+        assert isinstance(fields["latency_ms"], float)
+        assert fields["tokens"] == "not_reported"
+        assert fields["cost_usd"] == "not_reported"
 
 
 def test_tool_catalog_and_read_only_run_are_explicit() -> None:

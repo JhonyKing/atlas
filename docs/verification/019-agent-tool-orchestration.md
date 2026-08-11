@@ -1,6 +1,6 @@
 # Feature 019 verification
 
-Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
+Executed on 2026-08-11 from branch `codex/019-agent-tool-orchestration`.
 
 ## Local evidence
 
@@ -50,7 +50,27 @@ Executed on 2026-08-10 from branch `codex/019-agent-tool-orchestration`.
   **21 files**, and all **5** dataset cases.
 - `scripts/verify-agent-tools.ps1`: **passed**, 5 deterministic evaluation cases.
 - Frontend TypeScript and lint on modified agent files: **passed**.
-- Playwright `tests/e2e/agent-workspace.spec.ts`: **1 passed**.
+- Historical Playwright baseline `tests/e2e/agent-workspace.spec.ts`: **1 passed**; the current
+  rerun is recorded below and is not claimed because the local harness did not hydrate the catalog.
+
+### Live trace evidence (2026-08-11)
+
+The opt-in exporter `scripts/export-agent-live-evidence.py` ran six local API journeys through
+the configured LangSmith-compatible sink: successful, abstained, rejected, failed, cancelled,
+and resumed. The artifact is
+`evals/results/agent-tool-live-evidence-20260811.json` and contains six opaque trace/run IDs,
+HTTP status, measured wall-clock latency, lifecycle outcome, trace count, and safe trace fields
+(plan hash, model, locale/corpus labels, approval flag, and provider token/cost values when
+reported). It contains no question text, tool arguments, excerpts, private resource identifiers,
+or model inputs/outputs. All six cases produced at least one trace (`status: passed`).
+
+The lifecycle contract test `test_cancel_and_resume_emit_content_free_lifecycle_traces` also
+asserts numeric latency and explicit `cancelled`/`resumed` terminal trace statuses. The separate
+opt-in LangSmith connectivity smoke passed (**1 passed**).
+
+The full browser suite is not claimed by this evidence: the targeted agent-workspace journey
+currently waits on a catalog response in the local test harness, and the hosted deployment
+journeys remain skipped without `ATLAS_DEPLOYMENT_API_ORIGIN`.
 
 ## Supabase evidence
 
@@ -80,8 +100,8 @@ Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json
 
 ## Remaining honest gaps
 
-Cross-process idempotency/replay claims, complete read-only evidence envelopes, durable owner
-scoping integration evidence, live provider traces, latency/cost measurements, and production
-deployment evidence remain open under Feature 018/019 tasks. Agent-tool RLS for the seven durable
-tables is verified; the separate project-wide 41-table RLS backlog remains open. Feature 019
-remains open until its other mandatory tasks and convergence evidence are complete.
+Cross-process idempotency/replay claims, complete read-only evidence envelopes, full quota/scope
+policy enforcement, and production deployment evidence remain open under Feature 018/019 tasks.
+Agent-tool RLS for the seven durable tables is verified; the separate project-wide 41-table RLS
+backlog remains open. Feature 019 remains open until its other mandatory tasks and convergence
+evidence are complete.

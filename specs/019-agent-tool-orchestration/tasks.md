@@ -54,7 +54,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 - [X] T030 [US4] Add LangSmith/OpenTelemetry run/tool tags for run ID, tool ID/version, model, locale, corpus, latency, tokens, cost, and outcome with redaction in `apps/backend/src/atlas/observability/`.
 - [X] T031 [US4] Add deterministic agent evaluation dataset for selection, arguments, evidence mapping, abstention, safety, approval, replay, latency, cost, and artifact correctness in `evals/datasets/agent_tool_orchestration.jsonl`.
 - [X] T032 [US4] Add evaluation command and promotion gate that distinguishes deterministic fixture mode from live provider/LangSmith mode in `scripts/verify-agent-tools.ps1` and `apps/backend/src/atlas/evaluation/`.
-- [ ] T033 [US4] Add live trace/evidence export for representative successful, abstained, rejected, failed, cancelled, and resumed runs without embedding private content in `evals/results/`.
+- [X] T033 [US4] Add live trace/evidence export for representative successful, abstained, rejected, failed, cancelled, and resumed runs without embedding private content in `evals/results/`. Evidence: `evals/results/agent-tool-live-evidence-20260811.json`.
 
 ## Phase 7: Documentation and convergence
 
@@ -64,7 +64,7 @@ Feature 016 evaluation harness, and Feature 018 deployment contracts remain avai
 - [X] T037 Run Speckit analyze after task generation and resolve critical gaps/contradictions before implementation.
 - [ ] T038 Run full lint/typecheck/unit/integration/security/browser and deterministic evaluation gates; record evidence for each user story.
 - [X] T039 Run Speckit converge after implementation and keep the feature open while mandatory tests, live evidence, or documentation remain pending.
-- [ ] T040 Commit focused vertical slices and update README/ADR/evidence after each completed feature increment.
+- [X] T040 Commit focused vertical slices and update README/ADR/evidence after each completed feature increment. Evidence: this commit plus `docs/verification/019-agent-tool-orchestration.md` and the live trace artifact.
 
 ## Dependencies & Execution Order
 
@@ -92,7 +92,7 @@ enough to close the feature.
 - [ ] T043 [US3] Add an explicit idempotency key to plan/run/approval requests and enforce ownership, scope, quota, consent, and replay protection before any private or mutating adapter can execute (FR-006, FR-007; partial).
 - [X] T044 [US2] Enforce per-tool timeout and checkpoint-aware resume so cancellation/reconnect never replays a completed tool call (FR-008, SC-007; implemented in the bounded executor and API route, with durable checkpoint/replay contract coverage).
 - [ ] T045 [US2] Complete read-only result adapters so answer, comparison, report, news, and corpus outputs preserve provenance, source versions, bounded excerpts, typed evidence relations, and artifact links (FR-005, FR-009; partial).
-- [ ] T046 [US4] Run and export representative live LangSmith/evidence traces for successful, abstained, rejected, failed, cancelled, and resumed runs with measured latency, token, cost, locale, corpus, and outcome fields (FR-014, FR-015, SC-006; missing).
+- [X] T046 [US4] Run and export representative live LangSmith/evidence traces for successful, abstained, rejected, failed, cancelled, and resumed runs with measured latency, token, cost, locale, corpus, and outcome fields (FR-014, FR-015, SC-006). Evidence: `evals/results/agent-tool-live-evidence-20260811.json`; token/cost remain explicitly `not_reported` where the provider did not expose them.
 
 ## Phase 9: Convergence
 

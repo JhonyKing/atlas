@@ -28,8 +28,8 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 
 | 017 | CI/CD hardening | Slice implementado | 0 | `specs/017-cicd-hardening/tasks.md` |
 | 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; entorno real aún pendiente | T030-T036 operator-owned | `specs/018-production-deployment/tasks.md` |
-| 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development e idempotencia durable aplicada bajo `agent_idempotency` | 8 tareas SpecKit pendientes: persistencia completa, políticas, RLS y evidencia live | `specs/019-agent-tool-orchestration/tasks.md` |
-| 021 | Migración de base de datos a Supabase | Repositorio preparado con 31 migraciones y contrato RLS de agentes; Supabase remoto sigue en 30 hasta aprobar el diseño de policies | 1 gate remoto de seguridad | `specs/021-supabase-database-migration/tasks.md` |
+| 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development, idempotencia durable, trazas de ciclo de vida y evidencia live sin contenido privado | 4 tareas SpecKit pendientes: persistencia completa, políticas, envelopes de evidencia y gates de despliegue | `specs/019-agent-tool-orchestration/tasks.md` |
+| 021 | Migración de base de datos a Supabase | Repositorio preparado con 31 migraciones y contrato RLS de agentes; el remoto tiene `agent_tool_rls` como head | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 
@@ -62,7 +62,8 @@ El backlog completo mantiene la trazabilidad PRD → feature → tarea:
 La autorización explícita del propietario permitió aplicar `agent_tool_rls` en el proyecto
 Supabase de producción. El remoto está en 31 migraciones con `agent_tool_rls` como head; las siete
 tablas durables del agente tienen FORCE RLS, 14 policies worker/read-only y cero grants para
-`anon`/`authenticated`. T049 queda cerrada y Feature 019 pasa de 8 a 7 tareas abiertas. Supabase
+`anon`/`authenticated`. T049 queda cerrada y Feature 019 pasa de 7 a 4 tareas abiertas tras el
+slice de trazas live. Supabase
 todavía reporta 41 tablas `atlas` restantes sin RLS; ese backlog requiere políticas separadas y no
 se considera resuelto por esta migración. Evidencia:
 `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`.

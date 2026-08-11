@@ -29,7 +29,7 @@ bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase development project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
-current remote head is `0028_agent_tool_orchestration`.
+current remote head is `agent_tool_rls` (31 hosted revisions).
 
 The repeatable verification workflow lives in `scripts/supabase/` and is enforced by
 `.github/workflows/supabase-migration.yml`. Pull requests run manifest, evidence-contract, and
@@ -73,6 +73,12 @@ Run the deterministic verification from the repository root:
 The source of truth and evidence are `specs/019-agent-tool-orchestration/`,
 `docs/architecture/019-agent-tool-orchestration.md`, `docs/adr/0014-agent-tool-orchestration.md`,
 and `docs/verification/019-agent-tool-orchestration.md`.
+
+The latest content-free live trace evidence is
+[`evals/results/agent-tool-live-evidence-20260811.json`](evals/results/agent-tool-live-evidence-20260811.json).
+It covers successful, abstained, rejected, failed, cancelled, and resumed journeys with opaque
+IDs and bounded latency/outcome metadata. Provider token and cost fields remain
+`not_reported` when the configured provider does not expose them.
 
 ## Feature 003: reports
 

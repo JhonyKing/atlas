@@ -28,6 +28,7 @@ def agent_trace_fields(plan: AgentPlan) -> dict[str, object]:
         "plan_hash": plan.plan_hash,
         "run_id": str(plan.run_id),
         "model": plan.model_label,
+        "locale": plan.locale,
         "corpus": "configured",
         "tokens": "not_reported",
         "cost_usd": "not_reported",

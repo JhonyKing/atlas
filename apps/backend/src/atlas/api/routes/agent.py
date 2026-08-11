@@ -145,6 +145,43 @@ def _assert_run_actor(request: Request, record: object, actor_id: str | None) ->
         raise HTTPException(status_code=404, detail="run not found")
 
 
+def _trace_lifecycle(
+    request: Request,
+    *,
+    plan: AgentPlan | None,
+    run_id: UUID,
+    operation: str,
+    status: str,
+    elapsed_ms: float,
+) -> None:
+    """Emit a content-free trace for lifecycle actions outside tool execution."""
+
+    trace_sink = cast(TraceSink | None, getattr(request.app.state, "agent_trace_sink", None))
+    if trace_sink is None:
+        return
+    fields: dict[str, object] = {"run_id": str(run_id)}
+    tags: tuple[str, ...] = ("atlas.agent", f"lifecycle:{status}")
+    if plan is not None:
+        fields.update(agent_trace_fields(plan))
+        tags = agent_trace_tags(plan) + tags[1:]
+    fields.update(
+        {
+            "latency_ms": round(elapsed_ms, 3),
+            "outcome": status,
+            "tokens": fields.get("tokens", "not_reported"),
+            "cost_usd": fields.get("cost_usd", "not_reported"),
+        }
+    )
+    handle = trace_sink.start(
+        operation,
+        request_id=current_request_id() or run_id,
+        run_id=run_id,
+        fields=fields,
+        tags=tags,
+    )
+    trace_sink.end(handle, status=status, fields=fields)
+
+
 def _result_ids(value: object) -> tuple[str, ...]:
     if isinstance(value, (list, tuple, set)):
         return tuple(str(item) for item in value)
@@ -672,8 +709,17 @@ def cancel_agent_run(
     _assert_run_actor(request, record, actor_id)
     if record.status in {"completed", "failed", "rejected", "cancelled"}:
         raise HTTPException(status_code=409, detail="run is no longer cancellable")
+    started = perf_counter()
     repository.events.emit(run_id, "run.cancelled", status="cancelled")
     repository.update(run_id, status="cancelled")
+    _trace_lifecycle(
+        request,
+        plan=repository.get_plan(record.plan_hash),
+        run_id=run_id,
+        operation="agent.run.cancel",
+        status="cancelled",
+        elapsed_ms=(perf_counter() - started) * 1000,
+    )
     return {"run_id": str(run_id), "status": "cancelled"}
 
 
@@ -700,12 +746,21 @@ async def resume_agent_run(
     _assert_run_actor(request, record, actor_id)
     if record.status not in {"cancelled", "awaiting_approval"}:
         raise HTTPException(status_code=409, detail="run is not resumable")
+    started = perf_counter()
+    plan = repository.get_plan(record.plan_hash)
     repository.events.emit(run_id, "run.resumed", status="resumed")
     repository.update(run_id, status="accepted")
     if execute:
-        plan = repository.get_plan(record.plan_hash)
         if plan is None:
             raise HTTPException(status_code=404, detail="plan not found")
+        _trace_lifecycle(
+            request,
+            plan=plan,
+            run_id=run_id,
+            operation="agent.run.resume",
+            status="resumed",
+            elapsed_ms=(perf_counter() - started) * 1000,
+        )
         return await create_agent_run(
             RunCreateRequest(
                 plan_hash=record.plan_hash,
@@ -715,6 +770,14 @@ async def resume_agent_run(
             ),
             request,
         )
+    _trace_lifecycle(
+        request,
+        plan=plan,
+        run_id=run_id,
+        operation="agent.run.resume",
+        status="resumed",
+        elapsed_ms=(perf_counter() - started) * 1000,
+    )
     return {"run_id": str(run_id), "status": "accepted"}
 
 
