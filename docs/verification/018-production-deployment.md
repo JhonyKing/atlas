@@ -36,3 +36,21 @@ The build passed TypeScript and generated 12 static pages. This is a frontend-on
 it does not claim a managed API origin, hosted migrations, production Supabase, or a Git-connected
 deployment. The UTF-8-preserving evidence is in
 [`evals/results/vercel-preview-20260810-fixed-utf8.json`](../../evals/results/vercel-preview-20260810-fixed-utf8.json).
+
+## Full local verification follow-up (2026-08-11)
+
+- Frontend gates with Node 24: `pnpm lint` passed, `pnpm typecheck` passed, and Vitest passed
+  **35/35 tests in 10 files**.
+- Backend repository pytest: **423 passed, 4 skipped**; full Ruff passed; security regression
+  **14/14**, deterministic evals **20/20**, portfolio checks **2/2**, and deployment secret scan
+  passed.
+- Deployment contract/readiness/release-evidence/secret-boundary tests: **7 passed**.
+- Full backend mypy remains **not clean** with 33 pre-existing errors in eight non-agent modules
+  (`comparison_cli`, news/ingestion typing, comparison/answer services, and missing YAML stubs).
+- The deployment Playwright file could not start its configured Next web server within 60 seconds
+  in this local harness, both in dev and production-server modes. No hosted smoke result is claimed;
+  the existing local browser evidence remains valid where its manual Node 24 server was used.
+
+Therefore T042 remains open: the application/backend test gates are recorded, but the full mypy
+gate and the complete Playwright deployment journey still require remediation or an operator-hosted
+environment.
