@@ -49,3 +49,5 @@ evals/results/local/
 
 # Source PRD is retained outside version control
 /Proyecto_ATLAS_AI_PRD_Arquitectura_v1.1.pdf
+
+.vercel

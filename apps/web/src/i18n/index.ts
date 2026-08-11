@@ -341,9 +341,13 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 function getInitialLocale(): Locale {
   if (typeof window === "undefined") return "en-US";
   const pathLocale = window.location.pathname.split("/")[1];
+  // An explicit localized URL is authoritative. Persisted preferences and the
+  // browser language are only fallbacks for unprefixed routes.
+  if (pathLocale === "es") return "es-MX";
+  if (pathLocale === "en") return "en-US";
   const stored = window.localStorage.getItem("atlas-locale");
   const browserLocale = window.navigator.language.toLowerCase().startsWith("es") ? "es-MX" : "en-US";
-  return pathLocale === "es" || stored === "es-MX" || (!stored && browserLocale === "es-MX") ? "es-MX" : "en-US";
+  return stored === "es-MX" || (!stored && browserLocale === "es-MX") ? "es-MX" : "en-US";
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {

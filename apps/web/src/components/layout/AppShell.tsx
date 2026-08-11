@@ -22,8 +22,8 @@ const shellCopy = {
 } as const;
 
 const localeTargetCopy = {
-  "en-US": { flagEmoji: "🇲🇽", label: "Español", ariaLabel: "Switch to Spanish" },
-  "es-MX": { flagEmoji: "🇺🇸", label: "English", ariaLabel: "Cambiar a inglés" },
+  "en-US": { flagSrc: "/brand/flag-mx.svg", label: "Español", ariaLabel: "Switch to Spanish" },
+  "es-MX": { flagSrc: "/brand/flag-us.svg", label: "English", ariaLabel: "Cambiar a inglés" },
 } as const;
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -71,7 +71,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
           ))}
         </nav>
         <button className="atlas-locale-switch" type="button" onClick={switchLocale} aria-label={targetCopy.ariaLabel}>
-          <span className="atlas-locale-emoji" aria-hidden="true">{targetCopy.flagEmoji}</span>
+          <Image className="atlas-locale-flag" src={targetCopy.flagSrc} alt="" width={22} height={15} aria-hidden="true" />
           <span>{targetCopy.label}</span>
         </button>
         <button className="atlas-mobile-menu" type="button" aria-expanded={menuOpen} aria-controls="atlas-navigation" onClick={() => setMenuOpen((open) => !open)}>

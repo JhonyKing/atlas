@@ -1,12 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" role="img" aria-label="United States flag">
-  <rect width="36" height="24" fill="#fff"/>
-  <path d="M0 0h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0zm0 4h36v2H0z" fill="#b22234"/>
-  <rect width="16" height="13" fill="#3c3b6e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 20" role="img" aria-label="United States">
+  <path fill="#fff" d="M0 0h38v20H0z"/>
+  <path stroke="#b22234" stroke-width="1.54" d="M0 .77h38M0 3.85h38M0 6.92h38M0 10h38M0 13.08h38M0 16.15h38M0 19.23h38"/>
+  <path fill="#3c3b6e" d="M0 0h15.2v10.77H0z"/>
   <g fill="#fff">
-    <circle cx="2.2" cy="2.1" r=".65"/><circle cx="5" cy="2.1" r=".65"/><circle cx="7.8" cy="2.1" r=".65"/><circle cx="10.6" cy="2.1" r=".65"/><circle cx="13.4" cy="2.1" r=".65"/>
-    <circle cx="3.6" cy="4.2" r=".65"/><circle cx="6.4" cy="4.2" r=".65"/><circle cx="9.2" cy="4.2" r=".65"/><circle cx="12" cy="4.2" r=".65"/>
-    <circle cx="2.2" cy="6.3" r=".65"/><circle cx="5" cy="6.3" r=".65"/><circle cx="7.8" cy="6.3" r=".65"/><circle cx="10.6" cy="6.3" r=".65"/><circle cx="13.4" cy="6.3" r=".65"/>
-    <circle cx="3.6" cy="8.4" r=".65"/><circle cx="6.4" cy="8.4" r=".65"/><circle cx="9.2" cy="8.4" r=".65"/><circle cx="12" cy="8.4" r=".65"/>
-    <circle cx="2.2" cy="10.5" r=".65"/><circle cx="5" cy="10.5" r=".65"/><circle cx="7.8" cy="10.5" r=".65"/><circle cx="10.6" cy="10.5" r=".65"/><circle cx="13.4" cy="10.5" r=".65"/>
+    <circle cx="2" cy="2" r=".45"/><circle cx="5" cy="2" r=".45"/><circle cx="8" cy="2" r=".45"/><circle cx="11" cy="2" r=".45"/><circle cx="14" cy="2" r=".45"/>
+    <circle cx="3.5" cy="4.15" r=".45"/><circle cx="6.5" cy="4.15" r=".45"/><circle cx="9.5" cy="4.15" r=".45"/><circle cx="12.5" cy="4.15" r=".45"/>
+    <circle cx="2" cy="6.3" r=".45"/><circle cx="5" cy="6.3" r=".45"/><circle cx="8" cy="6.3" r=".45"/><circle cx="11" cy="6.3" r=".45"/><circle cx="14" cy="6.3" r=".45"/>
+    <circle cx="3.5" cy="8.45" r=".45"/><circle cx="6.5" cy="8.45" r=".45"/><circle cx="9.5" cy="8.45" r=".45"/><circle cx="12.5" cy="8.45" r=".45"/>
   </g>
 </svg>

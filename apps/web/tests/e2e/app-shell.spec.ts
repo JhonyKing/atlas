@@ -10,12 +10,27 @@ test("AppShell exposes the public research map and active Ask state", async ({ p
   await expect(page.getByRole("link", { name: "News", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Sources", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Account", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Switch to Spanish" })).toContainText("Español");
-  await expect(page.getByRole("button", { name: "Switch to Spanish" })).toContainText("🇲🇽");
+  const spanishSwitch = page.getByRole("button", { name: "Switch to Spanish" });
+  await expect(spanishSwitch).toContainText("Español");
+  await expect(spanishSwitch.locator("img")).toHaveAttribute("src", /flag-mx\.svg/);
   await page.getByRole("button", { name: "Switch to Spanish" }).click();
   await expect(page).toHaveURL(/\/es$/);
-  await expect(page.getByRole("button", { name: "Cambiar a inglés" })).toContainText("English");
-  await expect(page.getByRole("button", { name: "Cambiar a inglés" })).toContainText("🇺🇸");
+  const englishSwitch = page.getByRole("button", { name: "Cambiar a inglés" });
+  await expect(englishSwitch).toContainText("English");
+  await expect(englishSwitch.locator("img")).toHaveAttribute("src", /flag-us\.svg/);
+});
+
+test("explicit locale routes override browser and persisted language preferences", async ({ page }) => {
+  await page.goto("/es");
+  await page.evaluate(() => window.localStorage.setItem("atlas-locale", "es-MX"));
+  await page.goto("/en");
+  await expect(page.getByRole("heading", { name: "Answers you can verify." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Switch to Spanish" })).toBeVisible();
+
+  await page.evaluate(() => window.localStorage.setItem("atlas-locale", "en-US"));
+  await page.goto("/es");
+  await expect(page.getByRole("heading", { name: "Respuestas que puedes verificar." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cambiar a inglés" })).toBeVisible();
 });
 
 test("required route surfaces resolve without a server error", async ({ page }) => {

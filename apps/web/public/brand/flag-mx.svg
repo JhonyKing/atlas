@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" role="img" aria-label="Mexico flag">
-  <rect width="12" height="24" fill="#006847"/>
-  <rect x="12" width="12" height="24" fill="#fff"/>
-  <rect x="24" width="12" height="24" fill="#ce1126"/>
-  <circle cx="18" cy="12" r="2.4" fill="#8a5a2b"/>
-  <path d="M18 9.4c1.2 1 1.2 4.2 0 5.2M16.1 11.2c1.3.5 2.5.5 3.8 0" fill="none" stroke="#006847" stroke-width=".8" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" role="img" aria-label="Mexico">
+  <path fill="#006847" d="M0 0h10v20H0z"/>
+  <path fill="#fff" d="M10 0h10v20H10z"/>
+  <path fill="#ce1126" d="M20 0h10v20H20z"/>
+  <circle cx="15" cy="10" r="2.15" fill="#8c6b28"/>
+  <path d="M13.25 11.9c1.1 1.05 2.4 1.05 3.5 0" fill="none" stroke="#2e7d32" stroke-width=".65" stroke-linecap="round"/>
 </svg>
