@@ -1,12 +1,69 @@
 {
-  "version": "012-v1",
+  "version": "022-v2",
   "definitions": [
     {"category":"adoption","name":"demo_completion_rate","formula":"completed demo journeys / started journeys","cadence":"per release"},
     {"category":"value","name":"verified_answer_rate","formula":"answers passing citation verification / answers","cadence":"per eval"},
     {"category":"quality","name":"citation_precision","formula":"supported citations / cited IDs","cadence":"per eval"},
     {"category":"performance","name":"normal_p95_seconds","formula":"95th percentile normal answer latency","cadence":"per load run"},
+    {"category":"performance","name":"useful_progress_ms","formula":"elapsed milliseconds until the first useful progress event","cadence":"per live run"},
+    {"category":"performance","name":"terminal_latency_ms","formula":"elapsed milliseconds until a terminal event","cadence":"per live run"},
     {"category":"economy","name":"estimated_cost_usd","formula":"versioned token price estimate","cadence":"per run"},
     {"category":"knowledge","name":"corpus_freshness","formula":"fresh evidence cases / temporal cases","cadence":"per refresh"},
-    {"category":"operations","name":"uncontrolled_error_rate","formula":"uncontrolled errors / requests","cadence":"per load run"}
+    {"category":"operations","name":"uncontrolled_error_rate","formula":"uncontrolled errors / requests","cadence":"per load run"},
+    {"category":"quality","name":"deterministic_eval_pass_rate","formula":"passing deterministic cases / prepared deterministic cases","cadence":"per release"},
+    {"category":"delivery","name":"public_route_success_rate","formula":"successful anonymous canonical route variants / tested variants","cadence":"per deployment"}
+  ],
+  "measurements": [
+    {
+      "result_id": "comparator-citation-precision-t043",
+      "kpi": "citation_precision",
+      "value": 1.0,
+      "display": "11/11",
+      "scope": "Owner-reviewed cited cells in corrected comparator run ed9e093f-74ed-4d47-a5c6-8a05ace0e505",
+      "captured_at": "2026-08-07",
+      "artifact": "evals/results/live-comparator-t043-20260807-owner-review.md",
+      "limitation": "Eleven cited cells from one reviewed comparator run; not a platform-wide production SLO.",
+      "status": "measured"
+    },
+    {
+      "result_id": "comparator-terminal-latency-t042",
+      "kpi": "terminal_latency_ms",
+      "value": 18590,
+      "display": "18.59 s",
+      "scope": "One optimized live Spanish four-technology comparator run; useful progress was emitted at 0 ms",
+      "captured_at": "2026-08-07",
+      "artifact": "evals/results/live-comparator-t042-20260807.json",
+      "limitation": "A bounded comparator scenario, not normal-answer p95 or general production latency.",
+      "status": "measured"
+    },
+    {
+      "result_id": "cited-answer-offline-60",
+      "kpi": "deterministic_eval_pass_rate",
+      "value": 1.0,
+      "display": "60/60",
+      "scope": "Versioned deterministic cited-answer fixture evaluation",
+      "captured_at": "2026-08-07",
+      "artifact": "evals/results/001-cited-answer-baseline.md",
+      "limitation": "Deterministic fixture coverage; it does not replace live-provider or human usability evaluation.",
+      "status": "measured"
+    },
+    {
+      "result_id": "canonical-public-routes-21",
+      "kpi": "public_route_success_rate",
+      "value": 1.0,
+      "display": "21/21",
+      "scope": "Anonymous canonical route variants across unprefixed, English, and Spanish paths",
+      "captured_at": "2026-08-11",
+      "artifact": "docs/verification/022-product-clarity-engineering.md",
+      "limitation": "Point-in-time deployment verification; it is not a continuous availability measurement.",
+      "status": "measured"
+    }
+  ],
+  "unmeasured": [
+    {"kpi":"demo_completion_rate","reason":"External five-second and task-completion study remains pending."},
+    {"kpi":"normal_p95_seconds","reason":"A deployment-like production load run has not been accepted."},
+    {"kpi":"estimated_cost_usd","reason":"Live provider cost evidence is not yet promoted as a portfolio result."},
+    {"kpi":"corpus_freshness","reason":"The required seven-day refresh window is not complete."},
+    {"kpi":"uncontrolled_error_rate","reason":"Continuous production traffic evidence is not yet available."}
   ]
 }

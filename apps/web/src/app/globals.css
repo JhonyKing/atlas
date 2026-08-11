@@ -229,7 +229,7 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .engineering-hero { display: grid; gap: .75rem; max-width: 58rem; }
 .engineering-hero .eyebrow, .engineering-hero .lede { margin: 0; }
 .engineering-hero h1 { max-width: 14ch; margin: .25rem 0; }
-.engineering-flow, .engineering-capabilities { display: grid; gap: 1.4rem; }
+.engineering-flow, .engineering-capabilities, .engineering-case-study, .engineering-architecture { display: grid; gap: 1.4rem; }
 .section-heading { display: grid; gap: .35rem; max-width: 48rem; }
 .section-heading .eyebrow, .section-heading h2, .section-heading p { margin: 0; }
 .section-heading h2 { color: var(--atlas-navy); font-size: clamp(1.8rem, 4vw, 2.6rem); }
@@ -238,6 +238,29 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .engineering-flow li { display: grid; gap: .75rem; min-height: 8.5rem; align-content: space-between; border-top: 2px solid var(--atlas-indigo); padding: .85rem; background: var(--atlas-surface); }
 .engineering-flow li span { color: var(--atlas-indigo); font-size: .78rem; font-weight: 800; letter-spacing: .08em; }
 .engineering-flow li strong { color: var(--atlas-navy); line-height: 1.35; }
+.engineering-architecture { margin: 0; }
+.engineering-architecture ol { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.engineering-architecture li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 1rem; border-top: 1px solid var(--atlas-border); padding: 1rem 0; }
+.engineering-architecture li > span { color: var(--atlas-indigo); font-size: .78rem; font-weight: 850; letter-spacing: .08em; }
+.engineering-architecture h3, .engineering-architecture p { margin: 0; }
+.engineering-architecture h3 { color: var(--atlas-navy); font-size: 1rem; }
+.engineering-architecture li p { max-width: 48rem; margin-top: .3rem; color: var(--atlas-text-secondary); font-size: .9rem; line-height: 1.55; }
+.engineering-architecture figcaption { max-width: 48rem; color: var(--atlas-text-muted); font-size: .82rem; line-height: 1.5; }
+.case-study-narrative { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
+.case-study-narrative div { border-top: 2px solid var(--atlas-navy); padding-top: .8rem; }
+.case-study-narrative dt { color: var(--atlas-navy); font-weight: 800; }
+.case-study-narrative dd { margin: .4rem 0 0; color: var(--atlas-text-secondary); font-size: .9rem; line-height: 1.55; }
+.case-study-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin: .5rem 0 0; padding: 0; list-style: none; }
+.case-study-results li { display: grid; gap: .45rem; align-content: start; border-top: 1px solid var(--atlas-border); padding: 1.2rem 0; }
+.case-study-results p, .case-study-results h3 { margin: 0; }
+.case-study-results h3 { color: var(--atlas-navy); font-size: 1rem; }
+.case-study-results li > p:not(.case-study-value) { color: var(--atlas-text-secondary); font-size: .84rem; line-height: 1.5; }
+.case-study-value { color: var(--atlas-indigo); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 850; letter-spacing: -.04em; }
+.case-study-limit { margin-top: .2rem !important; }
+.case-study-results a { width: fit-content; margin-top: .3rem; color: var(--atlas-indigo); font-size: .84rem; font-weight: 800; }
+.case-study-limitations { border-left: 3px solid var(--atlas-partial); padding: .75rem 1rem; background: var(--atlas-partial-bg); }
+.case-study-limitations h3 { margin: 0; color: var(--atlas-navy); font-size: 1rem; }
+.case-study-limitations ul { margin: .65rem 0 0; padding-left: 1.15rem; color: var(--atlas-text-secondary); font-size: .88rem; line-height: 1.55; }
 .engineering-capability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .engineering-capability-grid article { display: grid; gap: .65rem; align-content: start; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); padding: 1.1rem; background: var(--atlas-surface); }
 .engineering-capability-grid h3, .engineering-capability-grid p { margin: 0; }
@@ -428,6 +451,8 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
   .engineering-hero h1 { font-size: clamp(2.65rem, 14vw, 3.5rem); }
   .engineering-flow ol { grid-template-columns: 1fr; }
   .engineering-flow li { min-height: auto; grid-template-columns: 2rem 1fr; align-items: center; }
+  .case-study-narrative, .case-study-results { grid-template-columns: 1fr; }
+  .engineering-architecture li { grid-template-columns: 2rem minmax(0, 1fr); gap: .6rem; }
   .engineering-capability-grid { grid-template-columns: 1fr; }
   .corpus-list { grid-template-columns: 1fr; }
   .comparison-preset-list { grid-template-columns: 1fr; }

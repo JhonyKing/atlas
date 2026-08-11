@@ -3,6 +3,7 @@
 import { useLocale } from "@/i18n";
 
 import { AgentWorkspace } from "../agent/AgentWorkspace";
+import { CaseStudy } from "./CaseStudy";
 
 const REPOSITORY = "https://github.com/JhonyKing/atlas/blob/main";
 
@@ -19,9 +20,39 @@ const capabilities = [
   { id: "architecture", evidence: `${REPOSITORY}/docs/portfolio/architecture-map.md` },
 ] as const;
 
+const architectureCopy = {
+  "en-US": {
+    eyebrow: "System boundaries",
+    title: "Architecture boundaries",
+    lede: "The public interface stays simple while each technical responsibility remains explicit, testable, and replaceable.",
+    caption: "Five reviewable layers connect a user request to evidence, durable state, and quality controls.",
+    layers: [
+      { title: "Product experience", detail: "Ask, Compare, Reports, News, and Sources provide one bilingual public entry point." },
+      { title: "Agent orchestration", detail: "A typed tool registry, bounded plans, approvals, cancellation, and replay coordinate work." },
+      { title: "Evidence pipeline", detail: "Hybrid retrieval, structured claims, and citation verification decide what ATLAS may support." },
+      { title: "Durable state", detail: "Supabase Postgres, migrations, ownership, row-level security, and artifacts preserve governed state." },
+      { title: "Quality and operations", detail: "Deterministic and live evals, LangSmith traces, CI gates, and safe telemetry expose regressions." },
+    ],
+  },
+  "es-MX": {
+    eyebrow: "Límites del sistema",
+    title: "Límites de arquitectura",
+    lede: "La interfaz pública permanece simple mientras cada responsabilidad técnica sigue explícita, comprobable y reemplazable.",
+    caption: "Cinco capas revisables conectan una solicitud con evidencia, estado duradero y controles de calidad.",
+    layers: [
+      { title: "Experiencia de producto", detail: "Preguntas, comparaciones, reportes, noticias y fuentes ofrecen una entrada pública bilingüe." },
+      { title: "Orquestación del agente", detail: "Un registro tipado de herramientas, planes acotados, aprobaciones, cancelación y replay coordinan el trabajo." },
+      { title: "Pipeline de evidencia", detail: "Recuperación híbrida, afirmaciones estructuradas y verificación de citas deciden qué puede respaldar ATLAS." },
+      { title: "Estado duradero", detail: "Supabase Postgres, migraciones, propiedad, seguridad por fila y artefactos conservan estado gobernado." },
+      { title: "Calidad y operaciones", detail: "Evals deterministas y en vivo, trazas de LangSmith, CI y telemetría segura exponen regresiones." },
+    ],
+  },
+} as const;
+
 export function EngineeringPage() {
-  const { messages } = useLocale();
+  const { locale, messages } = useLocale();
   const copy = messages.engineering;
+  const architecture = architectureCopy[locale];
 
   return (
     <article className="engineering-experience">
@@ -45,6 +76,28 @@ export function EngineeringPage() {
           ))}
         </ol>
       </section>
+
+      <figure className="engineering-architecture" aria-labelledby="engineering-architecture-title">
+        <div className="section-heading">
+          <p className="eyebrow">{architecture.eyebrow}</p>
+          <h2 id="engineering-architecture-title">{architecture.title}</h2>
+          <p>{architecture.lede}</p>
+        </div>
+        <ol>
+          {architecture.layers.map((layer, index) => (
+            <li key={layer.title} data-architecture-layer>
+              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{layer.title}</h3>
+                <p>{layer.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <figcaption>{architecture.caption}</figcaption>
+      </figure>
+
+      <CaseStudy locale={locale} />
 
       <section className="engineering-capabilities" aria-labelledby="engineering-capabilities-title">
         <div className="section-heading">

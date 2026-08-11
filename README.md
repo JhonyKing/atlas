@@ -12,6 +12,13 @@ primary journey. The public `/engineering` route documents the real RAG, agent, 
 verification, citation, structured-output, persistence, evaluation, observability, and
 architecture boundaries with links to repository evidence.
 
+The Engineering page also contains a public case study backed by the versioned portfolio KPI and
+evidence ledgers. It exposes four bounded results—11/11 owner-reviewed comparator citations,
+18.59 s terminal latency for one optimized comparator run, 60/60 deterministic cited-answer
+cases, and 21/21 anonymous canonical routes—and states why none of them should be read as a
+platform-wide production SLO. Its five-layer semantic architecture remains readable without
+JavaScript-only diagrams.
+
 The same plain-language boundary now extends across the public workflows: Compare offers realistic
 decision presets, Reports starts from a completed comparison and keeps manual IDs in Advanced
 options, Sources explains what can be verified before showing ingestion details, News explains the

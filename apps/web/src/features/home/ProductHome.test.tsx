@@ -34,6 +34,6 @@ describe("ProductHome", () => {
     expect(screen.getByText("Built by Jhonnatan Vazquez — AI Engineer")).toBeVisible();
     expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/JhonyKing/atlas");
     expect(screen.getByRole("link", { name: "Architecture" })).toHaveAttribute("href", "/en/engineering");
-    expect(screen.getByRole("link", { name: "Case study" })).toHaveAttribute("href", "https://github.com/JhonyKing/atlas/blob/main/docs/verification/012-portfolio-productization-proof.md");
+    expect(screen.getByRole("link", { name: "Case study" })).toHaveAttribute("href", "/en/engineering#case-study-title");
   });
 });

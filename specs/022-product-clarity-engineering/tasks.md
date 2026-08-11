@@ -89,9 +89,9 @@
 
 ## Phase 8: P2 — Expanded Portfolio Case Study
 
-- [ ] T035 Create an evidence-backed public case-study presentation in `apps/web/src/features/engineering/CaseStudy.tsx`
-- [ ] T036 Add measured portfolio metrics without unsupported claims using `docs/portfolio/kpis.json` and `docs/portfolio/evidence-ledger.json`
-- [ ] T037 Add a richer accessible architecture presentation in `apps/web/src/features/engineering/EngineeringPage.tsx`
+- [x] T035 Create an evidence-backed public case-study presentation in `apps/web/src/features/engineering/CaseStudy.tsx`
+- [x] T036 Add measured portfolio metrics without unsupported claims using `docs/portfolio/kpis.json` and `docs/portfolio/evidence-ledger.json`
+- [x] T037 Add a richer accessible architecture presentation in `apps/web/src/features/engineering/EngineeringPage.tsx`
 - [ ] T038 Run an external five-second comprehension review and record results in `docs/portfolio/external-evidence.md`
 
 ## Dependencies
@@ -101,7 +101,8 @@
 - User Story 1 is independently shippable after T010–T015.
 - User Story 2 depends only on localized copy foundations and is otherwise parallel with User Story 1.
 - User Story 3 can proceed in parallel after metadata tests exist.
-- T025–T030 close P0. T031–T034 close P1. T035–T038 remain explicitly open for P2.
+- T025–T030 close P0. T031–T034 close P1. T035–T037 close the implemented P2 slice; T038
+  remains explicitly open for genuine external review.
 
 ## Parallel Execution Examples
 
@@ -117,4 +118,5 @@
 4. Deliver the Engineering route independently.
 5. Add canonical discovery and anonymous-route proof.
 6. Run full verification and documentation closeout.
-7. Keep P1/P2 tasks unchecked for subsequent increments.
+7. Deliver P1/P2 as separate increments and mark only work backed by code and retained evidence;
+   never substitute automated review for T038's external participants.
