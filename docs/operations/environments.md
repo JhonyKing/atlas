@@ -59,3 +59,16 @@ Two hosted Playwright journeys passed against the public domain: explicit Spanis
 both SVG flags, all public feature routes, professional unavailable states, and zero calls to a
 localhost fallback. Four API-dependent journeys remain intentionally unexecuted until T032-T033
 provide the managed API origin and its secrets.
+
+## Public production aliases — 2026-08-11
+
+The owner explicitly authorized changing Vercel Authentication from Standard Protection
+(`all_except_custom_domains`) to preview-only protection (`preview`). This keeps preview
+deployments behind Vercel login while making every generated production domain publicly
+reachable. Production deployment `dpl_7xwapJ9TPjxp18riUnLsX2HSWYuZ` is `READY`.
+
+Anonymous checks returned 200 with ATLAS content and no `noindex` directive for the primary
+domain, the generated project domain used on LinkedIn, and the `main` branch production alias.
+The newest inspected preview returned 302 to Vercel Authentication, confirming that preview
+protection remains active. The redacted evidence is retained in
+[`evals/results/vercel-production-access-20260811.json`](../../evals/results/vercel-production-access-20260811.json).
