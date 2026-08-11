@@ -146,7 +146,7 @@ def compare_state(
                 if value not in actual_values:
                     findings.append(
                         DriftFinding(
-                            kind=kind,  # type: ignore[arg-type]
+                            kind=kind,
                             object_name=value,
                             expected="present",
                             actual="missing",

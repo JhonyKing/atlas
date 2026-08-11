@@ -8,7 +8,7 @@ from typing import Protocol
 from uuid import UUID
 
 from atlas.comparison.normalization import ComparisonObservation, normalize_observations
-from atlas.comparison.retrieval import ComparisonRetrievalBranch, ComparisonRetrievalService
+from atlas.comparison.retrieval import ComparisonRetrievalBranch
 from atlas.comparison.schemas import (
     ComparisonCell,
     ComparisonCellState,
