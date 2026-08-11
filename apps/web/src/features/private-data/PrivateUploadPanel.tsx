@@ -2,6 +2,8 @@
 
 import { ChangeEvent, useState } from "react";
 
+import { getApiUrl } from "@/lib/env";
+
 type UploadLocale = "en-US" | "es-MX";
 
 const copy = {
@@ -33,7 +35,7 @@ export function PrivateUploadPanel({ locale = "es-MX" }: { locale?: UploadLocale
     try {
       const bytes = await file.arrayBuffer();
       const contentBase64 = btoa(String.fromCharCode(...new Uint8Array(bytes)));
-      const response = await fetch("/v1/private/uploads", {
+      const response = await fetch(getApiUrl("/v1/private/uploads"), {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },

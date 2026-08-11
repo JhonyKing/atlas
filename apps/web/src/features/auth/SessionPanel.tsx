@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 
 import { authCopy, AuthLocale } from "./i18n";
 import { Button, Field, Input } from "@/components/forms";
+import { getApiUrl } from "@/lib/env";
 
 type SessionPanelProps = { locale?: AuthLocale };
 
@@ -21,7 +22,7 @@ export function SessionPanel({ locale = "es-MX" }: SessionPanelProps) {
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch("/v1/auth/session", {
+      const response = await fetch(getApiUrl("/v1/auth/session"), {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -44,7 +45,7 @@ export function SessionPanel({ locale = "es-MX" }: SessionPanelProps) {
     setBusy(true);
     setError(null);
     try {
-      await fetch("/v1/auth/session", { method: "DELETE", credentials: "include" });
+      await fetch(getApiUrl("/v1/auth/session"), { method: "DELETE", credentials: "include" });
       setSignedIn(false);
       setMessage(copy.anonymous ?? "Anonymous mode remains available.");
     } catch {

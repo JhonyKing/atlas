@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button, Field, Input, Textarea } from "@/components/forms";
+import { getApiUrl } from "@/lib/env";
 
 export function ReviewPanel() {
   const spanish = usePathname()?.startsWith("/es") ?? true;
@@ -20,7 +21,7 @@ export function ReviewPanel() {
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/v1/agent/reviews", {
+      const response = await fetch(getApiUrl("/v1/agent/reviews"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -47,7 +48,7 @@ export function ReviewPanel() {
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(`/v1/agent/reviews/${reviewId}/decision`, {
+      const response = await fetch(getApiUrl(`/v1/agent/reviews/${reviewId}/decision`), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { getPublicEnvironment } from "./env";
+import { getApiUrl, getPublicEnvironment } from "./env";
 
 describe("getPublicEnvironment", () => {
   afterEach(() => {
@@ -59,5 +59,17 @@ describe("getPublicEnvironment", () => {
     expect(Object.isFrozen(publicEnvironment)).toBe(true);
     expect(rendered).not.toContain("sk-must-remain-server-side");
     expect(rendered).not.toContain("operator-must-remain-server-side");
+  });
+
+  it("builds API URLs from the configured public origin only", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_ORIGIN", "https://api.atlas.example/");
+
+    expect(getApiUrl("/v1/auth/session")).toBe("https://api.atlas.example/v1/auth/session");
+    expect(() => getApiUrl("https://attacker.example/v1/auth/session")).toThrowError(
+      "API paths must be root-relative",
+    );
+    expect(() => getApiUrl("//attacker.example/v1/auth/session")).toThrowError(
+      "API paths must be root-relative",
+    );
   });
 });

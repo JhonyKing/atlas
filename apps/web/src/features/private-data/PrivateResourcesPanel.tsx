@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from "react";
 
+import { getApiUrl } from "@/lib/env";
+
 export function PrivateResourcesPanel({ locale = "es-MX" }: { locale?: "en-US" | "es-MX" }) {
   const [items, setItems] = useState<Array<{ resource_id: string; resource_type: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [unavailable, setUnavailable] = useState(false);
   useEffect(() => {
     let active = true;
-    void fetch("/v1/private/resources", { credentials: "include" })
+    void Promise.resolve()
+      .then(() => fetch(getApiUrl("/v1/private/resources"), { credentials: "include" }))
       .then(async (response) => {
         if (response.status === 401 || response.status === 403) return { items: [] };
         if (!response.ok) throw new Error("private_resources_unavailable");

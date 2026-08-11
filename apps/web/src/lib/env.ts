@@ -40,3 +40,10 @@ export function getPublicEnvironment(): PublicEnvironment {
 
   return Object.freeze({ apiOrigin: parsedApiOrigin.origin });
 }
+
+export function getApiUrl(path: string): string {
+  if (!path.startsWith("/") || path.startsWith("//")) {
+    throw new Error("API paths must be root-relative");
+  }
+  return `${getPublicEnvironment().apiOrigin}${path}`;
+}

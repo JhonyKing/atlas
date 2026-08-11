@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/forms";
+import { getApiUrl } from "@/lib/env";
 
 type Collection = {
   slug: string;
@@ -28,7 +29,7 @@ export function GovernancePanel() {
     setLoading(true);
     setError(false);
     try {
-      const response = await fetch("/v1/corpus/governance");
+      const response = await fetch(getApiUrl("/v1/corpus/governance"));
       if (!response.ok) throw new Error("unavailable");
       const body = (await response.json()) as { collections: Collection[] };
       setCollections(body.collections);
