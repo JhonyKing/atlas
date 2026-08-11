@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -6,10 +5,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   allowedDevOrigins: ["127.0.0.1"],
   turbopack: {
-    // Vercel deploys this app with `apps/web` as the project root. Keeping the
-    // workspace root locally while using the deployment root on Vercel avoids
-    // output-tracing warnings and preserves monorepo imports during development.
-    root: process.env.VERCEL === "1" ? __dirname : path.resolve(__dirname, "../.."),
+    // Keep the application root stable in local dev, Playwright, and Vercel.
+    // Letting Turbopack infer it from `src/app` breaks hydration in the monorepo.
+    root: process.cwd(),
   },
 };
 

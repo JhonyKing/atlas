@@ -56,6 +56,7 @@ main { width: min(68rem, calc(100% - 2rem)); margin: 0 auto; padding: 4rem 0; }
 .atlas-nav-link { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--atlas-text-secondary); border-bottom: 2px solid transparent; padding: .65rem .7rem; font-size: .92rem; font-weight: 700; text-decoration: none; }
 .atlas-nav-link:hover, .atlas-nav-link.active { color: var(--atlas-navy); border-bottom-color: var(--atlas-indigo); }
 .atlas-locale-switch { display: inline-flex; align-items: center; min-height: 2.75rem; gap: .4rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); padding: .5rem .75rem; color: var(--atlas-indigo); background: var(--atlas-surface); font-size: .85rem; font-weight: 700; }
+.atlas-locale-emoji { display: inline-flex; align-items: center; font-size: 1.05rem; line-height: 1; }
 .atlas-locale-flag { display: block; width: 1.25rem; height: .875rem; border: 1px solid color-mix(in srgb, var(--atlas-border-strong) 75%, transparent); border-radius: 2px; object-fit: cover; }
 .atlas-content { min-height: calc(100vh - 4rem); }
 .corpus-status { border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-lg); padding: 1rem; margin: 0 auto 3rem; background: var(--atlas-surface); }

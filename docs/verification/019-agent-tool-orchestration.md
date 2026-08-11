@@ -71,9 +71,19 @@ The lifecycle contract test `test_cancel_and_resume_emit_content_free_lifecycle_
 asserts numeric latency and explicit `cancelled`/`resumed` terminal trace statuses. The separate
 opt-in LangSmith connectivity smoke passed (**1 passed**).
 
-The full browser suite is not claimed by this evidence: the targeted agent-workspace journey
-currently waits on a catalog response in the local test harness, and the hosted deployment
-journeys remain skipped without `ATLAS_DEPLOYMENT_API_ORIGIN`.
+The full browser suite is not claimed by this evidence: hosted deployment journeys remain
+skipped without `ATLAS_DEPLOYMENT_API_ORIGIN`, and the broader matrix still includes dependency
+and operator journeys outside this focused agent check.
+
+### Browser/build harness correction (2026-08-11)
+
+The local harness failure was traced to Next 16 Turbopack root inference plus the system Node
+20/pyenv wrapper used by the Playwright web server. The web app now pins the application root,
+Playwright starts the same `process.execPath` as the test runner with Webpack, and the Vercel/web
+build command uses `next build --webpack`. Evidence: production build generated all 12 routes;
+the agent workspace journey passed **1/1** and the AppShell/locale/route contract passed **4/4**.
+The broader 153-test browser matrix remains open because it includes hosted/dependency journeys
+and was not claimed as a complete gate in this local run.
 
 ### Read-only evidence envelope evidence (2026-08-11)
 
