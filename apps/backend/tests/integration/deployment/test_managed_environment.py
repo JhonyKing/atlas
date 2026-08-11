@@ -22,7 +22,12 @@ def test_vercel_api_adapter_exports_fastapi_and_caps_beta_duration() -> None:
     config = json.loads((ROOT / "apps/backend/vercel.json").read_text(encoding="utf-8"))
 
     assert "from atlas.api.main import app" in entrypoint
-    assert config["functions"]["app.py"]["maxDuration"] == 60
+    # Vercel's current FastAPI runtime is zero-config. Pinning the framework
+    # keeps monorepo detection deterministic without a legacy `functions`
+    # override that would prevent detection of the root `app.py` entrypoint.
+    assert config["$schema"] == "https://openapi.vercel.sh/vercel.json"
+    assert config["framework"] == "fastapi"
+    assert "functions" not in config
 
 
 def test_container_entrypoint_honors_worker_command_and_packages_manifest() -> None:
