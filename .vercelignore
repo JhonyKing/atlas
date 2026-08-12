@@ -1,0 +1,12 @@
+# Keep the Vercel source bundle focused on deployable application files.
+tmp/
+**/tmp/
+**/.venv/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/__pycache__/
+**/tests/
+backend.stderr.log
+backend.stdout.log
+*.log

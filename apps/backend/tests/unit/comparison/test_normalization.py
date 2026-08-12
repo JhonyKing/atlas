@@ -61,6 +61,33 @@ def test_normalization_marks_missing_values_unsupported() -> None:
     assert cell.explanation
 
 
+def test_normalization_can_mark_framework_price_as_not_applicable() -> None:
+    cell = normalize_observations(
+        technology_id=CollectionSlug.LANGGRAPH,
+        criterion_id=ComparisonCriterion.PRICE,
+        observations=[],
+        not_applicable=True,
+        language="es-MX",
+    )
+
+    assert cell.state is ComparisonCellState.NOT_APPLICABLE
+    assert cell.evidence_ids == []
+    assert "no aplica" in (cell.explanation or "").lower()
+
+
+def test_normalization_localizes_explanation_without_changing_value() -> None:
+    cell = normalize_observations(
+        technology_id=CollectionSlug.OPENAI,
+        criterion_id=ComparisonCriterion.CONTEXT,
+        observations=[_observation(value="8k"), _observation(value="16k")],
+        language="es-MX",
+    )
+
+    assert cell.value is None
+    assert "valores diferentes" in (cell.explanation or "").lower()
+    assert "different values" not in (cell.explanation or "").lower()
+
+
 def test_normalization_marks_incompatible_units_contradictory() -> None:
     first = _observation(value="120", unit="ms")
     second = _observation(value="2", unit="seconds")

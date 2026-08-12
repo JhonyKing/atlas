@@ -317,6 +317,10 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .comparison-evidence-details summary { cursor: pointer; font-weight: 750; }
 .comparison-evidence-details ul { margin: .45rem 0 0; padding-left: 1rem; }
 .comparison-evidence-details code { overflow-wrap: anywhere; color: var(--atlas-text-muted); font-size: .7rem; }
+.comparison-evidence-item { display: grid; gap: .2rem; margin: .65rem 0; }
+.comparison-evidence-item a { color: var(--atlas-indigo); font-weight: 750; }
+.comparison-evidence-item span, .comparison-evidence-item small { color: var(--atlas-text-muted); }
+.comparison-evidence-item q { color: var(--atlas-text-secondary); font-size: .78rem; line-height: 1.4; }
 .comparison-empty-cell { color: var(--atlas-text-subtle); }
 .account-page, .report-page, .news-page, .sources-page, .admin-page { padding-top: 3.5rem; padding-bottom: 4rem; }
 .account-page { max-width: 62rem; }

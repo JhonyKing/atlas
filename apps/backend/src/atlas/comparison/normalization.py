@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
+from typing import Literal
 from uuid import UUID
 
 from atlas.comparison.schemas import ComparisonCell, ComparisonCellState, ComparisonCriterion
@@ -36,15 +37,33 @@ def normalize_observations(
     technology_id: CollectionSlug,
     criterion_id: ComparisonCriterion,
     observations: list[ComparisonObservation],
+    language: Literal["en-US", "es-MX"] = "en-US",
+    not_applicable: bool = False,
 ) -> ComparisonCell:
     evidence_ids = _unique_evidence_ids(observations)
+    if not_applicable:
+        return ComparisonCell(
+            technology_id=technology_id,
+            criterion_id=criterion_id,
+            state=ComparisonCellState.NOT_APPLICABLE,
+            explanation=_message(
+                language,
+                en="This criterion does not apply to the selected product type.",
+                es="Este criterio no aplica al tipo de producto seleccionado.",
+            ),
+            evidence_ids=[],
+        )
     populated = [observation for observation in observations if observation.value is not None]
     if not populated:
         return ComparisonCell(
             technology_id=technology_id,
             criterion_id=criterion_id,
             state=ComparisonCellState.UNSUPPORTED,
-            explanation="No comparable value was found in the selected evidence.",
+            explanation=_message(
+                language,
+                en="No comparable value was found in the selected evidence.",
+                es="No se encontró un valor comparable en la evidencia seleccionada.",
+            ),
             evidence_ids=[],
         )
 
@@ -56,7 +75,11 @@ def normalize_observations(
             technology_id,
             criterion_id,
             evidence_ids,
-            "Sources explicitly contradict one another for this comparison criterion.",
+            _message(
+                language,
+                en="Sources explicitly contradict one another for this comparison criterion.",
+                es="Las fuentes se contradicen explícitamente para este criterio de comparación.",
+            ),
         )
 
     units = {observation.unit for observation in populated}
@@ -65,7 +88,11 @@ def normalize_observations(
             technology_id,
             criterion_id,
             evidence_ids,
-            "Sources use incompatible units; ATLAS does not infer a conversion.",
+            _message(
+                language,
+                en="Sources use incompatible units; ATLAS does not infer a conversion.",
+                es="Las fuentes usan unidades incompatibles; ATLAS no infiere conversiones.",
+            ),
         )
 
     values = {observation.value for observation in populated}
@@ -80,8 +107,17 @@ def normalize_observations(
                 value=_combine_values(populated),
                 unit=unit,
                 explanation=(
-                    "Sources provide multiple qualitative observations without an explicit "
-                    "direct contradiction; the comparison preserves each fact."
+                    _message(
+                        language,
+                        en=(
+                            "Sources provide multiple qualitative observations without an explicit "
+                            "direct contradiction; the comparison preserves each fact."
+                        ),
+                        es=(
+                            "Las fuentes aportan varias observaciones cualitativas sin una "
+                            "contradicción directa; la comparación conserva cada hecho."
+                        ),
+                    )
                 ),
                 evidence_ids=evidence_ids,
                 period=first.period,
@@ -94,7 +130,17 @@ def normalize_observations(
             state=ComparisonCellState.PARTIAL,
             unit=unit,
             explanation=(
-                "Sources report different values; the comparison preserves the disagreement."
+                _message(
+                    language,
+                    en=(
+                        "Sources report different values; the comparison preserves the "
+                        "disagreement."
+                    ),
+                    es=(
+                        "Las fuentes reportan valores diferentes; la comparación conserva la "
+                        "discrepancia."
+                    ),
+                )
             ),
             evidence_ids=evidence_ids,
             period=first.period,
@@ -161,3 +207,7 @@ def _is_qualitative_observation_set(
         " " in value or not any(character.isdigit() for character in value)
         for value in values
     )
+
+
+def _message(language: Literal["en-US", "es-MX"], *, en: str, es: str) -> str:
+    return es if language == "es-MX" else en

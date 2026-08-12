@@ -1,0 +1,55 @@
+{
+  "captured_at": "2026-08-11",
+  "web_origin": "https://atlasai-lilac.vercel.app",
+  "api_origin": "https://atlasai-api.vercel.app",
+  "web": {
+    "route": "/en",
+    "status": 200,
+    "x_robots_tag": null,
+    "api_origin_found_in_client_bundle": true
+  },
+  "api": {
+    "healthz": {
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "checks": {
+          "database": "ready"
+        }
+      }
+    },
+    "readyz": {
+      "status": 200,
+      "body": {
+        "status": "ready",
+        "environment": "production",
+        "migration_revision": "foreign_key_indexes",
+        "checks": {
+          "database": "ready",
+          "migrations": "ready",
+          "model_provider": "ready",
+          "observability": "ready"
+        }
+      }
+    },
+    "cors": {
+      "origin": "https://atlasai-lilac.vercel.app",
+      "allow_origin": "https://atlasai-lilac.vercel.app",
+      "status": 200
+    },
+    "cited_answer_es_mx": {
+      "status": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "language": "es-MX",
+      "event_sequence": [
+        "run.accepted",
+        "retrieval.started",
+        "answer.completed"
+      ],
+      "answer_completed": true,
+      "citations_present": true,
+      "run_id": "428f66ca-a948-41fa-beaf-954c5314511e"
+    }
+  },
+  "scope": "owner-approved interim Vercel Python Function beta; continuous worker and full production Definition of Done remain open"
+}

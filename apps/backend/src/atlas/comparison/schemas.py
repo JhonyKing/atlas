@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
@@ -28,6 +28,7 @@ class ComparisonCriterion(StrEnum):
 class ComparisonCellState(StrEnum):
     SUPPORTED = "supported"
     UNSUPPORTED = "unsupported"
+    NOT_APPLICABLE = "not_applicable"
     PARTIAL = "partial"
     CONTRADICTORY = "contradictory"
 
@@ -46,6 +47,20 @@ class ComparisonRunStatus(StrEnum):
 ComparisonText = Annotated[
     str, StringConstraints(strip_whitespace=False, min_length=1, max_length=2000)
 ]
+ComparisonLanguage = Literal["en-US", "es-MX"]
+
+
+class ComparisonEvidence(DomainModel):
+    """Metadata the visitor can inspect for a cited comparison cell."""
+
+    id: UUID
+    source_title: ComparisonText
+    publisher: ComparisonText
+    canonical_url: Annotated[str, StringConstraints(min_length=1, max_length=2000)]
+    source_type: SourceType
+    excerpt: Annotated[str, StringConstraints(min_length=1, max_length=8000)]
+    captured_at: datetime
+    version_label: Annotated[str, StringConstraints(min_length=1, max_length=64)] | None = None
 
 
 class ComparisonRequest(DomainModel):
@@ -59,7 +74,18 @@ class ComparisonRequest(DomainModel):
     date_from: date | None = None
     date_to: date | None = None
     source_type: SourceType | None = None
-    language: Annotated[str, StringConstraints(pattern=r"^(?:en-US|es-MX)$")] = "en-US"
+    language: Annotated[
+        ComparisonLanguage, StringConstraints(pattern=r"^(?:en-US|es-MX)$")
+    ] = "en-US"
+
+    def effective_source_type(self, criterion: ComparisonCriterion) -> SourceType | None:
+        """Route price questions to pricing evidence, regardless of broad source filters."""
+
+        # Price is a separate evidence lane. A caller cannot accidentally make
+        # technical documentation authoritative for a commercial price claim.
+        if criterion is ComparisonCriterion.PRICE:
+            return SourceType.PRICING
+        return self.source_type
 
     @field_validator("technologies")
     @classmethod
@@ -99,6 +125,7 @@ class ComparisonCell(DomainModel):
     period: Annotated[str, StringConstraints(min_length=1, max_length=64)] | None = None
     version: Annotated[str, StringConstraints(min_length=1, max_length=64)] | None = None
     evidence_ids: list[UUID] = Field(default_factory=list)
+    evidence: list[ComparisonEvidence] = Field(default_factory=list)
     observed_at: datetime | None = None
 
     @field_validator("evidence_ids")
@@ -110,12 +137,19 @@ class ComparisonCell(DomainModel):
 
     @model_validator(mode="after")
     def enforce_cell_evidence_shape(self) -> ComparisonCell:
-        if self.state is ComparisonCellState.UNSUPPORTED:
+        if self.state in {
+            ComparisonCellState.UNSUPPORTED,
+            ComparisonCellState.NOT_APPLICABLE,
+        }:
             if self.evidence_ids:
-                raise ValueError("unsupported cells cannot cite evidence")
+                raise ValueError("unsupported and not-applicable cells cannot cite evidence")
+            if self.evidence:
+                raise ValueError("unsupported and not-applicable cells cannot include evidence")
             if not self.explanation or not self.explanation.strip():
-                raise ValueError("unsupported cells require an explanation")
+                raise ValueError("unsupported and not-applicable cells require an explanation")
             return self
+        if self.evidence and {item.id for item in self.evidence} != set(self.evidence_ids):
+            raise ValueError("comparison evidence metadata must match evidence_ids")
         if not self.evidence_ids:
             raise ValueError("populated cells require at least one evidence ID")
         if (

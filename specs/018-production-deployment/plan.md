@@ -72,6 +72,11 @@ evals/results/                  # redacted release/eval evidence only
 `scripts/`. Keep provider-specific configuration at the edge and reuse existing API/web/domain
 contracts. Do not add a second domain or duplicate data model for Supabase.
 
+**Interim beta activation**: An owner-approved Vercel Python Function may host the HTTP API
+entrypoint for the portfolio beta while the full managed API/worker runtime remains pending. This
+is a bounded activation adapter for the cited-answer web flow, not a replacement for the
+long-running worker architecture or the Feature 018 Definition of Done.
+
 ## Implementation Sequence
 
 1. Add failing contracts for environment separation, readiness, release evidence, secret scanning,

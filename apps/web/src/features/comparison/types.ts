@@ -13,7 +13,7 @@ export type ComparisonCriterion =
   | "license"
   | "freshness"
   | "operational_risk";
-export type ComparisonCellState = "supported" | "unsupported" | "partial" | "contradictory";
+export type ComparisonCellState = "supported" | "unsupported" | "not_applicable" | "partial" | "contradictory";
 export type ComparisonStatus =
   | "accepted"
   | "retrieving"
@@ -31,7 +31,7 @@ export type ComparisonRequest = {
   version?: string;
   date_from?: string;
   date_to?: string;
-  source_type?: "documentation" | "changelog" | "release_note";
+  source_type?: "documentation" | "changelog" | "release_note" | "pricing";
   language?: "en-US" | "es-MX";
 };
 
@@ -45,6 +45,18 @@ export type ComparisonCell = {
   version?: string | null;
   explanation?: string | null;
   evidence_ids: string[];
+  evidence?: ComparisonEvidence[];
+};
+
+export type ComparisonEvidence = {
+  id: string;
+  source_title: string;
+  publisher: string;
+  canonical_url: string;
+  source_type: "documentation" | "changelog" | "release_note" | "pricing";
+  excerpt: string;
+  captured_at: string;
+  version_label?: string | null;
 };
 
 export type ComparisonMatrix = {

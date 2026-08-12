@@ -126,6 +126,10 @@ As an operator, I want traces, structured logs, cost/latency signals, backups, a
 - Vercel is the web hosting target. Supabase is the managed data/auth/storage target. The API and worker use a managed container runtime selected during implementation so long-running/background behavior is not forced into a web-function model.
 - Provisioning accounts, domain ownership, billing, and production credentials are operator actions. Repository work may provide scripts, manifests, checks, and runbooks but must not invent credentials.
 - A real beta deployment is a separate evidence milestone after repository implementation; local tests alone cannot close this feature.
+- An owner-approved interim portfolio beta MAY expose the HTTP cited-answer API as a Vercel Python
+  Function to activate the existing public web application without adding a paid provider. This
+  interim adapter does not satisfy FR-003, does not provide a continuous worker, and MUST NOT be
+  reported as completion of T032 or Feature 018.
 
 ## Assumptions
 
