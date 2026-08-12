@@ -73,7 +73,7 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 8: Interim portfolio beta activation (owner-approved)
 
-- [ ] T046 [US1] Deploy the existing FastAPI HTTP surface as an owner-approved Vercel Python Function for the cited-answer beta, configure Supabase/OpenAI/LangSmith secrets without committing values, set `NEXT_PUBLIC_API_ORIGIN`, and retain bilingual `/healthz`, `/readyz`, and cited-answer smoke evidence. This is an interim activation only; it does not close T032, does not activate the continuous worker, and does not mark Feature 018 production-ready.
+- [X] T046 [US1] Deploy the existing FastAPI HTTP surface as an owner-approved Vercel Python Function for the cited-answer beta, configure Supabase/OpenAI/LangSmith secrets without committing values, set `NEXT_PUBLIC_API_ORIGIN`, and retain bilingual `/healthz`, `/readyz`, and cited-answer smoke evidence in `evals/results/vercel-api-beta-smoke-20260811.json`. This is an interim activation only; it does not close T032, does not activate the continuous worker, and does not mark Feature 018 production-ready.
 
 ## Dependencies & Execution Order
 

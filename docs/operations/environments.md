@@ -8,7 +8,7 @@ tokens, database passwords, Supabase service-role keys, or LangSmith API keys he
 | Development | n/a | `http://localhost:8000` | Local Docker PostgreSQL | n/a | Local development only |
 | Preview | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`atlasai-35ucmz40i-jhonykings-projects.vercel.app`](https://atlasai-35ucmz40i-jhonykings-projects.vercel.app) | `TODO_ISOLATED_TARGET` | n/a | Integration-branch web deployment `dpl_BdNauARdjjeJroNFuQ75GfiNzmEz` is `READY`; managed API/database isolation remains open |
 | Staging | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | `TODO_OWNER` | Not provisioned |
-| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | `TODO_MANAGED_API` | Web deployment `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T` from `main` is `READY`; Supabase is `ACTIVE_HEALTHY`; full product remains unavailable until the managed API/worker and environment variables exist |
+| Production | `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` | [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app) | `fcbclsaytbjpywlaplbh` | Interim Vercel Function `prj_bhfat0NPE7QR0QViesuWM6KSmntN` | Web and owner-approved cited-answer API beta are `READY`; Supabase is `ACTIVE_HEALTHY`; continuous managed API/worker and full production DoD remain open |
 
 The Supabase project `fcbclsaytbjpywlaplbh` was explicitly identified by the owner as **main / PRODUCTION**;
 it is not a development target. Post-apply inspection on 2026-08-11 found Postgres `17.6`, migration
@@ -21,8 +21,8 @@ root for Git deployment `dpl_GpEevej8ekvyiJKTPcjmM8VBr92K`, while the project AP
 `framework: null` and the dashboard warned that the effective deployment configuration differed
 from current Project Settings. The repository therefore also provides an equivalent monorepo build:
 the root declares the same Next.js version as `apps/web`, builds `@atlas/web`, and emits
-`apps/web/.next`. A managed API origin is still required before the complete product can be declared
-ready.
+`apps/web/.next`. An interim API origin is now available at `https://atlasai-api.vercel.app` for the
+owner-approved cited-answer beta; the complete product still requires the managed API/worker runtime.
 
 The Git-connected deployment for commit `1bf85aa` was checked on 2026-08-11. Its complete build log
 shows a successful frozen-lockfile workspace install followed by `NEXT_NO_VERSION`; this is evidence
@@ -49,8 +49,10 @@ Commit `251b10c163fdd9db44ae038c8ee401d1b09932ee` was built as preview
 [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app). Main then advanced to
 `d596fc39415b1abaa4b47e0b2dd5b5e620a09617`; deployment
 `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` is `READY` and contains the explicit locale-route and SVG flag
-fixes. The public web is real; `NEXT_PUBLIC_API_ORIGIN` is not configured yet, so this is not a claim
-that answer, comparison, report, corpus, news, auth, or agent operations work in production.
+fixes. The public web is real and the production build now receives `NEXT_PUBLIC_API_ORIGIN` pointing
+to the owner-approved Vercel API beta. The cited-answer smoke is recorded separately; comparison,
+report, corpus, news, auth, and continuous agent-worker operations are not claimed by this interim
+activation.
 
 Production later advanced to commit `174150ba53db8a98603fcc49e4262424f908a505` in deployment
 `dpl_GtVWDMyubQKuuKi2M3mNsKRiRr4T`. The GitHub CI run
@@ -72,3 +74,18 @@ domain, the generated project domain used on LinkedIn, and the `main` branch pro
 The newest inspected preview returned 302 to Vercel Authentication, confirming that preview
 protection remains active. The redacted evidence is retained in
 [`evals/results/vercel-production-access-20260811.json`](../../evals/results/vercel-production-access-20260811.json).
+
+## Interim Vercel API beta activation — 2026-08-11
+
+The owner-approved API project `prj_bhfat0NPE7QR0QViesuWM6KSmntN` is connected to
+`JhonyKing/atlas`, rooted at `apps/backend`, and serves the public alias
+[`https://atlasai-api.vercel.app`](https://atlasai-api.vercel.app). Production `/healthz` and
+`/readyz` returned HTTP 200 with Supabase, migration, model-provider, and observability checks
+ready. The web production project has `NEXT_PUBLIC_API_ORIGIN` configured to that alias and was
+redeployed; the value is present in the client bundle and CORS permits the canonical web origin.
+
+An `es-MX` cited-answer request returned HTTP 200 as an event stream with retrieval and
+`answer.completed` events plus citations. Redacted, reproducible evidence is retained in
+[`evals/results/vercel-api-beta-smoke-20260811.json`](../../evals/results/vercel-api-beta-smoke-20260811.json).
+This is an interim HTTP beta only: T032's continuous worker, managed container runtime, restore,
+rollback, and complete production Definition of Done remain open.
