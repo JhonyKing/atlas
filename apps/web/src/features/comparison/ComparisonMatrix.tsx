@@ -74,7 +74,7 @@ function CellView({ cell, spanish }: { cell: ComparisonCell; spanish: boolean })
   return (
     <div className="comparison-cell" data-cell-state={cell.state} role="group" aria-label={`${cell.technology_id} · ${cell.criterion_id}`}>
       <EvidenceStatus state={cell.state as EvidenceState} label={stateLabels[cell.state]} />
-      {cell.value ? <span className="comparison-cell-value">{`${cell.value}${cell.unit ? ` ${cell.unit}` : ""}`}</span> : <p className="comparison-cell-note">{cell.state === "not_applicable" ? (spanish ? "Este criterio no aplica a este producto." : "This criterion does not apply to this product.") : messages.comparison.noEvidence}</p>}
+      {cell.value ? <span className="comparison-cell-value">{`${cell.value}${cell.unit ? ` ${cell.unit}` : ""}`}</span> : <p className="comparison-cell-note">{cell.state === "not_applicable" ? (spanish ? "Este criterio no aplica a este producto." : "This criterion does not apply to this product.") : cell.evidence_ids.length > 0 ? (spanish ? "Hay evidencia, pero los valores no son directamente comparables." : "Evidence exists, but the values are not directly comparable.") : messages.comparison.noEvidence}</p>}
       {cell.explanation ? <p>{cell.explanation}</p> : null}
       {cell.evidence_ids.length > 0 ? (
         <details className="comparison-evidence-details">
