@@ -38,12 +38,16 @@
 |---|---|---|
 | technology_id | technology ID | One row dimension |
 | criterion_id | criterion ID | One column dimension |
-| state | enum | `supported`, `unsupported`, `partial`, `contradictory` |
+| state | enum | `supported`, `unsupported`, `not_applicable`, `partial`, `contradictory` |
 | value | nullable structured value | Required only when state is supported or partial |
 | unit | nullable string | Cannot be inferred when source units conflict |
 | period/version/date | nullable structured context | Preserves temporal and measurement conditions |
-| explanation | bounded text | Required for unsupported, partial and contradictory states |
-| evidence_ids | list of UUIDs | At least one for supported/partial/contradictory cells; empty for unsupported |
+| explanation | bounded text | Required for unsupported, not-applicable, partial and contradictory states |
+| evidence_ids | list of UUIDs | At least one for supported/partial/contradictory cells; empty for unsupported/not-applicable |
+| evidence | bounded metadata list | Title, publisher, URL, excerpt, capture date, source type and version for each cited ID |
+
+Price cells use `source_type=pricing` only. A framework without a comparable API/model price is
+`not_applicable`; a provider with no reviewed pricing evidence is `unsupported`.
 
 ## Criterion IDs
 

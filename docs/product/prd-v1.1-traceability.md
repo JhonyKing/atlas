@@ -28,13 +28,13 @@ La especificación inicial de `001-cited-answer` fue demasiado estrecha y contra
 | PRD-002 | English-first + es-MX con paridad funcional | Control del documento; 21; ADR-007 | 001 | Implementado y probado; falta evidencia operacional real | T078–T084; T086 |
 | PRD-003 | Preguntas sobre frameworks/proveedores y cambios de versión | 4–7 | 001 | Parcial | T037–T050; Anthropic es la cuarta colección en preparación y Gemini la quinta |
 | PRD-004 | Citas por afirmación, fecha, versión y fuente canónica | 10; 16.2 | 001 | Implementado con fakes | T042–T058; falta smoke real |
-| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe, ejecutores y baseline offline de 20 solicitudes implementados; falta cuarta colección y verificación live contra snapshot poblado | T001–T041; specs/002-technology-comparator/ |
+| PRD-005 | Comparador configurable de 2–4 tecnologías | 5.1; 7.2; 16.2 | 002 | Parcial: contratos, persistencia, cuota, workflow, UI bilingüe, conclusiones deterministas y evidencia inspeccionable implementados; pricing oficial requiere aplicar migración/ingestar snapshot y repetir live | T001–T048; specs/002-technology-comparator/ |
 | PRD-006 | Reportes DOCX/PDF descargables y citados | 1.1; 3.3; 7.2; 16.2 | 003 | No iniciado | Backlog RPT-001–RPT-012 |
 | PRD-007 | Architecture brief, ADR, release intelligence, research report | 7.3; tabla de plantillas | 003 | No iniciado | RPT-003–RPT-008 |
 | PRD-008 | Auth opcional, sesiones, historial y reportes propios | 5.1; 12.2 | 004 | No iniciado | Backlog IDN-001–IDN-009 |
 | PRD-009 | Feedback positivo/negativo y cita incorrecta | 5.1; 14 | 001 | Implementado con fakes | T051–T058 |
 | PRD-010 | Panel de fuentes, última actualización y cobertura | 5.1 | 001 / 005 | Parcial | T069; ING-009 |
-| PRD-011 | Corpus curado de docs, releases, papers, pricing y uploads autorizados | 6 | 005 | Parcial | T024–T030 cubren las tres colecciones iniciales; Anthropic/Gemini están registrados como expansión gobernada; ING-001–ING-015 |
+| PRD-011 | Corpus curado de docs, releases, papers, pricing y uploads autorizados | 6 | 005 | Parcial | `expansion-v3-pricing.yaml` añade tres fuentes oficiales de pricing; falta ingestión en Supabase y validación live; ING-001–ING-015 |
 | PRD-012 | Gobernanza: licencia, robots, hash, takedown, obsolescencia, desactivación | 6.3; 12.3 | 005 | Parcial | T022–T026; ING-012–ING-015 |
 | PRD-013 | Router, planner, retrieval, verifier, síntesis, reporte y human review | 7; 9.2 | 006 | Parcial | T039/T044/T062–T065; AGT-001–AGT-010 |
 | PRD-014 | Checkpoints persistentes y reanudación para trabajos largos | 9.3 | 006 | No iniciado | AGT-007–AGT-009 |

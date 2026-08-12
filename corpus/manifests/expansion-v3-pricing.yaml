@@ -1,0 +1,94 @@
+# Immutable corpus input: technical documentation plus official API pricing pages.
+# Price cells are extracted only from entries marked `pricing`; framework rows remain no-applicable.
+version: expansion-v3-pricing
+review_status: approved
+collections:
+  langgraph:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangGraph overview
+        url: https://docs.langchain.com/oss/python/langgraph/overview
+        type: documentation
+      - title: LangGraph graph API
+        url: https://docs.langchain.com/oss/python/langgraph/graph-api
+        type: documentation
+      - title: LangGraph persistence
+        url: https://docs.langchain.com/oss/python/langgraph/persistence
+        type: documentation
+      - title: LangGraph interrupts
+        url: https://docs.langchain.com/oss/python/langgraph/interrupts
+        type: documentation
+  langchain:
+    publisher: LangChain
+    allowed_host: docs.langchain.com
+    sources:
+      - title: LangChain overview
+        url: https://docs.langchain.com/oss/python/langchain/overview
+        type: documentation
+      - title: LangChain agents
+        url: https://docs.langchain.com/oss/python/langchain/agents
+        type: documentation
+      - title: LangChain retrieval
+        url: https://docs.langchain.com/oss/python/langchain/retrieval
+        type: documentation
+      - title: LangChain middleware
+        url: https://docs.langchain.com/oss/python/langchain/middleware/overview
+        type: documentation
+  openai:
+    publisher: OpenAI
+    allowed_host: developers.openai.com
+    sources:
+      - title: OpenAI API models
+        url: https://developers.openai.com/api/docs/models
+        type: documentation
+      - title: OpenAI model and Responses guidance
+        url: https://developers.openai.com/api/docs/guides/latest-model
+        type: documentation
+      - title: OpenAI embeddings guide
+        url: https://developers.openai.com/api/docs/guides/embeddings
+        type: documentation
+      - title: OpenAI structured outputs guide
+        url: https://developers.openai.com/api/docs/guides/structured-outputs
+        type: documentation
+      - title: OpenAI model comparison and API pricing
+        url: https://developers.openai.com/api/docs/models/compare
+        type: pricing
+  anthropic:
+    publisher: Anthropic
+    allowed_host: platform.claude.com
+    sources:
+      - title: Anthropic documentation overview
+        url: https://platform.claude.com/docs/en/overview
+        type: documentation
+      - title: Anthropic API overview
+        url: https://platform.claude.com/docs/en/api/overview
+        type: documentation
+      - title: Claude models
+        url: https://platform.claude.com/docs/en/about-claude/models
+        type: documentation
+      - title: Anthropic tool use
+        url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+        type: documentation
+      - title: Anthropic model pricing
+        url: https://platform.claude.com/docs/en/about-claude/pricing
+        type: pricing
+  gemini:
+    publisher: Google
+    allowed_host: ai.google.dev
+    sources:
+      - title: Gemini API documentation
+        url: https://ai.google.dev/gemini-api/docs
+        type: documentation
+      - title: Gemini API reference
+        url: https://ai.google.dev/api
+        type: documentation
+      - title: Gemini models
+        url: https://ai.google.dev/gemini-api/docs/models
+        type: documentation
+      - title: Gemini function calling
+        url: https://ai.google.dev/gemini-api/docs/function-calling
+        type: documentation
+      - title: Gemini API pricing
+        url: https://ai.google.dev/gemini-api/docs/pricing
+        type: pricing

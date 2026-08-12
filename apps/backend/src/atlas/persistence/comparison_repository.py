@@ -9,16 +9,18 @@ from typing import Protocol
 from uuid import UUID
 
 from psycopg import Connection
+from pydantic import HttpUrl
 
 from atlas.comparison.schemas import (
     ComparisonCell,
     ComparisonCellState,
     ComparisonCriterion,
+    ComparisonEvidence,
     ComparisonMatrix,
     ComparisonRun,
     ComparisonRunStatus,
 )
-from atlas.domain import CollectionSlug
+from atlas.domain import CollectionSlug, SourceType
 
 
 class ComparisonRunNotFound(KeyError):
@@ -171,13 +173,31 @@ class PostgresComparisonRepository:
         for cell_row in cell_rows:
             evidence_rows = self._connection.execute(
                 """
-                SELECT chunk_id
-                FROM atlas.comparison_cell_evidence
-                WHERE comparison_cell_id = %s
-                ORDER BY ordinal
+                SELECT cce.chunk_id, s.title, s.publisher, s.canonical_url,
+                       s.source_type, c.text, sv.fetched_at, sv.version_label
+                FROM atlas.comparison_cell_evidence AS cce
+                JOIN atlas.chunks AS c ON c.id = cce.chunk_id
+                JOIN atlas.source_versions AS sv ON sv.id = c.source_version_id
+                JOIN atlas.sources AS s ON s.id = sv.source_id
+                WHERE cce.comparison_cell_id = %s
+                ORDER BY cce.ordinal
                 """,
                 (cell_row[0],),
             ).fetchall()
+            evidence_ids = [row[0] for row in evidence_rows]
+            evidence = [
+                ComparisonEvidence(
+                    id=row[0],
+                    source_title=row[1],
+                    publisher=row[2],
+                    canonical_url=str(HttpUrl(row[3])),
+                    excerpt=row[5],
+                    captured_at=row[6],
+                    version_label=row[7],
+                    source_type=SourceType(row[4]),
+                )
+                for row in evidence_rows
+            ]
             cells.append(
                 ComparisonCell(
                     technology_id=CollectionSlug(cell_row[1]),
@@ -188,7 +208,8 @@ class PostgresComparisonRepository:
                     explanation=cell_row[6],
                     period=cell_row[7],
                     version=cell_row[8],
-                    evidence_ids=[row[0] for row in evidence_rows],
+                    evidence_ids=evidence_ids,
+                    evidence=evidence,
                     observed_at=cell_row[9],
                 )
             )

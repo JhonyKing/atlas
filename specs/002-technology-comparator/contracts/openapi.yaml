@@ -95,7 +95,7 @@ components:
         version: { type: string, maxLength: 64 }
         date_from: { type: string, format: date }
         date_to: { type: string, format: date }
-        source_type: { type: string }
+        source_type: { type: string, enum: [documentation, changelog, release_note, pricing] }
         language: { type: string, enum: [en-US, es-MX] }
     ComparisonRun:
       type: object
@@ -124,11 +124,27 @@ components:
       properties:
         technology_id: { type: string }
         criterion_id: { type: string }
-        state: { type: string, enum: [supported, unsupported, partial, contradictory] }
+        state: { type: string, enum: [supported, unsupported, not_applicable, partial, contradictory] }
         value: { type: string, nullable: true }
         unit: { type: string, nullable: true }
         explanation: { type: string, nullable: true }
         evidence_ids: { type: array, items: { type: string, format: uuid } }
+        evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComparisonEvidence'
+    ComparisonEvidence:
+      type: object
+      required: [id, source_title, publisher, canonical_url, source_type, excerpt, captured_at]
+      properties:
+        id: { type: string, format: uuid }
+        source_title: { type: string }
+        publisher: { type: string }
+        canonical_url: { type: string, format: uri }
+        source_type: { type: string, enum: [documentation, changelog, release_note, pricing] }
+        excerpt: { type: string }
+        captured_at: { type: string, format: date-time }
+        version_label: { type: string, nullable: true }
     Problem:
       type: object
       required: [type, title, status, detail, request_id, error_code]

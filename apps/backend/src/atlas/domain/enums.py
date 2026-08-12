@@ -20,6 +20,7 @@ class SourceType(_StringEnum):
     DOCUMENTATION = "documentation"
     CHANGELOG = "changelog"
     RELEASE_NOTE = "release_note"
+    PRICING = "pricing"
 
 
 class CollectionState(_StringEnum):

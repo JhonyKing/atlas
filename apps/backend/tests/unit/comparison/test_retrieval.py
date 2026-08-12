@@ -37,6 +37,15 @@ class FakeComparisonRetriever:
         return [duplicate, first]
 
 
+def test_price_defaults_to_pricing_sources_when_no_override_is_given() -> None:
+    request = ComparisonRequest(
+        technologies=[CollectionSlug.OPENAI, CollectionSlug.ANTHROPIC],
+        criteria=[ComparisonCriterion.PRICE],
+        source_type=SourceType.DOCUMENTATION,
+    )
+    assert request.effective_source_type(ComparisonCriterion.PRICE) is SourceType.PRICING
+
+
 @pytest.mark.asyncio
 async def test_fan_out_keeps_technology_criterion_order_and_selected_snapshot() -> None:
     retriever = FakeComparisonRetriever()
@@ -68,6 +77,8 @@ async def test_fan_out_keeps_technology_criterion_order_and_selected_snapshot() 
     assert all(call["version"] == "1.0" for call in retriever.calls)
     assert all(call["date_from"] == date(2026, 1, 1) for call in retriever.calls)
     assert all(call["date_to"] == date(2026, 8, 5) for call in retriever.calls)
+    price_calls = [call for call in retriever.calls if call["criterion"] is ComparisonCriterion.PRICE]
+    assert all(call["source_type"] is SourceType.PRICING for call in price_calls)
 
 
 @pytest.mark.asyncio

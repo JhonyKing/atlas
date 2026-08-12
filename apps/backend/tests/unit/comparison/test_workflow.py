@@ -54,7 +54,10 @@ class FakeRetrieval:
 
 
 class FakeExtractor:
-    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+    async def extract(
+        self, branch: ComparisonRetrievalBranch, *, language: str = "en-US"
+    ) -> list[ComparisonObservation]:
+        del language
         return [
             ComparisonObservation(
                 value="120",
@@ -72,12 +75,14 @@ class BoundedExtractor(FakeExtractor):
         self.active = 0
         self.max_active = 0
 
-    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+    async def extract(
+        self, branch: ComparisonRetrievalBranch, *, language: str = "en-US"
+    ) -> list[ComparisonObservation]:
         self.active += 1
         self.max_active = max(self.max_active, self.active)
         try:
             await asyncio.sleep(0)
-            return await super().extract(branch)
+            return await super().extract(branch, language=language)
         finally:
             self.active -= 1
 
@@ -86,14 +91,19 @@ class CancellingExtractor(FakeExtractor):
     def __init__(self, state: dict[str, bool]) -> None:
         self._state = state
 
-    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+    async def extract(
+        self, branch: ComparisonRetrievalBranch, *, language: str = "en-US"
+    ) -> list[ComparisonObservation]:
         self._state["cancelled"] = True
         await asyncio.sleep(0)
-        return await super().extract(branch)
+        return await super().extract(branch, language=language)
 
 
 class ForeignEvidenceExtractor(FakeExtractor):
-    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+    async def extract(
+        self, branch: ComparisonRetrievalBranch, *, language: str = "en-US"
+    ) -> list[ComparisonObservation]:
+        del language
         return [
             ComparisonObservation(
                 value="not from this branch",
@@ -203,3 +213,25 @@ async def test_workflow_rejects_evidence_outside_the_retrieved_branch() -> None:
             snapshot_id=uuid4(),
             embeddings={ComparisonCriterion.CAPABILITY: [0.1]},
         )
+
+
+@pytest.mark.asyncio
+async def test_workflow_marks_framework_price_not_applicable_and_writes_conclusion() -> None:
+    workflow = ComparisonWorkflow(FakeRetrieval(), FakeExtractor())
+    request = ComparisonRequest(
+        technologies=[CollectionSlug.LANGGRAPH, CollectionSlug.OPENAI],
+        criteria=[ComparisonCriterion.PRICE],
+        language="es-MX",
+    )
+
+    matrix = await workflow.run(
+        request,
+        snapshot_id=uuid4(),
+        embeddings={ComparisonCriterion.PRICE: [0.1]},
+    )
+
+    langgraph = next(cell for cell in matrix.cells if cell.technology_id is CollectionSlug.LANGGRAPH)
+    openai = next(cell for cell in matrix.cells if cell.technology_id is CollectionSlug.OPENAI)
+    assert langgraph.state is ComparisonCellState.NOT_APPLICABLE
+    assert openai.state is ComparisonCellState.SUPPORTED
+    assert matrix.summary and "Conclusión" in matrix.summary
