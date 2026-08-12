@@ -230,7 +230,9 @@ async def test_workflow_marks_framework_price_not_applicable_and_writes_conclusi
         embeddings={ComparisonCriterion.PRICE: [0.1]},
     )
 
-    langgraph = next(cell for cell in matrix.cells if cell.technology_id is CollectionSlug.LANGGRAPH)
+    langgraph = next(
+        cell for cell in matrix.cells if cell.technology_id is CollectionSlug.LANGGRAPH
+    )
     openai = next(cell for cell in matrix.cells if cell.technology_id is CollectionSlug.OPENAI)
     assert langgraph.state is ComparisonCellState.NOT_APPLICABLE
     assert openai.state is ComparisonCellState.SUPPORTED
