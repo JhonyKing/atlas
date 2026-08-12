@@ -1,7 +1,7 @@
 param(
     [string]$DatabaseUrl = $env:ATLAS_DATABASE_URL,
     [switch]$DryRun,
-    [string]$ExpectedHead = "foreign_key_indexes"
+    [string]$ExpectedHead = "comparison_pricing_contract"
 )
 
 $ErrorActionPreference = "Stop"
