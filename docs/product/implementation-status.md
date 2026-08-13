@@ -10,7 +10,7 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 |---|---|---:|---:|---|
 | 000 | Foundation y control del producto | No iniciado en SpecKit | — | `docs/product/prd-v1.1-backlog.md` |
 | 001 | Respuesta citada y UX bilingüe | Implementación terminada; evidencia humana/temporal pendiente | 4 | `specs/001-cited-answer/tasks.md` |
-| 002 | Comparador tecnológico | Cerrada; evidencia live y revisión del owner registradas | 0 | `specs/002-technology-comparator/tasks.md` |
+| 002 | Comparador tecnológico | Implementación local completa; ingesta de pricing, evidencia live y revisión del owner pendientes | 2: T047-T048 | `specs/002-technology-comparator/tasks.md` |
 | 003 | Reportes y documentos DOCX/PDF | Cerrada — MVP vertical | 0 | `specs/003-reports/tasks.md` |
 | 004 | Auth, sesiones y datos privados | Cerrada — MVP auth y datos privados | 0 | `specs/004-optional-auth-private-data/tasks.md` |
 | 005 | Corpus expandido e ingestión gobernada | Cerrada — slice determinista de portafolio | 0 | `specs/005-expanded-curated-corpus/tasks.md` |
@@ -27,20 +27,20 @@ Este es el tablero rápido del proyecto. El detalle ejecutable vive en cada
 | 016 | Harness conectado a LangSmith | Slice implementado y verificado | 0 | `specs/016-langsmith-evaluation-harness/tasks.md` |
 
 | 017 | CI/CD hardening | Cerrada: workflows hospedados verdes y `main` protegida | 0 | `specs/017-cicd-hardening/tasks.md` |
-| 018 | Production deployment | Fundación local implementada: Vercel, contenedor API/worker, readiness, CI, migración y evidencia redacted; activación externa aún pendiente | 6: T031-T036 | `specs/018-production-deployment/tasks.md` |
+| 018 | Production deployment | Fundación local implementada: API/Cron acotado por colección en Vercel, Supabase como cola/base durable, readiness y CI; activación externa aún pendiente | 7: T031-T036,T052 | `specs/018-production-deployment/tasks.md` |
 | 019 | Agent tool orchestration | Planner estructurado GPT-5.6 Luna con fallback determinista, catálogo, plan, aprobación, ejecución bounded, eventos, UI, persistencia Postgres no-development con replay entre repositorios, idempotencia durable, envelopes de evidencia read-only, enlaces de artefactos, trazas de ciclo de vida y evidencia live sin contenido privado | 0 | `specs/019-agent-tool-orchestration/tasks.md` |
-| 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 32 migraciones; `foreign_key_indexes` aplicado y advisors verificados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
+| 021 | Migración de base de datos a Supabase | Repositorio y producción alineados en 33 migraciones; `comparison_pricing_contract` aplicado y advisors revisados | 0 tareas SpecKit abiertas; el backlog de RLS de las otras tablas requiere un plan separado | `specs/021-supabase-database-migration/tasks.md` |
 | 022 | Claridad de producto y portafolio de ingeniería | P1 y P2 fusionados; corrección SSR bilingüe verificada en producción | 1: T038, revisión externa real | `specs/022-product-clarity-engineering/tasks.md` |
 
 ## Orden recomendado para terminar el MVP de portafolio
 
-1. Activar el runtime administrado de API/worker y sus secretos para cerrar T031–T036 de Feature
-   018; esto desbloquea las pruebas reales del producto desplegado.
+1. Activar el API/Cron de Vercel, `CRON_SECRET` y sus secretos para cerrar T031–T036 y T052 de
+   Feature 018; esto desbloquea las pruebas reales del producto desplegado.
 2. Ejecutar las cuatro evidencias externas de Feature 001: estudio de cinco personas, refresh de
    siete días, quickstart completo y consolidación final.
 3. Completar el refresh de siete días de Feature 014.
 4. Ejecutar la revisión externa de cinco segundos T038 de Feature 022. T039 ya está verificada en
-   producción; en total quedan 12 tareas SpecKit abiertas y el tablero separa claramente código,
+   producción; en total quedan 15 tareas SpecKit abiertas y el tablero separa claramente código,
    evidencia externa y despliegue.
 
 ## Comandos y archivos que debes consultar
@@ -60,9 +60,9 @@ El backlog completo mantiene la trazabilidad PRD → feature → tarea:
 
 ## Actualización hospedada (2026-08-11)
 
-La autorización explícita del propietario permitió aplicar `agent_tool_rls` y posteriormente
-`foreign_key_indexes` en el proyecto Supabase de producción. El remoto está en 32 migraciones con
-`foreign_key_indexes` como head; las siete
+La autorización explícita del propietario permitió aplicar `agent_tool_rls`,
+`foreign_key_indexes` y `comparison_pricing_contract` en el proyecto Supabase de producción. El
+remoto está en 33 migraciones con `comparison_pricing_contract` como head; las siete
 tablas durables del agente tienen FORCE RLS, 14 policies worker/read-only y cero grants para
 `anon`/`authenticated`. T046 de Feature 021 y T049 de Feature 019 están cerradas; Feature 019 no
 tiene tareas SpecKit abiertas. Supabase
