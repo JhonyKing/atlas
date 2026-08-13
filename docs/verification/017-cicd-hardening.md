@@ -70,4 +70,4 @@ author to manufacture an unavailable second reviewer.
 The redacted settings snapshot, failed-gate record, correction, and hosted-run identifiers are preserved in
 [`github-main-protection-20260811.json`](../../evals/results/github-main-protection-20260811.json).
 This closes the previously external branch-protection and hosted-run evidence gap without claiming
-that the still-unprovisioned managed API/worker deployment is production-ready.
+that the still-unactivated production API/Cron execution path is production-ready.

@@ -91,7 +91,12 @@ class _BatchWorker:
         self._batches = iter(batches)
         self.calls: list[int | None] = []
 
-    async def run_until_empty(self, *, max_runs: int | None = None) -> int:
+    async def run_until_empty(
+        self,
+        *,
+        max_runs: int | None = None,
+        collection: CollectionSlug | None = None,
+    ) -> int:
         self.calls.append(max_runs)
         return next(self._batches)
 
@@ -109,6 +114,19 @@ async def test_managed_worker_once_drains_one_bounded_batch() -> None:
 
     assert processed == 3
     assert worker.calls == [4]
+
+
+@pytest.mark.asyncio
+async def test_worker_can_drain_only_the_requested_collection() -> None:
+    repository = FakeIngestionRepository()
+    service = IngestionService(repository)
+    service.request_refresh(CollectionSlug.LANGGRAPH, "scheduled", "langgraph-key")
+    service.request_refresh(CollectionSlug.OPENAI, "scheduled", "openai-key")
+    worker = make_worker(repository, FakeDiscoverer([candidate()]))
+
+    assert await worker.run_until_empty(max_runs=1, collection=CollectionSlug.OPENAI) == 1
+    assert await worker.run_until_empty(max_runs=1, collection=CollectionSlug.LANGGRAPH) == 1
+    assert all(run.status == "succeeded" for run in repository.runs.values())
 
 
 @pytest.mark.asyncio

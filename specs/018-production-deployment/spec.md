@@ -4,9 +4,15 @@
 
 **Created**: 2026-08-07
 
-**Status**: Implementation foundation in progress; hosted beta evidence pending
+**Status**: Implementation foundation in progress; scheduled-ingestion architecture approved; hosted beta evidence pending
 
-**Input**: Product requirements for taking ATLAS from local development to a verifiable beta deployment using Vercel for the web application, Supabase for managed data/auth/storage, and a managed container runtime for the API and worker.
+**Input**: Product requirements for taking ATLAS from local development to a verifiable beta deployment using Vercel for the web application and scheduled bounded ingestion, and Supabase for managed data/auth/storage and the durable ingestion queue.
+
+## Clarifications
+
+### Session 2026-08-12
+
+- Q: ¿Cómo debe ejecutarse la ingesta diaria en producción sin mantener un worker encendido continuamente? → A: Vercel Cron diario, ejecución bounded por colección, Supabase como base de datos/cola, sin contratar un runtime adicional.
 
 ## User Scenarios & Testing
 
@@ -26,11 +32,11 @@ As a portfolio reviewer, I want to open a stable public ATLAS URL and use the sa
 
 ### User Story 2 - Run the API against managed production data (Priority: P1)
 
-As an operator, I want the API, ingestion worker, migrations, and scheduled jobs to use a managed Supabase project, so production data survives local-machine shutdown and is protected by explicit access policies.
+As an operator, I want the API, scheduled ingestion jobs, migrations, and durable queue to use a managed Supabase project, so production data survives local-machine shutdown and is protected by explicit access policies without paying for an idle worker process.
 
 **Why this priority**: The current database is local Docker PostgreSQL. A beta deployment is not real until persistence, authentication, vector search, retention, and private-data boundaries work outside the developer machine.
 
-**Independent Test**: Provision an isolated Supabase project, apply the versioned migrations to an empty database, load a small approved corpus, run health/readiness checks, and execute answer, comparison, report, news, auth, upload, and deletion smoke tests using non-local API credentials.
+**Independent Test**: Provision an isolated Supabase project, apply the versioned migrations to an empty database, invoke each approved collection's scheduled endpoint with a valid cron secret, verify one bounded queue run and its terminal status, then execute answer, comparison, report, news, auth, upload, and deletion smoke tests using non-local API credentials.
 
 **Acceptance Scenarios**:
 
@@ -69,6 +75,8 @@ As an operator, I want traces, structured logs, cost/latency signals, backups, a
 ## Edge Cases
 
 - Vercel must not receive server-only API keys, database passwords, Supabase service-role keys, or LangSmith tokens in browser bundles.
+- A scheduled ingestion invocation must process at most one collection and one durable queue run, use a date-scoped idempotency key, and terminate after the configured function limit; it must never depend on a continuously running process.
+- A repeated cron delivery must be safe: it may observe the existing date-scoped run, but must not create a duplicate run or promote a second snapshot for the same source content.
 - A preview deployment must not point at production private data by default.
 - A migration that is not backward-compatible with the currently running API must fail the release or use an explicitly documented expand/contract sequence.
 - Supabase is unavailable, has stale credentials, or returns a connection-pool exhaustion error; the API must report a truthful readiness failure and avoid claiming a verified answer.
@@ -84,7 +92,7 @@ As an operator, I want traces, structured logs, cost/latency signals, backups, a
 
 - **FR-001**: The system MUST provide a public HTTPS web deployment for the Next.js application on Vercel with separate preview and production configuration.
 - **FR-002**: The production web deployment MUST call a configured HTTPS API origin and MUST never require `localhost` at runtime.
-- **FR-003**: The system MUST provide a separately deployable API and ingestion-worker runtime suitable for long-running FastAPI requests, background jobs, scheduled retention/news work, and LangSmith traces; the API/worker runtime MUST NOT depend on Vercel function limits.
+- **FR-003**: The system MUST provide a separately deployable API and bounded scheduled-ingestion execution path suitable for FastAPI requests, one-collection refresh jobs, scheduled retention/news work, and LangSmith traces. The scheduled ingestion path MUST respect Vercel function limits and MUST NOT require a continuously running worker process. The existing container-capable `atlas-worker` remains the local/portable implementation seam.
 - **FR-004**: Production persistence MUST use a dedicated Supabase project with PostgreSQL, pgvector, authentication, storage, row-level security, and connection pooling configured for the ATLAS data model.
 - **FR-005**: Versioned migrations MUST be the source of truth, MUST run against a fresh production-like database in CI, and MUST run through an explicit release step before an application version is declared healthy.
 - **FR-006**: The deployment MUST keep public, authenticated, and private data boundaries equivalent to the existing domain contracts; production credentials MUST be least-privilege and environment-scoped.
@@ -95,6 +103,7 @@ As an operator, I want traces, structured logs, cost/latency signals, backups, a
 - **FR-011**: Production observability MUST emit correlated structured logs and LangSmith/OpenTelemetry traces for answer, comparison, report, news, ingestion, auth, and private-data flows with sensitive values redacted.
 - **FR-012**: The deployment MUST define backups, restore verification, retention, alerts, incident response, rollback, and recovery time/recovery point targets in operator documentation.
 - **FR-013**: The production smoke suite MUST prove Spanish and English UI paths, cited-answer verification/abstention, comparator evidence mapping, report artifact creation, previous-day news behavior, anonymous quota behavior, authenticated ownership, and private-resource deletion.
+- **FR-016**: The scheduled refresh contract MUST expose one authenticated endpoint per approved collection, use a dedicated `CRON_SECRET`, enqueue through Supabase with a deterministic idempotency key, process a bounded run, and return a redacted run summary without exposing provider or document contents.
 - **FR-014**: The deployment MUST document any functionality that remains intentionally disabled in beta and MUST fail closed rather than silently falling back to local fixtures or fake providers.
 - **FR-015**: The feature MUST NOT claim that ATLAS is deployed, publicly reachable, or using Supabase until a real environment passes the smoke evidence checklist with captured URLs, timestamps, revision IDs, and redacted logs.
 
@@ -119,23 +128,28 @@ As an operator, I want traces, structured logs, cost/latency signals, backups, a
 - **SC-007**: The operator can correlate a successful request, abstention, provider error, and private-data denial to a redacted trace and structured log within five minutes.
 - **SC-008**: Backup restore verification succeeds for a separate environment before the beta is declared operational.
 - **SC-009**: The beta documents whether the PRD targets for 99.5% API availability, TTFT p50 below 1.5 seconds, normal p95 below 12 seconds, report completion below 3 minutes, uncontrolled errors below 1%, citation rate at least 95%, and cost budgets are measured, pending, or not yet met; no target is claimed without evidence.
+- **SC-010**: A duplicate delivery of the same collection/date cron request produces one durable ingestion run and preserves one last-good source version; a bounded local contract test demonstrates this without a paid model call.
 
 ## Scope Boundaries
 
 - This feature defines and implements the production deployment path; it does not replace the existing local Docker development workflow.
-- Vercel is the web hosting target. Supabase is the managed data/auth/storage target. The API and worker use a managed container runtime selected during implementation so long-running/background behavior is not forced into a web-function model.
+- Vercel is the web hosting target and also invokes the bounded scheduled-ingestion endpoints on a daily cadence. Supabase is the managed data/auth/storage/queue target. No additional always-on API/worker runtime is required for the approved beta architecture.
 - Provisioning accounts, domain ownership, billing, and production credentials are operator actions. Repository work may provide scripts, manifests, checks, and runbooks but must not invent credentials.
 - A real beta deployment is a separate evidence milestone after repository implementation; local tests alone cannot close this feature.
-- An owner-approved interim portfolio beta MAY expose the HTTP cited-answer API as a Vercel Python
-  Function to activate the existing public web application without adding a paid provider. This
-  interim adapter does not satisfy FR-003, does not provide a continuous worker, and MUST NOT be
-  reported as completion of T032 or Feature 018.
+- An owner-approved interim portfolio beta MAY expose the HTTP cited-answer API and the
+  collection-scoped Cron routes as Vercel Python Functions to activate the existing public web
+  application without adding a paid provider. This adapter satisfies the approved beta execution
+  boundary; it MUST NOT be reported as completion of T032 or Feature 018 until hosted Cron,
+  secrets, and operational evidence are retained.
 
 ## Assumptions
 
 - The existing FastAPI API, ingestion worker, Alembic migration chain, Next.js web app, LangSmith instrumentation, and CI checks remain the domain source of truth.
 - Supabase-compatible local PostgreSQL remains available for offline development and CI; production configuration is selected through environment variables and secret management.
-- The API/worker hosting provider can run a container image, expose HTTPS, execute health checks, provide logs, and support a controlled release/rollback workflow.
+- The Vercel project can invoke authenticated production API routes on a daily cadence; the API route can connect to Supabase and provider APIs within the configured function limit, and can emit logs/traces and a controlled run summary.
 - Vercel preview builds are allowed to use a non-production API/database target.
-- The operator will supply Vercel, Supabase, domain, managed-container, model-provider, and LangSmith credentials when the implementation reaches the deployment-environment tasks.
+- The operator will supply Vercel, Supabase, domain, model-provider, and LangSmith credentials when
+  the implementation reaches the deployment-environment tasks. A separate always-on runtime is
+  not required for the approved beta; the portable worker seam remains available if volume later
+  exceeds the serverless bound.
 - Beta launch may start with a small approved corpus and bounded traffic, but it must expose corpus freshness and incomplete coverage instead of presenting fixtures as live research.

@@ -1,4 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "fastapi"
+  "framework": "fastapi",
+  "functions": {
+    "app.py": {
+      "maxDuration": 300,
+      "includeFiles": "../../corpus/manifests/**"
+    }
+  },
+  "crons": [
+    {"path": "/v1/operator/ingestion-cron/langgraph", "schedule": "0 2 * * *"},
+    {"path": "/v1/operator/ingestion-cron/langchain", "schedule": "5 2 * * *"},
+    {"path": "/v1/operator/ingestion-cron/openai", "schedule": "10 2 * * *"},
+    {"path": "/v1/operator/ingestion-cron/anthropic", "schedule": "15 2 * * *"},
+    {"path": "/v1/operator/ingestion-cron/gemini", "schedule": "20 2 * * *"}
+  ]
 }

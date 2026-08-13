@@ -5,7 +5,9 @@
 - **Decision**: Host the Next.js web application on Vercel; host the FastAPI API and ingestion worker as a container on a managed runtime; use Supabase as the managed PostgreSQL/pgvector/Auth/Storage target.
 - **Rationale**: The web application benefits from Vercel preview/production environments, while the API and worker need long-lived request handling, scheduled work, migrations, connection pooling, and LangSmith/OpenTelemetry instrumentation. Putting the whole backend into web functions would create avoidable limits and would not match the existing worker contract.
 - **Alternatives considered**:
-  - Vercel for everything: rejected because the current API/worker has background and long-running behavior that should remain container-friendly.
+  - Vercel for everything: initially rejected for the unbounded worker shape; superseded for the
+    approved beta after adding collection-scoped Cron, durable queue idempotency, and a bounded
+    one-run execution contract.
   - A single VM: rejected for the beta because it weakens preview isolation and makes web release evidence less explicit.
   - Self-hosted PostgreSQL: retained for local development/CI only; rejected for the public beta because it does not provide managed backups, auth, and operator access.
 
@@ -41,5 +43,7 @@
 
 ## Open operator inputs (not repository ambiguity)
 
-- The operator must choose/provision a managed container runtime and provide its credentials. The repository contract stays provider-neutral so the API/worker image can be moved without domain changes.
+- The approved beta does not require a managed container runtime. The repository contract stays
+  provider-neutral so the portable worker image can be moved without domain changes if future
+  volume or execution limits justify it.
 - The operator must provide Vercel, Supabase, domain, model-provider, and LangSmith credentials. No secret is generated or committed by this feature.

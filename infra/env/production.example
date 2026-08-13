@@ -3,6 +3,7 @@ WEB_ORIGIN=https://atlas.example.invalid
 API_ORIGIN=https://api.example.invalid
 NEXT_PUBLIC_API_ORIGIN=https://api.example.invalid
 ATLAS_DATABASE_URL=postgresql+psycopg://USER:PASSWORD@POOLER_HOST:6543/atlas
+CRON_SECRET=<platform-secret-at-least-16-chars>
 ATLAS_ANSWER_MODEL=gpt-5.6-luna
 ATLAS_CORPUS_MANIFEST=corpus/manifests/expansion-v1.yaml
 ATLAS_WORKER_POLL_SECONDS=10

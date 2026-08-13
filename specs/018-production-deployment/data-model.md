@@ -26,7 +26,7 @@ Immutable evidence produced for one release candidate or deployed revision.
 | `release_id` | identifier | Unique and stable for the release |
 | `source_revision` | commit | Required; must match the built source |
 | `web_build_id` | identifier | Required for Vercel deployment |
-| `api_image_digest` | digest | Required for managed container deployment |
+| `api_image_digest` | digest | Optional evidence for a future portable-worker container; the approved beta records the Vercel API deployment instead |
 | `migration_revision` | revision | Required and verified by readiness |
 | `checks` | list | Each required check has name, status, URL/log reference, timestamp |
 | `smoke_results` | list | Must include locale, answer, comparison, report, news, auth/privacy paths |

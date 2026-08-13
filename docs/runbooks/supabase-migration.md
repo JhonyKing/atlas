@@ -26,14 +26,14 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected repository and production chains contain 32 revisions and end at
-`0032_foreign_key_indexes.py` (revision name `foreign_key_indexes`). The revision adds covering
-indexes for the foreign keys reported by the hosted performance advisor and changes no row data or
-RLS policy.
+The expected repository and production chains contain 33 revisions and end at
+`0033_comparison_pricing_contract` (revision name `comparison_pricing_contract`). The latest
+revision adds the criterion-specific pricing evidence contract; the preceding revision added
+covering indexes for the foreign keys reported by the hosted performance advisor.
 
 ## Current hosted status (2026-08-11)
 
-- Remote and repository migration head: `foreign_key_indexes` at **32** revisions.
+- Remote and repository migration head: `comparison_pricing_contract` at **33** revisions.
 - All 24 reviewed covering indexes are present, valid, and ready. The hosted performance advisor
   reports zero `unindexed_foreign_keys` findings.
 - Seven durable agent tables have **FORCE ROW LEVEL SECURITY** and exactly 14 policies: one
@@ -88,7 +88,7 @@ Rerun inspection before attempting recovery.
 ## Definition of done
 
 - Every reviewed repository revision is applied; repository and remote both end at
-  `foreign_key_indexes` with 32 revisions.
+  `comparison_pricing_contract` with 33 revisions.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

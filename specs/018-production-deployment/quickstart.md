@@ -7,7 +7,7 @@ already provisioned.
 
 - A Vercel project for `apps/web`.
 - A Supabase project with a separate preview/staging target.
-- A managed container runtime for `apps/backend` and the worker.
+- A Vercel production project with Cron enabled for `apps/backend`.
 - Environment-scoped secrets supplied through the platform secret managers.
 - A domain and auth redirect URLs controlled by the operator.
 
@@ -35,13 +35,15 @@ quality signal. Live provider/LangSmith evaluation remains a separate evidence s
 ## Environment validation
 
 1. Apply migrations to the isolated Supabase target and record the head revision.
-2. Build and publish the API/worker image; record its immutable digest.
+2. Build the API function and record the immutable Vercel deployment identifier.
 3. Configure the API origin in Vercel as `NEXT_PUBLIC_API_ORIGIN` for the matching environment.
-4. Configure CORS, auth callbacks, model provider, LangSmith, storage, and database secrets in the
+4. Configure `CRON_SECRET`, CORS, auth callbacks, model provider, LangSmith, storage, and database secrets in the
    server-side secret managers only.
 5. Run the deployment readiness contract at `GET /healthz` and `GET /readyz`.
-6. Run the smoke contract and save its redacted JSON result as a release evidence bundle.
-7. Open the Vercel URL in a clean browser, test `/` and locale selection, and record the URL,
+6. Invoke each collection-scoped Cron route once with the platform-provided secret, verify one
+   bounded durable run per collection, and save its redacted JSON result.
+7. Run the smoke contract and save its redacted JSON result as a release evidence bundle.
+8. Open the Vercel URL in a clean browser, test `/` and locale selection, and record the URL,
    build ID, source revision, and timestamp.
 
 ## Rollback validation
