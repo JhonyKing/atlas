@@ -71,8 +71,9 @@ a typed unavailable state. Public components render localized recovery language 
 action; they do not render raw exception messages or environment-variable names. This prevents a
 configuration detail from becoming product copy while remaining truthful that the API is offline.
 
-The frontend does not invent a backend URL. Feature 018 owns provisioning the managed API/worker
-and setting the real `NEXT_PUBLIC_API_ORIGIN` in Vercel.
+The frontend does not invent a backend URL. Feature 018 owns setting the real
+`NEXT_PUBLIC_API_ORIGIN` in Vercel and activating the approved Vercel API/Cron path. The beta uses
+Supabase as the durable queue/database; it does not require an always-on worker runtime.
 
 ## Discovery and access
 

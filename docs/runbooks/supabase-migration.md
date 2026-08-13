@@ -13,8 +13,8 @@ Development/staging remains the preferred target for future data-bearing migrati
 - Restart Codex after adding the MCP so the tools are available in the active session.
 - The operator must classify the remote project before the first write. Production or unknown
   projects require explicit owner confirmation; that confirmation is recorded for the
-  `foreign_key_indexes` production run in
-  `evals/results/supabase-migration-foreign-key-indexes-20260811-applied.json`.
+  `foreign_key_indexes` and `comparison_pricing_contract` production runs in the corresponding
+  `evals/results/` artifacts.
 
 ## Source of truth
 
@@ -26,14 +26,15 @@ $env:PYTHONPATH = "$PWD/apps/backend/src"
 & "$PWD/apps/backend/.venv/Scripts/python.exe" "$PWD/scripts/supabase/verify_repository_migrations.py"
 ```
 
-The expected repository and production chains contain 32 revisions and end at
-`0032_foreign_key_indexes.py` (revision name `foreign_key_indexes`). The revision adds covering
-indexes for the foreign keys reported by the hosted performance advisor and changes no row data or
-RLS policy.
+The expected repository and production chains contain 33 revisions and end at
+`0033_comparison_pricing_contract.py` (revision name `comparison_pricing_contract`). The preceding
+`0032_foreign_key_indexes.py` revision adds covering indexes; the pricing revision adds the
+reviewed source/value contract used by comparison cells. Both are forward-only and do not copy
+private rows.
 
-## Current hosted status (2026-08-11)
+## Current hosted status (2026-08-13)
 
-- Remote and repository migration head: `foreign_key_indexes` at **32** revisions.
+- Remote and repository migration head: `comparison_pricing_contract` at **33** revisions.
 - All 24 reviewed covering indexes are present, valid, and ready. The hosted performance advisor
   reports zero `unindexed_foreign_keys` findings.
 - Seven durable agent tables have **FORCE ROW LEVEL SECURITY** and exactly 14 policies: one
@@ -42,8 +43,9 @@ RLS policy.
   migration.
 - Supabase still reports **41 other `atlas` tables** with RLS disabled. This is a separate warning
   backlog; do not claim project-wide RLS is complete or expand this migration implicitly.
-- Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`. The earlier
-  blocked run remains preserved as `...20260810.json`.
+- Evidence: `evals/results/supabase-migration-agent-tool-rls-20260811-applied.json`,
+  `evals/results/supabase-migration-foreign-key-indexes-20260811-applied.json`, and the reviewed
+  `comparison_pricing_contract` production artifact. Earlier blocked runs remain preserved.
 
 For a repeatable read-only check, export the bounded project state from the authenticated MCP as
 JSON and run:
@@ -88,7 +90,7 @@ Rerun inspection before attempting recovery.
 ## Definition of done
 
 - Every reviewed repository revision is applied; repository and remote both end at
-  `foreign_key_indexes` with 32 revisions.
+  `comparison_pricing_contract` with 33 revisions.
 - The final schema inventory has no unexplained drift.
 - RLS, provenance, vector retrieval, and idempotent rerun checks pass.
 - The inspect/apply/verify artifacts validate and contain no credentials or private content.

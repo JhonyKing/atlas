@@ -3,8 +3,9 @@
 1. Build from an immutable commit or release tag.
 2. Run all CI gates, including deterministic RAG evals and secret scanning.
 3. Run `scripts/release-migrate.ps1 -DryRun`, then apply the forward-only migration in the target.
-4. Deploy the API/worker image and Vercel web with environment-scoped secrets.
-5. Wait for `/healthz` and `/readyz`; run `scripts/deployment-smoke.py`.
+4. Deploy the Vercel web and API with environment-scoped secrets, then configure the five
+   per-collection Cron routes described below.
+5. Wait for `/healthz` and `/readyz`; run `scripts/deployment-smoke.py` and one bounded Cron smoke.
 6. Attach the redacted release evidence artifact to the release. Never paste secrets into logs.
 
 For Vercel, set the project **Root Directory** to `apps/web`. If the project is temporarily
@@ -15,9 +16,26 @@ the environment-specific project ID (`VERCEL_PREVIEW_PROJECT_ID` or
 `VERCEL_PRODUCTION_PROJECT_ID`). The workflow links the project explicitly before deploying;
 there is no dependency on a developer's local `.vercel` directory.
 
-For the managed backend image, keep `ATLAS_DATABASE_URL` in the platform secret manager and set
-`ATLAS_CORPUS_MANIFEST=corpus/manifests/expansion-v1.yaml`. Run the API role with the image's
-default command and the worker role with:
+For the Vercel API/Cron beta, keep `ATLAS_DATABASE_URL`, provider keys, and `CRON_SECRET` in the
+Vercel Production environment. Each invocation is bounded to one collection and authenticated by
+the platform Cron header. The routes are:
+
+```text
+/v1/operator/ingestion-cron/langgraph
+/v1/operator/ingestion-cron/langchain
+/v1/operator/ingestion-cron/openai
+/v1/operator/ingestion-cron/anthropic
+/v1/operator/ingestion-cron/gemini
+```
+
+The scheduled route must receive `Authorization: Bearer $CRON_SECRET`; do not put that value in
+`vercel.json`, source control, or a command argument. A deterministic idempotency key is derived
+from the manifest version, UTC date, and collection. The portable worker image remains available
+for local or alternative-runtime execution, but it is not an always-on production prerequisite for
+the approved beta.
+
+For local portability, keep `ATLAS_DATABASE_URL` in the platform secret manager and set
+`ATLAS_CORPUS_MANIFEST=corpus/manifests/expansion-v1.yaml`. Run the optional worker role with:
 
 ```text
 atlas-worker --manifest corpus/manifests/expansion-v1.yaml

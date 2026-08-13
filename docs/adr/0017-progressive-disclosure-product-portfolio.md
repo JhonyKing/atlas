@@ -42,7 +42,8 @@ Removing them would weaken the product and its portfolio value.
 Ordinary users receive a smaller cognitive load, while engineers retain direct access to the real
 system depth. Home and Engineering must remain consistent with the same SpecKit artifacts and
 tests. The UI can safely explain that the API is unavailable, but full hosted functionality still
-depends on Feature 018 provisioning the managed backend.
+depends on Feature 018 activating the Vercel API/Cron path and its secrets; an always-on managed
+worker is not required by the approved beta.
 
 The public routes keep their complete functional controls, but those controls no longer need to be
 understood before a visitor knows what the route is for. Native `details` elements preserve

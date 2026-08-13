@@ -23,6 +23,15 @@ Index migration evidence: [owner-approved foreign-key index verification](../../
 The earlier blocked attempt remains preserved at
 `../../evals/results/supabase-migration-agent-tool-rls-20260810.json` and was not overwritten.
 
+## Current hosted state (2026-08-13)
+
+The repository and production project have since advanced through
+`0033_comparison_pricing_contract`. The current head is `comparison_pricing_contract` at **33**
+revisions. This pricing contract is the source of truth for comparable provider pricing: a price
+cell must cite an approved pricing source and bounded value metadata; technical documentation alone
+does not become a price. The earlier 32-revision section below is retained as historical evidence
+from the 2026-08-11 index migration and is superseded by this current state.
+
 ## Result
 
 The project-scoped Supabase development database `fcbclsaytbjpywlaplbh` contains the exact 28
