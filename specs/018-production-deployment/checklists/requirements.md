@@ -31,5 +31,6 @@
 
 ## Notes
 
-- Planning must select and document the managed container runtime for the FastAPI API and worker.
+- Planning must select and document the bounded Vercel API/Cron runtime for the approved beta and
+  preserve a provider-neutral worker seam for a future scale-out decision.
 - Production credentials, billing, domain ownership, and account provisioning remain operator inputs.

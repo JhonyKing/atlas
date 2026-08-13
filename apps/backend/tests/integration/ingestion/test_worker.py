@@ -112,6 +112,19 @@ async def test_managed_worker_once_drains_one_bounded_batch() -> None:
 
 
 @pytest.mark.asyncio
+async def test_worker_can_drain_only_the_requested_collection() -> None:
+    repository = FakeIngestionRepository()
+    service = IngestionService(repository)
+    service.request_refresh(CollectionSlug.LANGGRAPH, "scheduled", "langgraph-key")
+    service.request_refresh(CollectionSlug.OPENAI, "scheduled", "openai-key")
+    worker = make_worker(repository, FakeDiscoverer([candidate()]))
+
+    assert await worker.run_until_empty(max_runs=1, collection=CollectionSlug.OPENAI) == 1
+    assert await worker.run_until_empty(max_runs=1, collection=CollectionSlug.LANGGRAPH) == 1
+    assert all(run.status == "succeeded" for run in repository.runs.values())
+
+
+@pytest.mark.asyncio
 async def test_managed_worker_shutdown_interrupts_idle_poll() -> None:
     worker = _BatchWorker([0])
     stop = asyncio.Event()

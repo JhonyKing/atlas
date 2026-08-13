@@ -53,7 +53,7 @@ Vercel, Supabase, or managed-container account already exists.
 
 - [X] T030 [US1] Provision Vercel preview and production projects and record non-secret project identifiers in `docs/operations/environments.md`. (Evidence: project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis`, main-branch deployment `dpl_Fn5qg6qNS9m88kWpu6Q2x6fP5481` and production deployment `dpl_8KpDGAy7wZSjeEyXEefnPWuH3JZi` are `READY`; `atlasai-lilac.vercel.app` serves HTTPS. Managed API activation remains T032-T036.)
 - [ ] T031 [US2] Provision isolated Supabase preview/staging/production targets, enable required extensions/policies, and record redacted project metadata in `docs/operations/environments.md`.
-- [ ] T032 [US2] Provision the managed container API/worker runtime, configure HTTPS/custom domain, and record immutable image/deployment identifiers.
+- [ ] T032 [US2] Provision and verify the production Vercel API/Cron execution path for collection-scoped ingestion, configure HTTPS and `CRON_SECRET`, and record immutable deployment/Cron identifiers. The owner-approved architecture supersedes an always-on container for this beta; this task remains open until hosted evidence exists.
 - [ ] T033 [US3] Configure environment-scoped secrets, CORS, auth callbacks, storage, model providers, and LangSmith project/tags without committing values.
 - [ ] T034 [US3] Execute the complete quickstart against preview/staging and retain the release evidence bundle under `evals/results/`.
 - [ ] T035 [US4] Verify traces, redaction, alerts, backups/restore, and rollback rehearsal in the real environment.
@@ -64,7 +64,7 @@ Vercel, Supabase, or managed-container account already exists.
 ## Phase 7: Documentation and convergence
 
 - [X] T037 [P] Update `README.md` with local versus deployed URLs, architecture, setup, environment boundaries, and evidence links.
-- [X] T038 [P] Add/update the deployment ADR in `docs/adr/` explaining Vercel web, Supabase data, managed API/worker, migrations, and rollback decisions.
+- [X] T038 [P] Add/update the deployment ADR in `docs/adr/` explaining Vercel web/Cron, Supabase data/queue, the portable worker seam, migrations, and rollback decisions.
 - [X] T039 [P] Update `docs/product/prd-v1.1-backlog.md`, `docs/product/feature-status-matrix.md`, and `docs/operations/` with Feature 018 traceability and SCL-011 status.
 - [X] T040 Run Speckit analyze and resolve all critical inconsistencies across spec, plan, tasks, contracts, code, workflows, and docs. (The 2026-08-11 follow-up found and resolved worker execution as T044 and non-development API composition/readiness as T045; T031-T036 stay explicitly open.)
 - [X] T041 Run Speckit converge after implementation; do not mark Feature 018 complete while operator-owned deployment evidence or required smoke tests are pending. (Follow-up convergence appended and completed T044-T045; the six external activation tasks remain open.)
@@ -73,7 +73,50 @@ Vercel, Supabase, or managed-container account already exists.
 
 ## Phase 8: Interim portfolio beta activation (owner-approved)
 
-- [X] T046 [US1] Deploy the existing FastAPI HTTP surface as an owner-approved Vercel Python Function for the cited-answer beta, configure Supabase/OpenAI/LangSmith secrets without committing values, set `NEXT_PUBLIC_API_ORIGIN`, and retain bilingual `/healthz`, `/readyz`, and cited-answer smoke evidence in `evals/results/vercel-api-beta-smoke-20260811.json`. This is an interim activation only; it does not close T032, does not activate the continuous worker, and does not mark Feature 018 production-ready.
+- [X] T046 [US1] Deploy the existing FastAPI HTTP surface as an owner-approved Vercel Python Function for the cited-answer beta, configure Supabase/OpenAI/LangSmith secrets without committing values, set `NEXT_PUBLIC_API_ORIGIN`, and retain bilingual `/healthz`, `/readyz`, and cited-answer smoke evidence in `evals/results/vercel-api-beta-smoke-20260811.json`. This is an interim activation only; it does not close T032 or mark Feature 018 production-ready.
+
+## Phase 9: Approved scheduled-ingestion architecture
+
+- [X] T047 [US2] Record the owner-approved architecture decision in `spec.md`, `plan.md`, and `docs/adr/0015-production-deployment.md`: Vercel daily Cron, one collection per bounded invocation, Supabase as durable queue/database, and no additional always-on runtime. T032 remains open because hosted evidence is still required.
+- [X] T048 [US2] Add the collection-scoped scheduled ingestion contract in `apps/backend/src/atlas/api/routes/operator_ingestion.py`, including `CRON_SECRET` bearer authentication, approved collection validation, redacted run summaries, and stable failure responses.
+- [X] T049 [US2] Add deterministic UTC-date idempotency and collection filtering to the ingestion execution seam in `apps/backend/src/atlas/ingestion/scheduled.py`, `apps/backend/src/atlas/ingestion/service.py`, and `apps/backend/src/atlas/ingestion/worker.py`; preserve the existing last-good promotion and retry/dead-letter behavior.
+- [X] T050 [US2] Configure production-only daily Cron routes and a five-minute bounded function limit in `apps/backend/vercel.json`, add `CRON_SECRET` placeholders to `.env.example` and `infra/env/`, and document the operational route in `docs/runbooks/corpus-refresh.md` and `docs/architecture/018-production-deployment.md`.
+- [X] T051 [US2] Add contract and worker tests for missing/invalid Cron authentication, redacted summaries, UTC idempotency, collection isolation, and one-run bounded execution in `apps/backend/tests/contract/api/test_scheduled_ingestion.py` and `apps/backend/tests/integration/ingestion/test_worker.py`.
+- [ ] T052 [US2] Deploy the scheduled route to Vercel production, configure the platform `CRON_SECRET`, invoke every approved collection once, and retain redacted run summaries and Vercel Cron logs under `evals/results/`; do not close T032-T036 without the remaining environment evidence.
+
+## Requirement and success-criteria coverage
+
+This matrix makes the owner-approved Cron change explicit for SpecKit review. A task may remain
+open when its implementation is present but its hosted evidence is still missing.
+
+| Requirement | Covered by tasks |
+|---|---|
+| FR-001 | T008, T030, T046, T052 |
+| FR-002 | T008, T046 |
+| FR-003 | T009, T010, T044, T045, T047-T052 |
+| FR-004 | T013-T017, T031 |
+| FR-005 | T003, T006, T013, T018, T031, T034 |
+| FR-006 | T006, T013, T019, T031, T033, T036 |
+| FR-007 | T008, T011, T012, T030, T031, T033 |
+| FR-008 | T001-T006, T018, T020, T024, T042 |
+| FR-009 | T003, T018, T022, T037, T042, T052 |
+| FR-010 | T002, T045, T046, T052 |
+| FR-011 | T025, T026, T035 |
+| FR-012 | T027, T028, T035 |
+| FR-013 | T005, T034, T036 |
+| FR-014 | T002, T004, T006, T045, T046, T052 |
+| FR-015 | T037, T040, T041, T052 |
+| FR-016 | T047-T052 |
+| SC-001 | T005, T030, T034, T036 |
+| SC-002 | T003, T006, T013, T031, T034 |
+| SC-003 | T003, T018, T037, T042, T052 |
+| SC-004 | T004, T025, T033, T035, T042, T052 |
+| SC-005 | T018, T020, T042 |
+| SC-006 | T027, T028, T035 |
+| SC-007 | T025, T026, T035 |
+| SC-008 | T028, T035 |
+| SC-009 | T026, T027, T035, T042 |
+| SC-010 | T049, T051, T052 |
 
 ## Dependencies & Execution Order
 

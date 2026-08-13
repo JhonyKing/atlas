@@ -41,23 +41,23 @@ Feature 022 is the source of truth for this product/portfolio separation:
 The canonical public web deployment is
 [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app). A missing hosted API origin
 is presented as a localized product-availability state; the browser never exposes the environment
-variable name. That safe UI does not mean the managed API/worker is live: Feature 018 still owns
-runtime provisioning and the final `NEXT_PUBLIC_API_ORIGIN` value.
+variable name. That safe UI does not mean the hosted API/Cron activation is complete: Feature 018
+still owns its production secrets, evidence, and the final `NEXT_PUBLIC_API_ORIGIN` value.
 
 ## Feature 018: production deployment foundation
 
-The repository now contains the production deployment contract: Vercel web configuration,
-provider-neutral API/worker container and manifest, Supabase migration preflight, `/healthz`
+The repository now contains the production deployment contract: Vercel web and collection-scoped
+Cron configuration, a provider-neutral API/worker seam and manifest, Supabase migration preflight, `/healthz`
 liveness, `/readyz` dependency readiness, deployment smoke checks, CI release gates, redacted
 release evidence, and deploy/backup/rollback runbooks. This is a deployable foundation, not a
-claim that the complete managed runtime is already live. The web is published at
-[`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app); the managed API/worker is not
-live yet, so the complete product is not declared production-ready.
+claim that the complete hosted runtime is already live. The web is published at
+[`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app); production Cron activation
+and its evidence are not complete, so the complete product is not declared production-ready.
 
-The shared backend image now has executable process separation: its default command starts the
-API, while the managed worker role runs `atlas-worker` with approved-manifest, PostgreSQL,
-allowlisted-fetch and embedding wiring. The worker implementation is locally container-verified;
-this does not replace the still-open task to provision and observe the hosted API/worker runtime.
+The shared backend image still has executable process separation: its default command starts the
+API, while a portable worker role runs `atlas-worker` with approved-manifest, PostgreSQL,
+allowlisted-fetch and embedding wiring. The approved portfolio beta invokes one collection per
+daily Vercel Cron request and drains the durable Supabase queue; an always-on worker is not required.
 The non-development API process now also wires the verified cited-answer graph and durable
 operator ingestion queue before declaring its model provider ready.
 
@@ -69,8 +69,8 @@ apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -q
 apps\backend\.venv\Scripts\python.exe scripts\deployment-smoke.py --help
 ```
 
-Remaining deployment tasks: create isolated preview/staging Supabase targets, provision the managed
-API/worker, configure environment secrets and API origin, run bilingual functional smoke tests,
+Remaining deployment tasks: create isolated preview/staging Supabase targets, activate production
+Cron and its secrets, configure environment secrets and API origin, run bilingual functional smoke tests,
 verify LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence
 bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
 
@@ -79,7 +79,7 @@ bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase production project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
-current remote and repository head is `foreign_key_indexes` (32 hosted revisions). The
+current remote and repository head is `comparison_pricing_contract` (33 hosted revisions). The
 owner-approved index-only migration resolved the hosted unindexed-foreign-key advisor findings:
 all 24 expected indexes are valid and ready, and the advisor now reports zero unindexed foreign
 keys.
@@ -99,8 +99,8 @@ Source, operations, and verification:
 
 ### Latest hosted Supabase update (2026-08-11)
 
-The owner-approved `foreign_key_indexes` migration is now applied in production. The remote head
-is `foreign_key_indexes` at 32 revisions. Seven durable agent tables retain FORCE RLS, 14 reviewed
+The owner-approved `foreign_key_indexes` and `comparison_pricing_contract` migrations are applied
+in production. The remote head is `comparison_pricing_contract` at 33 revisions. Seven durable agent tables retain FORCE RLS, 14 reviewed
 worker/read-only policies, and no `anon`/`authenticated` grants. Supabase still reports 41 other
 `atlas` tables without RLS; those require a separate reviewed policy plan.
 
