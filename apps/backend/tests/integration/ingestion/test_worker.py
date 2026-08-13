@@ -91,7 +91,12 @@ class _BatchWorker:
         self._batches = iter(batches)
         self.calls: list[int | None] = []
 
-    async def run_until_empty(self, *, max_runs: int | None = None) -> int:
+    async def run_until_empty(
+        self,
+        *,
+        max_runs: int | None = None,
+        collection: CollectionSlug | None = None,
+    ) -> int:
         self.calls.append(max_runs)
         return next(self._batches)
 
