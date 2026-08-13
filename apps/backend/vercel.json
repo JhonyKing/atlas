@@ -3,12 +3,12 @@
   "framework": "fastapi",
   "functions": {
     "app.py": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "includeFiles": [
+        "../../corpus/manifests/**"
+      ]
     }
   },
-  "includeFiles": [
-    "../../corpus/manifests/**"
-  ],
   "crons": [
     {"path": "/v1/operator/ingestion-cron/langgraph", "schedule": "0 2 * * *"},
     {"path": "/v1/operator/ingestion-cron/langchain", "schedule": "5 2 * * *"},
