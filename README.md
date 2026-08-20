@@ -41,23 +41,26 @@ Feature 022 is the source of truth for this product/portfolio separation:
 The canonical public web deployment is
 [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app). A missing hosted API origin
 is presented as a localized product-availability state; the browser never exposes the environment
-variable name. That safe UI does not mean the managed API/worker is live: Feature 018 still owns
-runtime provisioning and the final `NEXT_PUBLIC_API_ORIGIN` value.
+variable name. The interim cited-answer API beta is available at
+[`https://atlasai-api.vercel.app`](https://atlasai-api.vercel.app), with production `/healthz` and
+`/readyz` checks verified. The scheduled ingestion routes are implemented on the Feature 018 branch
+but are not claimed as production-active until that branch is merged and its Cron/secrets evidence
+is recorded.
 
 ## Feature 018: production deployment foundation
 
-The repository now contains the production deployment contract: Vercel web configuration,
-provider-neutral API/worker container and manifest, Supabase migration preflight, `/healthz`
-liveness, `/readyz` dependency readiness, deployment smoke checks, CI release gates, redacted
-release evidence, and deploy/backup/rollback runbooks. This is a deployable foundation, not a
-claim that the complete managed runtime is already live. The web is published at
-[`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app); the managed API/worker is not
-live yet, so the complete product is not declared production-ready.
+The repository now contains the production deployment contract: Vercel web/API configuration,
+five per-collection Cron routes, Supabase durable queue/preflight, a provider-neutral portable
+worker seam, `/healthz` liveness, `/readyz` dependency readiness, deployment smoke checks, CI
+release gates, redacted release evidence, and deploy/backup/rollback runbooks. This is a
+deployable foundation, not a claim that the complete hosted workflow is already live. The web and
+interim API beta are published, while production Cron activation and its evidence remain open.
+The owner-approved beta does not require an always-on worker runtime.
 
-The shared backend image now has executable process separation: its default command starts the
-API, while the managed worker role runs `atlas-worker` with approved-manifest, PostgreSQL,
-allowlisted-fetch and embedding wiring. The worker implementation is locally container-verified;
-this does not replace the still-open task to provision and observe the hosted API/worker runtime.
+The shared backend image still provides executable process separation for local portability: its
+default command starts the API, while the optional worker role runs `atlas-worker` with
+approved-manifest, PostgreSQL, allowlisted-fetch and embedding wiring. The worker implementation is
+locally container-verified, but an always-on worker is not required by the approved beta design.
 The non-development API process now also wires the verified cited-answer graph and durable
 operator ingestion queue before declaring its model provider ready.
 
@@ -69,17 +72,18 @@ apps\backend\.venv\Scripts\python.exe -m pytest apps/backend/tests -q
 apps\backend\.venv\Scripts\python.exe scripts\deployment-smoke.py --help
 ```
 
-Remaining deployment tasks: create isolated preview/staging Supabase targets, provision the managed
-API/worker, configure environment secrets and API origin, run bilingual functional smoke tests,
-verify LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence
-bundle. The exact checklist is in `specs/018-production-deployment/tasks.md`.
+Remaining deployment tasks: configure production `CRON_SECRET` and provider secrets, merge/deploy
+the scheduled routes, invoke each collection once, run bilingual functional smoke tests, verify
+LangSmith redaction, rehearse backup/restore and rollback, and attach the release evidence bundle.
+Preview/staging isolation remains optional and unprovisioned on the current Hobby plan. The exact
+checklist is in `specs/018-production-deployment/tasks.md`.
 
 ## Feature 021: Supabase database migration
 
 The PostgreSQL schema is reproducibly migrated to the project-scoped Supabase production project
 `fcbclsaytbjpywlaplbh` through OAuth-authenticated MCP operations. The repository remains the
 schema source of truth; local fixtures and private/user rows are not copied by default. The
-current remote and repository head is `foreign_key_indexes` (32 hosted revisions). The
+current remote and repository head is `comparison_pricing_contract` (33 hosted revisions). The
 owner-approved index-only migration resolved the hosted unindexed-foreign-key advisor findings:
 all 24 expected indexes are valid and ready, and the advisor now reports zero unindexed foreign
 keys.
@@ -97,10 +101,10 @@ Source, operations, and verification:
 - `docs/adr/0013-supabase-development-migration.md`
 - `docs/verification/021-supabase-migration.md`
 
-### Latest hosted Supabase update (2026-08-11)
+### Latest hosted Supabase update (2026-08-13)
 
-The owner-approved `foreign_key_indexes` migration is now applied in production. The remote head
-is `foreign_key_indexes` at 32 revisions. Seven durable agent tables retain FORCE RLS, 14 reviewed
+The owner-approved `comparison_pricing_contract` migration is now applied in production. The remote
+head is `comparison_pricing_contract` at 33 revisions. Seven durable agent tables retain FORCE RLS, 14 reviewed
 worker/read-only policies, and no `anon`/`authenticated` grants. Supabase still reports 41 other
 `atlas` tables without RLS; those require a separate reviewed policy plan.
 

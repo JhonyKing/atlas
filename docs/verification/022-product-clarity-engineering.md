@@ -121,9 +121,10 @@ The PR preview remained protected by Vercel Authentication, which is acceptable 
 does not represent canonical public access. The canonical production deployment is the anonymous
 surface verified above.
 
-The complete research runtime is still not claimed live: Feature 018 must provision the managed
-API/worker and configure the real `NEXT_PUBLIC_API_ORIGIN`. Feature 022 fixes the public failure
-mode; it does not fabricate a backend URL.
+The complete research runtime is still not claimed live: Feature 018 must activate the Vercel
+API/Cron routes, configure the real `NEXT_PUBLIC_API_ORIGIN` and secrets, and attach hosted smoke
+evidence. Feature 022 fixes the public failure mode; it does not fabricate a backend URL. The
+approved beta uses Supabase as the durable queue/database and does not require an always-on worker.
 
 ## P1 public-workflow verification ledger
 

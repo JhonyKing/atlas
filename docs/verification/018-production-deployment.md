@@ -62,13 +62,14 @@ deployment. The UTF-8-preserving evidence is in
   pass and Playwright discovers all six. Their execution is intentionally tracked by T036.
 - Vercel project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` has READY preview/main and production
   deployments. The public web is [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app).
-- Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with remote head
-  `foreign_key_indexes` and 32 hosted migration records. All 24 reviewed covering indexes are valid
-  and ready; the hosted advisor reports zero unindexed foreign keys.
+- Supabase production `fcbclsaytbjpywlaplbh` was `ACTIVE_HEALTHY` on Postgres 17.6, with the
+  then-current remote head `foreign_key_indexes` and 32 hosted migration records. All 24 reviewed
+  covering indexes were valid and ready; the hosted advisor reported zero unindexed foreign keys.
 
-T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
-managed API/worker, environment secrets, functional smoke, observability/restore and production
-rollback evidence do not yet exist.
+T005, T030 and T042 are closed. At that historical checkpoint T031-T036 remained open because the
+paid isolated database targets, managed API/worker, environment secrets, functional smoke,
+observability/restore and production rollback evidence did not yet exist; the current architecture
+and evidence boundary is recorded at the end of this file.
 
 ## Production access boundary follow-up (2026-08-11)
 
@@ -132,3 +133,24 @@ unavailable.
   imports the corrected FastAPI runtime successfully with a deliberately unreachable local test
   DSN and no real secret values.
 - T045 is closed. Hosted reachability and end-to-end behavior still require T032-T036.
+
+## Current owner-approved architecture and evidence boundary (2026-08-13)
+
+The owner approved a low-cost beta architecture that supersedes the earlier always-on runtime
+assumption: Vercel serves the API and five bounded Cron routes, while Supabase provides the durable
+queue and database. The portable `atlas-worker` image remains a tested local/alternative-runtime
+seam; an always-on managed worker is not required for this beta.
+
+- PR #13 (`codex/018-scheduled-ingestion`) contains the scheduled implementation. Its latest
+  branch commit is `6e6bec4`; the preview API deployment for that commit reached `READY` and its
+  `/healthz` check returned 200 with database readiness.
+- The current production `main` deployment remains the pre-Cron commit `b6058c7`. Its API
+  `/healthz` and `/readyz` are 200, but a scheduled ingestion route still returns 404 because PR
+  #13 has not yet been merged and deployed to production.
+- Production activation therefore still requires `CRON_SECRET` and provider secrets, the five
+  Cron schedules, one bounded run per collection, bilingual hosted smoke, LangSmith/redaction
+  evidence, backup/restore and rollback evidence, and the release bundle.
+
+This update is the current source of truth for the open boundary: T031-T036 and T052 remain open.
+Earlier paragraphs in this file intentionally preserve the historical managed-runtime evidence and
+must not be read as the current architecture.
