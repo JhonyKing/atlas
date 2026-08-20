@@ -21,17 +21,26 @@ class RecordingTraceSink:
         run_id: UUID,
         run_type: Literal["chain", "llm", "retriever", "tool", "parser"] = "chain",
         fields: Mapping[str, Any] | None = None,
+        inputs: Mapping[str, Any] | None = None,
         tags: Sequence[str] = (),
         parent: TraceHandle | None = None,
     ) -> TraceHandle:
+        del inputs
         self.started.append(
             {"name": name, "fields": dict(fields or {}), "tags": tuple(tags), "parent": parent}
         )
         return TraceHandle(run_id=uuid4(), active=True)
 
     def end(
-        self, handle: TraceHandle, *, status: str, fields: Mapping[str, Any] | None = None
+        self,
+        handle: TraceHandle,
+        *,
+        status: str,
+        fields: Mapping[str, Any] | None = None,
+        inputs: Mapping[str, Any] | None = None,
+        outputs: Mapping[str, Any] | None = None,
     ) -> None:
+        del inputs, outputs
         self.ended.append({"handle": handle, "status": status, "fields": dict(fields or {})})
 
 
