@@ -1,4 +1,4 @@
-# Feature 018 verification — 2026-08-08
+# Feature 018 verification â€” 2026-08-08
 
 ## Completed repository evidence
 
@@ -23,8 +23,8 @@
 
 ## Intentionally not claimed
 
-No public API URL, managed API/worker container, live LangSmith production trace, backup restore,
-rollback rehearsal, or complete hosted functional smoke has been claimed. Those remain T031-T036.
+No production Cron evidence, live LangSmith production trace, backup restore, rollback rehearsal,
+or complete hosted functional smoke has been claimed. Those remain T031-T036.
 
 ## Follow-up verification (2026-08-10)
 
@@ -63,12 +63,12 @@ deployment. The UTF-8-preserving evidence is in
 - Vercel project `prj_uk5h2ryyeHSYfi2AgL78cUM5TNis` has READY preview/main and production
   deployments. The public web is [`https://atlasai-lilac.vercel.app`](https://atlasai-lilac.vercel.app).
 - Supabase production `fcbclsaytbjpywlaplbh` is `ACTIVE_HEALTHY` on Postgres 17.6, with remote head
-  `foreign_key_indexes` and 32 hosted migration records. All 24 reviewed covering indexes are valid
+  `comparison_pricing_contract` and 33 hosted migration records. All 24 reviewed covering indexes are valid
   and ready; the hosted advisor reports zero unindexed foreign keys.
 
 T005, T030 and T042 are closed. T031-T036 remain open because the paid isolated database targets,
-managed API/worker, environment secrets, functional smoke, observability/restore and production
-rollback evidence do not yet exist.
+production Cron activation/secrets, functional smoke, observability/restore and production rollback
+evidence do not yet exist.
 
 ## Production access boundary follow-up (2026-08-11)
 
@@ -79,9 +79,8 @@ rollback evidence do not yet exist.
 - Preview `atlasai-rjcxyvm0b-jhonykings-projects.vercel.app/en` still returns 302 to Vercel login.
 - Evidence: `evals/results/vercel-production-access-20260811.json`.
 
-This resolves public web access for recruiters. It does not close T032-T036 because the managed
-API/worker, production secrets, functional research smoke, restore, and rollback evidence remain
-unavailable.
+This resolves public web access for recruiters. It does not close T032-T036 because production Cron,
+secrets, functional research smoke, restore, and rollback evidence remain unavailable.
 
 ## Public web fail-closed verification (2026-08-11)
 
@@ -112,8 +111,8 @@ unavailable.
   `sha256:443d1bba82c306df09c369b0a8cab6b66a5a9147d08fdee1bb67517fcce41e76`.
   Running the image through its real entrypoint displayed the `atlas-worker` CLI, while a
   secret-free `--once` start exited non-zero with the controlled `OPENAI_API_KEY` requirement.
-- T044 is closed. T032 remains open because no managed runtime, immutable registry digest, API
-  domain or hosted worker observation has been provisioned.
+- T044 is closed. T032 remains open because the production Cron deployment, secret, and hosted
+  collection-run observations have not been retained.
 
 ## Production API composition follow-up (2026-08-11)
 

@@ -4,10 +4,12 @@
 
 ## Summary
 
-Create a reproducible beta deployment path for ATLAS. Vercel hosts the Next.js web application;
-Supabase provides the managed PostgreSQL/pgvector/Auth/Storage target; a managed container runtime
-hosts the FastAPI API and ingestion worker. The repository will contain environment contracts,
-container/release configuration, migration gates, smoke tests, release evidence, observability and
+Create a reproducible beta deployment path for ATLAS. Vercel hosts the Next.js web application and
+invokes daily bounded ingestion routes; Supabase provides the managed PostgreSQL/pgvector/Auth/
+Storage target and durable ingestion queue. The existing FastAPI worker remains the portable domain
+implementation, while production invokes one collection-scoped `--once`-equivalent execution per
+cron request instead of paying for an idle always-on process. The repository will contain environment
+contracts, cron configuration, migration gates, smoke tests, release evidence, observability and
 rollback runbooks. A public deployment is not considered complete until a real environment passes
 the evidence bundle checks.
 
@@ -16,7 +18,7 @@ the evidence bundle checks.
 **Language/Version**: Python 3.13, Node 24, TypeScript strict, YAML/PowerShell
 
 **Primary Dependencies**: FastAPI/Uvicorn, Alembic, PostgreSQL/pgvector, Supabase Auth/Storage,
-Next.js 16, Vercel build/runtime, managed container runtime, GitHub Actions, LangSmith/OpenTelemetry
+Next.js 16, Vercel build/runtime/Cron, GitHub Actions, LangSmith/OpenTelemetry
 
 **Storage**: Local PostgreSQL/pgvector for development and CI; isolated Supabase PostgreSQL/pgvector,
 Auth, and Storage for preview/staging/production
@@ -24,7 +26,7 @@ Auth, and Storage for preview/staging/production
 **Testing**: pytest, Ruff, mypy, Vitest, Playwright, SQL contracts, deterministic RAG evals,
 deployment readiness/smoke runner, secret scan
 
-**Target Platform**: Vercel for web; managed HTTPS container runtime for API/worker; Supabase for data
+**Target Platform**: Vercel for web and bounded scheduled API jobs; Supabase for data, queue and auth
 
 **Project Type**: Monorepo web application, API, worker, and deployment automation
 
@@ -34,7 +36,7 @@ uncontrolled errors <1%, citation rate >=95%, and per-task cost budgets
 
 **Constraints**: No secrets in source/client/logs; preview isolation; forward-compatible migrations;
 no destructive automatic down-migrations; local workflow remains usable; deployment credentials are
-operator-provided; backend cannot rely on Vercel function limits
+operator-provided; each scheduled ingestion invocation must remain bounded by the Vercel function limit
 
 **Scale/Scope**: Portfolio beta, bounded traffic, small approved corpus first; one reproducible
 preview/staging path and one production path
@@ -73,7 +75,7 @@ evals/results/                  # redacted release/eval evidence only
 contracts. Do not add a second domain or duplicate data model for Supabase.
 
 **Interim beta activation**: An owner-approved Vercel Python Function may host the HTTP API
-entrypoint for the portfolio beta while the full managed API/worker runtime remains pending. This
+entrypoint for the portfolio beta while the collection-scoped Cron execution path remains pending. This
 is a bounded activation adapter for the cited-answer web flow, not a replacement for the
 long-running worker architecture or the Feature 018 Definition of Done.
 
@@ -81,10 +83,10 @@ long-running worker architecture or the Feature 018 Definition of Done.
 
 1. Add failing contracts for environment separation, readiness, release evidence, secret scanning,
    and deployment smoke behavior.
-2. Add platform-neutral container and environment configuration for API/worker and the Vercel web.
+2. Add platform-neutral worker and environment configuration for the API/Cron path and the Vercel web.
 3. Add Supabase migration/connection/RLS validation and explicit release migration step.
 4. Add CI/CD release gates, immutable evidence bundle, health checks, and rollback controls.
-5. Configure operator-owned Vercel, Supabase, domain, container, model, and LangSmith values in a
+5. Configure operator-owned Vercel, Supabase, domain, model, and LangSmith values in a
    non-production environment and run the quickstart.
 6. Verify observability, backups/restore, bilingual smoke journeys, and rollback rehearsal.
 7. Update README, ADRs, deployment runbooks, PRD backlog, and feature status; run Speckit analyze
@@ -94,5 +96,6 @@ long-running worker architecture or the Feature 018 Definition of Done.
 
 | Item | Why needed | Simpler alternative rejected because |
 |---|---|---|
-| Separate API/worker container runtime | Existing backend includes long-running and scheduled work | Vercel-only functions would impose the wrong runtime contract |
+| Collection-scoped scheduled execution | Daily ingestion does not justify an always-on worker on the portfolio beta | A continuous container would add cost and operational work for mostly idle capacity |
+| Durable Supabase queue and idempotency | Cron delivery can be duplicated or fail without retries | In-memory scheduling would lose work and make last-good preservation unverifiable |
 | Release evidence bundle | Portfolio and operations require externally verifiable deployment proof | A dashboard screenshot cannot prove migrations, smoke paths, or redaction |

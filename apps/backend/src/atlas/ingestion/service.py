@@ -52,7 +52,7 @@ class IngestionRepository(Protocol):
         requested_by: str | None = None,
     ) -> UUID: ...
 
-    def claim_next(self) -> IngestionRun | None: ...
+    def claim_next(self, collection: CollectionSlug | None = None) -> IngestionRun | None: ...
 
     def stage_source(
         self,
@@ -183,7 +183,7 @@ class PostgresIngestionRepository:
             "error_code": row[11],
         }
 
-    def claim_next(self) -> IngestionRun | None:
+    def claim_next(self, collection: CollectionSlug | None = None) -> IngestionRun | None:
         row = self._connection.execute(
             """
             SELECT r.id, c.slug, r.trigger, r.idempotency_key, r.attempt_count, r.status,
@@ -191,11 +191,16 @@ class PostgresIngestionRepository:
             FROM atlas.ingestion_runs AS r
             JOIN atlas.collections AS c ON c.id = r.collection_id
             WHERE r.status = 'queued'
+              AND (%s IS NULL OR c.slug = %s)
               AND pg_try_advisory_lock(hashtextextended(c.slug, 0))
             ORDER BY r.requested_at
             FOR UPDATE SKIP LOCKED
             LIMIT 1
-            """
+            """,
+            (
+                collection.value if collection is not None else None,
+                collection.value if collection is not None else None,
+            ),
         ).fetchone()
         if row is None:
             self._connection.rollback()

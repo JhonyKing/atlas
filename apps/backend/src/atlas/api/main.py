@@ -59,6 +59,7 @@ from atlas.comparison.retrieval import ComparisonRetrievalService, CorpusCompari
 from atlas.config import Settings, get_settings
 from atlas.demo import DemoAnswerGraph, DemoCorpusStatusProvider
 from atlas.ingestion.governance import InMemoryGovernanceRepository
+from atlas.ingestion.scheduled import ScheduledIngestionRunner, ScheduledIngestionService
 from atlas.ingestion.service import (
     IngestionService,
     OperatorIngestionService,
@@ -108,6 +109,8 @@ def create_app(
     migration_probe: MigrationProbe | None = None,
     operator_service: OperatorIngestionService | None = None,
     operator_token: str | None = None,
+    cron_secret: str | None = None,
+    scheduled_ingestion: ScheduledIngestionRunner | None = None,
     answer_service: AnswerRunControl | None = None,
     comparison_service: ComparisonRunControl | None = None,
     feedback_service: FeedbackControl | None = None,
@@ -181,6 +184,12 @@ def create_app(
         if settings.atlas_operator_token is not None
         else None
     )
+    application.state.cron_secret = cron_secret or (
+        settings.atlas_cron_secret.get_secret_value()
+        if settings.atlas_cron_secret is not None
+        else None
+    )
+    application.state.scheduled_ingestion = scheduled_ingestion
     application.state.auth_provider = auth_provider
     application.state.auth_service = SessionService(auth_provider) if auth_provider else None
     application.state.private_resource_service = private_resource_service
@@ -389,6 +398,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         },
     )
     operator_service = _durable_ingestion_service(settings)
+    scheduled_ingestion = ScheduledIngestionService(settings)
     comparison_service = _comparison_service(
         settings,
         corpus_service,
@@ -396,6 +406,12 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
     )
     return create_app(
         operator_service=operator_service,
+        cron_secret=(
+            settings.atlas_cron_secret.get_secret_value()
+            if settings.atlas_cron_secret is not None
+            else None
+        ),
+        scheduled_ingestion=scheduled_ingestion,
         answer_service=answer_service,
         corpus_service=corpus_service,
         migration_probe=partial(

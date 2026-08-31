@@ -110,3 +110,11 @@ Post-apply verification reports remote head **`foreign_key_indexes`**, **32** ho
 findings. Immediate `unused_index` findings are informational because no representative workload
 has exercised the new indexes yet. No Supabase row or RLS policy changed. T046 is closed, and the
 failed guarded attempt remains represented in the final evidence rather than being hidden.
+
+## Current follow-up (2026-08-13)
+
+The 32-revision `foreign_key_indexes` section above remains historical evidence. Production now
+has 33 hosted revisions with `comparison_pricing_contract` as the head; the pricing migration was
+applied separately and does not replace the index proof. The security advisor still reports a
+critical RLS-disabled finding for 41 other `atlas` tables. That remediation requires a separate
+reviewed policy migration and has not been applied here.

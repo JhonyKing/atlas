@@ -49,8 +49,8 @@ class IngestionWorker:
         self._embedder = embedder
         self._max_attempts = max_attempts
 
-    async def run_once(self) -> bool:
-        run = self._repository.claim_next()
+    async def run_once(self, collection: CollectionSlug | None = None) -> bool:
+        run = self._repository.claim_next(collection)
         if run is None:
             return False
         try:
@@ -88,10 +88,15 @@ class IngestionWorker:
             )
         return True
 
-    async def run_until_empty(self, *, max_runs: int | None = None) -> int:
+    async def run_until_empty(
+        self,
+        *,
+        max_runs: int | None = None,
+        collection: CollectionSlug | None = None,
+    ) -> int:
         processed = 0
         while max_runs is None or processed < max_runs:
-            if not await self.run_once():
+            if not await self.run_once(collection):
                 break
             processed += 1
         return processed
@@ -103,7 +108,12 @@ class IngestionWorker:
 class WorkerBatch(Protocol):
     """Small polling-loop seam used by deterministic tests and the managed runtime."""
 
-    async def run_until_empty(self, *, max_runs: int | None = None) -> int: ...
+    async def run_until_empty(
+        self,
+        *,
+        max_runs: int | None = None,
+        collection: CollectionSlug | None = None,
+    ) -> int: ...
 
 
 def build_parser() -> argparse.ArgumentParser:

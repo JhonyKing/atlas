@@ -51,9 +51,11 @@ class FakeIngestionRepository:
         self.queue.append(run_id)
         return run_id
 
-    def claim_next(self) -> IngestionRun | None:
+    def claim_next(self, collection: CollectionSlug | None = None) -> IngestionRun | None:
         for run_id in self.queue:
             run = self.runs[run_id]
+            if collection is not None and run.collection is not collection:
+                continue
             if run.collection in self.active_collections:
                 continue
             self.queue.remove(run_id)

@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     openai_api_key: SecretStr | None = None
     atlas_visitor_hmac_secret: SecretStr | None = None
     atlas_operator_token: SecretStr | None = None
+    atlas_cron_secret: SecretStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("CRON_SECRET", "ATLAS_CRON_SECRET"),
+    )
     langsmith_tracing: bool = False
     langsmith_api_key: SecretStr | None = None
     langsmith_project: str = "atlas-ai"
@@ -93,6 +97,7 @@ class Settings(BaseSettings):
         "openai_api_key",
         "atlas_visitor_hmac_secret",
         "atlas_operator_token",
+        "atlas_cron_secret",
         "langsmith_api_key",
         "langsmith_endpoint",
         "langsmith_workspace_id",

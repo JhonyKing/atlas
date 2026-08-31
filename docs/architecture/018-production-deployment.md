@@ -1,10 +1,10 @@
 # Feature 018 — production deployment architecture
 
-ATLAS uses three separately deployable surfaces:
+ATLAS uses two hosted surfaces plus a portable worker seam:
 
 1. Next.js web on Vercel, with preview and production projects separated.
-2. FastAPI API and ingestion worker in a managed container runtime. They are not Vercel
-   serverless functions and use immutable image digests.
+2. FastAPI API routes on Vercel, including authenticated collection-scoped Cron routes. Each
+   ingestion invocation enqueues and drains one bounded run before the function exits.
 3. Supabase Postgres/Auth/Storage/pgvector with pooled connections and forward-only Alembic
    migrations applied before API readiness.
 
@@ -27,8 +27,19 @@ packages the reviewed corpus manifests alongside all database migrations.
 `ATLAS_DATABASE_URL`, requires the OpenAI secret, and constructs the PostgreSQL repository,
 allowlisted fetcher, and embedding adapter inside the process. It drains a bounded number of
 durable ingestion jobs per cycle, waits interruptibly when idle, and handles termination signals
-before closing HTTP/provider/database resources. The managed runtime remains unprovisioned; this
-section records deployable repository wiring, not hosted evidence.
+before closing HTTP/provider/database resources. The portable worker seam is not a required hosted surface; this
+section records deployable repository wiring, not hosted evidence. The approved Hobby path does not
+require an always-on worker.
+
+## Scheduled ingestion boundary
+
+Production Cron requests use `GET /v1/operator/ingestion-cron/{collection}` with Vercel's
+`CRON_SECRET` bearer header. The route accepts only approved collections, derives an idempotency
+key from manifest version, UTC date and collection, and drains at most one queue run. The response
+contains only the run ID, status and counts; source bodies, provider errors and secrets are never
+returned. Vercel Cron is daily on Hobby, so the UTC date is the freshness boundary rather than an
+exact minute. If a collection cannot finish within the function limit, it must be split into smaller
+durable runs instead of being moved to an unbounded HTTP request.
 
 The non-development FastAPI composition also fails closed. It requires provider and visitor
 secrets, a verified corpus snapshot, a constructible cited-answer graph, durable agent
