@@ -56,6 +56,13 @@ documentation is never authoritative for a price claim. LangGraph and LangChain 
 `unsupported` (`Sin evidencia`). Expand a populated cell and verify title, publisher, bounded
 excerpt, capture date, version and canonical URL before using its value.
 
+Do not close the pricing slice from a local screenshot or a mocked response. The owner review must
+retain the immutable manifest version, Supabase snapshot ID, comparison run ID, application commit,
+locale, and retrieval version. The redacted live artifact must include the price cells that were
+verified, the cells that were `unsupported` or `not_applicable`, and the evidence IDs behind every
+populated value. Use `evals/results/comparator-pricing-live-<run-id>.json` for the machine-readable
+record and keep the corresponding owner-review checklist with it.
+
 ## 6. Run quality gates
 
 ```powershell
