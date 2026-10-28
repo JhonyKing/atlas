@@ -1,4 +1,5 @@
 import { getPublicEnvironment } from "@/lib/env";
+import { atlasVisitorHeaders, rememberAtlasVisitor } from "@/lib/atlas-visitor";
 
 import type {
   ComparisonEvent,
@@ -35,10 +36,12 @@ export async function streamComparison(
       "Content-Type": "application/json",
       Accept: "text/event-stream",
       "Idempotency-Key": idempotencyKey(),
+      ...atlasVisitorHeaders(),
     },
     body: JSON.stringify(input),
     signal,
   });
+  rememberAtlasVisitor(response);
   if (!response.ok) throw await parseError(response, "ATLAS could not start the comparison.");
   const runId = response.headers.get("X-Atlas-Run-ID");
   if (!runId) throw new ComparisonApiError(502, "ATLAS returned no comparison run identifier.");
@@ -50,8 +53,10 @@ export async function streamComparison(
 
 export async function getComparison(runId: string, signal?: AbortSignal): Promise<ComparisonRun> {
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/comparisons/${runId}`, {
+    headers: atlasVisitorHeaders(),
     signal,
   });
+  rememberAtlasVisitor(response);
   if (!response.ok) throw await parseError(response, "ATLAS could not read the comparison.");
   return (await response.json()) as ComparisonRun;
 }
@@ -59,8 +64,10 @@ export async function getComparison(runId: string, signal?: AbortSignal): Promis
 export async function cancelComparison(runId: string, signal?: AbortSignal): Promise<void> {
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/comparisons/${runId}`, {
     method: "DELETE",
+    headers: atlasVisitorHeaders(),
     signal,
   });
+  rememberAtlasVisitor(response);
   if (!response.ok && response.status !== 404) {
     throw await parseError(response, "ATLAS could not cancel the comparison.");
   }

@@ -20,7 +20,10 @@ from atlas.comparison.schemas import (
 )
 from atlas.observability.langsmith import NullTraceSink, TraceSink
 from atlas.persistence.comparison_quota import ComparisonQuotaService
-from atlas.persistence.comparison_repository import InMemoryComparisonRepository
+from atlas.persistence.comparison_repository import (
+    ComparisonRepository,
+    ComparisonRunNotFound,
+)
 
 
 class ComparisonExecutor(Protocol):
@@ -51,7 +54,7 @@ class InMemoryComparisonRunService:
         self,
         *,
         quota: ComparisonQuotaService,
-        repository: InMemoryComparisonRepository,
+        repository: ComparisonRepository,
         snapshot_provider: Callable[[], UUID],
         executor: ComparisonExecutor | None = None,
         clock: Callable[[], datetime] | None = None,
@@ -111,9 +114,22 @@ class InMemoryComparisonRunService:
         self, run_id: UUID, *, visitor_key_hash: str
     ) -> ComparisonRunResponse | None:
         entry = self._entries.get(run_id)
-        if entry is None or entry.run.visitor_key_hash != visitor_key_hash:
+        if entry is not None:
+            if entry.run.visitor_key_hash != visitor_key_hash:
+                return None
+            return self._response(entry)
+        try:
+            stored = self._repository.get(run_id, visitor_key_hash=visitor_key_hash)
+        except ComparisonRunNotFound:
             return None
-        return self._response(entry)
+        return ComparisonRunResponse(
+            run_id=stored.run.run_id,
+            status=stored.run.status.value,
+            created_at=stored.run.created_at,
+            completed_at=stored.run.completed_at,
+            matrix=stored.matrix,
+            retained_until=stored.run.retained_until,
+        )
 
     async def cancel(self, run_id: UUID, *, visitor_key_hash: str) -> ComparisonRunResponse:
         entry = self._entries.get(run_id)
@@ -130,6 +146,12 @@ class InMemoryComparisonRunService:
             entry.task.cancel()
         entry.run = entry.run.model_copy(
             update={"status": ComparisonRunStatus.CANCELLED, "completed_at": self._clock()}
+        )
+        self._repository.finish(
+            run_id,
+            visitor_key_hash=visitor_key_hash,
+            status=ComparisonRunStatus.CANCELLED,
+            completed_at=entry.run.completed_at or self._clock(),
         )
         writer = ComparisonEventWriter(run_id=run_id)
         writer.emit("comparison.accepted", {"status": "accepted"})
@@ -174,6 +196,12 @@ class InMemoryComparisonRunService:
             entry.run = entry.run.model_copy(
                 update={"status": ComparisonRunStatus.FAILED, "completed_at": self._clock()}
             )
+            self._repository.finish(
+                entry.run.run_id,
+                visitor_key_hash=entry.run.visitor_key_hash,
+                status=ComparisonRunStatus.FAILED,
+                completed_at=entry.run.completed_at or self._clock(),
+            )
             entry.queue.put_nowait(
                 writer.emit(
                     "comparison.failed", {"status": "failed", "reason": "executor_unavailable"}
@@ -189,7 +217,11 @@ class InMemoryComparisonRunService:
                 snapshot_id=entry.run.snapshot_id,
                 is_cancelled=lambda: entry.cancelled,
             )
-            self._repository.save_matrix(entry.run.run_id, matrix)
+            self._repository.save_matrix(
+                entry.run.run_id,
+                matrix,
+                visitor_key_hash=entry.run.visitor_key_hash,
+            )
             self._trace_sink.end(retrieval_trace, status="completed")
             entry.queue.put_nowait(
                 writer.emit("comparison.retrieval.completed", {"status": "retrieving"})
@@ -224,6 +256,12 @@ class InMemoryComparisonRunService:
         except Exception:
             entry.run = entry.run.model_copy(
                 update={"status": ComparisonRunStatus.FAILED, "completed_at": self._clock()}
+            )
+            self._repository.finish(
+                entry.run.run_id,
+                visitor_key_hash=entry.run.visitor_key_hash,
+                status=ComparisonRunStatus.FAILED,
+                completed_at=entry.run.completed_at or self._clock(),
             )
             entry.queue.put_nowait(
                 writer.emit("comparison.failed", {"status": "failed", "reason": "workflow_failed"})

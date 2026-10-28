@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 
 from atlas.api.middleware.anonymous_identity import (
     VISITOR_COOKIE_NAME,
+    VISITOR_TOKEN_HEADER,
     AnonymousIdentityMiddleware,
     visitor_key_hash,
 )
@@ -43,6 +44,7 @@ def test_identity_cookie_is_opaque_secure_and_only_hmac_hash_is_exposed() -> Non
     assert "HttpOnly" in set_cookie
     assert "Secure" in set_cookie
     assert "SameSite=lax" in set_cookie
+    assert response.headers[VISITOR_TOKEN_HEADER.lower()] == raw_cookie
 
 
 def test_existing_cookie_keeps_the_same_hmac_identity_without_setting_a_new_cookie() -> None:
@@ -57,6 +59,20 @@ def test_existing_cookie_keeps_the_same_hmac_identity_without_setting_a_new_cook
 
     assert second.json() == first.json()
     assert "set-cookie" not in second.headers
+
+
+def test_cross_origin_visitor_token_header_preserves_the_same_owner() -> None:
+    application = FastAPI()
+    application.add_middleware(AnonymousIdentityMiddleware, secret="visitor-secret")
+    application.get("/")(lambda request: {"visitor_key_hash": request.state.visitor_key_hash})
+    client = TestClient(application)
+
+    first = client.get("/")
+    token = first.headers[VISITOR_TOKEN_HEADER.lower()]
+    second = client.get("/", headers={VISITOR_TOKEN_HEADER: token})
+
+    assert second.json() == first.json()
+    assert second.headers[VISITOR_TOKEN_HEADER.lower()] == token
 
 
 def test_quota_is_idempotent_and_returns_the_earliest_retry_time() -> None:

@@ -87,7 +87,7 @@ class Settings(BaseSettings):
     atlas_agent_review_ttl_hours: int = Field(default=24, ge=1)
     atlas_agent_side_effect_limit: int = Field(default=5, ge=1)
     atlas_agent_side_effect_window_hours: int = Field(default=24, ge=1)
-    atlas_migration_head: str = "comparison_pricing_contract"
+    atlas_migration_head: str = "comparison_run_persistence"
 
     @field_validator(
         "openai_api_key",

@@ -12,6 +12,7 @@ from starlette.responses import Response
 from starlette.types import ASGIApp
 
 VISITOR_COOKIE_NAME = "atlas_visitor"
+VISITOR_TOKEN_HEADER = "X-Atlas-Visitor-Token"
 VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 _MIN_COOKIE_LENGTH = 32
 _MAX_COOKIE_LENGTH = 256
@@ -50,15 +51,20 @@ class AnonymousIdentityMiddleware(BaseHTTPMiddleware):
         self._cookie_max_age = cookie_max_age
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        raw_cookie = request.cookies.get(VISITOR_COOKIE_NAME)
-        issue_cookie = raw_cookie is None or not self._is_valid_cookie(raw_cookie)
-        if issue_cookie:
-            raw_cookie = secrets.token_urlsafe(32)
+        cookie_token = request.cookies.get(VISITOR_COOKIE_NAME)
+        header_token = request.headers.get(VISITOR_TOKEN_HEADER)
+        supplied_token = header_token if self._is_valid_cookie(header_token) else cookie_token
+        raw_cookie = (
+            supplied_token
+            if self._is_valid_cookie(supplied_token)
+            else secrets.token_urlsafe(32)
+        )
         assert raw_cookie is not None
         request.state.visitor_key_hash = visitor_key_hash(self._secret, raw_cookie)
 
         response = await call_next(request)
-        if issue_cookie:
+        response.headers[VISITOR_TOKEN_HEADER] = raw_cookie
+        if cookie_token != raw_cookie:
             response.set_cookie(
                 VISITOR_COOKIE_NAME,
                 raw_cookie,
@@ -70,5 +76,7 @@ class AnonymousIdentityMiddleware(BaseHTTPMiddleware):
         return response
 
     @staticmethod
-    def _is_valid_cookie(raw_cookie: str) -> bool:
-        return _MIN_COOKIE_LENGTH <= len(raw_cookie) <= _MAX_COOKIE_LENGTH
+    def _is_valid_cookie(raw_cookie: str | None) -> bool:
+        return raw_cookie is not None and _MIN_COOKIE_LENGTH <= len(raw_cookie) <= (
+            _MAX_COOKIE_LENGTH
+        )
