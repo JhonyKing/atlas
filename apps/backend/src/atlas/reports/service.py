@@ -8,6 +8,7 @@ import json
 from collections.abc import AsyncIterator, Callable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import cast
 from uuid import UUID, uuid4
 
 from psycopg import Connection
@@ -265,12 +266,15 @@ class PostgresReportService:
                     self._connection.rollback()
                     raise ValueError("idempotency_conflict")
                 self._connection.commit()
-                return previous[0]
-            count = self._connection.execute(
+                return cast(UUID, previous[0])
+            count_row = self._connection.execute(
                 """SELECT count(*) FROM atlas.report_jobs
                    WHERE visitor_key_hash = %s AND created_at > %s""",
                 (owner_key_hash, now - self._window),
-            ).fetchone()[0]
+            ).fetchone()
+            if count_row is None:
+                raise RuntimeError("report quota query returned no result")
+            count = int(count_row[0])
             if count >= self._limit:
                 self._connection.rollback()
                 raise ReportQuotaExceeded
@@ -392,7 +396,7 @@ class PostgresReportService:
             self._connection.rollback()
             raise ValueError("idempotency_conflict")
         self._connection.commit()
-        return row[0]
+        return cast(UUID, row[0])
 
     async def get(self, report_id: UUID, *, owner_key_hash: str) -> ReportJob:
         self._set_owner(owner_key_hash)
