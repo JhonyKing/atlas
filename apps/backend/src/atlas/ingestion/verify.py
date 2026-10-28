@@ -7,10 +7,9 @@ import json
 from collections.abc import Iterable, Sequence
 from typing import Any
 
-import psycopg
-
 from atlas.config import Settings
 from atlas.domain import CollectionSlug
+from atlas.persistence.supabase import connect_supabase
 
 _QUERY = """
     SELECT c.slug, s.id, s.canonical_url, sv.id, sv.page_count, sv.byte_size,
@@ -80,7 +79,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     dsn = settings.database_url.get_secret_value().replace(
         "postgresql+psycopg://", "postgresql://", 1
     )
-    with psycopg.connect(dsn) as connection:
+    with connect_supabase(dsn) as connection:
         rows = connection.execute(_QUERY, (args.collection, args.collection)).fetchall()
     print(json.dumps(summarize_rows(rows), indent=2, sort_keys=True))
     return 0

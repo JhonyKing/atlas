@@ -21,6 +21,7 @@ from atlas.ingestion.fetcher import FetchPolicy, SafeFetcher
 from atlas.ingestion.manifest import CorpusManifest, ManifestDiscoverer, load_manifest
 from atlas.ingestion.service import IngestionService, PostgresIngestionRepository
 from atlas.ingestion.worker import IngestionWorker
+from atlas.persistence.supabase import connect_supabase
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 
 
@@ -146,7 +147,7 @@ async def _execute(
         "postgresql://",
         1,
     )
-    connection = psycopg.connect(dsn)
+    connection = connect_supabase(dsn)
     client = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())  # type: ignore[union-attr]
     http_client = httpx.AsyncClient()
     hosts = frozenset(candidate.canonical_url.split("/", 3)[2] for candidate in manifest.candidates)

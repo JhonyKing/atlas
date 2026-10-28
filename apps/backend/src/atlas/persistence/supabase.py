@@ -6,9 +6,24 @@ Supabase SDK types or project identifiers leak into domain persistence ports.
 
 from collections.abc import Iterator
 from contextlib import contextmanager
+from typing import Any
 
+import psycopg
 from psycopg import Connection
 from psycopg_pool import ConnectionPool
+
+
+def connect_supabase(database_url: str, **kwargs: Any) -> Connection[tuple[Any, ...]]:
+    """Open a psycopg connection without server-side prepares through Supavisor.
+
+    Supabase's transaction pooler may assign a different PostgreSQL backend between
+    transactions. Psycopg's default prepared-statement threshold can then collide with
+    a statement name already present on the reused backend (SQLSTATE 42P05).
+    """
+
+    conninfo = database_url.replace("postgresql+psycopg://", "postgresql://", 1)
+    kwargs["prepare_threshold"] = None
+    return psycopg.connect(conninfo, **kwargs)
 
 
 class SupabaseConnectionPool:
@@ -21,6 +36,7 @@ class SupabaseConnectionPool:
             conninfo=database_url.replace("postgresql+psycopg://", "postgresql://", 1),
             min_size=min_size,
             max_size=max_size,
+            kwargs={"prepare_threshold": None},
             open=False,
         )
 
