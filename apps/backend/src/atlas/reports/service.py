@@ -35,6 +35,11 @@ class ReportNotFound(KeyError):
     """The report is missing or not owned by the visitor."""
 
 
+def _report_spec_from_json(value: object) -> ReportSpec:
+    """Validate a JSONB value in JSON mode so strict enum and UUID fields are decoded."""
+    return ReportSpec.model_validate_json(json.dumps(value))
+
+
 class _Entry:
     def __init__(self, job: ReportJob) -> None:
         self.job = job
@@ -428,7 +433,7 @@ class PostgresReportService:
             report_id=row[0],
             request_id=row[1],
             owner_key_hash=row[2].strip(),
-            spec=ReportSpec.model_validate(row[3]),
+            spec=_report_spec_from_json(row[3]),
             status=ReportStatus(row[4]),
             created_at=row[5],
             completed_at=row[6],
