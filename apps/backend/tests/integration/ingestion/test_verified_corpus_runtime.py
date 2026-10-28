@@ -120,6 +120,11 @@ def test_production_runtime_wires_answer_and_operator_services(
     )
     monkeypatch.setattr(
         main_module,
+        "_report_service",
+        lambda _settings, *, comparison_service: None,
+    )
+    monkeypatch.setattr(
+        main_module,
         "_answer_graph",
         lambda *_args, **_kwargs: DemoAnswerGraph(),
     )

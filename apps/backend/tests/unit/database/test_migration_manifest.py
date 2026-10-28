@@ -8,17 +8,16 @@ import pytest
 from atlas.database.migration_manifest import load_migration_manifest
 
 
-def test_repository_contains_one_ordered_34_revision_chain() -> None:
+def test_repository_contains_one_ordered_35_revision_chain() -> None:
     root = Path(__file__).resolve().parents[5]
     manifest = load_migration_manifest(root / "database" / "migrations" / "versions")
 
-    assert len(manifest) == 34
+    assert len(manifest) == 35
     assert manifest[0].revision_id == "0001_foundation"
-    assert manifest[-1].revision_id == "comparison_run_persistence"
+    assert manifest[-1].revision_id == "0035_durable_reports"
     assert all(item.sha256 for item in manifest)
     assert all(
-        current.down_revision == previous.revision_id
-        for previous, current in pairwise(manifest)
+        current.down_revision == previous.revision_id for previous, current in pairwise(manifest)
     )
 
 
@@ -27,5 +26,5 @@ def test_manifest_rejects_an_unexpected_revision_count(tmp_path: Path) -> None:
     for path in source.glob("*.py"):
         (tmp_path / path.name).write_bytes(path.read_bytes())
 
-    with pytest.raises(ValueError, match="Expected 35 migrations"):
-        load_migration_manifest(tmp_path, expected_count=35)
+    with pytest.raises(ValueError, match="Expected 36 migrations"):
+        load_migration_manifest(tmp_path, expected_count=36)

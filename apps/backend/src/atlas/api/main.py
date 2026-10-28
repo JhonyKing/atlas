@@ -100,7 +100,7 @@ from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.openai_responses import OpenAIResponsesAdapter, derive_safety_identifier
 from atlas.providers.ports import AgentPlanProvider
 from atlas.reports.planner import ComparisonSource
-from atlas.reports.service import InMemoryReportService
+from atlas.reports.service import InMemoryReportService, PostgresReportService
 from atlas.retrieval.service import RetrievalService
 from atlas.uploads.deletion import UploadDeletionService
 from atlas.uploads.pipeline import PrivateUploadPipeline
@@ -119,7 +119,7 @@ def create_app(
     news_service: DailyNewsProvider | None = None,
     news_trace_sink: TraceSink | None = None,
     review_case_service: ReviewCaseListing | None = None,
-    report_service: InMemoryReportService | None = None,
+    report_service: InMemoryReportService | PostgresReportService | None = None,
     visitor_hmac_secret: str | None = None,
     auth_provider: AuthPort | None = None,
     private_resource_service: InMemoryOwnershipService | None = None,
@@ -352,9 +352,7 @@ def create_runtime_app(*, use_real_provider: bool | None = None) -> FastAPI:
         agent_checkpoint_service,
         agent_idempotency_store,
         agent_quota_repository,
-    ) = (
-        _durable_agent_repositories(settings)
-    )
+    ) = _durable_agent_repositories(settings)
     if settings.openai_api_key is None:
         raise RuntimeError("a model provider secret is required outside development")
     if settings.atlas_visitor_hmac_secret is None:
@@ -512,21 +510,23 @@ def _comparison_service(
 
 def _report_service(
     settings: Settings, *, comparison_service: ComparisonSource | None
-) -> InMemoryReportService:
-    """Wire reports to the same comparison source; local storage is intentionally bounded."""
+) -> InMemoryReportService | PostgresReportService:
+    """Use durable jobs and artifacts on hosted runtimes; keep local development lightweight."""
 
-    del settings
     source = comparison_service
     if source is None:
         # Runtime wiring is completed after app construction in ``create_runtime_app``.
         class _Unavailable:
-            async def get_status(
-                self, run_id: UUID, *, visitor_key_hash: str
-            ) -> None:
+            async def get_status(self, run_id: UUID, *, visitor_key_hash: str) -> None:
                 del run_id, visitor_key_hash
                 return None
 
         source = _Unavailable()
+    if settings.atlas_env != "development":
+        dsn = settings.database_url.get_secret_value().replace(
+            "postgresql+psycopg://", "postgresql://", 1
+        )
+        return PostgresReportService(connection=psycopg.connect(dsn), source=source)
     return InMemoryReportService(source=source)
 
 
