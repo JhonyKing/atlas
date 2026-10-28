@@ -25,10 +25,10 @@ def test_supabase_connections_disable_server_side_preparation(
 ) -> None:
     calls: dict[str, Any] = {}
 
-    def connect(conninfo: str, **kwargs: Any) -> Connection[object]:
+    def connect(conninfo: str, **kwargs: Any) -> Connection[tuple[Any, ...]]:
         calls["conninfo"] = conninfo
         calls.update(kwargs)
-        return cast(Connection[object], object())
+        return cast(Connection[tuple[Any, ...]], object())
 
     monkeypatch.setattr(psycopg, "connect", connect)
 

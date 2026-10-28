@@ -13,7 +13,7 @@ from psycopg import Connection
 from psycopg_pool import ConnectionPool
 
 
-def connect_supabase(database_url: str, **kwargs: Any) -> Connection[object]:
+def connect_supabase(database_url: str, **kwargs: Any) -> Connection[tuple[Any, ...]]:
     """Open a psycopg connection without server-side prepares through Supavisor.
 
     Supabase's transaction pooler may assign a different PostgreSQL backend between
