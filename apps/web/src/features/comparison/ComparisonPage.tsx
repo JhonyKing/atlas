@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 
 import { useLocale } from "@/i18n";
 
@@ -61,6 +62,8 @@ export function ComparisonPage() {
   const [status, setStatus] = useState(messages.comparison.ready);
   const [error, setError] = useState<string | null>(null);
   const [matrix, setMatrix] = useState<Matrix | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [copiedRunId, setCopiedRunId] = useState(false);
   const [active, setActive] = useState(false);
   const controller = useRef<AbortController | null>(null);
   const language = useMemo(() => (spanish ? "es-MX" : "en-US"), [spanish]);
@@ -91,6 +94,8 @@ export function ComparisonPage() {
     }
     setError(null);
     setMatrix(null);
+    setRunId(null);
+    setCopiedRunId(false);
     setActive(true);
     setStatus(messages.comparison.accepted);
     const nextController = new AbortController();
@@ -101,7 +106,7 @@ export function ComparisonPage() {
       language,
     };
     try {
-      await streamComparison(input, handleEvent, nextController.signal);
+      await streamComparison(input, handleEvent, nextController.signal, setRunId);
     } catch {
       if (nextController.signal.aborted) return;
       setError(spanish ? "No pudimos completar la comparación. Inténtalo de nuevo más tarde." : "We couldn't complete the comparison. Try again later.");
@@ -152,6 +157,10 @@ export function ComparisonPage() {
         technologyHelp: "Elige entre 2 y 4 tecnologías.",
         criteriaHelp: "Elige al menos un criterio para comparar.",
         selectedSummary: `${selectedTechnologies.length} tecnologías · ${selectedCriteria.length} criterios`,
+        comparisonId: "ID de comparación",
+        copyId: copiedRunId ? "Copiado" : "Copiar ID",
+        report: "Generar reporte",
+        copyFailed: "No se pudo copiar el ID. Selecciónalo y cópialo manualmente.",
         lede: "Compara opciones para una decisión de IA. ATLAS muestra qué respaldan las fuentes y dónde todavía falta evidencia.",
         commonTitle: "Empieza con una decisión común",
         presets: [
@@ -166,6 +175,10 @@ export function ComparisonPage() {
         technologyHelp: "Choose between 2 and 4 technologies.",
         criteriaHelp: "Choose at least one criterion to compare.",
         selectedSummary: `${selectedTechnologies.length} technologies · ${selectedCriteria.length} criteria`,
+        comparisonId: "Comparison ID",
+        copyId: copiedRunId ? "Copied" : "Copy ID",
+        report: "Create report",
+        copyFailed: "Could not copy the ID. Select and copy it manually.",
         lede: "Compare options for a real AI decision. ATLAS shows what the sources support—and where evidence is still missing.",
         commonTitle: "Start with a common decision",
         presets: [
@@ -237,6 +250,27 @@ export function ComparisonPage() {
         {error ? <p className="error" role="alert">{error}</p> : null}
       </section>
       {matrix ? <ComparisonMatrix matrix={matrix} spanish={spanish} /> : null}
+      {matrix && runId ? (
+        <section className="comparison-run-reference" aria-label={copy.comparisonId}>
+          <p>{copy.comparisonId}</p>
+          <code>{runId}</code>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => {
+              void navigator.clipboard.writeText(runId).then(
+                () => setCopiedRunId(true),
+                () => setError(copy.copyFailed),
+              );
+            }}
+          >
+            {copy.copyId}
+          </Button>
+          <Link href={`${spanish ? "/es" : "/en"}/reports?comparison_id=${encodeURIComponent(runId)}`}>
+            {copy.report}
+          </Link>
+        </section>
+      ) : null}
     </main>
   );
 }

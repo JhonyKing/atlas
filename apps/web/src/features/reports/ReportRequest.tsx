@@ -1,12 +1,12 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { useLocale } from "@/i18n";
 import { Button, Field, Input } from "@/components/forms";
 
-import { createReport, deleteReport, getReport, reportDownloadUrl, type ReportStatus } from "./report-client";
+import { createReport, deleteReport, downloadReport, getReport, type ReportStatus } from "./report-client";
 
 export function ReportRequest() {
   const { locale } = useLocale();
@@ -17,6 +17,12 @@ export function ReportRequest() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    const comparisonId = new URLSearchParams(window.location.search).get("comparison_id");
+    if (comparisonId) setSourceRunId(comparisonId);
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,26 +73,26 @@ export function ReportRequest() {
         </div>
         <Link className="report-primary-link" href={`${prefix}/compare`}>{spanish ? "Comparar tecnologías primero" : "Compare technologies first"}</Link>
       </section>
-      <details className="report-advanced">
+      <details className="report-advanced" open={Boolean(sourceRunId)}>
         <summary>{spanish ? "Opciones avanzadas: ingresar un ID de comparación" : "Advanced options: enter a comparison ID"}</summary>
         <form onSubmit={submit}>
-          <Field id="source-run-id" label={spanish ? "ID de comparación completada" : "Completed comparison ID"} helper={spanish ? "Pega el ID que aparece en la pantalla de resultados." : "Paste the ID shown on the completed results screen."} error={error ?? undefined}>
+          <Field id="source-run-id" label={spanish ? "ID de comparación completada" : "Completed comparison ID"} helper={spanish ? "Pega el ID que aparece en los resultados o ábrelo desde la comparación." : "Paste the ID shown on the results screen, or open this page from the comparison."} error={error ?? undefined}>
             <Input id="source-run-id" value={sourceRunId} onChange={(event) => setSourceRunId(event.target.value)} placeholder="e.g. 7d3e…" autoComplete="off" required />
           </Field>
           <Button type="submit" loading={submitting}>{spanish ? "Generar informe" : "Generate report"}</Button>
         </form>
       </details>
-      {report ? <ReportArtifacts report={report} spanish={spanish} deleting={deleting} onDelete={() => void removeReport()} /> : <section className="report-recent-card" aria-labelledby="report-recent-title"><h3 id="report-recent-title">{spanish ? "Aún no hay comparaciones terminadas" : "No completed comparisons yet"}</h3><p>{spanish ? "Cuando termines una comparación, aparecerá aquí para convertirla en reporte. Si ya tienes un ID, usa Opciones avanzadas." : "When you finish a comparison, it will appear here for report creation. If you already have an ID, use Advanced options."}</p></section>}
+      {report ? <ReportArtifacts report={report} spanish={spanish} deleting={deleting} downloading={downloading} onDownload={async (format) => { setError(null); setDownloading(true); try { await downloadReport(report.report_id, format); } catch { setError(spanish ? "No se pudo descargar el informe." : "The report could not be downloaded."); } finally { setDownloading(false); } }} onDelete={() => void removeReport()} /> : <section className="report-recent-card" aria-labelledby="report-recent-title"><h3 id="report-recent-title">{spanish ? "Aún no hay comparaciones terminadas" : "No completed comparisons yet"}</h3><p>{spanish ? "Cuando termines una comparación, aparecerá aquí para convertirla en reporte. Si ya tienes un ID, usa Opciones avanzadas." : "When you finish a comparison, it will appear here for report creation. If you already have an ID, use Advanced options."}</p></section>}
     </section>
   );
 }
 
-function ReportArtifacts({ report, spanish, deleting, onDelete }: { report: ReportStatus; spanish: boolean; deleting: boolean; onDelete: () => void }) {
+function ReportArtifacts({ report, spanish, deleting, downloading, onDownload, onDelete }: { report: ReportStatus; spanish: boolean; deleting: boolean; downloading: boolean; onDownload: (format: "docx" | "pdf") => void; onDelete: () => void }) {
   if (report.status !== "completed") return <div className="report-artifact-status" data-report-state={report.status}><p role="status">{spanish ? `Estado: ${report.status}` : `Status: ${report.status}`}</p><span className="report-progress-bar" aria-hidden="true" /></div>;
   return (
     <div className="report-artifacts" data-report-state="completed">
       <p role="status">{spanish ? "Informe listo." : "Report ready."}</p>
-      <div className="report-downloads"><a className="report-download-link" href={reportDownloadUrl(report.report_id, "docx")}>{spanish ? "Descargar DOCX" : "Download DOCX"}</a><a className="report-download-link" href={reportDownloadUrl(report.report_id, "pdf")}>{spanish ? "Descargar PDF" : "Download PDF"}</a></div>
+      <div className="report-downloads"><button className="report-download-link" type="button" disabled={downloading} onClick={() => onDownload("docx")}>{spanish ? "Descargar DOCX" : "Download DOCX"}</button><button className="report-download-link" type="button" disabled={downloading} onClick={() => onDownload("pdf")}>{spanish ? "Descargar PDF" : "Download PDF"}</button></div>
       <Button type="button" variant="tertiary" loading={deleting} onClick={onDelete}>{spanish ? "Eliminar artefactos" : "Delete artifacts"}</Button>
     </div>
   );

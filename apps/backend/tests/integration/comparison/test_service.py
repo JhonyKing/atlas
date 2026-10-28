@@ -92,3 +92,37 @@ async def test_service_without_executor_fails_closed_without_matrix() -> None:
     assert any("comparison.failed" in frame for frame in frames)
     status = await service.get_status(run_id, visitor_key_hash="b" * 64)
     assert status is not None and status.status == "failed" and status.matrix is None
+
+
+@pytest.mark.asyncio
+async def test_completed_run_can_be_loaded_after_service_memory_is_cleared() -> None:
+    service = _service(FakeExecutor())
+    run_id = await service.start(
+        comparison={"technologies": ["langgraph", "openai"], "criteria": ["capability"]},
+        visitor_key_hash="c" * 64,
+        idempotency_key="comparison-service-key-03",
+        request_id=uuid4(),
+    )
+    _ = [frame async for frame in service.stream(run_id, visitor_key_hash="c" * 64)]
+    service._entries.clear()
+
+    status = await service.get_status(run_id, visitor_key_hash="c" * 64)
+
+    assert status is not None
+    assert status.status == "completed"
+    assert status.matrix is not None
+
+
+@pytest.mark.asyncio
+async def test_persisted_run_lookup_still_enforces_visitor_ownership() -> None:
+    service = _service(FakeExecutor())
+    run_id = await service.start(
+        comparison={"technologies": ["langgraph", "openai"], "criteria": ["capability"]},
+        visitor_key_hash="d" * 64,
+        idempotency_key="comparison-service-key-04",
+        request_id=uuid4(),
+    )
+    _ = [frame async for frame in service.stream(run_id, visitor_key_hash="d" * 64)]
+    service._entries.clear()
+
+    assert await service.get_status(run_id, visitor_key_hash="e" * 64) is None

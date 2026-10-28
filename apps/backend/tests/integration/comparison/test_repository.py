@@ -54,7 +54,9 @@ def test_repository_round_trips_snapshot_matrix_and_evidence_links() -> None:
     run = _run("a" * 64)
     evidence_id = uuid4()
     repository.create(run)
-    repository.save_matrix(run.run_id, _matrix(evidence_id))
+    repository.save_matrix(
+        run.run_id, _matrix(evidence_id), visitor_key_hash="a" * 64
+    )
 
     stored = repository.get(run.run_id, visitor_key_hash="a" * 64)
 
@@ -71,7 +73,9 @@ def test_repository_requires_terminal_timestamp_and_isolates_visitors() -> None:
     with pytest.raises(ComparisonRunNotFound):
         repository.get(run.run_id, visitor_key_hash="b" * 64)
 
-    repository.save_matrix(run.run_id, _matrix(uuid4()))
+    repository.save_matrix(
+        run.run_id, _matrix(uuid4()), visitor_key_hash="a" * 64
+    )
     completed = repository.complete(
         run.run_id,
         visitor_key_hash="a" * 64,
