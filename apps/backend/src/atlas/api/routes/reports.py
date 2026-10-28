@@ -9,7 +9,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from atlas.observability.context import current_request_id
-from atlas.reports.schemas import ReportSpec
+from atlas.reports.schemas import ReportFormat, ReportLocale, ReportSpec, ReportType
 from atlas.reports.service import (
     InMemoryReportService,
     PostgresReportService,
@@ -54,8 +54,17 @@ async def create_report(
     try:
         payload = dict(raw_body)
         payload["source_run_id"] = UUID(str(payload["source_run_id"]))
+        # JSON transports enum values as strings. DomainModel is intentionally strict, so
+        # convert only the public enum fields before validating the rest of the payload.
+        for field, enum_type in (
+            ("report_type", ReportType),
+            ("locale", ReportLocale),
+            ("format", ReportFormat),
+        ):
+            if field in payload:
+                payload[field] = enum_type(str(payload[field]))
         spec = ReportSpec.model_validate(payload)
-    except (KeyError, ValueError):
+    except (KeyError, TypeError, ValueError):
         return _problem(request, 400, "Report specification is not valid", "invalid_report_spec")
     try:
         report_id = await _service(request).create(

@@ -64,7 +64,13 @@ def test_create_report_completes_and_downloads_pdf(tmp_path: Path) -> None:
     )
     report_service = InMemoryReportService(source=source, storage=LocalArtifactStorage(tmp_path))
     client = TestClient(create_app(report_service=report_service), base_url="https://testserver")
-    body = {"source_run_id": str(run_id), "audience": "engineer", "scope": "comparison"}
+    body = {
+        "source_run_id": str(run_id),
+        "report_type": "comparison",
+        "locale": "es-MX",
+        "audience": "engineer",
+        "scope": "comparison",
+    }
     response = client.post(
         "/v1/reports", json=body, headers={"Idempotency-Key": "report-test-key-001"}
     )
