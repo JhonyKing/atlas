@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useLocale } from "@/i18n";
 import { Button, Field, Input } from "@/components/forms";
 
-import { createReport, deleteReport, downloadReport, getReport, type ReportStatus } from "./report-client";
+import { createReport, deleteReport, downloadReport, getReport, reportDownloadUrl, type ReportStatus } from "./report-client";
 
 export function ReportRequest() {
   const { locale } = useLocale();
@@ -89,7 +89,7 @@ function ReportArtifacts({ report, spanish, deleting, downloading, onDownload, o
   return (
     <div className="report-artifacts" data-report-state="completed">
       <p role="status">{spanish ? "Informe listo." : "Report ready."}</p>
-      <div className="report-downloads"><button className="report-download-link" type="button" disabled={downloading} onClick={() => onDownload("docx")}>{spanish ? "Descargar DOCX" : "Download DOCX"}</button><button className="report-download-link" type="button" disabled={downloading} onClick={() => onDownload("pdf")}>{spanish ? "Descargar PDF" : "Download PDF"}</button></div>
+      <div className="report-downloads"><a className="report-download-link" href={reportDownloadUrl(report.report_id, "docx")} aria-disabled={downloading} onClick={(event) => { event.preventDefault(); if (!downloading) onDownload("docx"); }}>{spanish ? "Descargar DOCX" : "Download DOCX"}</a><a className="report-download-link" href={reportDownloadUrl(report.report_id, "pdf")} aria-disabled={downloading} onClick={(event) => { event.preventDefault(); if (!downloading) onDownload("pdf"); }}>{spanish ? "Descargar PDF" : "Download PDF"}</a></div>
       <Button type="button" variant="tertiary" loading={deleting} onClick={onDelete}>{spanish ? "Eliminar artefactos" : "Delete artifacts"}</Button>
     </div>
   );

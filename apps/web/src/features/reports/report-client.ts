@@ -37,7 +37,7 @@ export async function getReport(reportId: string): Promise<ReportStatus> {
 }
 
 export async function downloadReport(reportId: string, format: "docx" | "pdf"): Promise<void> {
-  const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/reports/${reportId}/download?format=${format}`, { headers: atlasVisitorHeaders() });
+  const response = await fetch(reportDownloadUrl(reportId, format), { headers: atlasVisitorHeaders() });
   rememberAtlasVisitor(response);
   if (!response.ok) throw new Error("ATLAS could not download the report.");
   const blobUrl = URL.createObjectURL(await response.blob());
@@ -46,6 +46,10 @@ export async function downloadReport(reportId: string, format: "docx" | "pdf"): 
   anchor.download = `atlas-report-${reportId}.${format}`;
   anchor.click();
   URL.revokeObjectURL(blobUrl);
+}
+
+export function reportDownloadUrl(reportId: string, format: "docx" | "pdf"): string {
+  return `${getPublicEnvironment().apiOrigin}/v1/reports/${reportId}/download?format=${format}`;
 }
 
 export async function deleteReport(reportId: string): Promise<void> {
