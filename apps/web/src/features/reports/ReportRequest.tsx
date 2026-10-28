@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { useLocale } from "@/i18n";
 import { Button, Field, Input } from "@/components/forms";
@@ -10,19 +11,15 @@ import { createReport, deleteReport, downloadReport, getReport, type ReportStatu
 
 export function ReportRequest() {
   const { locale } = useLocale();
+  const searchParams = useSearchParams();
   const spanish = locale === "es-MX";
   const prefix = spanish ? "/es" : "/en";
-  const [sourceRunId, setSourceRunId] = useState("");
+  const [sourceRunId, setSourceRunId] = useState(() => searchParams.get("comparison_id") ?? "");
   const [report, setReport] = useState<ReportStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [downloading, setDownloading] = useState(false);
-
-  useEffect(() => {
-    const comparisonId = new URLSearchParams(window.location.search).get("comparison_id");
-    if (comparisonId) setSourceRunId(comparisonId);
-  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
