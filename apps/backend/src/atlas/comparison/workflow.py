@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable, Mapping, Sequence
-from typing import Protocol
+from typing import Literal, Protocol
 from uuid import UUID
 
 from atlas.comparison.normalization import ComparisonObservation, normalize_observations
@@ -13,9 +13,11 @@ from atlas.comparison.schemas import (
     ComparisonCell,
     ComparisonCellState,
     ComparisonCriterion,
+    ComparisonEvidence,
     ComparisonMatrix,
     ComparisonRequest,
 )
+from atlas.domain import Evidence
 
 
 class ComparisonWorkflowCancelled(RuntimeError):
@@ -35,7 +37,10 @@ class ComparisonRetrieval(Protocol):
 
 class ComparisonObservationExtractor(Protocol):
     async def extract(
-        self, branch: ComparisonRetrievalBranch
+        self,
+        branch: ComparisonRetrievalBranch,
+        *,
+        language: Literal["en-US", "es-MX"],
     ) -> Sequence[ComparisonObservation]: ...
 
 
@@ -76,13 +81,35 @@ class ComparisonWorkflow:
         async def extract_branch(branch: ComparisonRetrievalBranch) -> ComparisonCell:
             async with semaphore:
                 _check_cancelled(is_cancelled)
-                observations = list(await self._extractor.extract(branch))
+                if _is_not_applicable(branch):
+                    return normalize_observations(
+                        technology_id=branch.technology,
+                        criterion_id=branch.criterion,
+                        observations=[],
+                        language=request.language,
+                        not_applicable=True,
+                    )
+                observations = list(
+                    await self._extractor.extract(branch, language=request.language)
+                )
                 _check_cancelled(is_cancelled)
-                return normalize_observations(
+                cell = normalize_observations(
                     technology_id=branch.technology,
                     criterion_id=branch.criterion,
                     observations=observations,
+                    language=request.language,
                 )
+                if cell.evidence_ids:
+                    cell = cell.model_copy(
+                        update={
+                            "evidence": [
+                                _comparison_evidence(row.evidence)
+                                for row in branch.rows
+                                if row.evidence.id in set(cell.evidence_ids)
+                            ]
+                        }
+                    )
+                return cell
 
         tasks = [asyncio.create_task(extract_branch(branch)) for branch in branches]
         try:
@@ -97,6 +124,7 @@ class ComparisonWorkflow:
             technology_ids=request.technologies,
             criterion_ids=request.criteria,
             cells=cells,
+            summary=_build_summary(cells, language=request.language),
         )
         _check_evidence_links(matrix, branches)
         _check_evidence_gate(matrix)
@@ -111,7 +139,10 @@ def _check_cancelled(is_cancelled: Callable[[], bool] | None) -> None:
 
 def _check_evidence_gate(matrix: ComparisonMatrix) -> None:
     for cell in matrix.cells:
-        if cell.state is ComparisonCellState.UNSUPPORTED:
+        if cell.state in {
+            ComparisonCellState.UNSUPPORTED,
+            ComparisonCellState.NOT_APPLICABLE,
+        }:
             if cell.evidence_ids:
                 raise ValueError("unsupported comparison cells cannot cite evidence")
             if not cell.explanation:
@@ -138,3 +169,62 @@ def _check_evidence_links(
                 "comparison cell cited evidence outside its retrieval branch: "
                 + ", ".join(sorted(str(evidence_id) for evidence_id in unexpected))
             )
+
+
+def _is_not_applicable(branch: ComparisonRetrievalBranch) -> bool:
+    """Open-source frameworks do not have a comparable model/API token price."""
+
+    return branch.criterion is ComparisonCriterion.PRICE and branch.technology.value in {
+        "langgraph",
+        "langchain",
+    }
+
+
+def _comparison_evidence(evidence: Evidence) -> ComparisonEvidence:
+    return ComparisonEvidence(
+        id=evidence.id,
+        source_title=evidence.source_title,
+        publisher=evidence.publisher,
+        canonical_url=str(evidence.canonical_url),
+        source_type=evidence.source_type,
+        excerpt=evidence.excerpt,
+        captured_at=evidence.captured_at,
+        version_label=evidence.version_label,
+    )
+
+
+def _build_summary(
+    cells: Sequence[ComparisonCell], *, language: Literal["en-US", "es-MX"]
+) -> str:
+    unsupported = sum(cell.state is ComparisonCellState.UNSUPPORTED for cell in cells)
+    not_applicable = sum(cell.state is ComparisonCellState.NOT_APPLICABLE for cell in cells)
+    partial = sum(cell.state is ComparisonCellState.PARTIAL for cell in cells)
+    contradictory = sum(cell.state is ComparisonCellState.CONTRADICTORY for cell in cells)
+    if language == "es-MX":
+        if not unsupported and not not_applicable and not partial and not contradictory:
+            return (
+                "Conclusión: hay valores comparables respaldados; revisa las fuentes antes de "
+                "decidir."
+            )
+        reasons: list[str] = []
+        if partial:
+            reasons.append("evidencia parcial")
+        if contradictory:
+            reasons.append("evidencia contradictoria")
+        if unsupported:
+            reasons.append("datos comparables no encontrados")
+        if not_applicable:
+            reasons.append("criterios que no aplican al producto")
+        return "Conclusión: no se puede declarar un ganador todavía; " + ", ".join(reasons) + "."
+    if not unsupported and not not_applicable and not partial and not contradictory:
+        return "Conclusion: comparable values are supported; inspect the sources before deciding."
+    reasons_en: list[str] = []
+    if partial:
+        reasons_en.append("partial evidence")
+    if contradictory:
+        reasons_en.append("contradictory evidence")
+    if unsupported:
+        reasons_en.append("no comparable data found")
+    if not_applicable:
+        reasons_en.append("criteria that do not apply to the product")
+    return "Conclusion: no winner can be declared yet; " + ", ".join(reasons_en) + "."

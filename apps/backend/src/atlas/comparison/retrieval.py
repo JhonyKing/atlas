@@ -61,7 +61,10 @@ class CorpusComparisonBranchRetriever:
             collection=technology,
             query_text=criterion.value.replace("_", " "),
             embedding=list(embedding),
-            top_k=top_k,
+            # Pricing sources are a deliberately separate evidence lane. Ask the
+            # hybrid search for a wider candidate set before applying the lane
+            # filter so technical documentation cannot crowd out pricing pages.
+            top_k=min(MAX_TOP_K, top_k * 4 if source_type is SourceType.PRICING else top_k),
             snapshot_id=snapshot_id,
             version=version,
             date_from=date_from,
@@ -124,7 +127,7 @@ class ComparisonRetrievalService:
             version=request.version,
             date_from=request.date_from,
             date_to=request.date_to,
-            source_type=request.source_type,
+            source_type=request.effective_source_type(criterion),
             top_k=top_k,
         )
         return ComparisonRetrievalBranch(

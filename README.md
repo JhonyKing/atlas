@@ -24,6 +24,13 @@ decision presets, Reports starts from a completed comparison and keeps manual ID
 options, Sources explains what can be verified before showing ingestion details, News explains the
 reader benefit before its evidence threshold, and Account makes optional sign-in explicit.
 
+Comparison pricing follows a separate evidence policy: ATLAS reads prices only from official pages
+marked `pricing`; it never derives a price from a technical documentation page. Open-source
+LangGraph and LangChain rows therefore show `No aplica` for API price, while a provider with no
+ingested pricing page shows `Sin evidencia`. Every populated cell exposes the source title,
+publisher, bounded excerpt, capture date, version and URL, plus a deterministic conclusion that
+states when the matrix cannot support a winner.
+
 Feature 022 is the source of truth for this product/portfolio separation:
 
 - `specs/022-product-clarity-engineering/`

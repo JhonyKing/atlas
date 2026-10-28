@@ -99,8 +99,8 @@ evidence identifiers, citations, dates, and status values.
 - **FR-CMP-005**: Every populated factual cell MUST reference at least one evidence record with
   source title, publisher, canonical URL, bounded excerpt, capture date, and known version/date
   context.
-- **FR-CMP-006**: The system MUST label each cell as supported, unsupported, partial, or
-  contradictory and MUST explain unsupported or contradictory states.
+- **FR-CMP-006**: The system MUST label each cell as supported, unsupported, not applicable,
+  partial, or contradictory and MUST explain every non-supported state.
 - **FR-CMP-007**: The system MUST preserve source and version/date constraints independently for
   every technology retrieval branch.
 - **FR-CMP-008**: The system MUST normalize comparable values without hiding units, price periods,

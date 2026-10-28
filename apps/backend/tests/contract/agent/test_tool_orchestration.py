@@ -25,7 +25,16 @@ class RecordingTraceSink:
         assert isinstance(run_id, UUID)
         return TraceHandle(run_id=run_id, active=True)
 
-    def end(self, handle: TraceHandle, *, status: str, fields: object = None) -> None:
+    def end(
+        self,
+        handle: TraceHandle,
+        *,
+        status: str,
+        fields: object = None,
+        inputs: object = None,
+        outputs: object = None,
+    ) -> None:
+        del inputs, outputs
         safe_fields = fields if isinstance(fields, dict) else {}
         self.finished.append((str(handle.run_id), status, safe_fields))
 

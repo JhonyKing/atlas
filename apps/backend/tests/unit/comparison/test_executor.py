@@ -41,7 +41,10 @@ class FakeRetriever:
 
 
 class FakeExtractor:
-    async def extract(self, branch: ComparisonRetrievalBranch) -> list[ComparisonObservation]:
+    async def extract(
+        self, branch: ComparisonRetrievalBranch, *, language: str = "en-US"
+    ) -> list[ComparisonObservation]:
+        del language
         return [
             ComparisonObservation(
                 value="documented",

@@ -20,6 +20,7 @@ export function ComparisonMatrix({ matrix, spanish }: { matrix: Matrix; spanish:
     supported: spanish ? "Compatible" : "Supported",
     partial: messages.comparison.partial,
     unsupported: messages.comparison.unsupported,
+    not_applicable: spanish ? "No aplica" : "Not applicable",
     contradictory: messages.comparison.contradictory,
   };
   return (
@@ -66,18 +67,19 @@ function CellView({ cell, spanish }: { cell: ComparisonCell; spanish: boolean })
   const stateLabels = {
     supported: spanish ? "Compatible" : "Supported",
     unsupported: messages.comparison.unsupported,
+    not_applicable: spanish ? "No aplica" : "Not applicable",
     partial: messages.comparison.partial,
     contradictory: messages.comparison.contradictory,
   };
   return (
     <div className="comparison-cell" data-cell-state={cell.state} role="group" aria-label={`${cell.technology_id} · ${cell.criterion_id}`}>
       <EvidenceStatus state={cell.state as EvidenceState} label={stateLabels[cell.state]} />
-      {cell.value ? <span className="comparison-cell-value">{`${cell.value}${cell.unit ? ` ${cell.unit}` : ""}`}</span> : <p className="comparison-cell-note">{messages.comparison.noEvidence}</p>}
+      {cell.value ? <span className="comparison-cell-value">{`${cell.value}${cell.unit ? ` ${cell.unit}` : ""}`}</span> : <p className="comparison-cell-note">{cell.state === "not_applicable" ? (spanish ? "Este criterio no aplica a este producto." : "This criterion does not apply to this product.") : cell.evidence_ids.length > 0 ? (spanish ? "Hay evidencia, pero los valores no son directamente comparables." : "Evidence exists, but the values are not directly comparable.") : messages.comparison.noEvidence}</p>}
       {cell.explanation ? <p>{cell.explanation}</p> : null}
       {cell.evidence_ids.length > 0 ? (
         <details className="comparison-evidence-details">
           <summary>{spanish ? `${cell.evidence_ids.length} evidencia(s)` : `${cell.evidence_ids.length} evidence item(s)`}</summary>
-          <ul>{cell.evidence_ids.map((evidenceId) => <li key={evidenceId}><code>{evidenceId}</code></li>)}</ul>
+          <ul>{cell.evidence?.length ? cell.evidence.map((evidence) => <li key={evidence.id} className="comparison-evidence-item"><a href={evidence.canonical_url} target="_blank" rel="noreferrer">{evidence.source_title}</a><span>{evidence.publisher}{evidence.version_label ? ` · ${evidence.version_label}` : ""}</span><q>{evidence.excerpt}</q><small>{new Date(evidence.captured_at).toLocaleDateString(spanish ? "es-MX" : "en-US")}</small></li>) : cell.evidence_ids.map((evidenceId) => <li key={evidenceId}><code>{evidenceId}</code></li>)}</ul>
         </details>
       ) : null}
     </div>

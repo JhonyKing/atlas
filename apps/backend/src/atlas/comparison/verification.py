@@ -11,9 +11,14 @@ class ComparisonVerificationError(ValueError):
 
 def verify_matrix(matrix: ComparisonMatrix) -> ComparisonMatrix:
     for cell in matrix.cells:
-        if cell.state is ComparisonCellState.UNSUPPORTED:
+        if cell.state in {
+            ComparisonCellState.UNSUPPORTED,
+            ComparisonCellState.NOT_APPLICABLE,
+        }:
             if cell.evidence_ids:
-                raise ComparisonVerificationError("unsupported cells cannot contain evidence")
+                raise ComparisonVerificationError(
+                    "unsupported and not-applicable cells cannot contain evidence"
+                )
             if not cell.explanation:
                 raise ComparisonVerificationError("unsupported cells require an explanation")
             continue

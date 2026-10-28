@@ -172,6 +172,7 @@ class InMemoryAnswerRunService:
             yield frame
 
     async def _execute(self, entry: _Run, writer: SSEEventWriter) -> None:
+        question_payload = entry.question.model_dump(mode="json")
         root_trace = self._trace_sink.start(
             "atlas.answer",
             request_id=entry.request_id,
@@ -181,6 +182,7 @@ class InMemoryAnswerRunService:
                 "locale": entry.question.language,
                 "question_length": len(entry.question.text),
             },
+            inputs={"question": question_payload},
             tags=("answer", entry.question.language),
         )
         retrieval_trace = self._trace_sink.start(
@@ -188,6 +190,7 @@ class InMemoryAnswerRunService:
             request_id=entry.request_id,
             run_id=entry.run_id,
             run_type="retriever",
+            inputs={"question": question_payload},
             parent=root_trace,
         )
         generation_trace = self._trace_sink.start(
@@ -195,6 +198,7 @@ class InMemoryAnswerRunService:
             request_id=entry.request_id,
             run_id=entry.run_id,
             run_type="llm",
+            inputs={"question": question_payload},
             parent=root_trace,
         )
         verification_trace = self._trace_sink.start(
@@ -226,14 +230,34 @@ class InMemoryAnswerRunService:
                 entry.queue.put_nowait(None)
             return
 
-        self._trace_sink.end(retrieval_trace, status="completed")
-        self._trace_sink.end(generation_trace, status="completed")
-
         answer = cast(AnswerDraft | None, result.get("answer"))
         evidence = cast(tuple[Evidence, ...] | list[Evidence], result.get("evidence", []))
+        evidence_payload = [item.model_dump(mode="json") for item in evidence]
+        answer_payload = answer.model_dump(mode="json") if answer is not None else None
+        self._trace_sink.end(
+            retrieval_trace,
+            status="completed",
+            outputs={"evidence": evidence_payload},
+        )
+        self._trace_sink.end(
+            generation_trace,
+            status="completed" if answer is not None else "abstained",
+            outputs={"answer": answer_payload},
+        )
+
+        verification_payload: dict[str, object]
         if answer is None or answer.answer_status is AnswerStatus.ABSTAINED:
-            self._trace_sink.end(verification_trace, status="abstained")
             limitations = answer.limitations if answer is not None else []
+            verification_payload = {
+                "status": "abstained",
+                "limitations": limitations,
+            }
+            self._trace_sink.end(
+                verification_trace,
+                status="abstained",
+                inputs={"answer": answer_payload, "evidence": evidence_payload},
+                outputs={"verification": verification_payload},
+            )
             completed_at = self._clock()
             entry.status = entry.status.model_copy(
                 update={
@@ -255,7 +279,24 @@ class InMemoryAnswerRunService:
                 )
             )
         else:
-            self._trace_sink.end(verification_trace, status="completed")
+            verification_payload = {
+                "status": "completed",
+                "answer_status": answer.answer_status.value,
+                "claims": [
+                    {
+                        **claim.model_dump(mode="json"),
+                        "verification_status": claim.verification_status.value,
+                    }
+                    for claim in answer.claims
+                ],
+                "limitations": answer.limitations,
+            }
+            self._trace_sink.end(
+                verification_trace,
+                status="completed",
+                inputs={"answer": answer_payload, "evidence": evidence_payload},
+                outputs={"verification": verification_payload},
+            )
             citations = [
                 citation.model_dump(mode="json")
                 for citation in assemble_citations(
@@ -293,4 +334,9 @@ class InMemoryAnswerRunService:
             root_trace,
             status=entry.status.status,
             fields={"citation_count": len(entry.status.citations)},
+            outputs={
+                "answer": answer_payload,
+                "evidence": evidence_payload,
+                "verification": verification_payload,
+            },
         )

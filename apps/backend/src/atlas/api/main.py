@@ -85,7 +85,11 @@ from atlas.persistence.comparison_quota import (
     ComparisonQuotaService,
     InMemoryComparisonQuotaRepository,
 )
-from atlas.persistence.comparison_repository import InMemoryComparisonRepository
+from atlas.persistence.comparison_repository import (
+    ComparisonRepository,
+    InMemoryComparisonRepository,
+    PostgresComparisonRepository,
+)
 from atlas.persistence.corpus_repository import PostgresCorpusRepository
 from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
@@ -143,8 +147,14 @@ def create_app(
         allow_origins=[str(settings.web_origin).rstrip("/")],
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Accept", "Authorization", "Content-Type", "Idempotency-Key"],
-        expose_headers=["X-Atlas-Run-ID", "X-Request-ID"],
+        allow_headers=[
+            "Accept",
+            "Authorization",
+            "Content-Type",
+            "Idempotency-Key",
+            "X-Atlas-Visitor-Token",
+        ],
+        expose_headers=["X-Atlas-Run-ID", "X-Atlas-Visitor-Token", "X-Request-ID"],
     )
     application.add_middleware(RequestContextMiddleware)
     resolved_visitor_secret = visitor_hmac_secret or (
@@ -476,6 +486,15 @@ def _comparison_service(
             raise RuntimeError("no verified corpus snapshot is available")
         return status.snapshot_id
 
+    repository: ComparisonRepository = InMemoryComparisonRepository()
+    if settings.atlas_env != "development" and isinstance(
+        corpus_service, PostgresCorpusStatusRepository
+    ):
+        dsn = settings.database_url.get_secret_value().replace(
+            "postgresql+psycopg://", "postgresql://", 1
+        )
+        repository = PostgresComparisonRepository(psycopg.connect(dsn))
+
     return InMemoryComparisonRunService(
         quota=ComparisonQuotaService(
             InMemoryComparisonQuotaRepository(
@@ -483,7 +502,7 @@ def _comparison_service(
                 window=timedelta(hours=settings.atlas_anonymous_window_hours),
             )
         ),
-        repository=InMemoryComparisonRepository(),
+        repository=repository,
         snapshot_provider=snapshot_id,
         executor=executor,
         trace_sink=LangSmithTraceSink.from_settings(settings),

@@ -50,6 +50,12 @@ Run one comparison at `/en/compare` and the same request at `/es/compare`. Confi
 changes translate controls and status text while technology IDs, criterion IDs, cell states,
 evidence IDs, dates, versions and numeric values remain identical.
 
+For a price comparison, verify that ATLAS routes retrieval to `pricing` sources only. Technical
+documentation is never authoritative for a price claim. LangGraph and LangChain render
+`not_applicable` (`No aplica` in Spanish); a provider without a reviewed pricing page renders
+`unsupported` (`Sin evidencia`). Expand a populated cell and verify title, publisher, bounded
+excerpt, capture date, version and canonical URL before using its value.
+
 ## 6. Run quality gates
 
 ```powershell

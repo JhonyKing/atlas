@@ -1,4 +1,4 @@
-"""Hosted trace payloads contain identifiers and metrics, never sensitive content."""
+"""Hosted trace payloads expose evaluation content while recursively redacting credentials."""
 
 from uuid import uuid4
 
@@ -26,9 +26,25 @@ def test_langsmith_trace_does_not_forward_secret_or_private_content() -> None:
         request_id=request_id,
         run_id=uuid4(),
         fields={"api_key": "sk-never-forward-this", "private_document": "sensitive"},
+        inputs={
+            "question": "Visible evaluation question",
+            "evidence": {"excerpt": "Visible evidence"},
+            "headers": {"authorization": "Bearer never-forward-this"},
+        },
     )
-    sink.end(handle, status="abstained", fields={"session_token": "secret"})
+    sink.end(
+        handle,
+        status="abstained",
+        fields={"session_token": "secret"},
+        outputs={
+            "answer": "Visible generated answer",
+            "verification": {"status": "abstained", "api_key": "sk-never-forward-this"},
+        },
+    )
     serialized = repr((client.created, client.updated))
     assert "sk-never-forward-this" not in serialized
     assert "sensitive" not in serialized
-    assert "secret" not in serialized
+    assert "never-forward-this" not in serialized
+    assert "Visible evaluation question" in serialized
+    assert "Visible evidence" in serialized
+    assert "Visible generated answer" in serialized

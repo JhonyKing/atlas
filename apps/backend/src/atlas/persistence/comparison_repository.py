@@ -9,16 +9,18 @@ from typing import Protocol
 from uuid import UUID
 
 from psycopg import Connection
+from pydantic import HttpUrl
 
 from atlas.comparison.schemas import (
     ComparisonCell,
     ComparisonCellState,
     ComparisonCriterion,
+    ComparisonEvidence,
     ComparisonMatrix,
     ComparisonRun,
     ComparisonRunStatus,
 )
-from atlas.domain import CollectionSlug
+from atlas.domain import CollectionSlug, SourceType
 
 
 class ComparisonRunNotFound(KeyError):
@@ -36,13 +38,24 @@ class ComparisonRepository(Protocol):
 
     def get(self, run_id: UUID, *, visitor_key_hash: str) -> StoredComparison: ...
 
-    def save_matrix(self, run_id: UUID, matrix: ComparisonMatrix) -> None: ...
+    def save_matrix(
+        self, run_id: UUID, matrix: ComparisonMatrix, *, visitor_key_hash: str
+    ) -> None: ...
 
     def complete(
         self,
         run_id: UUID,
         *,
         visitor_key_hash: str,
+        completed_at: datetime,
+    ) -> ComparisonRun: ...
+
+    def finish(
+        self,
+        run_id: UUID,
+        *,
+        visitor_key_hash: str,
+        status: ComparisonRunStatus,
         completed_at: datetime,
     ) -> ComparisonRun: ...
 
@@ -68,7 +81,10 @@ class InMemoryComparisonRepository:
                 raise ComparisonRunNotFound(run_id)
             return record
 
-    def save_matrix(self, run_id: UUID, matrix: ComparisonMatrix) -> None:
+    def save_matrix(
+        self, run_id: UUID, matrix: ComparisonMatrix, *, visitor_key_hash: str
+    ) -> None:
+        del visitor_key_hash
         with self._lock:
             record = self._records.get(run_id)
             if record is None:
@@ -95,6 +111,22 @@ class InMemoryComparisonRepository:
             self._records[run_id] = StoredComparison(run=completed, matrix=record.matrix)
             return completed
 
+    def finish(
+        self,
+        run_id: UUID,
+        *,
+        visitor_key_hash: str,
+        status: ComparisonRunStatus,
+        completed_at: datetime,
+    ) -> ComparisonRun:
+        with self._lock:
+            record = self.get(run_id, visitor_key_hash=visitor_key_hash)
+            finished = record.run.model_copy(
+                update={"status": status, "completed_at": completed_at}
+            )
+            self._records[run_id] = StoredComparison(run=finished, matrix=record.matrix)
+            return finished
+
 
 class PostgresComparisonRepository:
     """Persist comparison runs, matrices, cells and corpus evidence links."""
@@ -104,28 +136,34 @@ class PostgresComparisonRepository:
 
     def create(self, run: ComparisonRun, *, idempotency_key: str | None = None) -> None:
         key = idempotency_key or str(run.run_id)
-        self._connection.execute(
-            """
-            INSERT INTO atlas.comparison_runs(
-              id, request_id, visitor_key_hash, idempotency_key, corpus_snapshot_id,
-              status, created_at, completed_at, retained_until
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                run.run_id,
-                run.request_id,
-                run.visitor_key_hash,
-                key,
-                run.snapshot_id,
-                run.status.value,
-                run.created_at,
-                run.completed_at,
-                run.retained_until,
-            ),
-        )
-        self._connection.commit()
+        try:
+            self._set_owner(run.visitor_key_hash)
+            self._connection.execute(
+                """
+                INSERT INTO atlas.comparison_runs(
+                  id, request_id, visitor_key_hash, idempotency_key, corpus_snapshot_id,
+                  status, created_at, completed_at, retained_until
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    run.run_id,
+                    run.request_id,
+                    run.visitor_key_hash,
+                    key,
+                    run.snapshot_id,
+                    run.status.value,
+                    run.created_at,
+                    run.completed_at,
+                    run.retained_until,
+                ),
+            )
+            self._connection.commit()
+        except Exception:
+            self._connection.rollback()
+            raise
 
     def get(self, run_id: UUID, *, visitor_key_hash: str) -> StoredComparison:
+        self._set_owner(visitor_key_hash)
         run_row = self._connection.execute(
             """
             SELECT id, request_id, visitor_key_hash, corpus_snapshot_id, status,
@@ -136,6 +174,7 @@ class PostgresComparisonRepository:
             (run_id, visitor_key_hash),
         ).fetchone()
         if run_row is None:
+            self._connection.rollback()
             raise ComparisonRunNotFound(run_id)
         run = ComparisonRun(
             run_id=run_row[0],
@@ -156,6 +195,7 @@ class PostgresComparisonRepository:
             (run_id,),
         ).fetchone()
         if matrix_row is None:
+            self._connection.commit()
             return StoredComparison(run=run)
         cell_rows = self._connection.execute(
             """
@@ -171,13 +211,31 @@ class PostgresComparisonRepository:
         for cell_row in cell_rows:
             evidence_rows = self._connection.execute(
                 """
-                SELECT chunk_id
-                FROM atlas.comparison_cell_evidence
-                WHERE comparison_cell_id = %s
-                ORDER BY ordinal
+                SELECT cce.chunk_id, s.title, s.publisher, s.canonical_url,
+                       s.source_type, c.text, sv.fetched_at, sv.version_label
+                FROM atlas.comparison_cell_evidence AS cce
+                JOIN atlas.chunks AS c ON c.id = cce.chunk_id
+                JOIN atlas.source_versions AS sv ON sv.id = c.source_version_id
+                JOIN atlas.sources AS s ON s.id = sv.source_id
+                WHERE cce.comparison_cell_id = %s
+                ORDER BY cce.ordinal
                 """,
                 (cell_row[0],),
             ).fetchall()
+            evidence_ids = [row[0] for row in evidence_rows]
+            evidence = [
+                ComparisonEvidence(
+                    id=row[0],
+                    source_title=row[1],
+                    publisher=row[2],
+                    canonical_url=str(HttpUrl(row[3])),
+                    excerpt=row[5],
+                    captured_at=row[6],
+                    version_label=row[7],
+                    source_type=SourceType(row[4]),
+                )
+                for row in evidence_rows
+            ]
             cells.append(
                 ComparisonCell(
                     technology_id=CollectionSlug(cell_row[1]),
@@ -188,7 +246,8 @@ class PostgresComparisonRepository:
                     explanation=cell_row[6],
                     period=cell_row[7],
                     version=cell_row[8],
-                    evidence_ids=[row[0] for row in evidence_rows],
+                    evidence_ids=evidence_ids,
+                    evidence=evidence,
                     observed_at=cell_row[9],
                 )
             )
@@ -198,11 +257,15 @@ class PostgresComparisonRepository:
             cells=cells,
             summary=matrix_row[3],
         )
+        self._connection.commit()
         return StoredComparison(run=run, matrix=matrix)
 
-    def save_matrix(self, run_id: UUID, matrix: ComparisonMatrix) -> None:
-        matrix_id = UUID(int=0)
-        row = self._connection.execute(
+    def save_matrix(
+        self, run_id: UUID, matrix: ComparisonMatrix, *, visitor_key_hash: str
+    ) -> None:
+        try:
+            self._set_owner(visitor_key_hash)
+            row = self._connection.execute(
             """
             INSERT INTO atlas.comparison_matrices(
               comparison_run_id, technology_ids, criterion_ids, summary
@@ -215,12 +278,12 @@ class PostgresComparisonRepository:
                 [value.value for value in matrix.criterion_ids],
                 matrix.summary,
             ),
-        ).fetchone()
-        if row is None:
-            raise RuntimeError("comparison matrix insert returned no ID")
-        matrix_id = row[0]
-        for cell in matrix.cells:
-            cell_row = self._connection.execute(
+            ).fetchone()
+            if row is None:
+                raise RuntimeError("comparison matrix insert returned no ID")
+            matrix_id = row[0]
+            for cell in matrix.cells:
+                cell_row = self._connection.execute(
                 """
                 INSERT INTO atlas.comparison_cells(
                   comparison_matrix_id, technology_id, criterion_id, state,
@@ -240,19 +303,22 @@ class PostgresComparisonRepository:
                     cell.version,
                     cell.observed_at,
                 ),
-            ).fetchone()
-            if cell_row is None:
-                raise RuntimeError("comparison cell insert returned no ID")
-            for ordinal, evidence_id in enumerate(cell.evidence_ids, start=1):
-                self._connection.execute(
+                ).fetchone()
+                if cell_row is None:
+                    raise RuntimeError("comparison cell insert returned no ID")
+                for ordinal, evidence_id in enumerate(cell.evidence_ids, start=1):
+                    self._connection.execute(
                     """
                     INSERT INTO atlas.comparison_cell_evidence(
                       comparison_cell_id, chunk_id, ordinal
                     ) VALUES (%s, %s, %s)
                     """,
-                    (cell_row[0], evidence_id, ordinal),
-                )
-        self._connection.commit()
+                        (cell_row[0], evidence_id, ordinal),
+                    )
+            self._connection.commit()
+        except Exception:
+            self._connection.rollback()
+            raise
 
     def complete(
         self,
@@ -264,6 +330,7 @@ class PostgresComparisonRepository:
         stored = self.get(run_id, visitor_key_hash=visitor_key_hash)
         if stored.matrix is None:
             raise ValueError("comparison cannot complete without a matrix")
+        self._set_owner(visitor_key_hash)
         row = self._connection.execute(
             """
             UPDATE atlas.comparison_runs
@@ -286,4 +353,50 @@ class PostgresComparisonRepository:
             created_at=row[5],
             completed_at=row[6],
             retained_until=row[7],
+        )
+
+    def finish(
+        self,
+        run_id: UUID,
+        *,
+        visitor_key_hash: str,
+        status: ComparisonRunStatus,
+        completed_at: datetime,
+    ) -> ComparisonRun:
+        if status not in {
+            ComparisonRunStatus.ABSTAINED,
+            ComparisonRunStatus.CANCELLED,
+            ComparisonRunStatus.FAILED,
+        }:
+            raise ValueError("finish only accepts non-completed terminal states")
+        self._set_owner(visitor_key_hash)
+        row = self._connection.execute(
+            """
+            UPDATE atlas.comparison_runs
+            SET status = %s, completed_at = %s
+            WHERE id = %s AND visitor_key_hash = %s
+            RETURNING id, request_id, visitor_key_hash, corpus_snapshot_id, status,
+                      created_at, completed_at, retained_until
+            """,
+            (status.value, completed_at, run_id, visitor_key_hash),
+        ).fetchone()
+        if row is None:
+            self._connection.rollback()
+            raise ComparisonRunNotFound(run_id)
+        self._connection.commit()
+        return ComparisonRun(
+            run_id=row[0],
+            request_id=row[1],
+            visitor_key_hash=row[2].strip(),
+            snapshot_id=row[3],
+            status=ComparisonRunStatus(row[4]),
+            created_at=row[5],
+            completed_at=row[6],
+            retained_until=row[7],
+        )
+
+    def _set_owner(self, visitor_key_hash: str) -> None:
+        self._connection.execute(
+            "SELECT set_config('atlas.visitor_key_hash', %s, true)",
+            (visitor_key_hash,),
         )

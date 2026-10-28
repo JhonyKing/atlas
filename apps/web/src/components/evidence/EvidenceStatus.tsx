@@ -1,9 +1,10 @@
-export type EvidenceState = "supported" | "partial" | "unsupported" | "contradictory";
+export type EvidenceState = "supported" | "partial" | "unsupported" | "not_applicable" | "contradictory";
 
 const stateCopy: Record<EvidenceState, { icon: string; label: string }> = {
   supported: { icon: "✓", label: "Supported" },
   partial: { icon: "◐", label: "Partial" },
   unsupported: { icon: "—", label: "Unsupported" },
+  not_applicable: { icon: "i", label: "Not applicable" },
   contradictory: { icon: "!", label: "Contradictory" },
 };
 

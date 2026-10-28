@@ -145,3 +145,27 @@ trustworthy. US3 is required before calling the public bilingual feature complet
   completed in 24,565 ms; `evals/results/live-comparator-t043-20260807-fixed-review.md` and its
   machine-readable JSON record report 40/40 evidence IDs resolved with zero collection mismatches.
   The corrected evidence mapping was subsequently owner-reviewed and accepted under T040.)
+
+## Phase 10: Convergence — decision quality, pricing evidence and locale integrity
+
+- [X] T044 [US1] Define and enforce criterion-specific source routing in
+  `apps/backend/src/atlas/comparison/`, add the `pricing` source type and reversible migration,
+  represent framework-only price cells as `not_applicable`, and add tests for the distinction between
+  `not_applicable` and `unsupported` (FR-CMP-008, FR-CMP-013). (Evidence: migration
+  `0033_comparison_pricing_contract`, criterion-routing tests and 45 targeted comparison/manifest
+  tests pass.)
+- [X] T045 [US3] Preserve the requested locale through comparison extraction and normalization so
+  Spanish responses contain Spanish explanations while source excerpts, IDs, dates and numeric
+  values remain unchanged; add regression tests for `es-MX` and `en-US` parity (FR-CMP-011). (Evidence:
+  locale reaches structured extraction and deterministic normalization; Spanish regression tests pass
+  and backend mypy/Ruff are clean.)
+- [X] T046 [US1] Add a deterministic decision conclusion to `ComparisonMatrix` and expose bounded
+  evidence metadata (title, publisher, URL, excerpt, capture date and version) in the API and matrix
+  UI instead of UUID-only inspection (FR-CMP-005, FR-CMP-013, SC-CMP-001). (Evidence: API schema,
+  Postgres rehydration, matrix UI and deterministic conclusion are implemented; web typecheck passes.)
+- [ ] T047 [US1] Add an immutable, versioned pricing corpus manifest containing official provider
+  pricing sources, ingest it without replacing prior snapshots, and execute a live comparison that
+  records verified price cells and explicit unavailable/not-applicable cells (FR-CMP-005, FR-CMP-008).
+- [ ] T048 [P] Update the comparator quickstart, README, ADR/architecture notes and PRD traceability
+  with the source-policy decision, pricing limitations, locale behavior and live evidence; record the
+  owner-review checklist before closing this phase (SC-CMP-008).
