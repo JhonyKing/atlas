@@ -54,18 +54,17 @@ class AnonymousIdentityMiddleware(BaseHTTPMiddleware):
         cookie_token = request.cookies.get(VISITOR_COOKIE_NAME)
         header_token = request.headers.get(VISITOR_TOKEN_HEADER)
         supplied_token = header_token if self._is_valid_cookie(header_token) else cookie_token
-        issue_cookie = supplied_token is None or not self._is_valid_cookie(supplied_token)
-        if header_token is not None and self._is_valid_cookie(header_token):
-            issue_cookie = cookie_token != header_token
-        raw_cookie = supplied_token
-        if issue_cookie:
-            raw_cookie = secrets.token_urlsafe(32)
+        raw_cookie = (
+            supplied_token
+            if self._is_valid_cookie(supplied_token)
+            else secrets.token_urlsafe(32)
+        )
         assert raw_cookie is not None
         request.state.visitor_key_hash = visitor_key_hash(self._secret, raw_cookie)
 
         response = await call_next(request)
         response.headers[VISITOR_TOKEN_HEADER] = raw_cookie
-        if issue_cookie:
+        if cookie_token != raw_cookie:
             response.set_cookie(
                 VISITOR_COOKIE_NAME,
                 raw_cookie,
