@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Literal
 from uuid import UUID
 
-import psycopg
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -93,6 +92,7 @@ from atlas.persistence.comparison_repository import (
 from atlas.persistence.corpus_repository import PostgresCorpusRepository
 from atlas.persistence.corpus_status import CorpusStatusProvider, PostgresCorpusStatusRepository
 from atlas.persistence.review_cases import InMemoryReviewCaseService, ReviewCaseListing
+from atlas.persistence.supabase import connect_supabase
 from atlas.privacy.deletion import AccountDeletionService, IdempotentDeletionService
 from atlas.privacy.ownership import InMemoryOwnershipService
 from atlas.providers.openai_agent_planner import OpenAIAgentPlannerAdapter
@@ -437,7 +437,7 @@ def _durable_agent_repositories(
     dsn = settings.database_url.get_secret_value().replace(
         "postgresql+psycopg://", "postgresql://", 1
     )
-    connection = psycopg.connect(dsn)
+    connection = connect_supabase(dsn)
     return (
         PostgresAgentRunRepository(connection),
         PostgresCheckpointRepository(connection),
@@ -456,7 +456,7 @@ def _durable_ingestion_service(settings: Settings) -> OperatorIngestionService:
     dsn = settings.database_url.get_secret_value().replace(
         "postgresql+psycopg://", "postgresql://", 1
     )
-    connection = psycopg.connect(dsn)
+    connection = connect_supabase(dsn)
     return IngestionService(PostgresIngestionRepository(connection))
 
 
@@ -491,7 +491,7 @@ def _comparison_service(
         dsn = settings.database_url.get_secret_value().replace(
             "postgresql+psycopg://", "postgresql://", 1
         )
-        repository = PostgresComparisonRepository(psycopg.connect(dsn))
+        repository = PostgresComparisonRepository(connect_supabase(dsn))
 
     return InMemoryComparisonRunService(
         quota=ComparisonQuotaService(
@@ -526,7 +526,7 @@ def _report_service(
         dsn = settings.database_url.get_secret_value().replace(
             "postgresql+psycopg://", "postgresql://", 1
         )
-        return PostgresReportService(connection=psycopg.connect(dsn), source=source)
+        return PostgresReportService(connection=connect_supabase(dsn), source=source)
     return InMemoryReportService(source=source)
 
 
@@ -552,7 +552,7 @@ def _comparison_executor(
         dsn = settings.database_url.get_secret_value().replace(
             "postgresql+psycopg://", "postgresql://", 1
         )
-        connection = psycopg.connect(dsn)
+        connection = connect_supabase(dsn)
         repository = PostgresCorpusRepository(connection)
         extractor = OpenAIComparisonObservationExtractor(
             client=client, model=settings.atlas_answer_model
@@ -589,7 +589,7 @@ def _answer_graph(
         dsn = settings.database_url.get_secret_value().replace(
             "postgresql+psycopg://", "postgresql://", 1
         )
-        connection = psycopg.connect(dsn)
+        connection = connect_supabase(dsn)
         repository = PostgresCorpusRepository(connection)
         return CitedAnswerGraph(
             CitedAnswerDependencies(
@@ -614,7 +614,7 @@ def _verified_corpus_or_demo(settings: Settings) -> CorpusStatusProvider:
     )
     connection = None
     try:
-        connection = psycopg.connect(dsn)
+        connection = connect_supabase(dsn)
         provider = PostgresCorpusStatusRepository(connection)
         provider.get_status()
         return provider

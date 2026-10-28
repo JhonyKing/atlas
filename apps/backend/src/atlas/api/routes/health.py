@@ -7,10 +7,10 @@ from uuid import uuid4
 from anyio import to_thread
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
-from psycopg import Connection
 from pydantic import BaseModel, ConfigDict, SecretStr
 
 from atlas.observability.context import current_request_id
+from atlas.persistence.supabase import connect_supabase
 
 DatabaseProbe = Callable[[], Awaitable[bool]]
 MigrationProbe = Callable[[], Awaitable[tuple[bool, str]]]
@@ -183,7 +183,7 @@ async def probe_migration_head(database_url: SecretStr, expected_head: str) -> t
 
 def _probe_migration_head_sync(connection_string: str, expected_head: str) -> tuple[bool, str]:
     with (
-        Connection.connect(connection_string, autocommit=True, connect_timeout=2) as connection,
+        connect_supabase(connection_string, autocommit=True, connect_timeout=2) as connection,
         connection.cursor() as cursor,
     ):
         cursor.execute("SELECT version_num FROM alembic_version LIMIT 1")
@@ -195,7 +195,7 @@ def _probe_migration_head_sync(connection_string: str, expected_head: str) -> tu
 def _probe_database_sync(connection_string: str) -> bool:
     """Use a worker thread so Windows and Linux event-loop policies behave identically."""
 
-    with Connection.connect(
+    with connect_supabase(
         connection_string,
         autocommit=True,
         connect_timeout=2,

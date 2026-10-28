@@ -12,7 +12,6 @@ from typing import Protocol
 from urllib.parse import urlparse
 
 import httpx
-import psycopg
 from openai import AsyncOpenAI
 
 from atlas.config import Settings
@@ -27,6 +26,7 @@ from atlas.ingestion.service import (
     PostgresIngestionRepository,
     SourceDiscoverer,
 )
+from atlas.persistence.supabase import connect_supabase
 from atlas.providers.openai_embeddings import OpenAIEmbeddingsAdapter
 from atlas.providers.ports import EmbeddingProvider, SourceFetcher
 
@@ -179,7 +179,7 @@ async def _run_managed_worker(args: argparse.Namespace) -> int:
     dsn = settings.database_url.get_secret_value().replace(
         "postgresql+psycopg://", "postgresql://", 1
     )
-    connection = psycopg.connect(dsn)
+    connection = connect_supabase(dsn)
     provider = AsyncOpenAI(api_key=settings.openai_api_key.get_secret_value())
     http_client = httpx.AsyncClient()
     hosts = frozenset(
