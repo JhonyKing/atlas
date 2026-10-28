@@ -62,7 +62,7 @@ async def create_report(
             ("format", ReportFormat),
         ):
             if field in payload:
-                payload[field] = enum_type(payload[field])
+                payload[field] = enum_type(str(payload[field]))
         spec = ReportSpec.model_validate(payload)
     except (KeyError, TypeError, ValueError):
         return _problem(request, 400, "Report specification is not valid", "invalid_report_spec")
