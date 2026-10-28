@@ -298,6 +298,11 @@ button.secondary { color: var(--atlas-text); background: var(--atlas-surface-sof
 .comparison-selection { display: flex; flex-wrap: wrap; gap: .3rem .75rem; color: var(--atlas-text-secondary); font-size: .88rem; }
 .comparison-selection strong { color: var(--atlas-text); }
 .comparison-results { display: grid; gap: 1rem; }
+.comparison-run-reference { display: grid; gap: .75rem; margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--atlas-border); border-radius: var(--atlas-radius-md); background: var(--atlas-surface-soft); }
+.comparison-run-reference > div { min-width: 0; }
+.comparison-run-reference code { display: block; margin-top: .35rem; overflow-wrap: anywhere; }
+.comparison-run-reference button, .comparison-run-reference a { justify-self: start; }
+.comparison-run-reference .actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
 .comparison-results-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
 .comparison-results-heading h2 { margin: .25rem 0 0; }
 .comparison-results-heading > p { max-width: 32rem; margin: 0; color: var(--atlas-text-secondary); }

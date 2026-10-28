@@ -1,7 +1,7 @@
 param(
     [string]$DatabaseUrl = $env:ATLAS_DATABASE_URL,
     [switch]$DryRun,
-    [string]$ExpectedHead = "comparison_run_persistence"
+    [string]$ExpectedHead = "0035_durable_reports"
 )
 
 $ErrorActionPreference = "Stop"

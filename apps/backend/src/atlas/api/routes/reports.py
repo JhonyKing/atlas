@@ -10,16 +10,21 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from atlas.observability.context import current_request_id
 from atlas.reports.schemas import ReportSpec
-from atlas.reports.service import InMemoryReportService, ReportNotFound, ReportQuotaExceeded
+from atlas.reports.service import (
+    InMemoryReportService,
+    PostgresReportService,
+    ReportNotFound,
+    ReportQuotaExceeded,
+)
 
 router = APIRouter(prefix="/v1/reports", tags=["Reports"])
 
 
-def _service(request: Request) -> InMemoryReportService:
+def _service(request: Request) -> InMemoryReportService | PostgresReportService:
     service = request.app.state.report_service
     if service is None:
         raise HTTPException(status_code=503, detail="Report service is unavailable")
-    return cast(InMemoryReportService, service)
+    return cast(InMemoryReportService | PostgresReportService, service)
 
 
 def _owner(request: Request) -> str:
@@ -44,9 +49,7 @@ def _problem(request: Request, code: int, detail: str, error_code: str) -> JSONR
 async def create_report(
     request: Request,
     raw_body: dict[str, object],
-    idempotency_key: Annotated[
-        str, Header(alias="Idempotency-Key", min_length=16, max_length=128)
-    ],
+    idempotency_key: Annotated[str, Header(alias="Idempotency-Key", min_length=16, max_length=128)],
 ) -> JSONResponse:
     try:
         payload = dict(raw_body)
@@ -87,7 +90,10 @@ async def get_report(request: Request, report_id: UUID) -> JSONResponse:
         job = await _service(request).get(report_id, owner_key_hash=_owner(request))
     except ReportNotFound:
         return _problem(request, 404, "Report was not found", "not_found")
-    return JSONResponse(status_code=200, content=job.model_dump(mode="json"))
+    return JSONResponse(
+        status_code=200,
+        content=job.model_dump(mode="json", exclude={"owner_key_hash"}),
+    )
 
 
 @router.get("/{report_id}/events", response_model=None)
@@ -130,4 +136,7 @@ async def delete_report(request: Request, report_id: UUID) -> JSONResponse:
         job = await _service(request).delete(report_id, owner_key_hash=_owner(request))
     except ReportNotFound:
         return _problem(request, 404, "Report was not found", "not_found")
-    return JSONResponse(status_code=200, content=job.model_dump(mode="json"))
+    return JSONResponse(
+        status_code=200,
+        content=job.model_dump(mode="json", exclude={"owner_key_hash"}),
+    )

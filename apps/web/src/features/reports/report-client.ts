@@ -8,6 +8,17 @@ export type ReportStatus = {
   error_code?: string | null;
 };
 
+async function apiError(response: Response, fallback: string): Promise<Error> {
+  try {
+    const body = (await response.json()) as { detail?: unknown; error_code?: unknown };
+    if (typeof body.error_code === "string") return new Error(body.error_code);
+    if (typeof body.detail === "string") return new Error(body.detail);
+  } catch {
+    // Use the caller's safe, localized fallback for non-JSON responses.
+  }
+  return new Error(fallback);
+}
+
 function key(): string {
   return typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-atlas-report`;
 }
@@ -25,14 +36,14 @@ export async function createReport(sourceRunId: string, locale: "en-US" | "es-MX
     }),
   });
   rememberAtlasVisitor(response);
-  if (!response.ok) throw new Error("ATLAS could not create the report.");
+  if (!response.ok) throw await apiError(response, "ATLAS could not create the report.");
   return ((await response.json()) as { report_id: string }).report_id;
 }
 
 export async function getReport(reportId: string): Promise<ReportStatus> {
   const response = await fetch(`${getPublicEnvironment().apiOrigin}/v1/reports/${reportId}`, { headers: atlasVisitorHeaders() });
   rememberAtlasVisitor(response);
-  if (!response.ok) throw new Error("ATLAS could not read the report.");
+  if (!response.ok) throw await apiError(response, "ATLAS could not read the report.");
   return (await response.json()) as ReportStatus;
 }
 

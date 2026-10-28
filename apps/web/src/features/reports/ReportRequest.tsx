@@ -38,8 +38,20 @@ export function ReportRequest() {
         if (["completed", "failed", "expired", "deleted"].includes(next.status)) return;
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
-    } catch {
-      setError(spanish ? "No pudimos crear el reporte. Inténtalo de nuevo más tarde." : "We couldn't create the report. Try again later.");
+    } catch (cause) {
+      const reason = cause instanceof Error ? cause.message : "";
+      const known: Record<string, [string, string]> = {
+        source_run_not_found: ["No encontramos esa comparación para esta sesión del navegador.", "That comparison is not available to this browser session."],
+        source_run_not_completed: ["La comparación todavía no está terminada.", "The comparison has not completed yet."],
+        source_run_has_no_evidence: ["La comparación no tiene evidencias para respaldar un reporte.", "The comparison has no evidence to support a report."],
+        report_type_not_implemented: ["Este tipo de reporte aún no está disponible.", "This report type is not available yet."],
+        quota_exceeded: ["Alcanzaste el límite temporal de reportes. Inténtalo más tarde.", "You reached the temporary report limit. Try again later."],
+        idempotency_conflict: ["La solicitud del reporte entró en conflicto. Vuelve a intentarlo.", "The report request conflicted. Please try again."],
+      };
+      const message = known[reason];
+      setError(message ? message[spanish ? 0 : 1] : reason && reason !== "ATLAS could not create the report."
+        ? `${spanish ? "No se pudo crear el reporte" : "Report creation failed"}: ${reason}`
+        : spanish ? "No pudimos crear el reporte. Inténtalo de nuevo más tarde." : "We couldn't create the report. Try again later.");
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +97,7 @@ export function ReportRequest() {
 }
 
 function ReportArtifacts({ report, spanish, deleting, downloading, onDownload, onDelete }: { report: ReportStatus; spanish: boolean; deleting: boolean; downloading: boolean; onDownload: (format: "docx" | "pdf") => void; onDelete: () => void }) {
-  if (report.status !== "completed") return <div className="report-artifact-status" data-report-state={report.status}><p role="status">{spanish ? `Estado: ${report.status}` : `Status: ${report.status}`}</p><span className="report-progress-bar" aria-hidden="true" /></div>;
+  if (report.status !== "completed") return <div className="report-artifact-status" data-report-state={report.status}><p role={report.status === "failed" ? "alert" : "status"}>{report.status === "failed" ? (spanish ? `No se pudo generar el reporte: ${report.error_code ?? "error desconocido"}` : `The report could not be generated: ${report.error_code ?? "unknown error"}`) : (spanish ? `Estado: ${report.status}` : `Status: ${report.status}`)}</p>{["accepted", "planning", "rendering"].includes(report.status) ? <span className="report-progress-bar" aria-hidden="true" /> : null}</div>;
   return (
     <div className="report-artifacts" data-report-state="completed">
       <p role="status">{spanish ? "Informe listo." : "Report ready."}</p>

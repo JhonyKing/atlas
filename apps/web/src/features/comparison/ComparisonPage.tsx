@@ -252,23 +252,27 @@ export function ComparisonPage() {
       {matrix ? <ComparisonMatrix matrix={matrix} spanish={spanish} /> : null}
       {matrix && runId ? (
         <section className="comparison-run-reference" aria-label={copy.comparisonId}>
-          <p>{copy.comparisonId}</p>
-          <code>{runId}</code>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => {
-              void navigator.clipboard.writeText(runId).then(
-                () => setCopiedRunId(true),
-                () => setError(copy.copyFailed),
-              );
-            }}
-          >
-            {copy.copyId}
-          </Button>
-          <Link href={`${spanish ? "/es" : "/en"}/reports?comparison_id=${encodeURIComponent(runId)}`}>
-            {copy.report}
-          </Link>
+          <div>
+            <p>{copy.comparisonId}</p>
+            <code>{runId}</code>
+          </div>
+          <div className="actions">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                void navigator.clipboard.writeText(runId).then(
+                  () => setCopiedRunId(true),
+                  () => setError(copy.copyFailed),
+                );
+              }}
+            >
+              {copy.copyId}
+            </Button>
+            <Link href={`${spanish ? "/es" : "/en"}/reports?comparison_id=${encodeURIComponent(runId)}`}>
+              {copy.report}
+            </Link>
+          </div>
         </section>
       ) : null}
     </main>
