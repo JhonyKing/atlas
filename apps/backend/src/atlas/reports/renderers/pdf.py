@@ -41,8 +41,13 @@ def _safe(text: str) -> str:
     return escape(text).replace("\n", "<br/>")
 
 
-def _matrix_rows(narrative: str, body_style: ParagraphStyle) -> list[list[object]]:
-    rows: list[list[object]] = [["Tecnología", "Criterio", "Resultado y evidencia"]]
+def _matrix_rows(narrative: str, body_style: ParagraphStyle, *, is_es: bool) -> list[list[object]]:
+    labels = (
+        ["Tecnología", "Criterio", "Resultado y evidencia"]
+        if is_es
+        else ["Technology", "Criterion", "Result and evidence"]
+    )
+    rows: list[list[object]] = [list(labels)]
     for line in narrative.splitlines():
         try:
             technology, rest = line.split(" / ", 1)
@@ -148,7 +153,7 @@ def render_pdf(report: ReportRepresentation) -> bytes:
         story.append(Paragraph(_safe(section.title), heading))
         if section.title.lower() in {"comparison matrix", "matriz de comparación"}:
             matrix = Table(
-                _matrix_rows(section.narrative, body),
+                _matrix_rows(section.narrative, body, is_es=is_es),
                 colWidths=[1.25 * inch, 1.2 * inch, 4.45 * inch],
                 repeatRows=1,
             )
@@ -177,7 +182,8 @@ def render_pdf(report: ReportRepresentation) -> bytes:
     for index, citation in enumerate(report.citations):
         url = _link(citation.url)
         source_label = (
-            f'<link href="{escape(url, quote=True)}" color="#315FEA">Abrir fuente</link>'
+            f'<link href="{escape(url, quote=True)}" color="#315FEA">'
+            f"{'Abrir fuente' if is_es else 'Open source'}</link>"
             if url
             else _safe(citation.url)
         )

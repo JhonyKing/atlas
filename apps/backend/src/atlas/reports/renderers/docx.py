@@ -80,7 +80,7 @@ def _format_run(run: object, *, color: str = NAVY, size: int = 10, bold: bool = 
     run.font.color.rgb = RGBColor.from_string(color)  # type: ignore[attr-defined]
 
 
-def _add_matrix(document: DocumentType, narrative: str) -> None:
+def _add_matrix(document: DocumentType, narrative: str, *, is_es: bool) -> None:
     rows: list[tuple[str, str, str]] = []
     for line in narrative.splitlines():
         try:
@@ -93,7 +93,11 @@ def _add_matrix(document: DocumentType, narrative: str) -> None:
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
     widths = [Inches(1.45), Inches(1.35), Inches(4.05)]
-    labels = ["Tecnología", "Criterio", "Resultado y evidencia"]
+    labels = (
+        ["Tecnología", "Criterio", "Resultado y evidencia"]
+        if is_es
+        else ["Technology", "Criterion", "Result and evidence"]
+    )
     for index, cell in enumerate(table.rows[0].cells):
         cell.width = widths[index]
         _set_cell_shading(cell, NAVY)
@@ -174,7 +178,7 @@ def render_docx(report: ReportRepresentation) -> bytes:
         for run in heading.runs:
             _format_run(run, size=14, bold=True)
         if report_section.title.lower() in {"comparison matrix", "matriz de comparación"}:
-            _add_matrix(document, report_section.narrative)
+            _add_matrix(document, report_section.narrative, is_es=is_es)
         else:
             paragraph = document.add_paragraph(report_section.narrative)
             paragraph.paragraph_format.space_after = Pt(10)
