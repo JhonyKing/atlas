@@ -1,6 +1,9 @@
+from io import BytesIO
 from pathlib import Path
+from zipfile import ZipFile
 
 import pytest
+from pypdf import PdfReader
 
 from atlas.reports.planner import plan_report
 from atlas.reports.renderers.docx import render_docx
@@ -29,3 +32,17 @@ async def test_docx_and_pdf_are_non_empty_and_citation_complete(
     validate_pdf(pdf, report)
     assert len(docx) > 100
     assert len(pdf) > 100
+    with ZipFile(BytesIO(docx)) as archive:
+        assert "word/media/image1.png" in archive.namelist()
+        relationships = archive.read("word/_rels/document.xml.rels").decode()
+        assert "https://example.com/docs" in relationships
+        footer_relationships = archive.read("word/_rels/footer1.xml.rels").decode()
+        assert "https://atlasai-lilac.vercel.app" in footer_relationships
+    reader = PdfReader(BytesIO(pdf))
+    pdf_links = {
+        annotation.get_object().get("/A", {}).get("/URI")
+        for page in reader.pages
+        for annotation in page.get("/Annots", [])
+    }
+    assert "https://example.com/docs" in pdf_links
+    assert "https://atlasai-lilac.vercel.app" in pdf_links

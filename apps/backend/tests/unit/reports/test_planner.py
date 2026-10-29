@@ -8,9 +8,10 @@ from atlas.comparison.schemas import (
     ComparisonCell,
     ComparisonCellState,
     ComparisonCriterion,
+    ComparisonEvidence,
     ComparisonMatrix,
 )
-from atlas.domain import CollectionSlug
+from atlas.domain import CollectionSlug, SourceType
 from atlas.reports.planner import ReportPlanningError, plan_report
 from atlas.reports.schemas import ReportLocale, ReportSpec
 
@@ -39,6 +40,17 @@ def _completed() -> ComparisonRunResponse:
                 state=ComparisonCellState.SUPPORTED,
                 value="yes",
                 evidence_ids=[evidence_id],
+                evidence=[
+                    ComparisonEvidence(
+                        id=evidence_id,
+                        source_title="Official API documentation",
+                        publisher="Example",
+                        canonical_url="https://example.com/docs",
+                        source_type=SourceType.DOCUMENTATION,
+                        excerpt="The API supports the listed capability.",
+                        captured_at=datetime.now(UTC),
+                    )
+                ],
             ),
             ComparisonCell(
                 technology_id=CollectionSlug("anthropic"),
@@ -46,6 +58,17 @@ def _completed() -> ComparisonRunResponse:
                 state=ComparisonCellState.SUPPORTED,
                 value="yes",
                 evidence_ids=[evidence_id],
+                evidence=[
+                    ComparisonEvidence(
+                        id=evidence_id,
+                        source_title="Official API documentation",
+                        publisher="Example",
+                        canonical_url="https://example.com/docs",
+                        source_type=SourceType.DOCUMENTATION,
+                        excerpt="The API supports the listed capability.",
+                        captured_at=datetime.now(UTC),
+                    )
+                ],
             ),
         ],
         summary="Verified comparison",
@@ -74,6 +97,8 @@ async def test_planner_preserves_evidence_identity_and_localizes_headings() -> N
     assert report.locale is ReportLocale.ES_MX
     assert report.citations[0].evidence_id in {cell.evidence_ids[0] for cell in source.matrix.cells}
     assert report.sections[0].title == "Resumen ejecutivo"
+    assert "OpenAI / Capacidad" in report.sections[1].narrative
+    assert report.citations[0].url == "https://example.com/docs"
 
 
 @pytest.mark.asyncio
