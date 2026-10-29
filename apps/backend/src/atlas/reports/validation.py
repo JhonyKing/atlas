@@ -31,10 +31,16 @@ def validate_docx(content: bytes, report: ReportRepresentation) -> None:
     try:
         with ZipFile(BytesIO(content)) as archive:
             xml = archive.read("word/document.xml").decode("utf-8")
+            relationships = archive.read("word/_rels/document.xml.rels").decode("utf-8")
     except Exception as exc:
         raise ReportValidationError("malformed_docx") from exc
     for citation in report.citations:
-        if citation.citation_id not in xml or citation.url not in xml:
+        citation_linked = (
+            citation.url in relationships
+            if citation.url.startswith(("http://", "https://"))
+            else citation.url in xml
+        )
+        if citation.citation_id not in xml or not citation_linked:
             raise ReportValidationError("docx_missing_citation")
 
 
@@ -46,6 +52,16 @@ def validate_pdf(content: bytes, report: ReportRepresentation) -> None:
     except Exception as exc:
         raise ReportValidationError("malformed_pdf") from exc
     compact_text = "".join(text.split())
+    annotations = [
+        annotation.get_object().get("/A", {}).get("/URI")
+        for page in PdfReader(BytesIO(content)).pages
+        for annotation in page.get("/Annots", [])
+    ]
     for citation in report.citations:
-        if citation.citation_id not in text or "".join(citation.url.split()) not in compact_text:
+        link_present = (
+            citation.url in annotations
+            if citation.url.startswith(("http://", "https://"))
+            else "".join(citation.url.split()) in compact_text
+        )
+        if citation.citation_id not in text or not link_present:
             raise ReportValidationError("pdf_missing_citation")

@@ -38,6 +38,26 @@ def _label(value: str, locale: ReportLocale) -> str:
     return value
 
 
+def _technology_label(value: str) -> str:
+    known = {"openai": "OpenAI", "anthropic": "Anthropic", "google": "Google"}
+    return known.get(value.lower(), value.replace("-", " ").replace("_", " ").title())
+
+
+def _criterion_label(value: str, locale: ReportLocale) -> str:
+    labels = {
+        "capability": ("Capacidad", "Capability"),
+        "tool_calling": ("Llamada a herramientas", "Tool calling"),
+        "context": ("Ventana de contexto", "Context window"),
+        "latency": ("Latencia", "Latency"),
+        "price": ("Precio", "Price"),
+        "license": ("Licencia", "License"),
+        "freshness": ("Vigencia", "Freshness"),
+        "operational_risk": ("Riesgo operativo", "Operational risk"),
+    }
+    fallback = value.replace("_", " ").title()
+    return labels.get(value, (fallback, fallback))[0 if locale is ReportLocale.ES_MX else 1]
+
+
 async def plan_report(
     spec: ReportSpec,
     *,
@@ -56,6 +76,9 @@ async def plan_report(
         raise ReportPlanningError("source_run_not_completed")
 
     citations: list[ReportCitation] = []
+    evidence_by_id = {
+        evidence.id: evidence for cell in run.matrix.cells for evidence in cell.evidence
+    }
     seen: set[UUID] = set()
     for cell in run.matrix.cells:
         for evidence_id in cell.evidence_ids:
@@ -67,10 +90,18 @@ async def plan_report(
                     citation_id=f"E{len(citations) + 1}",
                     source_run_id=spec.source_run_id,
                     evidence_id=evidence_id,
-                    url=f"atlas://comparison/{spec.source_run_id}/evidence/{evidence_id}",
+                    url=(
+                        evidence_by_id[evidence_id].canonical_url
+                        if evidence_id in evidence_by_id
+                        else f"atlas://comparison/{spec.source_run_id}/evidence/{evidence_id}"
+                    ),
                     excerpt=(
-                        "Original evidence is available in the source run evidence panel; "
-                        f"citation identity {evidence_id} is preserved."
+                        evidence_by_id[evidence_id].excerpt[:2000]
+                        if evidence_id in evidence_by_id
+                        else (
+                            "Original evidence is available in the source run evidence panel; "
+                            f"citation identity {evidence_id} is preserved."
+                        )
                     ),
                 )
             )
@@ -84,7 +115,8 @@ async def plan_report(
         value = cell.value or cell.explanation or "No supported evidence"
         refs = ", ".join(citation_by_evidence[evidence_id] for evidence_id in cell.evidence_ids)
         matrix_lines.append(
-            f"{cell.technology_id.value} / {cell.criterion_id.value}: {value} "
+            f"{_technology_label(cell.technology_id.value)} / "
+            f"{_criterion_label(cell.criterion_id.value, spec.locale)}: {value} "
             f"[{refs or 'abstained'}]"
         )
     summary = run.matrix.summary or "Comparison completed with evidence-linked cells."
