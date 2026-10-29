@@ -26,6 +26,9 @@ from atlas.reports.validation import (
     validate_representation,
 )
 
+REPORT_LIMIT_PER_VISITOR = 20
+REPORT_QUOTA_WINDOW = timedelta(hours=24)
+
 
 class ReportQuotaExceeded(RuntimeError):
     """The visitor reached the report limit."""
@@ -55,8 +58,8 @@ class InMemoryReportService:
         *,
         source: ComparisonSource,
         storage: LocalArtifactStorage | None = None,
-        limit: int = 3,
-        window: timedelta = timedelta(hours=24),
+        limit: int = REPORT_LIMIT_PER_VISITOR,
+        window: timedelta = REPORT_QUOTA_WINDOW,
         clock: Callable[[], datetime] | None = None,
         model: str = "gpt-5.6-luna",
         prompt_version: str = "report-v1",
@@ -229,8 +232,8 @@ class PostgresReportService:
         *,
         connection: Connection,
         source: ComparisonSource,
-        limit: int = 3,
-        window: timedelta = timedelta(hours=24),
+        limit: int = REPORT_LIMIT_PER_VISITOR,
+        window: timedelta = REPORT_QUOTA_WINDOW,
         clock: Callable[[], datetime] | None = None,
         model: str = "gpt-5.6-luna",
         prompt_version: str = "report-v1",
